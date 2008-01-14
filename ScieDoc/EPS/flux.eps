@@ -1,0 +1,790 @@
+%!
+%%BoundingBox: 32 584 343 798
+%%Title: flux
+%%CreationDate: Mon Nov 30 09:14:52 1998
+%%Creator: Tgif-3.0-p17 by William Chia-Wei Cheng (william@cs.UCLA.edu)
+
+/tgifdict 37 dict def
+tgifdict begin
+
+/tgifarrowtipdict 8 dict def
+tgifarrowtipdict /mtrx matrix put
+
+/tgifarrowtip
+ { tgifarrowtipdict begin
+      /dy exch def
+      /dx exch def
+      /h exch def
+      /w exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      dy dx atan rotate
+      0 0 moveto
+      w neg h lineto
+      w neg h neg lineto
+      savematrix setmatrix
+   end
+ } def
+
+/tgifpatdict 10 dict def
+
+/tgifpatbyte
+ { currentdict /retstr get exch
+   pat i cellsz mod get put
+ } def
+
+/tgifpatproc
+ { 0 1 widthlim {tgifpatbyte} for retstr
+   /i i 1 add def
+ } def
+
+/tgifpatfill
+ { tgifpatdict begin
+      /h exch def
+      /w exch def
+      /lty exch def
+      /ltx exch def
+      /cellsz exch def
+      /pat exch def
+
+      /widthlim w cellsz div cvi 1 sub def
+      /retstr widthlim 1 add string def
+      /i 0 def
+
+      tgiforigctm setmatrix
+      ltx lty translate
+      w h true [1 0 0 1 0 0] {tgifpatproc} imagemask
+      ltx neg lty neg translate
+   end
+ } def
+
+/pat3 <8000000008000000> def
+/pat4 <8800000022000000> def
+/pat5 <8800220088002200> def
+/pat6 <8822882288228822> def
+/pat7 <aa55aa55aa55aa55> def
+/pat8 <77dd77dd77dd77dd> def
+/pat9 <77ffddff77ffddff> def
+/pat10 <77ffffff77ffffff> def
+/pat11 <7fffffff7fffffff> def
+/pat12 <8040200002040800> def
+/pat13 <40a00000040a0000> def
+/pat14 <ff888888ff888888> def
+/pat15 <ff808080ff080808> def
+/pat16 <f87422478f172271> def
+/pat17 <038448300c020101> def
+/pat18 <081c22c180010204> def
+/pat19 <8080413e080814e3> def
+/pat20 <8040201008040201> def
+/pat21 <8844221188442211> def
+/pat22 <77bbddee77bbddee> def
+/pat23 <c1e070381c0e0783> def
+/pat24 <7fbfdfeff7fbfdfe> def
+/pat25 <3e1f8fc7e3f1f87c> def
+/pat26 <0102040810204080> def
+/pat27 <1122448811224488> def
+/pat28 <eeddbb77eeddbb77> def
+/pat29 <83070e1c3870e0c1> def
+/pat30 <fefdfbf7efdfbf7f> def
+/pat31 <7cf8f1e3c78f1f3e> def
+
+end
+
+%%PageBoundingBox: 32 584 343 798
+tgifdict begin
+/tgifsavedpage save def
+
+1 setmiterlimit
+1 setlinewidth
+
+0 setgray
+
+72 0 mul 72 11.70 mul translate
+72 128 div 100.000 mul 100 div dup neg scale
+
+gsave
+
+/tgiforigctm matrix currentmatrix def
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      96 256 moveto
+      224 256 lineto
+      224 384 lineto
+      320 384 lineto
+      320 256 lineto
+      448 256 lineto
+      448 384 lineto
+      480 384 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      196 323 moveto (T) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      228 403 moveto (T) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      108 275 moveto (T) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      140 273 moveto (d) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      260 401 moveto (d) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      236 95 moveto (T) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      256 311 moveto (T) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      280 95 moveto (q) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      244 100 moveto (a) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      292 100 moveto (a) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      120 280 moveto (R) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      148 280 moveto (R) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      208 328 moveto (w) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      268 316 moveto (can) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      268 336 moveto (can) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      240 408 moveto (r) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      272 408 moveto (r) show
+   grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      552 256 moveto
+      40 0 atan dup cos 8.000 mul exch sin 8.000 mul rmoveto
+      40 0 atan dup cos 8.000 mul 552 exch sub
+      exch sin 8.000 mul 296 exch sub lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+gsave
+   tgiforigctm setmatrix
+   newpath
+      552 256 8.000 3.000 0 -40 tgifarrowtip
+   1 setgray closepath fill
+   0 setgray
+   newpath
+      552 256 8.000 3.000 0 -40 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   tgiforigctm setmatrix
+   newpath
+      552 296 8.000 3.000 0 40 tgifarrowtip
+   1 setgray closepath fill
+   0 setgray
+   newpath
+      552 296 8.000 3.000 0 40 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      560 279 moveto (h/3) show
+   grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      532 296 moveto
+      -24 0 atan dup cos 10.000 mul 532 exch sub
+      exch sin 10.000 mul 272 exch sub lineto
+   tgiforigctm setmatrix
+   2 setlinewidth
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   tgiforigctm setmatrix
+   newpath
+      532 272 10.000 4.000 0 -24 tgifarrowtip
+   1 setgray closepath fill
+   0 setgray
+   newpath
+      532 272 10.000 4.000 0 -24 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      496 291 moveto (z) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      504 300 moveto (0town) show
+   grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      480 384 moveto
+      544 384 lineto
+      544 256 lineto
+      604 256 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   [4 12] 0 setdash
+   newpath
+      60 104 moveto
+      608 104 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      128 256 moveto
+      128 228 lineto
+      136 224 lineto
+      120 216 lineto
+      136 208 lineto
+      120 200 lineto
+      136 192 lineto
+      120 184 lineto
+      136 176 lineto
+      120 168 lineto
+      136 160 lineto
+      120 152 lineto
+      128 148 lineto
+      128 104 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      268 296 moveto
+      268 228 lineto
+      276 224 lineto
+      260 216 lineto
+      276 208 lineto
+      260 200 lineto
+      276 192 lineto
+      260 184 lineto
+      276 176 lineto
+      260 168 lineto
+      276 160 lineto
+      260 152 lineto
+      268 148 lineto
+      268 104 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      256 324 moveto
+      256 324 lineto
+      252 316 lineto
+      244 332 lineto
+      236 316 lineto
+      228 332 lineto
+      224 324 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      268 384 moveto
+      268 376 lineto
+      276 372 lineto
+      260 364 lineto
+      276 356 lineto
+      260 348 lineto
+      268 344 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% TEXT
+0 setgray
+newpath
+   255 315 moveto 264 315 lineto 264 335 lineto 255 335 lineto
+closepath 1 setgray fill
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      256 331 moveto (q) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [14 0 0 -14 0 0] makefont setfont
+   gsave
+      140 194 moveto (RES) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [14 0 0 -14 0 0] makefont setfont
+   gsave
+      280 194 moveto (RES) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [14 0 0 -14 0 0] makefont setfont
+   gsave
+      228 374 moveto (RES) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [14 0 0 -14 0 0] makefont setfont
+   gsave
+      224 346 moveto (RES) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      168 200 moveto (R) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      308 200 moveto (top) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      248 352 moveto (w) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      256 376 moveto (r) show
+   grestore
+
+% BOX
+0 setgray
+gsave
+   10 setmiterlimit
+   gsave
+      newpath
+         252 296 moveto 288 296 lineto 288 344 lineto 252 344 lineto
+      closepath
+      [4 4] 0 setdash
+      stroke
+   grestore
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   [8 8] 0 setdash
+   newpath
+      556 104 moveto
+      553.33 141.33 548.67 171.33 542.00 194.00 curveto
+      535.33 216.67 527.33 234.00 518.00 246.00 curveto
+      508.67 258.00 494.67 268.00
+      476 276 curveto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+newpath
+   464 104 moveto
+   464.00 133.33 462.00 160.67 458.00 186.00 curveto
+   454.00 211.33 447.33 227.33 438.00 234.00 curveto
+   428.67 240.67 416.00 245.33
+   400 248 curveto
+closepath 1 setgray eofill
+0 setgray
+gsave
+   newpath
+      464 104 moveto
+      464.00 133.33 462.00 160.67 458.00 186.00 curveto
+      454.00 211.33 447.33 227.33 438.00 234.00 curveto
+      428.67 240.67 416.00 245.33
+      400 248 curveto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   1 setgray stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      516 248 moveto
+      505.33 264.00 497.33 277.33 492.00 288.00 curveto
+      486.67 298.67 484.00 330.67
+      484 384 curveto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      556 104 moveto
+      553.33 141.33 548.67 171.33 542.00 194.00 curveto
+      535.33 216.67 527.33 234.00 518.00 246.00 curveto
+      508.67 258.00 504.00 264.00
+      504 264 curveto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% TEXT
+0 setgray
+/Times-Italic findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      456 359 moveto (exp) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Italic findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      520 163 moveto (log ) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      128 451 moveto (Aerodynamical resistances) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      444 451 moveto (wind profile) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      492 327 moveto (U) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      504 332 moveto (can) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      292 401 moveto (d) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      304 408 moveto (snow r) show
+   grestore
+
+% BOX
+0 setgray
+gsave
+   newpath
+   284 372 moveto 320 372 lineto 320 384 lineto 284 384 lineto
+   closepath 1 setgray fill
+   0 setgray
+   newpath
+      284 372 moveto 320 372 lineto 320 384 lineto 284 384 lineto
+   closepath eoclip newpath
+   pat3 8 280 368 48 24 tgifpatfill
+grestore
+gsave
+   10 setmiterlimit
+   gsave
+      newpath
+         284 372 moveto 320 372 lineto 320 384 lineto 284 384 lineto
+      closepath
+      stroke
+   grestore
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      300 372 moveto
+      300 364 lineto
+      312 360 lineto
+      292 352 lineto
+      308 344 lineto
+      300 340 lineto
+      300 332 lineto
+      288 332 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      168 273 moveto (d) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      176 280 moveto (snow R) show
+   grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      204 256 moveto
+      204 228 lineto
+      212 224 lineto
+      196 216 lineto
+      212 208 lineto
+      196 200 lineto
+      212 192 lineto
+      196 184 lineto
+      212 176 lineto
+      196 168 lineto
+      212 160 lineto
+      196 152 lineto
+      204 148 lineto
+      204 104 lineto
+   tgiforigctm setmatrix
+   1 setlinewidth
+   stroke
+grestore
+
+% BOX
+0 setgray
+gsave
+   newpath
+   160 244 moveto 224 244 lineto 224 256 lineto 160 256 lineto
+   closepath 1 setgray fill
+   0 setgray
+   newpath
+      160 244 moveto 224 244 lineto 224 256 lineto 160 256 lineto
+   closepath eoclip newpath
+   pat3 8 152 240 80 24 tgifpatfill
+grestore
+gsave
+   10 setmiterlimit
+   gsave
+      newpath
+         160 244 moveto 224 244 lineto 224 256 lineto 160 256 lineto
+      closepath
+      stroke
+   grestore
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      296 284 moveto
+      12 -8 atan dup cos 10.000 mul 288 exch sub
+      exch sin 10.000 mul 296 exch sub lineto
+   tgiforigctm setmatrix
+   2 setlinewidth
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   tgiforigctm setmatrix
+   newpath
+      288 296 10.000 4.000 -8 12 tgifarrowtip
+   1 setgray closepath fill
+   0 setgray
+   newpath
+      288 296 10.000 4.000 -8 12 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      288 280 moveto (traffic) show
+   grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      384 124 moveto
+      -20 0 atan dup cos 10.000 mul 384 exch sub
+      exch sin 10.000 mul 104 exch sub lineto
+   tgiforigctm setmatrix
+   2 setlinewidth
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   tgiforigctm setmatrix
+   newpath
+      384 104 10.000 4.000 0 -20 tgifarrowtip
+   1 setgray closepath fill
+   0 setgray
+   newpath
+      384 104 10.000 4.000 0 -20 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      368 140 moveto (industry) show
+   grestore
+
+grestore
+tgifsavedpage restore
+end
+%MatchingCreationDate: Mon Nov 30 09:14:52 1998

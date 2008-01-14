@@ -1,0 +1,1119 @@
+%!
+%%BoundingBox: 49 328 473 826
+%%Title: silhouette
+%%CreationDate: Fri Sep 15 10:34:39 1995
+%%Creator: Tgif-2.15-p7 by William Chia-Wei Cheng (william@cs.UCLA.edu)
+%
+%	Due to bugs in Transcript, the 'PS-Adobe-' stuff is omitted from line 1
+%
+
+/tgifdict 132 dict def
+tgifdict begin
+
+%
+%	Using a zero value radius for an ellipse or an arc would result
+%		in a non-invertible CTM matrix which causes problem when this
+%		when this PostScript is wrapped inside other routines, such as
+%		the multi.ps package from
+%		ftp.ucc.su.oz.au:/pub/ps_printing/multi.  You can overcome such
+%		error by uncommenting the sole line of the procedure below:
+%
+/tgif_min_radius
+ {
+%    dup 0.01 lt { pop 0.01 } if
+ } bind def
+
+/tgifellipsedict 6 dict def
+tgifellipsedict /mtrx matrix put
+
+/tgifellipse
+ { tgifellipsedict begin
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 0 360 arc
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarrowtipdict 8 dict def
+tgifarrowtipdict /mtrx matrix put
+
+/tgifarrowtip
+ { tgifarrowtipdict begin
+      /dy exch def
+      /dx exch def
+      /h exch def
+      /w exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      dy dx atan rotate
+      0 0 moveto
+      w neg h lineto
+      w neg h neg lineto
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarcdict 8 dict def
+tgifarcdict /mtrx matrix put
+
+/tgifarcn
+ { tgifarcdict begin
+      /endangle exch def
+      /startangle exch def
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 startangle endangle arc
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarc
+ { tgifarcdict begin
+      /endangle exch def
+      /startangle exch def
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 startangle endangle arcn
+      savematrix setmatrix
+   end
+ } def
+
+/tgifsetuserscreendict 22 dict def
+tgifsetuserscreendict begin
+   /tempctm matrix def
+   /temprot matrix def
+   /tempscale matrix def
+
+   /concatprocs
+    { /proc2 exch cvlit def
+      /proc1 exch cvlit def
+      /newproc proc1 length proc2 length add array def
+      newproc 0 proc1 putinterval
+      newproc proc1 length proc2 putinterval
+      newproc cvx
+    } def
+   /resmatrix matrix def
+   /findresolution
+    { 72 0 resmatrix defaultmatrix dtransform
+      /yres exch def /xres exch def
+      xres dup mul yres dup mul add sqrt
+    } def
+end
+
+/tgifsetuserscreen
+ { tgifsetuserscreendict begin
+      /spotfunction exch def
+      /screenangle exch def
+      /cellsize exch def
+
+      /m tempctm currentmatrix def
+      /rm screenangle temprot rotate def
+      /sm cellsize dup tempscale scale def
+
+      sm rm m m concatmatrix m concatmatrix pop
+
+      1 0 m dtransform /y1 exch def /x1 exch def
+
+      /veclength x1 dup mul y1 dup mul add sqrt def
+      /frequency findresolution veclength div def
+
+      /newscreenangle y1 x1 atan def
+
+      m 2 get m 1 get mul m 0 get m 3 get mul sub 0 gt
+
+      {{neg} /spotfunction load concatprocs
+         /spotfunction exch def
+      } if
+
+      frequency newscreenangle /spotfunction load setscreen
+   end
+ } def
+
+/tgifsetpatterndict 18 dict def
+tgifsetpatterndict begin
+   /bitison
+    { /ybit exch def /xbit exch def
+      /bytevalue bstring ybit bwidth mul xbit 8 idiv add get def
+
+      /mask 1 7 xbit 8 mod sub bitshift def
+      bytevalue mask and 0 ne
+    } def
+end
+
+/tgifbitpatternspotfunction
+ { tgifsetpatterndict begin
+      /y exch def /x exch def
+
+      /xindex x 1 add 2 div bpside mul cvi def
+      /yindex y 1 add 2 div bpside mul cvi def
+
+      xindex yindex bitison
+       { /onbits onbits 1 add def 1 }
+       { /offbits offbits 1 add def 0 }
+       ifelse
+   end
+ } def
+
+/tgifsetpattern
+ { tgifsetpatterndict begin
+      /cellsz exch def
+      /angle exch def
+      /bwidth exch def
+      /bpside exch def
+      /bstring exch def
+
+      /onbits 0 def /offbits 0 def
+      cellsz angle /tgifbitpatternspotfunction load tgifsetuserscreen
+      {} settransfer
+      offbits offbits onbits add div setgray
+   end
+ } def
+
+/tgifxpmdict 4 dict def
+/tgifbwpicstr 1 string def
+/tgifcolorpicstr 3 string def
+
+/tgifsetpixels { tgifxpmdict begin /pixels exch def end } def
+
+/tgifsetpix { tgifxpmdict begin pixels 3 1 roll putinterval end } def
+
+/tgifbwspot
+ { tgifxpmdict begin
+      /index exch def
+      tgifbwpicstr 0
+      pixels index 3 mul 3 getinterval aload pop
+      255 mul .114 mul exch 255 mul .587 mul add exch 255 mul .299 mul add
+      cvi put
+      tgifbwpicstr
+   end
+ } def
+
+/tgifcolorspot
+ { tgifxpmdict begin
+      /index exch def
+      pixels index 3 mul 3 getinterval aload pop
+      255 mul cvi tgifcolorpicstr 2 3 -1 roll put
+      255 mul cvi tgifcolorpicstr 1 3 -1 roll put
+      255 mul cvi tgifcolorpicstr 0 3 -1 roll put
+      tgifcolorpicstr
+   end
+ } def
+
+/tgifnewcolorspot
+ { tgifxpmdict begin
+      /index exch def
+      pixels index 3 mul 3 getinterval aload pop setrgbcolor
+   end
+ } def
+
+/tgifcolordict 4 dict def
+
+/colorimage where
+ { pop }
+ { /colorimage
+   { tgifcolordict begin
+        pop pop pop pop pop
+        /ih exch def
+        /iw exch def
+        /x 0 def
+        /y 0 def
+        1 1 ih
+         { pop 1 1 iw
+            { pop currentfile
+              tgifbwpicstr readhexstring pop 0 get tgifnewcolorspot
+              x y moveto 1 0 rlineto 0 1 rlineto -1 0 rlineto
+              closepath fill
+              /x x 1 add def
+            } for
+           /y y 1 add def
+           /x 0 def
+         } for
+     end
+   } def
+ } ifelse
+
+/tgifpatdict 10 dict def
+
+/tgifpatbyte
+ { currentdict /retstr get exch
+   pat i cellsz mod get put
+ } def
+
+/tgifpatproc
+ { 0 1 widthlim {tgifpatbyte} for retstr
+   /i i 1 add def
+ } def
+
+/tgifpatfill
+ { tgifpatdict begin
+      /h exch def
+      /w exch def
+      /lty exch def
+      /ltx exch def
+      /cellsz exch def
+      /pat exch def
+
+      /widthlim w cellsz div cvi 1 sub def
+      /retstr widthlim 1 add string def
+      /i 0 def
+
+      ltx lty translate
+      w h true [1 0 0 1 0 0] {tgifpatproc} imagemask
+      ltx neg lty neg translate
+   end
+ } def
+
+/pat1 <ffffffffffffffff> def
+/pat2 <0000000000000000> def
+/pat3 <8000000008000000> def
+/pat4 <8800000022000000> def
+/pat5 <8800220088002200> def
+/pat6 <8822882288228822> def
+/pat7 <aa55aa55aa55aa55> def
+/pat8 <77dd77dd77dd77dd> def
+/pat9 <77ffddff77ffddff> def
+/pat10 <77ffffff77ffffff> def
+/pat11 <7fffffff7fffffff> def
+/pat12 <8040200002040800> def
+/pat13 <40a00000040a0000> def
+/pat14 <ff888888ff888888> def
+/pat15 <ff808080ff080808> def
+/pat16 <f87422478f172271> def
+/pat17 <038448300c020101> def
+/pat18 <081c22c180010204> def
+/pat19 <8080413e080814e3> def
+/pat20 <8040201008040201> def
+/pat21 <8844221188442211> def
+/pat22 <77bbddee77bbddee> def
+/pat23 <c1e070381c0e0783> def
+/pat24 <7fbfdfeff7fbfdfe> def
+/pat25 <3e1f8fc7e3f1f87c> def
+/pat26 <0102040810204080> def
+/pat27 <1122448811224488> def
+/pat28 <eeddbb77eeddbb77> def
+/pat29 <83070e1c3870e0c1> def
+/pat30 <fefdfbf7efdfbf7f> def
+/pat31 <7cf8f1e3c78f1f3e> def
+
+/tgifcentertext { dup stringwidth pop 2 div neg 0 rmoveto } def
+
+/tgifrighttext { dup stringwidth pop neg 0 rmoveto } def
+
+/tgifreencsmalldict 12 dict def
+/tgifReEncodeSmall
+ { tgifreencsmalldict begin
+      /newcodesandnames exch def
+      /newfontname exch def
+      /basefontname exch def
+
+      /basefontdict basefontname findfont def
+      /newfont basefontdict maxlength dict def
+
+      basefontdict
+      { exch dup /FID ne
+         { dup /Encoding eq
+            { exch dup length array copy newfont 3 1 roll put }
+            { exch newfont 3 1 roll put }
+            ifelse
+         }
+         { pop pop }
+         ifelse
+      }
+      forall
+
+      newfont /FontName newfontname put
+      newcodesandnames aload pop
+
+      newcodesandnames length 2 idiv
+      { newfont /Encoding get 3 1 roll put}
+      repeat
+
+      newfontname newfont definefont pop
+   end
+ } def
+
+/tgifgray { 8 1 0 72 300 32 div div tgifsetpattern } bind def
+
+/tgifboxdict 6 dict def
+/tgifboxstroke
+ { tgifboxdict begin
+      /pat def /w def /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+      1.415 setmiterlimit
+      w 1 eq { w setlinewidth } if
+      pat pat1 ne pat pat2 ne and { gsave pat tgifgray } if
+      newpath x1 y1 moveto x2 y1 lineto x2 y2 lineto x1 y2 lineto closepath
+      pat pat2 eq { 1 setgray stroke 0 setgray } { stroke } ifelse
+      pat pat1 ne pat pat2 ne and { grestore } if
+      w 1 eq { 1 setlinewidth } if
+      1 setmiterlimit
+   end
+ } def
+/tgifboxfill
+ { tgifboxdict begin
+      /pat def /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+      pat pat1 ne pat pat2 ne and { gsave pat tgifgray } if
+      newpath x1 y1 moveto x2 y1 lineto x2 y2 lineto x1 y2 lineto closepath
+      pat pat2 eq { 1 setgray fill 0 setgray } { fill } ifelse
+      pat pat1 ne pat pat2 ne and { grestore } if
+   end
+ } def
+
+end
+
+%%PageBoundingBox: 49 328 473 826
+tgifdict begin
+/tgifsavedpage save def
+
+1 setmiterlimit
+1 setlinewidth
+
+72 0 mul 72 11.70 mul translate
+72 128 div 100 mul 100 div dup neg scale
+
+gsave
+
+% POLYGON/CLOSED-SPLINE
+gsave
+   pat20 8 1 0 72 300 32 div div tgifsetpattern
+   newpath
+      416 688 moveto
+      416 544 lineto
+      432 544 lineto
+      448 512 lineto
+      456 480 lineto
+      464 496 lineto
+      480 536 lineto
+      496 572 lineto
+      512 560 lineto
+      516 480 lineto
+      528 464 lineto
+      544 512 lineto
+      544 624 lineto
+   closepath eofill
+grestore
+gsave
+   newpath
+      416 688 moveto
+      416 544 lineto
+      432 544 lineto
+      448 512 lineto
+      456 480 lineto
+      464 496 lineto
+      480 536 lineto
+      496 572 lineto
+      512 560 lineto
+      516 480 lineto
+      528 464 lineto
+      544 512 lineto
+      544 624 lineto
+   closepath stroke
+grestore
+
+% POLYGON/CLOSED-SPLINE
+gsave
+   pat20 8 1 0 72 300 32 div div tgifsetpattern
+   newpath
+      288 320 moveto
+      288 192 lineto
+      304 160 lineto
+      320 176 lineto
+      352 144 lineto
+      384 160 lineto
+      400 112 lineto
+      448 192 lineto
+      480 192 lineto
+      528 128 lineto
+      544 176 lineto
+      544 320 lineto
+   closepath eofill
+grestore
+gsave
+   newpath
+      288 320 moveto
+      288 192 lineto
+      304 160 lineto
+      320 176 lineto
+      352 144 lineto
+      384 160 lineto
+      400 112 lineto
+      448 192 lineto
+      480 192 lineto
+      528 128 lineto
+      544 176 lineto
+      544 320 lineto
+   closepath stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      544 128 moveto
+      544 320 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      288 144 moveto
+      288 320 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      224 320 moveto
+      640 320 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 384 moveto
+      96 416 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 384 moveto
+      96 384 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      416 384 moveto
+      352 416 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      416 384 moveto
+      496 384 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      224 384 moveto
+      352 320 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      288 384 moveto
+      416 320 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      352 384 moveto
+      480 320 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      224 624 moveto
+      640 624 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 688 moveto
+      96 720 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 688 moveto
+      96 688 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      416 688 moveto
+      352 720 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      416 688 moveto
+      496 688 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      512 640 moveto
+      256 640 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      480 656 moveto
+      224 656 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      448 672 moveto
+      192 672 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   5 setlinewidth
+   newpath
+      208 288 moveto
+      -32 64 atan dup cos 18 mul 272 exch sub
+      exch sin 18 mul 256 exch sub lineto
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   newpath
+      272 256 18 7 64 -32 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   5 setlinewidth
+   newpath
+      216 512 moveto
+      0 64 atan dup cos 18 mul 280 exch sub
+      exch sin 18 mul 512 exch sub lineto
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   newpath
+      280 512 18 7 64 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      352 144 moveto
+      288 144 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      416 112 moveto
+      352 112 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      416 140 moveto
+      480 140 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      544 128 moveto
+      480 128 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      352 144 moveto
+      352 320 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   [2 2] 0 setdash
+   newpath
+      352 112 moveto
+      352 144 lineto
+   stroke
+   [] 0 setdash
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      416 112 moveto
+      416 320 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      480 128 moveto
+      480 320 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 384 moveto
+      416 384 lineto
+      576 304 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 384 moveto
+      288 320 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 688 moveto
+      416 688 lineto
+      576 608 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      160 688 moveto
+      320 608 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      416 528 moveto
+      416 688 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      448 672 moveto
+      448 484 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      480 656 moveto
+      480 468 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      512 640 moveto
+      512 472 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [2 2] 0 setdash
+   newpath
+      544 624 moveto
+      544 456 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      448 512 moveto
+      416 528 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      480 468 moveto
+      448 484 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      512 520 moveto
+      480 536 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      544 456 moveto
+      512 472 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [20 4 4 4] 0 setdash
+   newpath
+      212 132 moveto
+      672 132 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [20 4 4 4] 0 setdash
+   newpath
+      376 552 moveto
+      568 456 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      672 132 moveto
+      188 0 atan dup cos 8 mul exch sin 8 mul rmoveto
+      188 0 atan dup cos 8 mul 672 exch sub
+      exch sin 8 mul 320 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      672 132 8 3 0 -188 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      672 320 8 3 0 188 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      580 604 moveto
+      -156 0 atan dup cos 8 mul exch sin 8 mul rmoveto
+      -156 0 atan dup cos 8 mul 580 exch sub
+      exch sin 8 mul 448 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      580 604 8 3 0 156 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      580 448 8 3 0 -156 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      688 198 moveto (mean silhouette) show
+      688 215 moveto (orography in) show
+      688 232 moveto (y direction) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      600 502 moveto (mean silhouette) show
+      600 519 moveto (orography in) show
+      600 536 moveto (x direction) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      320 246 moveto (silhouette orography) show
+      320 263 moveto (in y direction) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      228 414 moveto (XSIL) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      216 396 moveto
+      0 64 atan dup cos 8 mul exch sin 8 mul rmoveto
+      0 64 atan dup cos 8 mul 280 exch sub
+      exch sin 8 mul 396 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      216 396 8 3 -64 0 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      280 396 8 3 64 0 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      172 646 moveto (XSIL) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      216 652 moveto
+      -16 32 atan dup cos 8 mul exch sin 8 mul rmoveto
+      -16 32 atan dup cos 8 mul 248 exch sub
+      exch sin 8 mul 636 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      216 652 8 3 -32 16 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      248 636 8 3 32 -16 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      156 46 moveto (silhouette orography) show
+      156 63 moveto (in y direction) show
+      156 80 moveto (discretized with XSIL) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      316 84 moveto
+      28 52 atan dup cos 8 mul 368 exch sub
+      exch sin 8 mul 112 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      368 112 8 3 52 28 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      92 886 moveto (silhouette orography =) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      332 866 moveto (1) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      332 902 moveto (2) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      544 882 moveto (+) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      368 866 moveto (mean silhouette) show
+      368 883 moveto (orography in) show
+      368 900 moveto (x direction) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [17 0 0 -17 0 0] makefont setfont
+   gsave
+      584 866 moveto (mean silhouette) show
+      584 883 moveto (orography in) show
+      584 900 moveto (y direction) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      320 880 moveto
+      352 880 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      376 844 moveto
+      360 844 lineto
+      360 912 lineto
+      376 912 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      728 912 moveto
+      744 912 lineto
+      744 844 lineto
+      728 844 lineto
+   stroke
+grestore
+
+grestore
+tgifsavedpage restore
+end
+%MatchingCreationDate: Fri Sep 15 10:34:39 1995

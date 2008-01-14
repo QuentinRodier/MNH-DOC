@@ -1,0 +1,2999 @@
+%!
+%%BoundingBox: 33 190 496 821
+%%Title: nest-ex
+%%CreationDate: Fri Oct 20 10:47:57 1995
+%%Creator: Tgif-2.15-p7 by William Chia-Wei Cheng (william@cs.UCLA.edu)
+%
+%	Due to bugs in Transcript, the 'PS-Adobe-' stuff is omitted from line 1
+%
+
+/tgifdict 132 dict def
+tgifdict begin
+
+%
+%	Using a zero value radius for an ellipse or an arc would result
+%		in a non-invertible CTM matrix which causes problem when this
+%		when this PostScript is wrapped inside other routines, such as
+%		the multi.ps package from
+%		ftp.ucc.su.oz.au:/pub/ps_printing/multi.  You can overcome such
+%		error by uncommenting the sole line of the procedure below:
+%
+/tgif_min_radius
+ {
+%    dup 0.01 lt { pop 0.01 } if
+ } bind def
+
+/tgifellipsedict 6 dict def
+tgifellipsedict /mtrx matrix put
+
+/tgifellipse
+ { tgifellipsedict begin
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 0 360 arc
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarrowtipdict 8 dict def
+tgifarrowtipdict /mtrx matrix put
+
+/tgifarrowtip
+ { tgifarrowtipdict begin
+      /dy exch def
+      /dx exch def
+      /h exch def
+      /w exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      dy dx atan rotate
+      0 0 moveto
+      w neg h lineto
+      w neg h neg lineto
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarcdict 8 dict def
+tgifarcdict /mtrx matrix put
+
+/tgifarcn
+ { tgifarcdict begin
+      /endangle exch def
+      /startangle exch def
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 startangle endangle arc
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarc
+ { tgifarcdict begin
+      /endangle exch def
+      /startangle exch def
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 startangle endangle arcn
+      savematrix setmatrix
+   end
+ } def
+
+/tgifsetuserscreendict 22 dict def
+tgifsetuserscreendict begin
+   /tempctm matrix def
+   /temprot matrix def
+   /tempscale matrix def
+
+   /concatprocs
+    { /proc2 exch cvlit def
+      /proc1 exch cvlit def
+      /newproc proc1 length proc2 length add array def
+      newproc 0 proc1 putinterval
+      newproc proc1 length proc2 putinterval
+      newproc cvx
+    } def
+   /resmatrix matrix def
+   /findresolution
+    { 72 0 resmatrix defaultmatrix dtransform
+      /yres exch def /xres exch def
+      xres dup mul yres dup mul add sqrt
+    } def
+end
+
+/tgifsetuserscreen
+ { tgifsetuserscreendict begin
+      /spotfunction exch def
+      /screenangle exch def
+      /cellsize exch def
+
+      /m tempctm currentmatrix def
+      /rm screenangle temprot rotate def
+      /sm cellsize dup tempscale scale def
+
+      sm rm m m concatmatrix m concatmatrix pop
+
+      1 0 m dtransform /y1 exch def /x1 exch def
+
+      /veclength x1 dup mul y1 dup mul add sqrt def
+      /frequency findresolution veclength div def
+
+      /newscreenangle y1 x1 atan def
+
+      m 2 get m 1 get mul m 0 get m 3 get mul sub 0 gt
+
+      {{neg} /spotfunction load concatprocs
+         /spotfunction exch def
+      } if
+
+      frequency newscreenangle /spotfunction load setscreen
+   end
+ } def
+
+/tgifsetpatterndict 18 dict def
+tgifsetpatterndict begin
+   /bitison
+    { /ybit exch def /xbit exch def
+      /bytevalue bstring ybit bwidth mul xbit 8 idiv add get def
+
+      /mask 1 7 xbit 8 mod sub bitshift def
+      bytevalue mask and 0 ne
+    } def
+end
+
+/tgifbitpatternspotfunction
+ { tgifsetpatterndict begin
+      /y exch def /x exch def
+
+      /xindex x 1 add 2 div bpside mul cvi def
+      /yindex y 1 add 2 div bpside mul cvi def
+
+      xindex yindex bitison
+       { /onbits onbits 1 add def 1 }
+       { /offbits offbits 1 add def 0 }
+       ifelse
+   end
+ } def
+
+/tgifsetpattern
+ { tgifsetpatterndict begin
+      /cellsz exch def
+      /angle exch def
+      /bwidth exch def
+      /bpside exch def
+      /bstring exch def
+
+      /onbits 0 def /offbits 0 def
+      cellsz angle /tgifbitpatternspotfunction load tgifsetuserscreen
+      {} settransfer
+      offbits offbits onbits add div setgray
+   end
+ } def
+
+/tgifxpmdict 4 dict def
+/tgifbwpicstr 1 string def
+/tgifcolorpicstr 3 string def
+
+/tgifsetpixels { tgifxpmdict begin /pixels exch def end } def
+
+/tgifsetpix { tgifxpmdict begin pixels 3 1 roll putinterval end } def
+
+/tgifbwspot
+ { tgifxpmdict begin
+      /index exch def
+      tgifbwpicstr 0
+      pixels index 3 mul 3 getinterval aload pop
+      255 mul .114 mul exch 255 mul .587 mul add exch 255 mul .299 mul add
+      cvi put
+      tgifbwpicstr
+   end
+ } def
+
+/tgifcolorspot
+ { tgifxpmdict begin
+      /index exch def
+      pixels index 3 mul 3 getinterval aload pop
+      255 mul cvi tgifcolorpicstr 2 3 -1 roll put
+      255 mul cvi tgifcolorpicstr 1 3 -1 roll put
+      255 mul cvi tgifcolorpicstr 0 3 -1 roll put
+      tgifcolorpicstr
+   end
+ } def
+
+/tgifnewcolorspot
+ { tgifxpmdict begin
+      /index exch def
+      pixels index 3 mul 3 getinterval aload pop setrgbcolor
+   end
+ } def
+
+/tgifcolordict 4 dict def
+
+/colorimage where
+ { pop }
+ { /colorimage
+   { tgifcolordict begin
+        pop pop pop pop pop
+        /ih exch def
+        /iw exch def
+        /x 0 def
+        /y 0 def
+        1 1 ih
+         { pop 1 1 iw
+            { pop currentfile
+              tgifbwpicstr readhexstring pop 0 get tgifnewcolorspot
+              x y moveto 1 0 rlineto 0 1 rlineto -1 0 rlineto
+              closepath fill
+              /x x 1 add def
+            } for
+           /y y 1 add def
+           /x 0 def
+         } for
+     end
+   } def
+ } ifelse
+
+/tgifpatdict 10 dict def
+
+/tgifpatbyte
+ { currentdict /retstr get exch
+   pat i cellsz mod get put
+ } def
+
+/tgifpatproc
+ { 0 1 widthlim {tgifpatbyte} for retstr
+   /i i 1 add def
+ } def
+
+/tgifpatfill
+ { tgifpatdict begin
+      /h exch def
+      /w exch def
+      /lty exch def
+      /ltx exch def
+      /cellsz exch def
+      /pat exch def
+
+      /widthlim w cellsz div cvi 1 sub def
+      /retstr widthlim 1 add string def
+      /i 0 def
+
+      ltx lty translate
+      w h true [1 0 0 1 0 0] {tgifpatproc} imagemask
+      ltx neg lty neg translate
+   end
+ } def
+
+/pat1 <ffffffffffffffff> def
+/pat2 <0000000000000000> def
+/pat3 <8000000008000000> def
+/pat4 <8800000022000000> def
+/pat5 <8800220088002200> def
+/pat6 <8822882288228822> def
+/pat7 <aa55aa55aa55aa55> def
+/pat8 <77dd77dd77dd77dd> def
+/pat9 <77ffddff77ffddff> def
+/pat10 <77ffffff77ffffff> def
+/pat11 <7fffffff7fffffff> def
+/pat12 <8040200002040800> def
+/pat13 <40a00000040a0000> def
+/pat14 <ff888888ff888888> def
+/pat15 <ff808080ff080808> def
+/pat16 <f87422478f172271> def
+/pat17 <038448300c020101> def
+/pat18 <081c22c180010204> def
+/pat19 <8080413e080814e3> def
+/pat20 <8040201008040201> def
+/pat21 <8844221188442211> def
+/pat22 <77bbddee77bbddee> def
+/pat23 <c1e070381c0e0783> def
+/pat24 <7fbfdfeff7fbfdfe> def
+/pat25 <3e1f8fc7e3f1f87c> def
+/pat26 <0102040810204080> def
+/pat27 <1122448811224488> def
+/pat28 <eeddbb77eeddbb77> def
+/pat29 <83070e1c3870e0c1> def
+/pat30 <fefdfbf7efdfbf7f> def
+/pat31 <7cf8f1e3c78f1f3e> def
+
+/tgifcentertext { dup stringwidth pop 2 div neg 0 rmoveto } def
+
+/tgifrighttext { dup stringwidth pop neg 0 rmoveto } def
+
+/tgifreencsmalldict 12 dict def
+/tgifReEncodeSmall
+ { tgifreencsmalldict begin
+      /newcodesandnames exch def
+      /newfontname exch def
+      /basefontname exch def
+
+      /basefontdict basefontname findfont def
+      /newfont basefontdict maxlength dict def
+
+      basefontdict
+      { exch dup /FID ne
+         { dup /Encoding eq
+            { exch dup length array copy newfont 3 1 roll put }
+            { exch newfont 3 1 roll put }
+            ifelse
+         }
+         { pop pop }
+         ifelse
+      }
+      forall
+
+      newfont /FontName newfontname put
+      newcodesandnames aload pop
+
+      newcodesandnames length 2 idiv
+      { newfont /Encoding get 3 1 roll put}
+      repeat
+
+      newfontname newfont definefont pop
+   end
+ } def
+
+/tgifgray { 8 1 0 72 300 32 div div tgifsetpattern } bind def
+
+/tgifboxdict 6 dict def
+/tgifboxstroke
+ { tgifboxdict begin
+      /pat def /w def /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+      1.415 setmiterlimit
+      w 1 eq { w setlinewidth } if
+      pat pat1 ne pat pat2 ne and { gsave pat tgifgray } if
+      newpath x1 y1 moveto x2 y1 lineto x2 y2 lineto x1 y2 lineto closepath
+      pat pat2 eq { 1 setgray stroke 0 setgray } { stroke } ifelse
+      pat pat1 ne pat pat2 ne and { grestore } if
+      w 1 eq { 1 setlinewidth } if
+      1 setmiterlimit
+   end
+ } def
+/tgifboxfill
+ { tgifboxdict begin
+      /pat def /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+      pat pat1 ne pat pat2 ne and { gsave pat tgifgray } if
+      newpath x1 y1 moveto x2 y1 lineto x2 y2 lineto x1 y2 lineto closepath
+      pat pat2 eq { 1 setgray fill 0 setgray } { fill } ifelse
+      pat pat1 ne pat pat2 ne and { grestore } if
+   end
+ } def
+
+end
+
+%%PageBoundingBox: 33 190 496 821
+tgifdict begin
+/tgifsavedpage save def
+
+1 setmiterlimit
+1 setlinewidth
+
+72 0 mul 72 11.70 mul translate
+72 128 div 100 mul 100 div dup neg scale
+
+gsave
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 64 moveto
+      832 64 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 64 moveto
+      64 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      128 64 moveto
+      128 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      192 64 moveto
+      192 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      256 64 moveto
+      256 152 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      320 320 moveto
+      320 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      384 64 moveto
+      384 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      448 64 moveto
+      448 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      512 224 moveto
+      512 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      576 64 moveto
+      576 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      640 64 moveto
+      640 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      704 64 moveto
+      704 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      768 64 moveto
+      768 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      832 64 moveto
+      832 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 128 moveto
+      832 128 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 192 moveto
+      832 192 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 256 moveto
+      832 256 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 320 moveto
+      832 320 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 384 moveto
+      832 384 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 448 moveto
+      832 448 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 512 moveto
+      832 512 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 576 moveto
+      832 576 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 640 moveto
+      832 640 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      64 704 moveto
+      832 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 192 moveto
+      704 192 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 224 moveto
+      704 224 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 256 moveto
+      704 256 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 288 moveto
+      704 288 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 320 moveto
+      704 320 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 352 moveto
+      704 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 384 moveto
+      704 384 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 416 moveto
+      704 416 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 448 moveto
+      704 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 480 moveto
+      704 480 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 512 moveto
+      704 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      192 192 moveto
+      192 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      224 192 moveto
+      224 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 192 moveto
+      256 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      288 320 moveto
+      288 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      352 192 moveto
+      352 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      384 192 moveto
+      384 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      416 192 moveto
+      416 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 192 moveto
+      448 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      544 192 moveto
+      544 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      576 192 moveto
+      576 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      608 192 moveto
+      608 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      640 192 moveto
+      640 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      672 192 moveto
+      672 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      704 192 moveto
+      704 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 224 moveto
+      640 224 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 224 moveto
+      448 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      456 224 moveto
+      456 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      464 224 moveto
+      464 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      472 224 moveto
+      472 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      480 224 moveto
+      480 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      488 224 moveto
+      488 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      496 224 moveto
+      496 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      504 224 moveto
+      504 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      512 224 moveto
+      512 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      520 224 moveto
+      520 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      528 224 moveto
+      528 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      536 224 moveto
+      536 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      544 224 moveto
+      544 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      552 224 moveto
+      552 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      560 224 moveto
+      560 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      568 224 moveto
+      568 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      576 224 moveto
+      576 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      584 224 moveto
+      584 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      592 224 moveto
+      592 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      600 224 moveto
+      600 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      608 224 moveto
+      608 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      616 224 moveto
+      616 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      624 224 moveto
+      624 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      632 224 moveto
+      632 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      640 224 moveto
+      640 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 232 moveto
+      640 232 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 240 moveto
+      640 240 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 248 moveto
+      640 248 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 256 moveto
+      640 256 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 264 moveto
+      640 264 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 272 moveto
+      640 272 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 280 moveto
+      640 280 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 288 moveto
+      640 288 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 296 moveto
+      640 296 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 304 moveto
+      640 304 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 312 moveto
+      640 312 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 320 moveto
+      640 320 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 328 moveto
+      640 328 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 336 moveto
+      640 336 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 344 moveto
+      640 344 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      448 352 moveto
+      640 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 320 moveto
+      352 320 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 320 moveto
+      256 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      264 320 moveto
+      264 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      272 320 moveto
+      272 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      280 320 moveto
+      280 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      288 320 moveto
+      288 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      296 320 moveto
+      296 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      304 320 moveto
+      304 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      312 320 moveto
+      312 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      320 320 moveto
+      320 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      328 320 moveto
+      328 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      336 320 moveto
+      336 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      344 320 moveto
+      344 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      352 320 moveto
+      352 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 328 moveto
+      352 328 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 336 moveto
+      352 336 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 344 moveto
+      352 344 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 352 moveto
+      352 352 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 360 moveto
+      352 360 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 368 moveto
+      352 368 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 376 moveto
+      352 376 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 384 moveto
+      352 384 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 392 moveto
+      352 392 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 400 moveto
+      352 400 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 408 moveto
+      352 408 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 416 moveto
+      352 416 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 424 moveto
+      352 424 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 432 moveto
+      352 432 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 440 moveto
+      352 440 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      256 448 moveto
+      352 448 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      80 57 moveto (MODEL 1) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      200 185 moveto (MODEL 2) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      264 313 moveto (MODEL 3) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      456 217 moveto (MODEL 4) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      288 192 moveto
+      288 296 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      320 192 moveto
+      320 296 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      320 320 moveto
+      320 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      512 224 moveto
+      512 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      480 224 moveto
+      480 512 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      256 192 moveto
+      256 704 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      320 64 moveto
+      320 296 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      512 64 moveto
+      512 200 lineto
+   stroke
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      64 897 moveto (MODEL 1) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      64 961 moveto (MODEL 2) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      64 1025 moveto (MODEL 3) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      64 1089 moveto (MODEL 4) show
+   grestore
+
+% OVAL
+newpath 448 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 448 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 192 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      192 1080 moveto
+      192 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      208 1080 moveto
+      208 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      224 1080 moveto
+      224 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      240 1080 moveto
+      240 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      256 1080 moveto
+      256 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      272 1080 moveto
+      272 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      288 1080 moveto
+      288 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      304 1080 moveto
+      304 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      320 1080 moveto
+      320 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      336 1080 moveto
+      336 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      352 1080 moveto
+      352 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      368 1080 moveto
+      368 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      384 1080 moveto
+      384 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      400 1080 moveto
+      400 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      416 1080 moveto
+      416 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      432 1080 moveto
+      432 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      448 1080 moveto
+      448 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      464 1080 moveto
+      464 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      480 1080 moveto
+      480 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      496 1080 moveto
+      496 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      512 1080 moveto
+      512 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      528 1080 moveto
+      528 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      544 1080 moveto
+      544 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      560 1080 moveto
+      560 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      576 1080 moveto
+      576 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      592 1080 moveto
+      592 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      608 1080 moveto
+      608 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      624 1080 moveto
+      624 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      640 1080 moveto
+      640 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      656 1080 moveto
+      656 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      672 1080 moveto
+      672 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      688 1080 moveto
+      688 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      704 1080 moveto
+      704 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      720 1080 moveto
+      720 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      736 1080 moveto
+      736 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      752 1080 moveto
+      752 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      768 1080 moveto
+      768 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      192 1016 moveto
+      192 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      208 1016 moveto
+      208 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      224 1016 moveto
+      224 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      240 1016 moveto
+      240 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      256 1016 moveto
+      256 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      272 1016 moveto
+      272 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      288 1016 moveto
+      288 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      304 1016 moveto
+      304 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      320 1016 moveto
+      320 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      336 1016 moveto
+      336 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      352 1016 moveto
+      352 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      368 1016 moveto
+      368 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      384 1016 moveto
+      384 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      400 1016 moveto
+      400 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      416 1016 moveto
+      416 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      432 1016 moveto
+      432 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      448 1016 moveto
+      448 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      464 1016 moveto
+      464 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      480 1016 moveto
+      480 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      496 1016 moveto
+      496 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      512 1016 moveto
+      512 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      528 1016 moveto
+      528 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      544 1016 moveto
+      544 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      560 1016 moveto
+      560 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      576 1016 moveto
+      576 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      592 1016 moveto
+      592 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      608 1016 moveto
+      608 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      624 1016 moveto
+      624 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      640 1016 moveto
+      640 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      656 1016 moveto
+      656 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      672 1016 moveto
+      672 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      688 1016 moveto
+      688 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      704 1016 moveto
+      704 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      720 1016 moveto
+      720 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      736 1016 moveto
+      736 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      752 1016 moveto
+      752 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      768 1016 moveto
+      768 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      784 1016 moveto
+      784 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      800 1016 moveto
+      800 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      816 1016 moveto
+      816 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      832 1016 moveto
+      832 1024 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      784 1080 moveto
+      784 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      800 1080 moveto
+      800 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      816 1080 moveto
+      816 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   3 setlinewidth
+   newpath
+      832 1080 moveto
+      832 1088 lineto
+   stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   2 setlinewidth
+   newpath
+      352 1152 moveto
+      0 192 atan dup cos 10 mul 544 exch sub
+      exch sin 10 mul 1152 exch sub lineto
+   stroke
+   1 setlinewidth
+grestore
+gsave
+   newpath
+      544 1152 10 4 192 0 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      424 1129 moveto (TIME) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      448 857 moveto (t) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      560 857 moveto (t+   t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      576 858 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      304 857 moveto (t -   t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      320 858 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      744 857 moveto (       t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      760 858 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      776 867 moveto ( 1) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      776 921 moveto (       t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      792 922 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      808 931 moveto ( 2) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      832 985 moveto (       t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      848 986 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      864 995 moveto ( 3) show
+   grestore
+
+% TEXT
+0 setgray
+/Times-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      832 1049 moveto (       t) show
+   grestore
+
+% TEXT
+0 setgray
+/Symbol findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      848 1050 moveto (D) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      864 1059 moveto ( 4) show
+   grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      704 872 moveto
+      0 128 atan dup cos 8 mul exch sin 8 mul rmoveto
+      0 128 atan dup cos 8 mul 832 exch sub
+      exch sin 8 mul 872 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      704 872 8 3 -128 0 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      832 872 8 3 128 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      768 936 moveto
+      0 64 atan dup cos 8 mul exch sin 8 mul rmoveto
+      0 64 atan dup cos 8 mul 832 exch sub
+      exch sin 8 mul 936 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      768 936 8 3 -64 0 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      832 936 8 3 64 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      792 1000 moveto
+      872 1000 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      800 1000 moveto
+      0 24 atan dup cos 8 mul 824 exch sub
+      exch sin 8 mul 1000 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      824 1000 8 3 24 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      872 1000 moveto
+      0 -40 atan dup cos 8 mul 832 exch sub
+      exch sin 8 mul 1000 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      832 1000 8 3 -40 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      792 1064 moveto
+      872 1064 lineto
+   stroke
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      800 1064 moveto
+      0 24 atan dup cos 8 mul 824 exch sub
+      exch sin 8 mul 1064 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      824 1064 8 3 24 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   newpath
+      872 1064 moveto
+      0 -40 atan dup cos 8 mul 832 exch sub
+      exch sin 8 mul 1064 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      832 1064 8 3 -40 0 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      592 867 moveto (1) show
+   grestore
+
+% TEXT
+0 setgray
+/Courier findfont [12 0 0 -12 0 0] makefont setfont
+   gsave
+      336 867 moveto (1) show
+   grestore
+
+% OVAL
+newpath 576 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 576 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+newpath 704 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 704 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+newpath 832 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 832 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 256 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 320 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 384 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 448 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 512 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 576 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 640 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 704 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 768 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+gsave
+   2 setlinewidth
+   newpath 832 960 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+newpath 192 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 192 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+newpath 320 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 320 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+newpath 448 896 8 8 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 448 896 8 8 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      576 896 moveto
+      576 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      448 896 moveto
+      448 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      320 896 moveto
+      320 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      192 896 moveto
+      192 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      704 896 moveto
+      704 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      256 968 moveto
+      256 1088 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      384 968 moveto
+      384 1088 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      512 968 moveto
+      512 1088 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+% POLY/OPEN-SPLINE
+gsave
+   [4 4] 0 setdash
+   newpath
+      640 960 moveto
+      640 1080 lineto
+   stroke
+   [] 0 setdash
+grestore
+
+grestore
+tgifsavedpage restore
+end
+%MatchingCreationDate: Fri Oct 20 10:47:57 1995

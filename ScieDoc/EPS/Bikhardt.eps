@@ -1,0 +1,415 @@
+%!
+%%BoundingBox: 24 643 327 800
+%%Title: Bikhardt
+%%CreationDate: Fri Apr 26 15:22:53 1996
+%%Creator: Tgif-2.16-p11 by William Chia-Wei Cheng (william@cs.UCLA.edu)
+
+/tgifdict 6 dict def
+tgifdict begin
+
+/tgifellipsedict 6 dict def
+tgifellipsedict /mtrx matrix put
+
+/tgifellipse
+ { tgifellipsedict begin
+      /yrad exch def
+      /xrad exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      xrad yrad scale
+      0 0 1 0 360 arc
+      savematrix setmatrix
+   end
+ } def
+
+/tgifarrowtipdict 8 dict def
+tgifarrowtipdict /mtrx matrix put
+
+/tgifarrowtip
+ { tgifarrowtipdict begin
+      /dy exch def
+      /dx exch def
+      /h exch def
+      /w exch def
+      /y exch def
+      /x exch def
+      /savematrix mtrx currentmatrix def
+      x y translate
+      dy dx atan rotate
+      0 0 moveto
+      w neg h lineto
+      w neg h neg lineto
+      savematrix setmatrix
+   end
+ } def
+
+/tgifcentertext { dup stringwidth pop 2 div neg 0 rmoveto } def
+
+end
+
+%%PageBoundingBox: 24 643 327 800
+tgifdict begin
+/tgifsavedpage save def
+
+1 setmiterlimit
+1 setlinewidth
+
+0 setgray
+
+72 0 mul 72 11.70 mul translate
+72 128 div 80 mul 100 div dup neg scale
+
+gsave
+
+% OVAL
+0 setgray
+newpath 400 100 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 400 100 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 500 100 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 500 100 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 600 100 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 600 100 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 700 100 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 700 100 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 400 200 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 400 200 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 500 200 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 500 200 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 600 200 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 600 200 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 700 200 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 700 200 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 400 300 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 400 300 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 500 300 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 500 300 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 600 300 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 600 300 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 700 300 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 700 300 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 400 400 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 400 400 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 500 400 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 500 400 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 600 400 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 600 400 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% OVAL
+0 setgray
+newpath 700 400 5 5 tgifellipse fill
+gsave
+   2 setlinewidth
+   newpath 700 400 5 5 tgifellipse stroke
+   1 setlinewidth
+grestore
+
+% BOX
+0 setgray
+gsave
+   0.94 setgray
+   newpath
+      500 200 moveto 600 200 lineto 600 300 lineto 500 300 lineto
+   closepath fill
+grestore
+gsave
+   1.415 setmiterlimit
+   newpath
+      500 200 moveto 600 200 lineto 600 300 lineto 500 300 lineto
+   closepath stroke
+   1 setmiterlimit
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      500 265 moveto
+      0 75 atan dup cos 8 mul exch sin 8 mul rmoveto
+      0 75 atan dup cos 8 mul 575 exch sub
+      exch sin 8 mul 265 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      500 265 8 3 -75 0 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      575 265 8 3 75 0 tgifarrowtip
+   closepath fill
+grestore
+
+% POLY/OPEN-SPLINE
+0 setgray
+gsave
+   newpath
+      575 265 moveto
+      35 0 atan dup cos 8 mul exch sin 8 mul rmoveto
+      35 0 atan dup cos 8 mul 575 exch sub
+      exch sin 8 mul 300 exch sub lineto
+   stroke
+grestore
+gsave
+   newpath
+      575 265 8 3 0 -35 tgifarrowtip
+   closepath fill
+grestore
+gsave
+   newpath
+      575 300 8 3 0 35 tgifarrowtip
+   closepath fill
+grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      400 433 moveto (\(1,1\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      500 433 moveto (\(2,1\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      600 433 moveto (\(3,1\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      700 433 moveto (\(4,1\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      405 333 moveto (\(1,2\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      505 333 moveto (\(2,2\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      605 333 moveto (\(3,2\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      705 333 moveto (\(4,2\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      400 233 moveto (\(1,3\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      500 183 moveto (\(2,3\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      600 183 moveto (\(3,3\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      700 233 moveto (\(4,3\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      400 133 moveto (\(1,4\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      500 133 moveto (\(2,4\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      600 133 moveto (\(3,4\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      700 133 moveto (\(4,4\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      540 258 moveto (a) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      580 258 moveto (\(a,b\)) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      585 288 moveto (b) tgifcentertext show
+   grestore
+
+% TEXT
+0 setgray
+newpath
+   56 198 moveto 63 198 lineto 63 223 lineto 56 223 lineto
+closepath 1 setgray fill
+0 setgray
+/NewCenturySchlbk-Roman findfont [18 0 0 -18 0 0] makefont setfont
+   gsave
+      60 218 moveto (.) tgifcentertext show
+   grestore
+
+grestore
+tgifsavedpage restore
+end
+%MatchingCreationDate: Fri Apr 26 15:22:53 1996
