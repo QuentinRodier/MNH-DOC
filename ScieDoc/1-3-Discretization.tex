@@ -1,0 +1,533 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Discretization}
+\minitoc
+
+%{\em by V. Ducrocq and P. Bougeault}
+
+\section{Stretching}
+
+For many reasons, it may be desirable to stretch the computational grid. On
+the vertical, it is customary to have a better resolution in the planetary
+boundary layer than in the atmosphere. On the horizontal, the use of stretched
+coordinates may allow to study the interaction between larger-scale and
+smaller-scale processes, or simply avoid problems at the lateral boundary.
+However, if the stretching is not done properly, it may result in a loss of
+accuracy.
+
+In order to stretch the coordinates, we introduce a new system
+noted $(\overline{x},\overline{y},\overline{z})$, and related to
+$\widehat{x},\widehat{y},\widehat{z}$ by
+
+\begin{eqnarray}
+d\overline{x} & = & \dfrac{d\widehat{x}}{ {\cal D}_x(\widehat{x})}
+\\
+& & \\
+d \overline{y}& = & \dfrac{d\widehat{y}}{ {\cal D}_y(\widehat{y})}
+\\
+ & & \\
+d\overline{z} & = &\dfrac{ d\widehat{z}}{ {\cal D}_z(\widehat{z})}
+\end{eqnarray}
+
+The stretching functions
+${\cal D}_x(\widehat{x}), {\cal D}_y(\widehat{y}),
+{\cal D}_z(\widehat{z})$ are defined independently
+in the three directions.
+
+
+The new metric coefficients $d_{ij}$ can be computed as
+\begin{eqnarray}
+d_{xx} &=& \widehat{d}_{xx} \;{\cal D}_x(\widehat{x}) \nonumber  \\
+d_{yy} &=& \widehat{d}_{yy} \;{\cal D}_y(\widehat{y}) \nonumber  \\
+d_{zz} &=& \widehat{d}_{zz} \;{\cal D}_z(\widehat{z})  \\
+d_{zx} &=& \widehat{d}_{zx} \;{\cal D}_x(\widehat{x}) \nonumber \\
+d_{zy} &=& \widehat{d}_{zy} \;{\cal D}_y(\widehat{y}) \nonumber   \\
+\nonumber \\
+J&=& \widehat{J} {\cal D}_x(\widehat{x})\;{\cal D}_y(\widehat{y})\; {\cal D}_z
+(\widehat{z})
+\end{eqnarray}
+and we define
+\begin{equation}
+\tilde{\rho}  = \rho_{d\,ref} J
+\end{equation}
+
+In practice, the value of $\overline{x}$ is 1 on the first grid point,
+2 to the second grid point, etc.. and ${\cal D}_x(\widehat{x})$
+is equal to the local value of the grid distance on the surface of projection.
+Therefore $d_{xx}$ and $d_{zz}$ are precisely the horizontal
+and vertical grid distances in the physical space, and $J$ is the volume
+of the grid box in the physical space. Thus, $\tilde{\rho}$ is the mass of
+dry air within each grid box, for the reference state.
+
+
+The model equations in this new system have exactly the same
+expression as found in the previous chapter, substituting
+ ($\widehat{x}$,$\widehat{y}$, $\widehat{z})$  by
+ $( \overline{x},\overline{y},\overline{z})$.
+This reads
+
+\begin{itemize}
+\item \underbar{Continuity Equation}
+\begin{equation}
+\dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \; )
++ \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \; )
++ \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \; ) =0.
+\end{equation}
+
+\item\underbar{Momentum Equation}
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\tilde{\rho}  u ) &= &
+ \, - \, \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;   u )
+ \, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;   u )
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;   u )
+\nonumber \\
+& & \nonumber \\
+&  + & \delta _{2}\tilde{\rho}  u   v  \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K)
+\,+ \,\delta _{2}\tilde{\rho}  v ^{2}  \dfrac{ \sin\gamma  }{r \cos \varphi} (\sin\varphi -K)
+\nonumber \\
+& & \nonumber \\
+ & - &\delta _{2}\delta _{1} \tilde{\rho}\dfrac{ u  w}{r} \,  - \,
+  \tilde{\rho}\dfrac{1}{d_{xx}}
+\dfrac{\partial \Phi}{\partial \overline{x}}
+\, + \,\tilde{\rho}\dfrac{d_{zx}}{d_{xx}d_{zz}}
+\dfrac{\partial \Phi}{\partial \overline{z}} \nonumber \\
+& & \nonumber \\
+&  - &\delta _{1} \tilde{\rho} f^* \cos\gamma w \, +  \, \tilde{\rho} f  v
+\, + \, \tilde{\rho} \vec{F}_{v} \cdot \vec{i}
+\\
+& & \nonumber \\
+\dfrac{\partial}{\partial t}(\tilde{\rho}  v ) &= &
+ \, - \, \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;   v )
+ \, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;   v )
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;   v )
+\nonumber \\ & & \nonumber \\
+&  - & \delta _{2}\tilde{\rho}  u ^{2}  \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K)
+ \, - \, \delta _{2}\tilde{\rho}  u   v   \dfrac{\sin\gamma}{r \cos \varphi} (\sin\varphi -K)
+\nonumber \\ & & \nonumber \\
+ & - & \delta _{2}\delta _{1} \tilde{\rho}\dfrac{ v  w}{r} \,  - \,
+ \tilde{\rho}\dfrac{1}{d_{yy}}
+\dfrac{\partial \Phi}{\partial \overline{y}}
+ \, +  \, \tilde{\rho}\dfrac{d_{zy}}{d_{yy}d_{zz}}
+\dfrac{\partial \Phi}{\partial \overline{z}} \nonumber \\
+& & \nonumber \\
+&  - &\delta _{1}\tilde{\rho} f^* \sin\gamma w  \, - \,  \tilde{\rho} f  u
+ \, + \, \tilde{\rho} \vec{F}_{v} \cdot \vec{j}
+\\
+& & \nonumber \\
+\dfrac{\partial}{\partial t}(\tilde{\rho} w) &= &
+ \, - \, \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;  w)
+ \, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;  w )
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;  w)
+\nonumber \\ & & \nonumber \\
+ & + & \delta _{2}\delta _{1}\tilde{\rho}\dfrac{ u ^{2}+ v ^{2} }{r}
+ \,  - \, \tilde{\rho}\dfrac{1}{d_{zz}}
+\dfrac{\partial \Phi}{\partial \overline{z}}
+ \, + \,\tilde{\rho} g \dfrac{\theta_v ' }{\overline{\theta}_v}\nonumber \\
+& & \nonumber \\
+&  + &\delta _{1}\tilde{\rho} f^* (\sin\gamma  v  + \cos\gamma  u )
+ \, + \, \tilde{\rho} \vec{F}_{v} \cdot \vec{k}
+ \end{eqnarray}
+
+\item\underbar{Thermodynamic Equation}
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\tilde{\rho}\theta) &=& \, - \,
+ \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;  \theta)
+ \, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;  \theta )
+\, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;  \theta)
+\nonumber \\ & &
++\tilde{\rho} \left[ {R_d+r_vR_v\over R_d}{C_{pd} \over C_{ph}}-1 \right]
+{\theta \over \Pi_{ref}} {w \over d_{zz} }
+ {\partial \Pi_{ref} \over \partial \overline{z}}
+\nonumber \\ & &
++ {\tilde{\rho}\over \Pi_{ref} C_{ph}} \left[
+ L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right]
+\end{eqnarray}
+\end{itemize}
+
+
+\section{Location of the Variables on the Grid}
+
+We use a C-grid in the Arakawa and Mesinger (1976) terminology,
+both on the horizontal and on the vertical.
+
+\begin{figure}[pbh]
+\psfig{figure=\EPSDIR/horzgrid1.eps}
+\vspace{1cm}
+\psfig{figure=\EPSDIR/essai.eps}
+\caption{Discretization on the horizontal \label{horizgrid}}
+\end{figure}
+
+The horizontal grid is shown on Fig. ~\ref{horizgrid}.
+The "mass" points, located at the center of each grid element, are noted
+by $\bigcirc$, the $u$ points by $\triangleright$, and the $v$ points
+by  $\bigtriangleup$.
+$\zeta $ is the vertical component of the vorticity.
+The corners of the shaded square all have the same integer coordinates
+$(i,j)$.
+
+\begin{figure}[pbh]
+\psfig{figure=\EPSDIR/vergrid1.eps}
+\vspace{1cm}
+\psfig{figure=\EPSDIR/essai4.eps}
+\caption{Discretization on the vertical \label{vertgrid}}
+\end{figure}
+
+The vertical grid is shown on Fig.~\ref{vertgrid}.
+Again the mass points are noted by
+$\bigcirc$, the $u$ points by $\triangleright$, the $v$ points
+by $\bigtriangleup$,
+and the $w$ points by $\Box$. $\xi$ and $\eta$ are the vorticity components
+along x and y. The corners of the shaded square all
+have the same integer coordinates.
+
+$\widehat{x},\widehat{y},\widehat{z}$
+and the metric coefficients $d_{xx},d_{yy},d_{zz}$ are
+respectively located on $u$, $v$, and $w$ points. On the other hand,
+$d_{zx}$ and $d_{zy}$ are located on the $\eta$ and $\xi$ vorticity points.
+The Jacobian $J$ is located on the mass points.
+
+The orography $z_{s}(i,j)$ is defined on the lowest $w$ point.
+
+\section{Schuman Operators}
+The discretization is based on second-order finite differences, and two point
+averages. We will adopt the traditional notations of Schuman:
+$\delta_{x}\alpha$, $\delta_{y}\alpha$ and $\delta_{z}\alpha$ for finite
+differences in the directions $\overline{x}$,  $\overline{y}$, and
+$\overline{z}$;  $\overline{\alpha}^{x}$, $\overline{\alpha}^{y}$, and
+$\overline{\alpha}^{z}$ for averaging in the same directions.
+
+For instance, $\delta_x\alpha (i,j,k)= (\alpha(i+1,j,k)-\alpha(i,j,k))$
+or $(\alpha(i,j,k) -\alpha(i-1,j,k))$, depending of the location of
+the variable $\alpha$, $\overline{\alpha}^{x}(i,j,k)=(\alpha(i+1,j,k)+
+\alpha(i,j,k))/2$ or $(\alpha(i,j,k)+\alpha(i-1,j,k))/2$, and
+similarly for the other operators.
+
+For the time evolution,
+we use the classical leap-frog explicit scheme. The operator of time
+derivation also follows Schuman notation:
+\begin{equation}
+\delta _{t}\overline{ \alpha (i,j,k,t)}^{t} =
+\dfrac{\alpha (i,j,k,t+\Delta t)-\alpha (i,j,k,t-\Delta t)}{2 \Delta t}
+\end{equation}
+
+\section{Grid Generation}
+
+The parameters needed to generate the grids are:
+\begin{itemize}
+\item the projection parameters $\lambda_{0}$, $\varphi_{0}$, $\beta$ and $K$.
+\item the latitude and longitude of one mass point to start the integration,
+i.e. the point $(i=1,j=1)$.
+\item the series of values of $\widehat{x}$ at $u$ points, $\widehat{y}$
+at $v$ points, and $\widehat{z}$ at w points.
+\end{itemize}
+
+The following computations are performed:
+
+1) The positions $\widehat{x}_m(i)$, $\widehat{y}_m(j)$, $\widehat{z}_m(k)$
+of the mass points are deduced:
+\begin{eqnarray}
+\widehat{x}_m(i) & = &0.5 \left[ \widehat{x}(i) +\widehat{x}(i+1) \right]
+\nonumber \\
+\widehat{y}_m(j) & = &0.5 \left[ \widehat{y}(j) +\widehat{y}(j+1) \right] \\
+\widehat{z}_m(k) & = &0.5 \left[ \widehat{z}(k) +\widehat{z}(k+1) \right]
+\nonumber
+\end{eqnarray}
+
+2) The latitude and longitude of each mass point is retrieved:
+\\
+\\
+{\bf Case of the Polar stereographic or Lambert Projection}
+\\
+\\
+Applying the general equations to the point (1,1) of the grid, one gets
+\begin{eqnarray}
+\rho (1,1) & = & \dfrac{a}{K} (\cos\varphi _{0})^{1-K}
+ (1 + \sin\varphi _{0})^{K}
+\left(\dfrac{\cos\varphi (1,1)}{1 + \sin\varphi (1,1)}\right)^{K} \nonumber\\
+\gamma (1,1) & = &   K (\lambda (1,1) - \lambda _{0}) - \beta
+\end{eqnarray}
+The pole coordinates may be deduced as
+\begin{eqnarray}
+X_{p} & = &  \widehat{x}_m(1) -  \rho (1,1) \sin\gamma (1,1)  \nonumber \\
+Y_{p} & = & \widehat{y}_m(1) + \rho (1,1) \cos\gamma (1,1) \nonumber \\
+\end{eqnarray}
+The longitude of any mass point (i,j) follows:
+\begin{eqnarray}
+\lambda (i,j) &=&  \dfrac{\beta + \arctan \left( -
+\dfrac{ \widehat{x}_{m}(i)- X_{p}}{ \widehat{y}_{m}(j)- Y_{p}}
+ \right) + \epsilon  \pi}{K} + \lambda_{0} \; \; \; \;  \left[ 2 \pi \right]
+\end{eqnarray}
+with
+\begin{eqnarray*}
+\epsilon & = & 0 \hbox{ if } \widehat{y}_{m}(j)- Y_{p} \leq 0 \\
+\epsilon & = & 1 \hbox{ if } \widehat{y}_{m}(j)- Y_{p} > 0
+\end{eqnarray*}
+while the latitudes are given by
+\begin{eqnarray}
+\rho  (i,j)^{2} &=&  \left[ \widehat{x}_m(i) - X_{p} \right]^{2} +
+ \left[ \widehat{y}_m(j) - Y_{p}\right] ^{2} \nonumber \\
+\varphi (i,j) &=& \dfrac{\pi}{2} - \arccos \left\{ \dfrac{
+\left[ a (\cos \varphi_{0})^{1-K} \right] ^{2/K} (1 + \sin\varphi _{0})^{2} -
+\left[ K^{2} \rho  (i,j)^{2} \right] ^{1/K} }{
+\left[ a (\cos \varphi_{0})^{1-K} \right] ^{2/K} (1 + \sin\varphi _{0})^{2}+
+ \left[ K^{2} \rho  (i,j)^{2}  \right] ^{1/K} }
+\right\}
+\end{eqnarray}
+\\
+\\
+{\bf Case of the Mercator projection}
+\\
+\\
+The latitudes and longitudes of the mass points are given by
+\begin{eqnarray}
+\lambda (i,j) &=&  \dfrac{\left[ \widehat{x}_{m}(i)-\widehat{x}_{m}(1) \right]
+\cos \gamma + \left[\widehat{y}_{m}(j)-\widehat{y}_{m}(1) \right]\sin \gamma  }
+{a \cos \varphi _{0}}
+  + \lambda(1,1) \nonumber \\
+\varphi (i,j) & = & -\dfrac{\pi}{2} + 2 \arctan \left\{ \exp \left( -
+\dfrac{\left[\widehat{x}_{m}(1)-\widehat{x}_{m}(i) \right]
+\sin \gamma + \left[\widehat{y}_{m}(j)-\widehat{y}_{m}(1) \right]\cos \gamma  }{a \cos \varphi _{0} } \right. \right.  \nonumber \\
+& & \left. \left. +  \ln \left[ \tan (\dfrac{\pi}{4} +\dfrac{ \varphi(1,1)}{2})
+\right]
+\right)
+\right\}
+\end{eqnarray}
+\\
+\\
+3) Once the latitudes and longitudes are known, the map scale factor,
+the angle $\gamma$, and the Coriolis parameters are easily
+computed for each mass point:
+\begin{eqnarray}
+m&=&\left( \dfrac{\cos \varphi _{0}}{\cos \varphi}\right)^{1-K}
+\left( \dfrac{1 + \sin\varphi _{0}}{1 + \sin\varphi} \right)^{K} \\
+\gamma & = & K (\lambda - \lambda _{0}) - \beta \nonumber \\
+f&=&2\Omega \sin\varphi \\
+f_{*}&=&2\Omega \cos\varphi
+\end{eqnarray}
+
+
+\section{Metric Coefficients and Jacobian}
+
+\begin{eqnarray}
+z & = & z_{s} + \widehat{z} \left( 1 - \dfrac{z_{s}}{H} \right) \\
+ d_{xx} &  = & \overline{ \left[ \dfrac{\overline{\left(a+ \delta _{1}\delta _{2} z\right)}^{z}}{a}
+\;  \dfrac{1}{m}\;  \delta_{x}\widehat{x} \right]}^{x} \\
+ d_{yy}  & = & \overline{ \left[\dfrac{ \overline{\left(a+ \delta _{1}\delta _{2} z \right)}^{z}}{a}
+ \dfrac{1}{m}\; \delta_y \widehat{y} \right] }^{y} \\
+ d_{zx} & = & \delta_{x} z \\  d_{zy} & = & \delta_{y} z \\
+ d_{zz} & = & \overline{\delta_{z} z}^z  \\
+  J   &  = & \left(
+ \dfrac{ \overline{ \left( a+ \delta _{1}\delta _{2} z \right)}^{z}}{a} \right)^{2}
+\;  \left( \dfrac{1}{m} \right)^{2} \;
+\delta_x \widehat{x} \; \delta_y \widehat{y} \; \delta_z z
+\end{eqnarray}
+
+\section{Contravariant Velocity Components}
+
+\begin{eqnarray}
+\overline{\tilde{\rho}}^{x} U^{c} \;  &  = & \overline{\tilde{\rho}}^{x} \dfrac{ u }{ d_{xx}} \\
+\overline{\tilde{\rho}}^{y} V^{c} \;  &  = & \overline{\tilde{\rho}}^{y} \dfrac{ v }{ d_{yy}} \\
+\overline{\tilde{\rho}}^{z} W^{c} \;  & = & \dfrac{1}{d_{zz}}
+\left[\overline{\tilde{\rho}}^{z}  w -
+\overline{\left( \overline{\left(
+ \dfrac{\overline{\tilde{\rho}}^{x}  u }{d_{xx}} \right)}^{z}
+d_{zx}\right)}^{x}
+-  \overline{\left( \overline{\left(\dfrac{\overline{\tilde{\rho}}^{y}  v }{d_{yy}}
+\right)}^{z}
+d_{zy}\right)}^{y}\right]
+\end{eqnarray}
+
+\section{Time Derivatives}
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\tilde{\rho}  u ) & \Longrightarrow &
+\delta _{t } \left[ \overline{ \left( \overline{\tilde{\rho}}^{x}  u
+ \right)}^{t} \right]
+ \\
+\dfrac{\partial}{\partial t}(\tilde{\rho}  v ) & \Longrightarrow &
+\delta _{t } \left[  \overline{ \left( \overline{ \tilde{\rho}}^{y}  v
+ \right)}^{t}  \right]
+ \\
+  \dfrac{\partial}{\partial t}(\tilde{\rho} w) & \Longrightarrow &
+\delta_{t } \left[
+\overline{ \left( \overline{\tilde{\rho}}^{z} w  \right)}^{t} \right]
+\end{eqnarray}
+
+\section{Advection}
+
+\begin{eqnarray}
+- \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;   u )
+ & \Longrightarrow & - \delta_{x} \left[
+\overline{  \left(
+\overline{\tilde{\rho}}^{x} U^{c} \;  \right)}^{x}
+\overline{  u  }^{x}
+ \right]
+  \\
+  -  \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;   u )
+ & \Longrightarrow & - \delta_{y} \left[
+\overline{  \left(
+\overline{ \tilde{\rho}}^{y} V^{c} \; \right)}^{x} \overline{  u }^{y}
+  \right]
+\\
+ -  \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;   u )
+ & \Longrightarrow & - \delta _{z} \left[ \overline{  \left(
+\overline{\tilde{\rho}}^{z} W^{c} \;  \right)}^{x}
+ \overline{ u }^{z}
+ \right] \\ \nonumber \\
+  -  \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;   v )
+& \Longrightarrow & - \delta_{x} \left[\overline{  \left(
+\overline{\tilde{\rho}}^{x} U^{c} \; \right)}^{y} \overline{  v }^{x}
+ \right]
+\\
+- \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;   v )
+& \Longrightarrow & - \delta_{y} \left[\overline{  \left(
+\overline{ \tilde{\rho}}^{y} V^{c} \; \right)}^{y} \overline{   v }^{y}
+\right] \\
+   - \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;   v )
+& \Longrightarrow &  - \delta_{z} \left[ \overline{  \left(
+\overline{ \tilde{\rho}}^{z} W^{c} \;  \right)}^{y} \overline{  v }^{z}
+\right]  \\ \nonumber \\
+  -  \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;  w)
+& \Longrightarrow &  - \delta_{x} \left[\overline{  \left(
+\overline{ \tilde{\rho}}^{x}
+ U^{c} \; \right)}^{z} \overline{ w}^{x} \right]
+   \\
+-  \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;  w )
+& \Longrightarrow &  - \delta_{y} \left[\overline{  \left(
+\overline{ \tilde{\rho}}^{y} V^{c} \; \right)}^{z}\overline{
+ w }^{y}\right] \\
+ -  \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;  w)
+& \Longrightarrow &  - \delta_{z} \left[ \overline{  \left(
+\overline{ \tilde{\rho}}^{z}  W^{c} \;  \right)}^{z}\overline{w}^{z} \right]
+ \end{eqnarray}
+
+\section{Curvature Terms}
+
+\begin{eqnarray}
+ \delta _{2}\tilde{\rho}  u   v
+ \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K) & \Longrightarrow &
+ \delta _{2} \overline{\tilde{\rho}}^{x}   u
+ \overline{\left(\overline{ v }^{y}
+ \dfrac{ \cos\gamma}{ \cos\varphi} (\sin\varphi -K)
+ \dfrac{1}{\overline{a+\delta _{1} z}^{z}}\right)}^{x}  \\
+\delta _{2}\tilde{\rho}  v ^{2}  \dfrac{ \sin\gamma  }{r \cos \varphi} (\sin\varphi -K)
+& \Longrightarrow & \delta _{2}  \overline{\left( \overline{\left(\overline{\tilde{\rho}}^{y}
+ v ^{2}\right)}^{y}\dfrac{ \sin\gamma}{ \cos\varphi} (\sin\varphi -K)
+ \dfrac{1}{\overline{a+\delta _{1} z}^{z}}\right)}^{x}
+ \\
+ - \delta _{2}\delta _{1} \tilde{\rho}\dfrac{ u  w}{r}
+  & \Longrightarrow &
+ - \delta _{2}\delta _{1} \overline{\tilde{\rho}}^{x}  u
+ \overline{\left( \dfrac{\overline{ w}^{z}}{\overline{a+\delta _{1} z}^{z}} \right)}^{x}\\
+ \nonumber \\
+ -  \delta _{2}\tilde{\rho}  u ^{2}  \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K)
+& \Longrightarrow &  -  \delta _{2}
+ \overline{\left(\overline{\left(
+\overline{\tilde{\rho}}^{x}
+  u ^{2}\right)}^{x}  \dfrac{ \cos\gamma}{ \cos\varphi} (\sin\varphi -K)
+ \dfrac{1}{\overline{a+\delta _{1} z}^{z}}\right)}^{y}\\
+ - \delta _{2}\tilde{\rho}  u   v
+   \dfrac{\sin\gamma}{r \cos \varphi} (\sin\varphi -K)
+& \Longrightarrow & -  \delta _{2} \overline{\tilde{\rho}}^{y} v
+ \overline{\left( \overline{  u }^{x} \dfrac{ \sin\gamma}{ \cos\varphi} (\sin\varphi -K)
+ \dfrac{1}{\overline{a+\delta _{1} z}^{z}}\right)}^{y} \\
+-  \delta _{2}\delta _{1} \tilde{\rho}\dfrac{ v  w}{r}
+& \Longrightarrow & -  \delta_1\delta _{2}\delta _{1}\overline{\tilde{\rho}}^{y}
+ v \overline{\left( \dfrac{\overline{ w}^{z}}{
+\overline{a+\delta _{1} z}^{z}} \right)}^{y}\\
+ \nonumber \\
+ \delta _{2}\delta _{1}\tilde{\rho}\dfrac{ u ^{2}+ v ^{2} }{r}
+& \Longrightarrow &    \delta _{2}\delta _{1}
+\overline{\left(\dfrac{ \overline{\left(\overline{\tilde{\rho}}^{x} u ^{2}\right)}^{x}
++ \overline{\left( \overline{\tilde{\rho}}^{y} v ^{2}\right)}^{y}}
+{\overline{a+\delta _{1} z}^{z}}\right)}^{z}
+\end{eqnarray}
+
+\section{Coriolis Force}
+
+\begin{eqnarray}
+ - \delta _{1} \tilde{\rho} f \cos\gamma w & \Longrightarrow &
+ - \delta _{1} \overline{ \left(\tilde{\rho} f \cos\gamma \overline{
+ w}^{z}\right)}^{x}
+ \\
+ \tilde{\rho} f  v  & \Longrightarrow & \overline{ \left(\tilde{\rho} f
+  \overline{ v  }^{y} \right)}^{x} \\
+-\delta _{1}\tilde{\rho} f \sin\gamma w & \Longrightarrow &
+-\delta _{1} \overline{ \left(\tilde{\rho} f \sin\gamma \overline{
+ w}^{z}\right)}^{y} \\
+ -   \tilde{\rho} f  u  & \Longrightarrow &
+ - \overline{ \left(  \tilde{\rho} f \overline{  u }^{x}\right)}^{y} \\
+\delta _{1}\tilde{\rho} f(\sin\gamma  v  + \cos\gamma  u )
+ & \Longrightarrow & \delta _{1} \overline{ \left(\tilde{\rho} f
+ \cos\gamma  \overline{   u  }^{x}\right)}^{z }\, + \, \delta _{1} \overline{ \left(\tilde{\rho} f
+ \sin\gamma  \overline{   v  }^{y}\right)}^{z }
+  \end{eqnarray}
+
+\section{Pressure Gradient}
+\begin{eqnarray}
+- \tilde{\rho}\dfrac{1}{d_{xx}}
+\dfrac{\partial \Phi}{\partial \overline{x}}
+ & \Longrightarrow & -  \overline{  \tilde{\rho}}^{x}\dfrac{\delta_{x} \Phi}{d_{xx}}
+ \\
+\tilde{\rho}\dfrac{d_{zx}}{d_{xx}d_{zz}}
+\dfrac{\partial \Phi}{\partial \overline{z}}
+ & \Longrightarrow &   \overline{ \tilde{\rho}}^{x} \dfrac{1}{d_{xx}}
+\overline{ \left(\overline{ \left(\dfrac{\delta_{z} \Phi}{d_{zz}} \right)}^{x}d_{zx}\right)}^{z}\\
+- \tilde{\rho}\dfrac{1}{d_{yy}}
+\dfrac{\partial \Phi}{\partial \overline{y}}
+ & \Longrightarrow & -   \overline{  \tilde{\rho}}^{y}
+ \dfrac{\delta_{y} \Phi}{d_{yy}}
+ \\
+   \tilde{\rho}\dfrac{d_{zy}}{d_{yy}d_{zz}}
+\dfrac{\partial \Phi}{\partial \overline{z}}
+ & \Longrightarrow &  \overline{ \tilde{\rho}}^{y} \dfrac{1}{d_{yy}}
+\overline{ \left(\overline{ \left(\dfrac{\delta_{z} \Phi}{d_{zz}}
+\right)}^{y}d_{zy}\right)}^{z}\\
+  -  \tilde{\rho}\dfrac{1}{d_{zz}}
+  \dfrac{\partial \Phi}{\partial \overline{z}}
+ & \Longrightarrow & - \overline{ \tilde{\rho}}^{z}  \dfrac{\delta_{z}
+ \Phi}{d_{zz}}
+   \end{eqnarray}
+
+\section{Buoyancy Term}
+\begin{equation}
+\tilde{\rho} g \dfrac{\theta_v ' }{\overline{\theta}_v}
+\Longrightarrow g \overline{ \left(
+\tilde{\rho}\dfrac{\theta_v ' }{\overline{\theta}_v}\right) }^{z}
+\end{equation}
+
+\section{Thermodynamic Equation}
+
+\begin{eqnarray}
+\delta _{t } \left[ \overline{ \left( \tilde{\rho} \theta
+\right)}^{t} \right]  & =  & - \delta_{x} \left[\overline{\left(
+\tilde{\rho} \theta\right)}^{x} U^{c} \;
+\right] - \delta_{y} \left[\overline{\left(
+\tilde{\rho}\theta\right)}^{y}  V^{c} \;
+\right] - \delta_{z} \left[\overline{ \left(
+\tilde{\rho}\theta\right)}^{z} W^{c} \;
+\right] \nonumber \\ & &
++\tilde{\rho} \left[ {R_d+r_vR_v\over R_d}{C_{pd} \over C_{ph}}-1 \right]
+{\theta \over \Pi_{ref}} \overline{ {w \over d_{zz} } \delta_z \Pi_{ref} }^z
+\nonumber \\ & &
++ {\tilde{\rho}\over \Pi_{ref} C_{ph}} \left[
+ L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right]
+\end{eqnarray}
+
+
+\section{Continuity Equation}
+
+\begin{equation}
+\delta_{x} \left[ \overline{\tilde{\rho}}^{x} U^{c} \; \right] +
+\delta_{y} \left[ \overline{\tilde{\rho}}^{y} V^{c} \; \right] +
+\delta_{z} \left[ \overline{\tilde{\rho}}^{z} W^{c} \; \right] =0
+\end{equation}
+
+\section{Pressure Equation}
+
+For convenience, the discretization of the pressure equation is described
+in Chapter 7.
+
+
+\end{document}
+

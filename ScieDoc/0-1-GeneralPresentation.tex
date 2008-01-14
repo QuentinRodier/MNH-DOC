@@ -1,0 +1,238 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% THE MESONH BOOK1
+% Author      : Philippe Bougeault, and collective contributions.
+% Original    : September 1, 1995 (Ph. Bougeault)
+% Last Update : May 21 2002  (P. Mascart, P. Bechtold new subcloud scheme)
+%
+% Copyright Meteo-France and Laboratoire d'Aerologie, 1996, 1999, 2000, 2001
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+\chapter{General Presentation}
+
+\minitoc
+
+%{\em by P. Bougeault}
+
+\section{Introduction}
+ The Meso-NH Atmospheric Simulation System
+is a joint effort of Centre National de
+Recherches M\'et\'eorologiques (M\'et\'eo-France) and Laboratoire d'A\'erologie
+(CNRS). It comprises several elements:
+{\bf a numerical model} able to simulate the atmospheric
+motions, ranging from the large meso-alpha scale down to the micro-scale,
+with a {\bf comprehensive physical package}; a flexible {\bf file manager};
+ an ensemble of facilities to {\bf prepare
+initial states}, either idealized or interpolated from real meteorological
+analyses or forecasts;
+a flexible {\bf post-processing and graphical facility}
+ to visualize the results;
+an ensemble of {\bf unix procedures} to control these functions.
+
+ Some of the distinctive features of this ensemble are the followings:
+the model is based on an advanced set of anelastic systems.
+ It allows for simultaneous
+ simulation of several scales of motion, by the
+so-called  "interactive grid-nesting technique". It allows for the in-line
+computation and accumulation of various terms of the budget of several
+quantities. It allows for the transport and diffusion of passive scalars,
+to be coupled with a chemical module. It uses the relatively new Fortran 90
+compiler. It is tailored to be easily implemented on any Unix machine.
+
+The documentation of this system is divided in three "books". The present
+"book 1" contains a {\bf scientific introduction} to Meso-NH, discussing the
+system of equations, the geographical projections, the discretization, and
+the physical parameterizations. The "book 2" is the {\bf algorithmic
+documentation}
+of the Fortran 90 code and of the Unix procedural package, with a summary
+of code organization, as well as the inputs, outputs, and actions of each
+subroutine. Finally, the "book 3" is a {\bf User Manual}, designed to allow
+a quick acquaintance of new users with the control parameters of the system.
+
+Meso-NH is designed as a research tool for small and meso-scale atmospheric
+processes. It is freely accessible to any interested user, and we have
+tried to make it as "user friendly" as possible, and as general as possible,
+although these two goals sometimes appeared contradictory.
+
+\section{The anelastic system\label{CHP1anel}}
+
+It is well known that the fast propagation of acoustic waves in the
+Euler equation system sets a very strong constraint on the computational
+time step. Generally speaking, three different
+methods have been developed to avoid this problem: (i)the use of two different
+time steps for acoustic and non-acoustic types of motions; (ii)the implicit
+treatment of some terms, which usually involves a linearization around some
+mean atmospheric state; (iii)finally the various "anelastic" approximations.
+In presence of steep orography, the separation of the terms responsible
+for acoustic waves becomes much more difficult, and the problem is more
+complex. An extensive comparison of these method has been done by Ikawa (1988).
+\\
+
+We have examined some of these method in great detail during the
+preliminary studies of the Meso-NH project, and concluded in favor of the
+"anelastic" approach. In this approach, the acoustic waves are eliminated
+from the continuous set of equations by the use of a constant density profile
+instead of the actual fluid density in the continuity equation and in the
+momentum equation, except for the buoyancy term, which is the leading term
+of the approximation. The fluid becomes therefore formally incompressible,
+and the pressure is deduced from the solution of an elliptic equation. The
+continuity equation sets a strong constraint on the 3D velocity field,
+which is no longer synonymous of mass conservation. In fact the mass
+conservation must be insured by an additional equation, in a similar way
+as the surface pressure equation in hydrostatic models using the sigma
+coordinate system. A beneficial consequence is that the system has no
+external gravity wave, and the time discretization is entirely explicit,
+without introducing an overly restrictive constraint on the computational
+time step. This makes the code in general much more simple and conservative.
+\\
+
+Known detrimental effects of the anelastic approximation are that: (i)
+the vertical velocities simulated by the model are slightly inaccurate
+(because the continuity and vertical momentum equations are approximate);
+(ii) pressure
+perturbations linked to the filtered acoustic waves may be transmitted
+instantaneously from one place to the other in the simulation domain, instead
+of traveling at the speed of sound. At the present time, there does not
+seem to exist any meteorological consequences of these effects, since
+the inaccuracy on the vertical velocity is smaller than the one induced
+by other sources (like uncertainty in the initial state and in the physical
+parameterizations), and since the acoustic waves are largely decoupled
+from meteorologically significant motions. We have therefore decided to
+adopt this method as the most simple allowing for an effective filtering of
+acoustic waves. However, at several places in the code,
+we have made provisions for a future possible change back to the fully
+compressible system, in case future research demonstrates some incapacity
+of the anelastic system.
+\\
+
+% Modif pour MASTER 4 version, April 2000, P.M.
+%Finally, among the various available
+%versions of the anelastic approximation, we have
+%adopted the Lipps and Hemler (1982) formulation, as the most simple allowing
+%for a correct representation of the gravity waves momentum flux in the upper
+%atmosphere.
+Finally, among the various available versions of the anelastic approximation, we have
+implemented three formulations: the Lipps and Hemler (1982) anelastic system,
+the Wilhelmson an Ogura (1972) "modified anelastic equations", and the "psedo--incompressible"
+system of Durran (1989), which offer some flexibility for the representation of meteorological
+flow depending on horizontal and vertical scales. A brief examination of the respective merits
+of these three systems is given in next chapter, but most of the rest of this manual simply
+illustrates the case of the  Lipps and Hemler (1982) formalism for the sake of brevity.
+
+\section{Thermodynamic Variables}
+
+The exact conservation of energy in presence of water, and especially liquid
+and ice phase, is a very difficult problem. The use of entropy as a prognostic
+thermodynamic variable appears to be the ultimate solution, however the
+computation of temperature, and the various mixing ratios of water from the
+entropy appears technically difficult, and subject to approximations.
+Alternative proposals by Pointin(1984), Hauf and H\"oller (1987), and
+Marquet(1991), do not get rid of these problems. Therefore, although
+we did not rule out the use of entropy in Meso-NH, we have decided that the
+first version of the model would rather use a "dry" potential temperature as a
+thermodynamic variable. The evolution
+equation for this variable is an original one,
+and takes into account the effect of water vapor, and water phase changes,
+to a very good accuracy, we think.
+
+\section{Water}
+
+We adopted the use of mixing ratio, rather than specific content,
+for the various water phases, and other scalars in the model.
+The specific content is the ratio of the mass of a given substance to
+the {\em total mass} within a given volume.
+This total mass may vary because of the
+loss of water by precipitation, making the use of specific content tricky.
+The mixing ratio is the ratio of the mass of considered substance to the
+mass of {\em dry air}
+ within the considered volume. The later is a true invariant.
+Therefore, we think that mixing ratio is a more appropriate quantity to
+conserve.
+
+For the water, up to seven different mixing ratios can be carried
+by the model, corresponding to vapor, cloud liquid water, rain water, cloud ice,
+snow, graupel, and hail. The user may choose to use only a few of these,
+depending of his interest.
+
+\section{Geographical Systems}
+Here the classical alternative is between the latitude/longitude system on the
+sphere, with possible stretching of the grid, and the conformal projection.
+Although all options may be maintained simultaneously in the code, we
+thought this would make it less easy to understand and maintain, and in view
+of the major foreseen applications, decided to code only the conformal
+projection system. This encompass a simple cartesian plan for very idealized
+applications. Since the curvature terms are retained, and the thin layer
+approximation may be relaxed, this does not preclude, in our opinion, the
+use of Meso-NH for the study of very large scale (though not global)
+processes. On the projection plane, the coordinates may be stretched,
+which allows for the use of effective variable resolution grid, much like
+the Canadian EFR System (Chouinard et al., 1994).
+In fact the combination in the same code of the
+grid-nesting capacity and the variable resolution option renders this tool
+rather unique to adress problems of scale interactions.
+
+\section{Vertical Coordinate}
+Again, we were faced with a difficult choice between the classical Gal-Chen
+and Sommerville (1975)
+ system of vertical coordinates, featuring a purely vertical,
+very simple transformation and allowing for an effective terrain following
+coordinate system, and the much more complicated, generalized curvilinear
+system, such as recently adopted in the ARPS model for instance. The major
+benefit expected from the generalized curvilinear transformation
+is to simplify the solution of the pressure problem in case of steep and
+nearly angulous topography. We have developed a prototype 2D version of
+the Meso-NH system, supporting both coordinate systems, in order to examine
+this point. Stein (1995) has demonstrated that in most cases of interest for
+the foreseen use of Meso-NH, the Gal-Chen and Sommerville approach would
+do nearly as well as the generalized curvilinear system, for a much reduced
+memory occupation and computation time. We therefore opted for the previous
+one, resulting in a huge simplification of the code. The major limitation
+of this system is not in terms of {\em slope}, since idealized flows over slopes
+of $70\%$ have been simulated satisfactorily, but in terms of {\em slope
+discontinuity}: the topography used in the model must avoid a cliff-type
+ behaviour.
+We feel this limitation would have been present with any other system anyway.
+
+
+\section{References}
+\por
+Chouinard, C., J. Mailhot, H. L. Mitchell, A. Staniforth, and R. Hogue, 1994:
+The Canadian Regional Data Assimilaton System: Operational and Research
+Applications. Mon. Wea. Rev., 122, 1306-1325.
+\por
+Gal-Chen, T., and R. C. J. Sommerville, 1975: On the Use of a Coordinate
+Transformation for the Solution of the Navier-Stokes Equations. J. Comput.
+Phys., 17, 209-228.
+\por
+Hauf, T., and H. H\"oller, 1987: Entropy and Potential Temperature. J. Atmos.
+Sci., 44, 2887-2901.
+\por
+Ikawa, M., 1988: Comparison of Some Schemes for Nonhydrostatic Models with
+Orography. J. Meteor. Soc. Jap., 66, 753-776.
+\por
+Lipps, F. B., and R. S. Hemler, 1982: A scale analysis of deep moist convection
+and some related numerical calculations. J. Atmos. Sci., 39, 2192-2210.
+\por
+Marquet, P., 1991: On the Concept of Exergy and Available Enthalpy: Application
+to Atmospheric Anergetics. Quart. J. Roy. Meteor. Soc., 117, 449-475.
+\por
+Pointin, Y., 1984: Wet Equivalent Potential Temperature and Enthalpy as
+Prognostic Variables in Cloud Modeling. J. Atmos., Sci., 15, 651-660.
+\por
+Stein, J., 1995: to appear.
+\por
+Durran D. R., 1989: Improving the anelastic approximation, J. Atmos. Sci., {\bf 46}, 1453--1461.
+\por
+Lafore J.P., J. Stein, N. Asencio, P. Bougeault, V. Ducrocq, J. Duron, C. Fischer, P. Héreil,
+P. Mascart, V. Masson, J. P. Pinty, J. L. Redelsperger, E. Richard, J. Vil\'a-Guerau de
+Arellano, 1998: The Meso-NH atmospheric simulation system. Part I: adiabatic formulation and
+control simulations, Ann. Geophysicae, {\bf 16}, 90--109.
+\por
+Lipps F., and R. S. Hemler, 1982: A scale analysis of deep moist convection and some related
+numerical calculations, J. Atmos. Sci., {\bf 39}, 2192--2210.
+\por
+Wilhelmson, R., and Y. Ogura,1972: The pressure perturbation and the numerical modelling of a
+cloud, J. Atmos. Sci., {\bf 29}, 1295--1307.
+

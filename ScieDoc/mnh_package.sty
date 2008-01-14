@@ -1,0 +1,119 @@
+%% Informations générales
+\NeedsTeXFormat{LaTeX2e}[1999/01/01]
+\ProvidesPackage{mnh_package}[2008/01/05]
+
+%% Chargement des extensions
+\RequirePackage[a4paper]{geometry}
+\RequirePackage[dvips]{graphicx}
+\RequirePackage{epsfig}
+\RequirePackage{times}
+\RequirePackage{natbib}
+\RequirePackage{fancyhdr}
+\RequirePackage{minitoc}
+
+%% Déclaration des options
+\DeclareOption{option}{...}
+\DeclareOption*{...}
+\ProcessOptions
+
+%% Size of Text
+\setlength{\textwidth}{16.5cm}
+\setlength{\textheight}{24.0cm}
+\hoffset=-1.0cm
+\voffset=-1.2cm
+\setlength{\oddsidemargin}{1.0cm}
+\setlength{\evensidemargin}{1.0cm}
+\parindent 0 cm
+
+%% Header and footer
+%\renewcommand\partmark[1]{\markboth{#1}{#1}}
+\newcommand{\mnhversion}{Meso-NH Masdev4.7$\beta$ January 2008}
+\newcommand{\partoto}{\title}
+\pagestyle{fancy} 
+\renewcommand{\footrulewidth}{0.4pt} 
+\fancyhf{}
+\fancyhead[LO]{\leftmark}
+\makeatletter
+\fancyhead[RE]{\MakeUppercase\@title}
+\makeatother
+\fancyhead[RO,LE]{\thepage}
+\fancyfoot[C]{\mnhversion}
+
+%% Table of Contents
+\setcounter{tocdepth}{0} 
+\setcounter{minitocdepth}{3} 
+\renewcommand{\afterparttoc}{}
+\makeatletter
+\renewcommand\tableofcontents{%
+  \newpage
+  \null
+  \vskip 2em%
+    \begin{center}%
+    {\LARGE Meso-NH Scientific Documentation}%
+    \vskip 3em%
+    {\LARGE \@title \par}%
+    \vskip 3em%
+  \end{center}\par
+    {\large \@starttoc{toc}}%
+    }
+\makeatother
+
+%% less fussy about line breaking
+\sloppy
+
+%% Directory of Figures
+\def\EPSDIR{EPS}
+
+%% Définition des commandes
+\def\por {\par \hangindent=1truecm \hangafter=1}
+\newcommand{\froc}[2]{\displaystyle{#1\over{#2}}}
+\def\l{\left(}
+\def\r{\right)}
+\def\dr{\partial }
+\def\fl{\overrightarrow }
+\def\d{\delta}
+\def\eps{\epsilon}
+\def\D{\Delta}
+\def\o{\overline}
+\def\ox{{{\overline}{^{x}}}}
+\def\oz{{{\overline}{^{z}}}}
+\def\oxz{{{\overline}{^{xz}}}}
+\def\wt{\widetilde}
+\def\croc#1{{<\!\!#1\!\!>}}
+\def\pvus{~PVU.${\rm s}^{-1}$}
+\def\rb{<\!\!\rho\!\!> }
+\def\qe{q_e}
+\def\qet{\tilde {q_e}}
+\def\tvb{<\!\!\theta_{v}\!\!>}
+\def\etal{{\it et al.}~~}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\dfrac}[2]{\frac{\displaystyle#1}{\displaystyle#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%  MACROS POUR CONTRIBUTIONS DE JPP%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% macros du rayonnement et de la glace
+%%%%%%%%%% Definition of new commands for LATEX :
+%
+\def \decrefname {\par\noindent\hangindent=1truecm \hangafter=1}
+\def \decrefrule {\par\noindent{\vskip4pt\hrule width1truecm \vskip-4pt}
+                  \hangindent=1truecm \hangafter=1}
+                  \def \decfigname {\hsize= 10 cm \vglue 14 cm
+                  \par\noindent\hangindent= 1truecm \hangafter=-1}
+%
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\ba}{\begin{eqnarray}}
+\newcommand{\ea}{\end{eqnarray}}
+%
+%  definition of  new commands for the indexes :
+\newcommand{\rind}[1]{\index{#1,module MODD CST}}
+\newcommand{\see}[2]{{\it see\/}#1}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%  FIN MACROS POUR CONTRIBUTIONS DE JPP %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Fin du package
+\endinput

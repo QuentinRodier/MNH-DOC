@@ -1,0 +1,490 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Initial Fields for Idealized Flows}
+\minitoc
+
+%{\em by J. Stein}
+
+In many occasions, we want to run simulations starting from highly idealized
+conditions, such as an atmosphere in geostrophic equilibrium, with simple
+vertical and horizontal structure, and simple orography, or no orography
+at all.  This is useful
+for theoretical research on geophysical flows, or simply to test if recent
+changes in the code have not been detrimental to the quality of previous
+results.  Meso-NH possesses a general program to prepare initial data for
+such experiments, named PREP\_IDEAL\_CASE.
+
+This program reads data on the
+vertical structure of the atmosphere from an input file, that may take a
+variety of formats for convenience, and prepares a file containing a 2D or 3D
+initial state satisfying the geostrophic and anelastic balances,
+according to various specifications for the geographical setting.
+It is also possible to prepare non balanced fields following simple mathematical
+formulas, in order to test the good functioning of the post-processing
+and graphical facility (see last section).
+
+The fields are produced either for a cartesian geometry, or for a conformal
+projection.  A stretched vertical grid may be used, but only regular horizontal
+grids are supported in this program. The orography can be zero everywhere,
+or defined by simple bell-shaped or sine-shaped mountains.
+
+\section{Input Atmospheric Profile}
+The input atmospheric profile may be specified in several ways, depending
+on the willingness of the user to use observations (or pseudo observations)
+in various formats, or to achieve a highly idealized experiment.
+
+{\bf Sounding Formats } (Option: 'RSOU')
+
+If one wishes to use observations or pseudo-observations, the most convenient
+way to communicate with the program is to use one of several available
+"sounding" formats. The data consist of surface level information, followed
+by $nu$ levels of temperature and moisture data, and $nm$ levels of wind data.
+The date and time of the observation must also be supplied.
+
+The following  data formats are supported, and may be selected by specification
+of the appropriate value for the parameter YKIND:
+\begin{itemize}
+\item 'STANDARD'  :
+\begin{itemize} \item altitude, pressure, temperature and dew point temperature at
+ground level,
+\item $nu$ levels with pressure, wind direction and wind force,
+\item and $nm$
+levels with pressure, temperature and dew point temperature.
+\end{itemize}
+\item 'PUVTHVMR'  : \begin{itemize} \item altitude, pressure, virtual potential temperature
+and vapor mixing ratio at ground level,\item   $nu$ levels with pressure, zonal wind
+component, meridian wind component,\item  $nm$ levels with pressure, virtual potential temperature
+and vapor mixing ratio.\end{itemize}
+\item 'PUVTHVHU' : \begin{itemize} \item altitude, pressure, virtual potential temperature
+and relative humidity at ground level , \item $nu$ levels with pressure, zonal wind
+component, meridian wind component,\item  $nm$ levels with pressure, virtual potential temperature
+and relative humidity \end{itemize}
+\item 'ZUVTHVHU'  : \begin{itemize} \item altitude, pressure, virtual potential temperature
+and relative humidity at ground level,\item    $nu$ levels with altitude, zonal wind
+component, meridian wind component, \item  $nm$ levels with altitude, virtual potential temperature
+and relative humidity.\end{itemize}
+\item 'ZUVTHVMR'  :  \begin{itemize} \item  altitude, pressure, virtual potential temperature
+and vapor mixing ratio at ground level, \item  $nu$ levels with altitude, zonal wind
+component, meridian wind component, \item  $nm$ levels with   altitude, virtual potential temperature
+and vapor mixing ratio. \end{itemize}
+\item 'PUVTHDMR'  : \begin{itemize} \item   altitude, pressure, dry potential temperature
+and vapor mixing ratio at ground level, \item  $nu$ levels with pressure, zonal wind
+component, meridian wind component, \item  $nm$ levels with pressure,
+dry potential temperature and vapor mixing ratio.\end{itemize}
+\item 'PUVTHDHU'  : \begin{itemize} \item altitude, pressure, dry potential temperature
+and relative humidity at ground level, \item  $nu$ levels with pressure, zonal wind
+component, meridian wind component, \item  $nm$ levels with pressure,
+dry potential temperature and relative humidity.\end{itemize}
+\item 'ZUVTHDMR'  : \begin{itemize} \item   altitude, pressure, dry potential temperature
+and vapor mixing ratio at ground level, \item  $nu$ levels with  altitude, zonal wind
+component, meridian wind component, \item  $nm$ levels with  altitude,
+dry potential temperature and vapor mixing ratio.\end{itemize}
+\end{itemize}
+
+{\bf More Idealized Format} (Option: 'CSTN')
+
+A more idealized manner to communicate with the program is to assume that
+the atmosphere is composed of an arbitrary number $n-1$ of layers defined
+by their altitudes $Z(k)$. Within each layer,
+the stability is constant, and the wind and relative humidity vary linearly
+with height. In that case, the input data consist in the surface level
+information, followed by the moist V\"ais\"al\"a frequency of each layer
+$N_v$, and the wind components and relative humidity at the layer
+interfaces.
+The virtual potential temperature on the $n$ input levels is retrieved
+from the $N_{v}$ data by
+\begin{equation}
+\theta_{v}(k)  = \theta_{v}(k-1) \exp\left\{ \dfrac{N_{v}^{2}(k-1)}{g}
+\left( Z(k)-Z(k-1) \right) \right\}
+\end{equation}
+for $k=2,n$. The situation concerning input data is then the same as for
+the 'ZUVTHVHU' case in the 'RSOU' option, and subsequent treatment is similar.
+
+{\bf Specifying a jet structure}
+
+For other applications, one may want to have a jet structure $U(y,z)$ instead
+of a horizontally uniform wind $U(z)$. Then we directly prescribe through
+a Fortran function the following  value of the x-component wind U(y,z):
+
+\begin{equation}
+U(\hat{y},\hat{z})= { 1 \over \cosh \left(
+  \left( { \hat{y} - \hat{y}_0 \over zwidthy } \right) ^2 +
+  \left( { \hat{z} - \hat{z}_0 \over zwidthz } \right) ^2
+ \right) }
+\end{equation}
+
+where $ zwidthy$ and  $ zwidthz $ are the characteristic sizes of the jet along
+the horizontal and vertical directions. $\hat{y}_0$ and $\hat{z}_0$ are the
+curvilinear coordinates  for the jet center.
+
+An intermediate case is also available where the function U(y,z) is a separable
+function of y and z:
+
+$$ U(y,z) = U(z) * f(y)$$
+ The vertical part $ U(z)$  is still obtained from the input atmospheric profile and
+the horizontal part $f(y)$ is given by a Fortran function:
+\begin{equation}
+ f(\hat{y}) = { 1 \over \cosh \left(
+   { \hat{y} - \hat{y_0} \over zwidth } \right) }
+\end{equation}
+with the same notations as for the jet case.
+
+The jet structure or the separable function, can also be taken into account for
+the V(x,z). All combinations between U(y,z) and V(x,z) (function of only z,
+separable or non-separable function) are possible.
+
+
+All these options lead to the prescription of the wind components along vertical
+planes (I,K) for V(x,z) and (J,K) for U(y,z) and subsequent treatments
+to balance the wind and the mass fields are the same.
+
+\section{Vertical Profile on the Model Grid}
+
+For all the above options, the program will first convert the vertical profile
+ in a common format, featuring only the surface altitude, pressure, virtual
+temperature and vapor mixing ratio, together with the altitudes of the
+data points, and the corresponding values of $\theta_v, r_v$, and wind
+components.
+
+The correspondance between pressure and altitude is achieved, when necessary,
+by integration of the hydrostatic relation, starting from the surface level:
+\begin{equation}
+d \Pi = - \dfrac{g}{C_{pd} \theta_{v}}  dz
+\end{equation}
+with $P = P_{00} \Pi^{C_{pd}/R_{d}} $.
+
+The virtual temperature is obtained as
+\begin{equation}
+T_{v} = \theta_{v} \Pi = \theta_{v} \left( \dfrac{P}{P_{00}} \right) ^{R_{d}/C_{pd}}
+\end{equation}
+
+
+
+In some cases, this requires the use of an iterative procedure
+to derive the absolute temperature and the vapor mixing ratio from
+available information (virtual temperature and relative humidity).
+This is done independantly for each level, and
+comprises the following steps, starting with $T=T_v$ as first guess:
+\begin{enumerate}
+\item The saturation vapor pressure $e_{s}(T)$ at temperature T is computed  :
+$$
+e_{s}(T) =  \exp\left( \alpha_{w} - \dfrac{\beta_{w}}{T} - \gamma_{w}
+\ln (T)\right)
+$$
+
+with
+\begin{eqnarray*}
+\alpha_{w} & = &  \ln (e_{s}(T_{t}) ) + \dfrac{\beta_{w}}{T_{t}} + \gamma_{w}
+\ln (T_{t}) \\
+\beta_{w} & = & \dfrac{L_{v}(T_{t})}{R_{v}} + \gamma_{w} T_{t} \\
+\gamma_{w} & = & \dfrac{C_{l}-C_{pv}}{R_{v}}
+\end{eqnarray*}
+where $T_t$ is the triple point temperature.
+
+\item  The partial pressure of the vapor $e= e_{s}(T_d)$
+is computed from the relative humidity $Hu$ (in percents) and the saturation
+vapor pressure $e_{s}(T)$ :
+$$
+e= \dfrac{Hu}{100} e_{s}(T)
+$$
+\item  The vapor mixing ratio is evaluated by :
+$$
+r_{v} = \dfrac{R_{d}}{R_{v}} \;\; \dfrac{e}{P-e}
+$$
+\item   The temperature is deduced :
+$$
+T = T_{v} \dfrac{(1+r_{v})}{(1 + \dfrac{R_{v}}{R_{d}}r_{v})}
+$$
+\end{enumerate}
+The iteration continues until convergence is achieved.
+
+Once the variables are known on data points, they are linearly
+interpolated to the vertical grid of the model without orography.
+Here $\theta_v$ and $r_v$ are located on the mass points of the grid,
+but the wind components are located on $w$ points for more accurate
+estimate of the thermal wind balance. They will be called hereafter
+$U$ and $V$.  The
+next sections explain how the 3D fields are produced, starting from this
+single profile.
+
+\section{Wind and Mass Fields in the absence of Orography}
+
+The vertical profile obtained above is supposed to be valid at the point
+$ILOC,JLOC$ of the horizontal model grid, and we want to reconstitute the
+whole 3D fields.  As a first step in this computation, the program computes
+the wind and mass fields on a 3D grid ignoring the orography (this grid is
+exactly the model grid if there is no orography at all).
+
+The wind is first projected on to model axes. At this stage,
+the desired jet structure is introduced (to be completed by J. Stein).
+
+The virtual potential temperature on the model grid without
+orography is then derived using the thermal wind balance, assuming the above
+mentionned
+$U$ and $V$ components of the wind can be taken as the geostrophic wind.
+
+The continuous equation of the thermal wind balance is :
+\begin{equation}
+\dfrac{\partial \vec{V_{g}}}{\partial z} =
+\dfrac{\vec{k}}{f} \wedge \dfrac{1}{\theta_{v\,ref}} g \vec{\nabla}_{z}
+\theta_{v}
+\end{equation}
+where
+\begin{equation}
+\dfrac{\partial \Phi}{\partial z} = g \dfrac{ \theta_v - \theta_{v\,ref} }
+{\theta_{v\,ref} }
+\end{equation}
+has been used. It follows
+\begin{eqnarray}
+\dfrac{\partial \theta_{v} }{\partial \overline{x}} & = &
+d_{xx} \dfrac{f}{g}  \theta_{v\,ref}
+\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial v_{g} }{\partial \widehat{z}}
+\\
+\dfrac{\partial \theta_{v} }{\partial \overline{y}} &  = & - d_{yy}
+\dfrac{f}{g} \theta_{v\,ref}
+\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial u_{g} }{\partial \widehat{z}}
+\end{eqnarray}
+
+This is discretized as
+\begin{eqnarray}
+\left( \delta _{x} \theta_{v}\right)_{(i,j,k)} & = & d_{xx}
+ \dfrac{\overline{f}^x}{g}
+\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} V}^x  \\
+\left( \delta _{y} \theta_{v}\right)_{(i,j,k)} & = & - d_{yy}
+ \dfrac{\overline{f}^y}{g}
+\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} U }^y
+\end{eqnarray}
+where $U$ and $V$ are used as geostrophic wind components.
+
+If the Coriolis parameter is equal to zero, $\theta_{v}$ is defined everywhere
+as $\theta_{v}(k)$ at point $(ILOC,JLOC)$.
+
+Note that at this stage $\theta_{v\,ref}$ is unknown, and an iterative
+procedure must be used to enforce an exact
+ thermal wind balance. For the first iteration, we initialize
+$\theta_{v\,ref}$ by the value of $\theta_{v}$ at the point
+$(ILOC,JLOC)$. At the following steps,
+the virtual potential temperature for the anelastic reference state
+is defined as the horizontal average of $\theta_{v}$ :
+
+$$
+\theta_{v\,ref}(k) = \sum _{i,j} \theta_{v}(i,j,k)
+$$
+
+When the iteration is converged,
+the remaining properties of the reference state can be computed.
+The Exner function for the
+reference state may then be obtained by integration of the hydrostatic relation
+from $z=0$ ($\Pi_{ref} (k=KB) =1$) :
+
+$$
+d \Pi_{ref}(k) = - \dfrac{g}{C_{pd} \theta_{v\,ref}(k)}  dz
+$$
+and the computation of the reference state characteristics is finalized
+by the density of dry air:
+$$
+\rho_{d\,ref}(k) = \dfrac{P_{00} (\Pi)^{C_{pd}/R_d - 1} }{R_{d}
+\theta_{v\,ref}(k) \left(1+r_{v}(k) \right) }
+$$
+\section{Add a Perturbation}
+
+In order to start a non-trivial experiment, it is often useful to add
+a perturbation to the previously defined balanced fields. Two possibilities
+are presently available:
+
+\begin{itemize}
+\item
+add a perturbation to the $\theta $ field ( convective bubble)
+\begin{eqnarray}
+&&Dist = \sqrt{ \left( \left( { \hat{x} - \hat{x}_0    \over  Rad_x } \right) ^2 +
+                       \left( { \hat{y} - \hat{y}_0    \over  Rad_y } \right) ^2 +
+                       \left( { \hat{z} - \hat{z}_0    \over  Rad_z } \right) ^2
+                \right)       }  \nonumber \\
+&&\theta ' =  Ampli \cos ^2  \left( {\pi \over 2} Dist  \right)  \ \ \
+for \ Dist < 1  \nonumber \\
+&&\theta ' = 0  \ \ \  \ \ \  \ \ \  elsewhere  \nonumber
+\end{eqnarray}
+
+\item
+add a non-divergent perturbation to the horizontal wind, through the use of a
+streamfunction $\Phi '$ :
+\begin{equation}
+\Phi ' = Ampli \ \  e^{\left( { \hat{y} - \hat{y}_0    \over  Rad_y } \right) ^2 }
+\  \cos \left( {2 \pi  \hat{x} \over  Rad_x } \right)   \nonumber
+\end{equation}
+
+This streamfunction is located at the vertical vorticity point and the $u'$
+and $v'$ perturbations are computed at the right locations by :
+\begin{eqnarray}
+u' = - { \partial \Phi ' \over \partial \hat{y} } \nonumber \\
+v' = + { \partial \Phi ' \over \partial \hat{x} } \nonumber
+\end{eqnarray}
+The discretizations use the grid-point curvilinear $ \hat{x}, \hat{y}$ because
+at this point, the orography has  not yet  being  introduced in  the model.
+This guarantees that the perturbation does not change the  divergence of the
+previously obtained fields.
+\end{itemize}
+
+
+
+\section{Wind and Mass Fields with Orography}
+
+An orography following simple form can be specified:
+
+It may be sine shaped:
+$$
+z_{s}(i,j) = h_{max} \left\{  \sin \left( \dfrac{\pi i}{IU-1}\right)^{2}
+\right\}^{exp_{x}}\left\{  \sin \left( \dfrac{\pi j}{JU-1}\right)^{2}
+\right\}^{exp_{y}}
+$$
+
+or bell-shaped :
+$$
+z_{s}(i,j) = h_{max} / \left\{ 1 + \left(\dfrac{x(i) - x_{s}}{a_{x}}\right)^{2}
++ \left(\dfrac{y(j) - y_{s}}{a_{y}}\right)^{2}
+\right\}^{1.5}
+$$
+$IU$ and $JU$ are the total number of points along x and y directions (
+{\it i.e.}
+including the external points). $h_{max}$, $exp_{x}$, $exp_{y}$, $a_{x}$,
+$a_{y}$,$x_{s}$ and $y_{s}$ are the  degrees of freedom. $h_{max}$ is the maximum
+height, $a_{x}$ and
+$a_{y}$ represent widths along x and y directions,$x_{s}$ and $y_{s}$  are
+the center
+positions of the mountain.
+
+In that case, an additional step is performed
+to compute the 3D field on the model grid following the terrain.
+The previous fields of $\theta_v$, $r_v$, $u$, and $v$
+are linearly interpolated to the new grid. We also set the vertical component
+$w$ equal to zero.
+Then, $\theta$ is recovered by :
+\begin{equation}
+\theta = \theta_{v}\dfrac{(1+r_{v})}{(1 + \dfrac{R_{v}}{R_{d}}r_{v})}
+\end{equation}
+Finally, the  3D anelastic reference state (
+{\it i.e.} on the grid with orography) is determined
+ by vertical interpolation for  $\theta_{v\,ref}$ and
+$\rho_{d\,ref}$ and by integration of the hydrostatic relation for
+$\Pi_{ref}$
+defined on the model grid without  orography.
+
+\section{Enforcement of the Anelastic Constraint}
+
+Obviously, wind field obtained at this stage does not fulfil the anelastic
+constraint (\ref{anelcons}) and the
+free-slip boundary conditions. Therefore, a
+last adjustement is necessary so that this wind field can be used as initial
+field for the MESONH model. Thus, a perturbation deduced from a potential $Pot$
+gradient  is added to the wind component $\vec{U}_0$ so that the resulting
+ wind field $\vec{U}$  satisfies (\ref{anelcons}).
+
+Let us write this constraint:
+
+\begin{eqnarray}
+\vec{U} = \vec{U} _0 - \vec {\nabla } Pot  \nonumber \\
+\vec { \nabla } . \left( \rho _{dref}  \vec{U}  \right) = 0 \nonumber
+\end{eqnarray}
+
+From these 2 equations, we deduce an equation for the $Pot$ field given by:
+
+\begin{eqnarray}
+\vec { \nabla } .  \left( \rho _{dref} \vec {\nabla } Pot \right) = \vec { \nabla } .
+ \left( \rho _{dref}  \vec{U} _0 \right) \label{eq:potential}
+\end{eqnarray}
+
+This equation is equivalent to the Pressure equation solved in the temporal loop
+of the model to determine the pressure function. Therefore, the same iterative
+solver is used to solve the equation \ref{eq:potential} and the gradient of this
+potential is added to find the final field $\vec{U}$ satifying (\ref{anelcons}).
+
+
+\section{Analytical 3D fields}
+
+For the purpose of testing the post-processing and graphical facility, it
+is also possible to generate a family of simple 3D analytical fields.
+Three types of such fields are possible: spherical fields, plane
+fields and wave fields.
+\begin{itemize}
+\item \underbar{spherical fields} :
+\begin{eqnarray}
+\overline{\rho^{*}}^{x} {\cal U} & = &  \overline{\rho^{*}}^{x}
+\left\{ f_{0} + 0.5  (f_{1}- f_{0}) \sqrt{\dfrac{x-x_{0}}{L_{x}}
++ \dfrac{y_{m}-y_{0}}{L_{y}} + \dfrac{z_{m}-z_{0}}{L_{z}}}    \right\}
+\\
+\overline{\rho^{*}}^{y}{\cal V} & = &    \overline{\rho^{*}}^{y}
+\left\{ f_{0} + 0.5  (f_{1}- f_{0}) \sqrt{\dfrac{x_{m}-x_{0}}{L_{x}}
++ \dfrac{y-y_{0}}{L_{y}} + \dfrac{z_{m}-z_{0}}{L_{z}}}    \right\}
+\\
+\overline{ \rho^{*}}^{z} w & = &  \overline{\rho^{*}}^{z}
+\left\{ f_{0} + 0.5  (f_{1}- f_{0}) \sqrt{\dfrac{x_{m}-x_{0}}{L_{x}}
++ \dfrac{y_{m}-y_{0}}{L_{y}} + \dfrac{z-z_{0}}{L_{z}}}    \right\}
+ \\
+\rho^{*} \theta(k) & = &   \rho^{*} \left\{ f_{0}
++ 0.5  (f_{1}- f_{0}) \sqrt{\dfrac{x_{m}-x_{0}}{L_{x}}
++ \dfrac{y_{m}-y_{0}}{L_{y}} + \dfrac{z_{m}-z_{0}}{L_{z}}}    \right\}
+\\
+\rho^{*} r_{n} & = & 0.
+\end{eqnarray}
+
+\item \underbar{plane fields} :
+\begin{eqnarray}
+\overline{\rho^{*}}^{x} {\cal U} & = & \overline{\rho^{*}}^{x}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z} \right)\right\}\\
+\overline{\rho^{*}}^{y}{\cal V} & = &    \overline{\rho^{*}}^{y}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z}\right)\right\} \\
+\overline{ \rho^{*}}^{z} w & = &  \overline{\rho^{*}}^{z}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z-z_{0}}{L_{z}} N_{z}\right)\right\} \\
+\rho^{*} \theta(k) & = &   \rho^{*}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z} \right)\right\}\\
+\\
+\rho^{*} r_{n} & = & 0.
+\end{eqnarray}
+where
+\begin{eqnarray}
+N_{x} & = & \cos(\alpha_{z})\sin(\alpha_{x}) \\
+N_{y} & = & - \cos(\alpha_{z})\cos(\alpha_{x}) \\
+N_{y} & = & - \sin(\alpha_{z})
+\end{eqnarray}
+\item \underbar{wave  fields} :
+\begin{eqnarray}
+\overline{\rho^{*}}^{x} {\cal U} & = & \overline{\rho^{*}}^{x}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z}
+\right) \right. \\
+& + & \left. 0.125 (f_{1}+ f_{0}) \sin \left(2 \pi f_{2} (\dfrac{x-x_{0}}{L_{x}} C_{s}
++ \dfrac{y_{m}-y_{0}}{L_{y}} S_{n}) \right) \right\}
+ \\
+\overline{\rho^{*}}^{y}{\cal V} & = &    \overline{\rho^{*}}^{y}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z} \right)\right.
+\\ & + & \left.0.125 (f_{1}+ f_{0}) \sin \left( 2 \pi f_{2}( \dfrac{x_{m}-x_{0}}{L_{x}} C_{s}
++ \dfrac{y-y_{0}}{L_{y}} S_{n} ) \right) \right\}\\
+\overline{ \rho^{*}}^{z} w & = &  \overline{\rho^{*}}^{z}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z-z_{0}}{L_{z}} N_{z}\right)\right. \\
+& + & \left. 0.125 (f_{1}+ f_{0}) \sin \left( 2 \pi f_{2} (\dfrac{x_{m}-x_{0}}{L_{x}} C_{s}
++ \dfrac{y_{m}-y_{0}}{L_{y}} S_{n} ) \right)\right\} \\
+\rho^{*} \theta(k) & = &   \rho^{*}
+\left\{ f_{0} + (f_{1}- f_{0}) \left( \dfrac{x_{m}-x_{0}}{L_{x}} N_{x}
++ \dfrac{y_{m}-y_{0}}{L_{y}} N_{y} + \dfrac{z_{m}-z_{0}}{L_{z}} N_{z} \right)\right.
+\\ & + & \left. 0.125 (f_{1}+ f_{0}) \sin \left( 2 \pi f_{2} (\dfrac{x_{m}-x_{0}}{L_{x}} C_{s}
++ \dfrac{y_{m}-y_{0}}{L_{y}} S_{n} ) \right) \right\}\\
+\\
+\rho^{*} r_{n} & = & 0.
+\end{eqnarray}
+where
+\begin{eqnarray*}
+C_{s} & = &  \cos(\alpha_{x}) \\
+S_{n} & = & \sin(\alpha_{x})
+\end{eqnarray*}
+
+$f_{0},f_{1},f_{2},\alpha_{x},\alpha_{z}$ are the degrees of freedom . $L_{x}$,
+$L_{y}$,$L_{z}$ are the lengths of the physical part of the domain. $x_{0}$,
+$y_{0}$ and $z_{0}$ represent the coordinates of the center point of  the
+physical part of the domain.
+\end{itemize}
+

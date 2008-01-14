@@ -1,0 +1,204 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "FORCED MODE VERSION"
+% Author : M. Georgelin - K. Suhre - J. P. Pinty
+% Original : October 8, 1997
+% Update   : October 9, 1997
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% DEFINITIONS:
+%
+\def\souligne#1{$\underline{\smash{\hbox{#1}}}$}
+%
+%\begin{document}
+%\begin{titlepage}
+%\thispagestyle{empty}
+%\title{\huge \bf FORCED MODE VERSION}
+%\author{ Marc GEORGELIN \cr Revised by K. Suhre and J.-P. Pinty}
+%\date{\today}
+%\maketitle
+%\vfill
+%\hfill {\bf \LARGE BOOK 1}
+%\end{titlepage}
+
+\chapter{Forced Mode Version}
+\minitoc
+
+\section{Purpose}
+%\section{Equations}
+For some academic studies (1D PBL dynamics, 2D Eady wave problem, 2D mountain
+flow, moving squall lines, 3D breeze studies...), it is necessary to impose a
+large scale environment even crudely (geostrophic wind, subsidence, ... ), in
+order to perform consistent simulations with Meso-NH. Practically, this means
+that some additional forcing terms have to be included in the Meso-NH system of
+equation.
+
+Actually, only the most usual physical forcing terms have been taken into
+account for simplicity. The forcing terms are prescribed empirically from
+external sources of information ({\it e.g.} series of observation) and are
+mutually independent when acting on the same prognostic variable. Generally
+they are non-stationary and horizontally homogeneous, only the case of
+flat terrain is addressed. Furthermore, forcing terms are considered for
+the restricted cartesian geometry of Meso-NH (constant Coriolis parameter).
+
+The effects of several forcings are considered:
+
+\begin{tabular}{l c}
+                                               &\\
+$\bullet$ Domain translation at a constant speed: & \\
+(affects the surface fluxes and the Coriolis force) & \\
+                                               & \\
+                                               &\\
+$\bullet$ Geostrophic wind (or pressure gradient) forcing:
+\ & $\dfrac{\partial u}{\partial t}\Big|_{FRC}=+f v_{frc}$ \\
+\ & $\dfrac{\partial v}{\partial t}\Big|_{FRC}=-f u_{frc}$  \\
+                                               & \\
+                                               &\\
+\end{tabular}
+
+\begin{tabular}[t]{l c}
+                                               &\\
+$\bullet$ Forced ascent or descent (vertical transport) of $\alpha$:
+ & $\dfrac{\partial \alpha}{\partial t}\Big|_{FRC}=-w_{frc}\dfrac{\partial \alpha}{\partial z}$ \\
+applied to \souligne{all} prognostic variables ($w$ excepted in the 1D case)
+                                               &\\
+                                               & \\
+$\bullet$ Large scale horizontal transport of $\alpha \in [\theta, r_{v} ]$:
+   & $\dfrac{\partial u}{\partial t}\Big|_{FRC}=-u (\dfrac{\partial \alpha}{\partial x})_{frc}$ \\
+   & $\dfrac{\partial v}{\partial t}\Big|_{FRC}=-v (\dfrac{\partial \alpha}{\partial y})_{frc}$ \\
+                                               &\\
+                                               & \\
+$\bullet$ Large scale variables $\alpha \in [u, v, \theta, r_{v} ]$:
+   & $\dfrac{\partial \alpha}{\partial t}\Big|_{FRC}=- \dfrac{\alpha - \alpha_{frc}}{\tau_{frc}}$ \\
+for a newtonian relaxation with damping time $\tau_{frc}$
+                                               &\\
+                                               &\\
+\end{tabular}
+
+In the above definitions, the subscript $_{frc}$ tags the forcing fields or scalars
+which must be provided by the user for a specific application. The forcing terms
+are written in the form of a tendency of the relevant prognostic variable.
+
+\section{Modified equations}
+The inclusion of the forcing terms (single underbraced for the physical
+terms and double underbraced for the Newtonian relaxation terms) in the
+Meso-NH system of equation is made as follows:
+
+\bigskip
+\noindent {\bf Conservation of momentum}
+\begin{eqnarray}
+{\partial \over \partial t} (\rho_{dref} \vec U) & +
+\vec \nabla \cdot (\rho_{dref} \vec U\otimes \vec U) + \rho_{dref} \vec \nabla \Phi + \rho_{dref} \vec g \dfrac{\theta_v - \theta_{vref}}{\theta_{vref}}+
+2\rho_{dref} \vec \Omega \wedge (\vec U - \underbrace{\vec U_{frc}})
+\nonumber \\
+ &+ \underbrace{w_{frc} \dfrac{\partial u}{\partial z} \vec i}
+  + \underbrace{w_{frc} \dfrac{\partial v}{\partial z} \vec j}
+  = \rho_{dref} \vec {\cal F}
+- \underbrace{\underbrace{\dfrac{u - u_{frc}}{\tau_{frc}} \vec i}}
+- \underbrace{\underbrace{\dfrac{v - v_{frc}}{\tau_{frc}} \vec j}}
+\end{eqnarray}
+
+\noindent {\bf Thermodynamic equation}
+\begin{eqnarray}\label{eqfrc1}
+&\dfrac{\partial }{\partial t} (\rho_{dref} \theta)
++ \vec \nabla \cdot  (\rho_{dref} \theta \vec U)+ \rho_{dref} \Big(
+  \underbrace{u (\dfrac{\partial \theta }{ \partial x})_{frc}}
++ \underbrace{v (\dfrac{\partial \theta }{ \partial y})_{frc}}
++ \underbrace{w_{frc} \dfrac{\partial \theta }{\partial z}}
+\Big) =  \rho_{dref} \Big[ \dfrac{R_d + r_v R_v C_{pd}} {R_d    C_{ph}}
+\nonumber \\
+& -1 \Big]
+ \dfrac{
+\theta} {\Pi_{ref}} w \dfrac{\partial \Pi_{ref}} {\partial z}
+ + \dfrac{\rho_{dref}} {\Pi_{ref} C_{ph}} \Big[ L_m
+\dfrac{D(r_i + r_s + r_g + r_h)} {Dt} - L_v \dfrac{Dr_v} {Dt} + \cal H \Big]
+- \underbrace{\underbrace{\dfrac{\theta - \theta_{frc}} {\tau_{frc}}}}
+\end{eqnarray}
+
+\noindent {\bf Conservation of the water vapor mixing ratio}
+\begin{equation}
+{\partial \over \partial t}(\rho_{dref} r_{v}) + \vec \nabla \cdot
+(\rho_{dref} r_{v} \vec U)+ \rho_{dref} \Big(
+  \underbrace{u (\dfrac{\partial r_{v} }{ \partial x})_{frc}}
++ \underbrace{v (\dfrac{\partial r_{v} }{ \partial y})_{frc}}
++ \underbrace{w_{frc} \dfrac{\partial r_{v} }{\partial z}}
+\Big) = \rho_{dref} Q_{v}
+- \underbrace{\underbrace{\dfrac{r_{v}-r_{v\ frc}}{\tau_{frc}}}}
+\end{equation}
+
+\noindent {\bf Conservation of the condensed water mixing ratios}
+\begin{equation}
+{\partial \over \partial t}(\rho_{dref} r_\star) + \vec \nabla \cdot
+(\rho_{dref} r_\star \vec U)+ \rho_{dref}
+\underbrace{w_{frc} \dfrac{\partial r_\star }{\partial z}} = \rho_{dref} Q_\star
+\end{equation}
+
+\bigskip
+These forced terms are not independent from each other, the horizontal
+gradient of $\theta$ (baroclinicity) is related to the geostrophic wind by
+the "thermal wind" equation which takes the following form:
+
+\begin{equation}
+\dfrac{\partial u_{frc}}{\partial z} = + {g \over f \theta_{vref}} (\dfrac{\partial \theta_v}
+{\partial y} )_{frc}
+\end{equation}
+\begin{equation}
+\dfrac{\partial v_{frc}}{\partial z} = - {g \over f \theta_{vref}} (\dfrac{\partial \theta_v}
+{\partial x} )_{frc}
+\end{equation}
+where $u_{frc}$ and $v_{frc}$ are the horizontal components of the geostrophic
+wind and $f = 2 \vec \Omega \cdot \vec k$, the (constant) Coriolis parameter.
+
+The forced temperature gradients are deduced from these relations but beware
+that condensation modify gradients of $\theta$ or $r_{v}$ and so forced
+gradients of $\theta$ or forced advection of humidity might be excessive in
+some circumstances.
+
+The relaxation towards large scale variables is useful to constraint a free
+atmosphere state to match series of observation above a specified height level.
+
+\section{Interpolation}
+The series of asynchronous 1D forcing data are provided by the Meso-NH user
+in a special format (see the {\bf Forced version} described in the
+{\bf Meso-NH user's guide}).
+Then they are linearly interpolated to fill the Meso-NH vertical grid system
+and stored in the LFI files.
+In the case of orography, these fields are further projected on the horizontal
+embedded grids of Meso-NH by linear interpolation.
+
+The time-evolution of the forcings is obtained by linear interpolation between
+two bounding forcing fields at each time step. When the last forcing data is
+reached a stationary forcing is kept on. Conversely, no forcing is applied
+until the current time of the Meso-NH integration has reached that of the first
+forcing data. The following scheme summarizes how a set of 3 forcing data are
+used during the model integration starting at time DTEXP.
+
+\vskip 1.0cm
+\begin{center}
+\begin{tabular}{c}
+%\setlength{\epsfxsize}{14cm}
+%\epsfbox{eps/scheme_FRC.eps}
+\psfig{figure=\EPSDIR/scheme_FRC.eps,width=14cm}
+\end{tabular}
+\end{center}
+\vskip 1.0cm
+
+
+\section{Discretization}
+The vertical transport $w_{frc}(\dfrac{\partial \alpha}{\partial z})$ is lagged
+and integrated with a first order upstream scheme to ensure positivity in some
+situation, {\it e.g.} the case of large scale subsidence over a shallow
+inversion in the stratus cloud modeling problem. The numerical scheme of the
+large scale horizontal transport is time centered and the horizontal forcing
+gradients
+$(\dfrac{\partial \alpha}{\partial x})_{frc}$ and
+$(\dfrac{\partial \alpha}{\partial y})_{frc}$ are assumed to be given on the
+$\alpha$ (mass) grid.
+The integration of the large scale relaxation terms is lagged for numerical
+stability. This term applies either above a constant selected height or above
+a time evolving thermal inversion (useful for PBL dynamics studies).
+%\vfill
+%\eject
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% END OF FORCED MODE VERSION SECTION %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

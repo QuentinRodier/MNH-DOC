@@ -1,0 +1,160 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "Budget Analysis"
+% Author : J. Nicoleau and J.P. Lafore
+% Original : October 15, 1997
+% Update   : October 15, 1997
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Budget Analysis}
+\minitoc
+
+%{\em by J. Nicoleau and J.P. Lafore}
+
+\section{Introduction}
+
+The budget analysis is a major component of the {\bf comprehensive
+physical package} offered by the Meso-NH Atmospheric Simulation System. This
+analysis is performed in three steps.
+
+\begin{enumerate}
+\item In-line computation of the budget for all prognostic variables of the
+model. The results are written on a diachronic MNH file.
+\item Post-processing programs read these files, in order
+to derive new budgets of non-prognostic variables (such as kinetic energy,
+potential vorticity,...), or diagnostics (such as apparent source of heat, or
+moisture sink,...). The results are also written on a diachronic MNH file.
+\item Finally the graphical package reads these files, and visualizes
+the results.
+\end{enumerate}
+
+ The budget analysis has been designed to be easily performed. The user has to
+prescribe variables for which he wants a budget, processes
+to store, and spatio-temporal domain type and characteristics,
+on which the budgets are computed. For simulations with several nested models,
+the budget analysis has been limited to only one model.
+
+\section{Budget definition}
+
+\subsection{Equations}
+
+ The budget analysis is based on the model equations written in flux form,
+discretized on the computational grid (see chapter 4).
+ For instance for a prognostic variable
+$\alpha$, we have the following generic equation;
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(\tilde{\rho}\alpha) \, = \, - \,
+ \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;  \alpha)
+\, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;  \alpha)
+\, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;  \alpha)
+\, + \, \sum_{p=4}^{p_{max}} \; {\cal S}\alpha_p
+\end{equation}
+
+\noindent where ${\cal S}\alpha_p$ represents the $\alpha$ source
+due to the $p^{th}$ process. The first 3 terms of the r.h.s. of this equation
+($\it i.e.$ $p= 1$, $2$ and $3$) correspond to the advection contributions in the
+$\overline{x}$, $\overline{y}$ and $\overline{z}$-directions respectively.
+The budget analysis simply consists in storing all the sources terms,
+necessary to explain the temporal evolution of the $\alpha$ variable.
+To check the budget closure, and to physically understand it, it is necessary to
+add the storage of variable $\alpha$ at the initial and final instant
+of the budget, and of its mean value for this time period.
+
+ At this point, it is important to note that the budget is not performed for the
+physical variable $\alpha$, but for $\tilde{\rho}\alpha$
+(with $\tilde{\rho}  = \rho_{d\,ref} J$), i.e. the quantity multiplied
+by the mass of dry
+air contained in the grid box volume. The flux form of the advection equation,
+allows the conservation properties of the transport process to be exactly
+accounted for.
+
+\subsection{Average operators}
+
+ Such budget analysis quickly generates a huge amount of information, difficult
+to handle and to physically understand. Thus in practice, the budgets terms
+can be conveniently compressed in different ways, by applying the following
+operator:
+
+\begin{equation}
+\dfrac{1}{t_2 - t_1} \,  \sum_{t=t_1}^{t_2}
+ \,  \sum_{i} \,  \sum_{j} \,  \sum_{k} \,
+ \, {\cal P}_{i,j,k}^{t}
+ \, \Delta \overline{x} \, \Delta \overline{y} \, \Delta \overline{z}
+ \, \Delta t
+\end{equation}
+
+\noindent where ${\cal P}$ is for a given process.
+
+\begin{enumerate}
+\item Several {\bf processes} can be added to form a single process. For example
+the summation of the 3 first processes of Eq. 1, corresponds to the total
+advection.
+
+\item The {\bf temporal average}
+$\dfrac{1}{t_2 - t_1} \,  \sum_{t=t_1}^{t_2} \, \Delta t$
+of the budgets on a time interval ($t_1$ to
+$t_2$) longer than a time step, allows to obtain more significant results
+for system presenting high temporal fluctuations.
+
+\item The {\bf vertical integration} of the budgets allows understandng of the
+behaviour of a column of atmosphere for a given layer ($k_1$ to $k_2$).
+ It corresponds to the operator $\sum_{k=k_1}^{k_2} \, \Delta \overline{z}$.
+
+\item The {\bf "horizontal" integration} (performed on the computational levels)
+gives significant information for given horizontal subdomain. It can be
+performed for
+2 types of subdomain; either a cartesian zone, or a complex area defined by
+a mask.
+
+\end{enumerate}
+
+\begin{itemize}
+\item {\bf Cartesian domain}
+
+ In that case the user defines a cartesian sub-domain, where the budget will be
+performed, by setting the horizontal coordinates of the edges of this zone
+($i_1$ to $i_2$ and $j_1$ to $j_2$). The horizontal average operator is:
+
+\begin{equation}
+\sum_{i=i_1}^{i_2} \, \sum_{j=j_1}^{j_2}
+\, \Delta \overline{x} \, \Delta \overline{y}
+\end{equation}
+
+
+\noindent
+The budget can be compressed or not in the 2 horizontal directions.
+In case of no compression, the resulting budget fields are 3D over the selected
+cartesian horizontal zone, whereas 1D budget for this zone is returned in case of total
+compression. For some systems characterized by a strong slab symmetric structure
+(fronts, convection line,...), a compression in the along-system direction
+results in 2D budget fields, well adapted to analyze them.
+
+\item {\bf Defined by a mask}
+
+ For a wide range of systems, it is convenient to analyze budgets over
+complex zones, which can temporally evolve. For example a cloud population
+simulation can be analyzed, by considering zones with precipitation, and/or
+clear air regions... In that case, the user must define the differents zones,
+owing to a set of horizontal masks ($mask(i,j)$), refreshed every time
+step if necessary. The budgets are horizontally averaged in each zone, so that
+1D vertical budget profiles are provided. Thus, the horizontal integration operator is:
+
+\begin{equation}
+\sum_{mask \, (i,j)} \, \Delta \overline{x} \, \Delta \overline{y}
+\end{equation}
+
+\end{itemize}
+
+\noindent {\bf NB:} In the case of non-flat topography, the budget compression
+by the above horizontal operators, results in budgets over volumes following
+the non-horizontal computational levels. Thus to obtain budget over horizontal
+boxes having a physical meaning, spatial interpolations must be performed
+before compression. As a consequence, in case of flow over topography, the
+best is to avoid the horizontal compression. The interpolation and the compression
+will be therefore performed by the post-processing programs.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END OF CONTRIBUTION "Budget Analysis"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

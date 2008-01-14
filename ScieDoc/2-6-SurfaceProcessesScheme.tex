@@ -1,0 +1,1545 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "Surface Processes Scheme"
+% Author        : J. S. Belair,  A. Boone and V. Masson
+% Original      : October 15, 1997
+% Last Update   : April 7, 2000
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Surface Processes Scheme}
+
+%{by S. Belair, A. Boone and V. Masson}
+
+\section{Introduction}
+
+
+By providing more realistic
+lower boundary conditions,
+land surface schemes
+can help to improve the numerical simulation
+of the atmosphere.
+The surface and the atmosphere
+interact via energy fluxes applied at the base of the
+atmospheric numerical model.
+The fluxes provided to the atmospheric model
+are the momentum flux, turbulent sensible and latent heat fluxes,
+the upward radiative fluxes, and, as an option, the CO2 flux.
+
+The MESO-NH grid box is partitioned in 4 main surface types:
+sea, inland water, towns (artificial areas only),
+natural and cultivated areas (including gardens and town parks).
+In order to keep the subgrid surface type information,
+an appropriate surface scheme is used to compute the fluxes
+between each of the surfaces and the atmosphere
+(assumed identical for all the sub-components).
+Then, the averaging of the 4 fluxes gives
+the flux received by the atmospheric part of MESO-NH.\\
+
+\begin{figure}[h]
+\hspace*{2.cm}
+\psfig{figure=\EPSDIR/4flux.eps,width=12cm}
+\caption{Partitioning of the MESO-NH grid box, and corresponding turbulent fluxes.
+F stands either for M (momentum flux), H (sensible heat flux), LE (latent heat flux),
+$S^\uparrow$ (the reflected solar radiation) or $L^\uparrow$ (the
+upward longwave radiation).
+\label{surf1}}
+\end{figure}
+
+\begin{displaymath}
+\begin{array}{lclclclcl}
+M &= & M_{sea} & + & M_{water} & + & M_{town} & + & M_{nature} \\
+H &= & H_{sea} & + & H_{water} & + & H_{town} & + & H_{nature} \\
+LE &= & LE_{sea} & + & LE_{water} & + & LE_{town} & + & LE_{nature} \\
+S^\uparrow &= & S^\uparrow_{sea} & + & S^\uparrow_{water} & + & S^\uparrow_{town} & + & S^\uparrow_{nature} \\
+L^\uparrow &= & L^\uparrow_{sea} & + & L^\uparrow_{water} & + & L^\uparrow_{town} & + & L^\uparrow_{nature} \\
+\end{array}
+\end{displaymath}
+
+\bigskip
+
+For the natural surfaces,
+an 'aggregated' vegetation is used, viz
+a vegetation representative of all the species present
+in the grid mesh.
+
+As an option, it will be possible to use the soil and
+vegetation scheme on the different landscape types present in the grid mesh.
+Then averaging the fluxes coming from each landscape type will give
+the flux coming from the natural part of the grid mesh.
+Only a limited number of landscape types will be available:
+forests, grassland, C3 type cropland, C4 type cropland, irrigated crops,
+bare soil, rocks and permanent snow. For each lanscape,
+there will be a temporal
+evolution of the surface variables independently of the other landscape types.\\
+
+The fluxes coming from the urban area are themselves average
+of fluxes from the roofs, roads and walls (see TEB scheme hereafter).\\
+
+
+
+
+The surface schemes used for the 4 main surface types are:
+
+\begin{itemize}
+\item \underline{over seas}: a  Charnock's formulation, with stationnary SST
+\item \underline{over inland waters}: a Charnock's formulation, with stationnary
+temperature.
+\item \underline{over natural areas}:
+an improved version of the
+Interactions Soil-Biosphere-Atmosphere (ISBA) scheme
+by Noilhan and Planton (1989), Noilhan and Mahfouf (1996),
+Calvet et al. (1998) and Boone et al. (1999),
+\item \underline{over artificial areas}:
+the 'Town Energy Budget' scheme by Masson (2000).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Fluxes over water surfaces}
+
+\subsection{Free water surfaces}
+
+For ocean surfaces and over inland waters,
+all the prognostic variables are kept constant.
+
+The surface fluxes are calculated using Eqs. \ref{eqnRN}, \ref{eqnH},
+\ref{eqnLEG} and
+Eqs. \ref{eqn_H}, \ref{eqn_LE}, \ref{eqn_FM},
+taking the relative humidity of the ocean $hu=1$, and
+$veg=p_{sn}=0$.
+The roughness length is given by Charnock's relation:
+\begin{eqnarray}
+z_{0sea} = 0.015 {u^2_* \over g}
+\end{eqnarray}
+
+\subsection{Sea ice}
+
+Sea ice is detected in the model when sea surface temperature (SST) is
+two degrees below 0$^\circ$C (i.e. 271.15K). In this case, in order
+to avoid an overestimation of the evaporation flux, the calculations
+are performed with the roughness length of flat snow surfaces:
+\begin{eqnarray}
+z_{0ice} = 2.4 \; \times \; 10^{-4} m
+\end{eqnarray}
+
+In the same manner, the sea ice albedo is set equal to the fresh snow
+albedo instead of the free water albedo. This leads to a much brighter
+surface. This has no effect on the sea ice cover (since there is no evolution
+of the sea surface parameters), but modifies the lower boundary shortwave flux
+input for the atmospheric radiative scheme.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Urban and artificial areas: the TEB surface cheme}
+
+The Town Energy Budget (TEB) scheme is aimed
+to simulate the turbulent fluxes into the atmosphere
+at the surface of a mesoscale atmospheric model which is covered
+by buildings, roads, or any artificial material
+(see Masson 2000 for all details and equations).
+It should parameterize both the urban surface and the roughness sublayer,
+so that the atmospheric model only 'sees' a constant flux layer
+as its lower boundary.
+At mesoscale (with a grid mesh larger than a few hundred meters), spatial
+averaging of the town characteristics, as well as its effect on the atmosphere,
+are necessary.
+The individual shapes
+of each building are no longer taken into account.
+The TEB geometry is based on the canyon hypothesis. However, a
+single canyon would be too restrictive at the
+considered horizontal scale.
+We therefore use the following original city representation:
+\begin{enumerate}
+\item the buildings have the same height and width (in the model mesh).
+The roof level is at the surface level of the atmospheric model.
+\item buildings are located along identical roads, the length
+of which is considered
+far greater than their width. The space contained between two facing buildings
+is defined as a canyon.
+\item any road orientation is possible, and they all exist
+with the same probability. This hypothesis allows the computation
+of averaged forcing
+for road and wall surfaces. In other words, when the canyon orientation
+appears in a formula (with respect to the sun or the wind direction),
+it is averaged over 360$^\circ$. In this way, no discretization is performed
+on the orientation.
+\end{enumerate}
+
+\begin{figure}[h]
+\hspace*{2.cm}
+\psfig{figure=\EPSDIR/geom.eps,width=12cm}
+\caption{Canyon geometry in the TEB scheme ,and its prognostic variables.
+\label{TEB2}}
+\end{figure}
+
+These hypotheses, as well as the
+formulations chosen for the physics (see Masson 2000), allow
+the development of a relatively
+simple scheme. The parameters describing the city
+are displayed in Table \ref{paramTEB} in chapter \ref{PGD}.
+The prognostic variables of the scheme are in Table \ref{TEB1}.
+{\bf The TEB model
+does not use one urban surface temperature} (representative of the
+entire urban cover), but {\bf three} surface temperatures
+representative of roofs, roads and walls (see figure \ref{TEB2}).
+There are two reasons for that:
+\begin{itemize}
+\item this allows to keep the maximum of results gathered by the
+urban climatologists about the urban surface energy budget,
+\item the use of only one temperature should be debatable, because
+it is observed that the Monin-Obukhov similarity theory does not
+apply for temperature in the urban roughness sublayer.
+\end{itemize}
+
+
+\begin{figure}[t]
+\hspace*{0.cm}
+\psfig{figure=\EPSDIR/flux.eps,width=16cm}
+\caption{Energy fluxes between the artificial surfaces and the atmosphere.
+\label{TEB3}}
+\end{figure}
+
+As a consequence, {\bf three} surface energy budgets are computed, one
+for each surface type. The resulting fluxes at town scale are obtained
+by averaging (see figure \ref{TEB3} for the links between surfaces and
+atmosphere).
+
+\clearpage
+The physics of the scheme are relatively complete, thanks to
+the use of this non-flat canyon geometry:
+\begin{itemize}
+\item interception of snow and water.
+\item longwave computations (with one reemission), infra-red trapping effect.
+\item shortwave computations (with an infinity of reflections),
+solar trapping effect. The solar zenith angle influences
+each surface energy input (see figure \ref{TEB4}) and thus the trapping effect.
+\item momentum fluxes (with an urban roughness).
+\item sensible and latent heat fluxes, dew.
+\item storage flux (by explicit conduction equation),
+domestic heating (buildings internal temperature).
+\item anthropogenic fluxes (car traffic, factories).
+\end{itemize}
+
+
+\begin{figure}[t]
+\hspace*{0.cm}
+\psfig{figure=\EPSDIR/solar1.eps,width=16cm}
+\caption{Solar radiation input for a road perpendicular to the sun azimuth.
+In the TEB scheme, the contribution of all the other road directions
+are averaged with this one.
+\label{TEB4}}
+\end{figure}
+
+\clearpage
+\begin{table}[h]
+{\footnotesize{
+\begin{tabular}{||c |l |c||}
+\hline
+\hline
+symbol                             & designation of symbol & unit    \\
+\hline
+\hline
+prognostic variables && \\
+\hline
+$T_{R_k}$, $T_{r_k}$, $T_{w_k}$  & temperature of the $k^{th}$ roof, road or wall layer & K \\
+$W_R$, $W_r$              & roof and road water interception reservoir& kg m$^{-2}$ \\
+${W_{snow}}_R$, ${W_{snow}}_r$ & roof and road snow interception reservoir& kg m$^{-2}$ \\
+${T_{snow}}_R$, ${T_{snow}}_r$ & roof and road snow temperature& K \\
+${\rho_{snow}}_R$, ${\rho_{snow}}_r$ & roof and road snow density& kg m$^{-3}$ \\
+${\alpha_{snow}}_R$, ${\alpha_{snow}}_r$ & roof and road snow albedo& -  \\
+\hline
+diagnostic variables && \\
+\hline
+$T_{can}$ & canyon air temperature & K \\
+$q_{can}$ & canyon air specific humidity & kg kg$^{-1}$ \\
+$U_{can}$ & along canyon horizontal wind & m s$^{-1}$ \\
+$\alpha_{town}$ & town effective albedo& - \\
+$T_{s_{town}}$ & town area averaged radiative surface temperature & K \\
+\hline
+input energy fluxes && \\
+\hline
+$L^\downarrow$ & downward infra-red radiation on an horizontal surface  & W m$^{-2}$ \\
+$S^\downarrow$ & downward {\bf diffuse} solar radiation on an horizontal surface  & W m$^{-2}$ \\
+$S^\Downarrow$ & downward {\bf direct} solar radiation on an horizontal surface  & W m$^{-2}$ \\
+$H_{traffic} $ & anthropogenic sensible heat flux released in the canyon & W m$^{-2}$ \\
+$LE_{traffic} $ & anthropogenic latent heat flux released in the canyon & W m$^{-2}$ \\
+$H_{industry} $ & anthropogenic  sensible heat flux released by industries & W m$^{-2}$ \\
+$LE_{industry} $&  anthropogenic latent heat flux released by industries & W m$^{-2}$ \\
+\hline
+other energy input && \\
+\hline
+$T_{i_{bld}}$  & building interior temperature & K \\
+\hline
+output energy fluxes && \\
+\hline
+$S^*_R$, $S^*_r$, $S^*_w$ & net solar radiation budget for roofs, roads and walls & W m$^{-2}$ \\
+$L^*_R$, $L^*_r$, $L^*_w$ & net infra-red radiation budget for roofs, roads and walls & W m$^{-2}$ \\
+$H_R$, $H_r$, $H_w$ & turbulent sensible heat flux for roofs, roads and walls & W m$^{-2}$ \\
+$LE_R$, $LE_r$, $LE_w$ & turbulent latent heat flux for roofs, roads and walls & W m$^{-2}$ \\
+$G_{R_{k,k+1}}$, $G_{r_{k,k+1}}$, $G_{w_{k,k+1}}$ & conduction heat flux between $k^{th}$ and $k+1^{th}$ roof,
+ road or wall layers & W m$^{-2}$ \\
+$H_{town}$ & town averaged turbulent sensible heat flux & W m$^{-2}$ \\
+$LE_{town}$ & town averaged turbulent latent heat flux & W m$^{-2}$ \\
+\hline
+\hline
+\end{tabular}
+}}
+\caption{Energy fluxes and variables in the TEB scheme}
+\label{TEB1}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Soil and Vegetation}
+
+\subsection{Treatment of the soil heat content}
+
+The prognostic equations for the surface temperature
+$T_s$ and its mean value $T_2$ over one day $\tau$,
+are obtained from the force-restore method proposed by
+Bhumralkar (1975) and Blackadar (1976):
+
+\begin{eqnarray} \label{eqTs}
+{\partial T_s \over \partial t}&=&C_T (R_n-H-LE) -
+{2 \pi \over \tau} (T_s-T_2),   \\
+{\partial T_2 \over \partial t}&=& {1 \over \tau}
+(T_s-T_2),
+\end{eqnarray}
+where $H$ and
+$LE$ are the sensible and latent heat fluxes, and
+$R_n$ is the net radiation at the surface.
+The surface temperature $T_s$ evolves due to both the
+diurnal forcing by the heat flux $G = R_n-H-LE$ and
+a restoring term towards its mean value $T_2$.
+In contrast, the mean temperature $T_2$ only varies
+according to a slower relaxation towards $T_s$.
+
+The coefficient $C_T$ is expressed by
+
+\begin{equation}
+C_T=1 / \left(  {(1-veg)(1-p_{sng}) \over C_g}
+    +       { veg(1-p_{snv}) \over C_v }
+    +       { p_{sn} \over C_s } \right)
+\end{equation}
+where $veg$ is the fraction of vegetation, $C_g$ is the ground heat capacity,
+$C_s$ is the snow heat capacity, $C_v$ is the vegetation heat capacity,
+and
+\begin{eqnarray}
+p_{sng} = {W_s \over W_s + W_{crn} }; \ \ \ \ \ \
+p_{snv} = { h_s \over h_s + 5000 z_0 }; \ \ \ \ \ \
+p_{sn} = (1-veg) p_{sng} + veg p_{snv}
+\end{eqnarray}
+are respectively the fractions of the bare soil and vegetation
+covered by snow, and the fraction of the grid covered by snow.
+Here, $W_{crn} = 10 \ mm$, and
+$h_s = W_s / \rho_s$ is the thickness of the snow canopy ($\rho_s$ is the
+snow density).
+The partitioning of the grid into bare soil, vegetation, and snow regions,
+is indicated in Fig.(\ref{isba1}) .
+
+\begin{figure}[h]
+\psfig{figure=\EPSDIR/isba_fig1.eps,width=15cm}
+\caption{Partitioning of the grid \label{isba1}}
+\end{figure}
+
+The heat capacities of the ground and snow canopies are
+respectively given by
+
+\begin{equation}
+C_g=C_{gsat} \left( {w_{sat} \over w_2} \right)^
+{b / 2log10} ; C_g \leq 1.5 \times 10^{-5} \ K m^2 J^{-1}
+\end{equation}
+where $G_{gsat}$ is the heat capacity at saturation, and $w_{sat}$ the
+volumetric moisture content of the soil at saturation; and
+\begin{equation}
+C_s=2 \times \left( {\pi \over \lambda_s c_s \tau}
+\right)^{1/2}
+\end{equation}
+where $\lambda_s = \lambda_i \times {\rho_s}^{1.88}$;
+$c_s = c_i (\rho_s / \rho_i)$:
+$\lambda_i$ is the ice conductivity;
+$c_i$ is the heat capacity
+of ice; and $\rho_i$ is the relative density
+of ice (see Douville 1994, Douville et al. 1995).
+\\
+
+After an intermediate surface
+temperature ${T_s}^*$ is evaluated from Eq. (\ref{eqTs}), the cooling
+due to the melting of snow is considered following
+\begin{eqnarray}
+{T_s}^+ = {T_s}^* - C_T L_f (melt) \Delta t
+\end{eqnarray}
+where $L_f$ is the latent of fusion, $\Delta t$ is the timestep,
+and the melting rate of snow is
+\begin{eqnarray}
+melt = p_{sn} \left( { T_n - T_0 \over C_s L_f \Delta t } \right); \ \ \ \ \
+melt \geq 0
+\end{eqnarray}
+Here,
+\par $T_0=273.16 \ K$;
+\par $T_n = (1-veg) {T_s}^* + veg T_2$
+
+Similarly, the intermediate mean temperature ${T_2}^*$ obtained
+from Eq. (2) is also modified due to the melting/freezing of
+water in the soil layer occurring for temperatures
+between $-5^\circ C$ and $0^\circ C$.
+The resulting mean temperature is
+\begin{eqnarray}
+{T_2}^+ = {T_2}^* + (\Delta w_2)_{frozen} L_f C_g d
+\end{eqnarray}
+with
+\begin{eqnarray}
+(\Delta w_2)_{frozen} = \left[ 1 - \left( { {T_2}^*-268.16
+\over 5. } \right) \right] \left( w_2(t) - w_2(t-\Delta t) \right) \\
+(\Delta w_2)_{frozen} = 0  \ \ \ \ if \ T_2 \leq -5^\circ C \
+or \ if \ T_2 \geq 0^\circ C
+\end{eqnarray}
+where $d=15 \ cm$ is an estimated average of the penetration of the
+diurnal wave into the soil.
+Only the mean temperature $T_2$ is modified
+by this factor.
+The surface temperature $T_s$, however, indirectly
+feels this effect through the relaxation term in Eq. (1).
+
+\subsection{Treatment of the soil water}
+
+Equations for $w_g$ and $w_2$ are derived from the force-restore
+method applied by Deardorff (1977) to the ground soil moisture:
+\begin{eqnarray}
+{\partial w_g \over \partial t}&=&{ C_1 \over \rho_w d_1}
+(P_g - E_g) - {C_2 \over \tau} ( w_g - w_{geq} ) \ ;
+0 \leq w_g \leq w_{sat} \\
+{\partial w_2 \over \partial t}&=&{1 \over \rho_w d_2}
+(P_g - E_g - E_{tr}) - { C_3 \over d_2 \tau} \ max
+\left[ 0., ( w_2 - w_{fc} ) \right] ; 0 \leq w_2 \leq w_{sat}
+\end{eqnarray}
+where $P_g$ is the flux of liquid water reaching the soil surface
+(including the melting),
+$E_g$ is the evaporation at the soil surface,
+$E_{tr}$ is the transpiration rate,
+$\rho_w$ is the density of liquid water,
+and $d_1$ is an arbitrary normalization depth of 10 centimeters.
+In the present formulation, all the liquid water from
+the flux $P_g$ goes into the
+reservoirs $w_g$ and $w_2$, even when snow covers fractions of the
+ground and vegetation.
+The first term on the right hand side of Eq. (12) represents
+the influence of surface atmospheric fluxes when the
+contribution of the water extraction by the roots is neglected.
+The coefficients $C_1$ and $C_2$, and the equilibrium surface volumetric
+moisture $w_{geq}$,
+have been calibrated for different soil textures and
+moistures.
+
+The expression for $C_1$ differs depending on the moisture content
+of the soil.  For wet soils
+(i.e., $w_g \geq w_{wilt}$), this coefficient is expressed as
+\begin{eqnarray}
+C_1 = C_{1sat} \left( {w_{sat} \over w_g} \right)^{b/2+1}
+\end{eqnarray}
+For dry soils (i.e., $w_g < w_{wilt}$),
+the vapor phase transfer needs to be considered in order to reproduce the
+physics of water exchange.  These transfers are parameterized
+as a function of the wilting point $w_{wilt}$, the soil water
+content $w_g$,
+and the surface temperature $T_s$, using the Gaussian expression
+(see Braud et al. 1993, Giordani 1993)
+\begin{eqnarray}
+C_1 = C_{1max} exp \left[ - { (w_g-w_{max})^2 \over 2 \sigma^2 } \right]
+\end{eqnarray}
+where $w_{max}$, $C_{1max}$, and $\sigma$ are respectively the abscissa
+of the maximum, the mode, and the standard deviation of the
+Gaussian functions (see Appendix B).
+The other coefficient, $C_2$, and the equilibrium water
+content, $w_{geq}$, are given by
+\begin{eqnarray}
+C_2&=&C_{2ref} \left( {w_2 \over w_{sat}-w_2+0.01} \right) \\
+w_{geq}&=&w_2 - a w_{sat} \left( { w_2 \over w_{sat}} \right)^p
+\left[ 1 - \left({ w_2 \over w_{sat}} \right)^{8p} \right]
+\end{eqnarray}
+
+For the $w_g$ evolution,
+Eq. (13) represents the water budget over the soil
+layer of depth $d_2$.  The drainage, which is proportional to the water
+amount exceeding the field capacity (i.e., $w_2-w_{fc}$),
+is considered in the second term of the equation (see
+Mahfouf et al. 1994).  The coefficient $C_3$ does not depend
+on $w_2$ but simply on the soil texture (see Appendix A).  Similarly,
+run-off occurs when $w_g$ or $w_2$ exceeds the saturation
+value $w_{sat}$.
+
+\subsubsection{Root zone soil layer option}
+
+In the standard two-soil layer version of ISBA, it is not possible
+to distinguish the root zone and sub-root zone soil water reservoirs.
+With the three-layer version,
+the deep soil layer may provide water
+to the system through capillary rises only, and the available
+water content (for transpiration) is clearly defined.
+
+The bulk soil layer (referred to as $w_2$ in the previous sections)
+is divided into a root-zone layer (with a depth $d_2$) and base-flow layer
+(with a thickness defined as $d_3-d_2$).
+The governing equations for the time evolution of
+soil moisture for the two sub-surface soil layers are written
+following (Boone et al. 1999) as
+%
+\begin{eqnarray}
+%
+{\partial w_2\over\partial t} &=&
+{1\over \rho_w d_2}\left(P_g-E_g-E_{tr}\right)
+\,-\, {C_3\over d_2\tau} {\rm max}\left[0,\,\left(w_2-w_{fc}\right)\right]
+\,-\, {C_4\over\tau} \left(w_2-w_3\right) \\
+%
+{\partial w_3\over\partial t} &=&
+{d_2\over \left(d_3-d_2\right)}
+\Biggr\lbrace
+{C_3\over d_2\tau} {\rm max}\left[0,\,\left(w_2-w_{fc}\right)\right]
+\,+\, {C_4\over\tau} \left(w_2-w_3\right)
+\Biggr\rbrace \\
+& & \,-\,
+{C_3\over \left(d_3-d_2\right)\tau}
+{\rm max}\left[0,\,\left(w_3-w_{fc}\right)\right] \,;
+\hskip.5in 0 \leq w_3 \leq w_{sat}
+%
+\end{eqnarray}
+%
+where $C_4$ represents the vertical diffusion coefficient.
+It is defined as
+%
+\begin{eqnarray}
+%
+C_4 & =& {C_{4\, ref}} \,{{\overline w}_{2,3}}^{C_{4b}} \\
+%
+\end{eqnarray}
+%
+where ${\overline w_{2,3}}$ represents the interpolated volumetric water
+content representative of the values at the layer interface ($d_2$).
+The $C_{4\, ref}$ and $C_{4b}$ coefficients are defined using the soil
+sand and clay contents, consistent with the
+other model parameters (see the section on model coefficients). In addition,
+the $C_{4\, ref}$ coefficient is scaled as a function of grid geometry.
+The equations are integrated in time using a fully implicit method.
+
+\subsection{Treatment of the intercepted water}
+
+Rainfall and dew intercepted by the foliage feed a
+reservoir of water content $W_r$.  This amount of water
+evaporates in the air at a potential rate from the fraction
+$\delta$ of the foliage covered with a film of water, as the
+remaining part $(1-\delta)$ of the leaves transpires.
+Following Deardorff (1978), we set
+\begin{eqnarray}
+{\partial W_r \over \partial t} = veg P - (E_v-E_{tr}) - R_r \ ; \
+0 \leq W_r \leq W_{rmax}
+\end{eqnarray}
+where $P$ is the precipitation rate at the top of the vegetation,
+$E_v$ is the evaporation from the vegetation including the
+transpiration $E_{tr}$ and the direct evaporation $E_r$ when
+positive, and the dew flux when negative (in this case $E_{tr} = 0$),
+and $R_r$ is the runoff of the interception reservoir.
+This runoff occurs when $W_r$ exceeds a maximum value $W_{rmax}$
+depending upon the density of the canopy, i.e., roughly proportional
+to $veg LAI$.
+According to Dickinson (1984), we use the simple equation:
+\begin{eqnarray}
+W_{rmax} = 0.2 veg LAI \ \ \ \ \ [mm]
+\end{eqnarray}
+
+\subsection{Treatment of soil ice}
+
+The inclusion of soil freezing necessitates the addition
+of so-called phase change to the thermal and hydrologic
+transfer equations. In addition,
+a freezing/drying wetting/thawing analogy is
+used to model changes in the force-restore coefficients
+so that they must also be modified accordingly. Terms which have been
+added to the baseline ISBA scheme are underlined in this
+section, while terms which are modified are denoted using
+an $\ast$ superscript.
+Additional details related to soil freezing
+scheme can be found in Boone et al. (2000).
+
+The basic prognostic equations
+including soil ice are expressed as
+%
+\begin{eqnarray}
+{\partial T_s\over\partial t} &=&
+{C_T}^\ast \left[ R_n \,-\, H \,-\, {LE}^\ast \,-\,
+L_f(M_s-{\underline{F_{g\,w}}})\right] \,-\,
+{2\pi\over\tau}(T_s-T_2)
+\,\,\,, \\
+%
+{\partial T_2\over\partial t} &=&
+{1\over\tau}(T_s-T_2)
+\,+\,{C_G}^\ast L_f {\underline{F_{2\,w}}}
+\,\,\,, \\
+%
+{\partial w_g\over\partial t} &=&
+{1\over d_1\rho_w} \left[ {C_1}^\ast\left(P_g-E_{g\,l}+M_s \right)
+\,-\, {\underline{F_{g\,w}}} \right]
+\,-\, {{C_2}^\ast\over\tau}(w_g-{w_{g\,{\rm eq}}}^\ast) \\
+& & \hskip2.6in
+(w_{{\rm min}} \leq w_g \leq w_{\rm sat}-w_{g\,f})
+\,\,\,, \\
+%
+{\partial w_2\over\partial t} &=&
+{1\over d_p\rho_w}
+\left(P_g-{E_{g\,l}}-{E_{tr}}^\ast+M_s-
+{\underline{F_{2\,w}}} \right) \,-\,{C_3\over\tau}{\rm max}
+(0\,,\,\,w_2-{w_{\rm fc}}^\ast) \\
+& & \hskip2.6in
+(w_{{\rm min}}\leq w_2 \leq w_{\rm sat}-w_{2\,f})
+\,\,\,, \\
+%
+{\partial w_{g\,f}\over\partial t} &=&
+{1\over d_1 \rho_w} \left(
+F_{g\,w} \,-\, E_{g\,f} \right)
+\hskip1.35in
+(0 \leq w_{g\,f}\leq w_{\rm sat}-w_{{\rm min}} )
+\,\,\,, \\
+%
+{\partial w_{2\,f}\over\partial t} &=&
+{1\over \left(d_2-d_1\right)\rho_w} F_{2\,w}
+\hskip1.6in
+(0 \leq w_{2\,f}\leq w_{\rm sat}-w_{{\rm min}} )
+\,\,\,.
+\end{eqnarray}
+%
+where $w_{g\,f}$ and $w_{2\,f}$ represent the volumetric soil ice content
+(m$^3$ m$^{-3}$) in the surface and deep-soil reservoirs, respectively.
+The phase change mass and heat sink (source) terms ($F$; kg m$^{-2}$ s$^{-1}$)
+are expressed as
+%
+\begin{eqnarray}
+F_{g\,w} &=& \left(1-p_{sng}\right)\,\left( F_{g\,f}
+\,-\, F_{g\,m}\right)\,\,\,, \\
+%
+F_{2\,w} &=& \left(1-p_{sng}\right)\,\left( F_{2\,f}
+\,-\, F_{2\,m}\right)\,\,\,,
+\end{eqnarray}
+%
+where the $m$ and $f$ subscripts represent melting and
+freezing, respectively.
+The freezing and melting phase change terms are formulated using simple
+relationships based on the potential
+energy available for phase change. They are expressed
+for the surface soil layer as
+%
+\begin{eqnarray}
+F_{g\,f} &=& \left(1/\tau_i \right)\,{\rm min} \left[
+K_s \,\epsilon_{s\,f} \,{\rm max}(0,\,T_0-T_s)/C_I \, L_f ,\,
+\rho_w\,d_1\,\left( w_g-w_{\rm min} \right)
+\right]
+\,\,\, , \\
+%
+F_{g\,m} &=& \left(1/\tau_i \right)\,{\rm min} \left[
+K_s \,\epsilon_{s\,m} \,{\rm max}(0,\,T_s-T_0)/C_I \, L_f ,\,
+\rho_w\,d_1\,w_{g\,f}
+\right]
+\,\,\, ,
+\end{eqnarray}
+%
+and for the deep soil layer as
+%
+\begin{eqnarray}
+F_{2\,f} &=& \left(\delta_{2\,f}/\tau_i \right)\,{\rm min} \left[
+\epsilon_{2\,f} \,{\rm max}(0,\,T_0-T_2)/C_I \, L_f , \,
+\rho_w\,\left(d_2-d_1\right)\left( w_2-w_{\rm min}\right)\right]
+\,\,\, ,\\
+%
+F_{2\,m} &=& \left(1/\tau_i \right)\,{\rm min} \left[
+\epsilon_{2\,m} \,{\rm max}(0,\,T_2-T_0)/C_I \, L_f , \,
+\rho_w\,\left(d_2-d_1\right)\,w_{2\,f}\right]
+\,\,\,.
+\end{eqnarray}
+%
+The characteristic time scale for freezing is represented by $\tau_i$ (s).
+The phase change efficiency coefficients, $\epsilon$, introduce
+a dependence on the water mass available for phase changes
+which are expressed as
+the ratio of the liquid volumetric water content
+to the total soil porosity for freezing,
+and the ratio of ice content to the porosity for melting.
+The ice thermal inertia coefficient is defined as
+$C_I = 2 {\left( {\pi/\lambda_i\,C_i\rho_i\tau} \right)}^{1/2}$
+(J m$^{-2}$ K$^{-1}$).
+The insulating effect of vegetation is modeled using a coefficient
+defined as
+%
+\begin{eqnarray}
+K_s =
+\, \left({1-{veg\over K_2}}\right)
+\left({1-{LAI\over K_3}}\right) \,\,\,,
+\end{eqnarray}
+%
+where the dimensionless coefficients have
+the values $K_2\,=\,5.0$ and $K_3\,=\,30.0$ (Giard and Bazile 1999).
+The most direct
+effect of vegetation cover
+is to slow the rate of phase changes for more dense vegetation cover
+as energy not used for phase change is assumed to cool/warm the
+vegetative portion of the lumped soil-vegetation layer.
+
+The deep-soil phase change (freezing) term
+is multiplied by a factor ($\delta_{2\,f}$)
+which essentially limits ice production during prolonged
+cold periods.  It is defined as 0 if $z_f \geq z_{f\,{\rm max}}$
+where
+%
+\begin{eqnarray}
+z_{f\,{\rm max}} &=& 4/\left( {C_G}^\ast\,c_g\right)
+\,\,\,
+\end{eqnarray}
+and the actual depth of ice in the soil is defined as
+\begin{eqnarray}
+z_f &=& d_2 \, \left({w_{2\,f}\over w_{2\,f} + w_2}\right)
+\hskip1.in \left(0 \leq z_f < d_2\right)
+\end{eqnarray}
+%
+Ice is assumed to become
+part of the solid soil matrix. This is accomplished by
+defining the modified porosity
+(eg. Johnsson and Lundin 1991) as
+%
+\begin{eqnarray}
+{w_{sat}}^\ast = w_{sat} - w_{j\,f}
+\end{eqnarray}
+%
+where $j$ corresponds to the surface ($g$) or sub-surface ($2$)
+soil water reservoirs.
+This, in turn, is used to modify the force-restore coefficients
+(see Boone at al. 2000 for more details).
+
+\subsection{Treatment of the snow}
+
+\subsubsection{One-layer snow scheme option}
+
+The evolution of the equivalent water content of the snow reservoir
+is given by
+\begin{eqnarray}
+{\partial W_s \over \partial t} = P_s - E_s - melt
+\end{eqnarray}
+where $P_s$ is the precipitation of snow, and $E_s$ is the sublimation
+from the snow surface.
+
+The presence of snow covering the ground and
+vegetation can greatly influence the energy and mass
+transfers between the land surface and the atmosphere.
+Notably, a snow layer modifies the radiative
+balance at the surface by increasing the albedo.
+To consider this effect, the albedo of snow $\alpha_s$ is treated
+as a new prognostic variable.
+Depending if the snow is melting or not,
+$\alpha_s$ decreases
+exponentially or linearly with time.
+
+If there is no melting (i.e., $melt=0$):
+\begin{eqnarray}
+\alpha_s (t) = \alpha_s (t-\Delta t) - \tau_a {\Delta t \over \tau}
++ { P_s \Delta t \over W_{crn} } ( \alpha_{smax} - \alpha_{smin} ) \\
+\alpha_{smin} \leq \alpha_s \leq \alpha_{smax}
+\end{eqnarray}
+where $\tau_a=0.008$ is the linear rate of decrease per day,
+$\alpha_{smin}=0.50$
+and $\alpha_{smax}=0.85$ are the minimum and maximum values of the snow
+albedo.
+
+If there is melting (i.e., $melt \ > \ 0$):
+\begin{eqnarray}
+\alpha_s (t) = \left[ \alpha_s(t - \Delta t) - \alpha_{smin} \right]
+exp \left[ -\tau_f {\Delta t \over \tau } \right]
++ \alpha_{smin}
++ { P_s \Delta t \over W_{crn} } ( \alpha_{smax} - \alpha_{smin} ) \\
+\alpha_{smin} \leq \alpha_s \leq \alpha_{smax}
+\end{eqnarray}
+where $\tau_f=0.24$ is the exponential decrease rate per day.
+Of course, the snow albedo increases as snowfalls occur, as shown
+by the second terms of Eqs. (21) and (23).
+
+The average albedo of a model grid-area is expressed as
+\begin{eqnarray}
+\alpha_t = (1-p_{sn}) \alpha + p_{sn} \alpha_s
+\end{eqnarray}
+Similarly, the average emissivity $\epsilon_t$ is also
+influenced by the snow coverage:
+\begin{eqnarray}
+\epsilon_t = (1-p_{sn}) \epsilon + p_{sn} \epsilon_s
+\end{eqnarray}
+where $\epsilon_s = 1.0$ is the emissivity of the snow.
+Thus, the overall albedo and emissivity of the ground for infrared radiation
+is enhanced by snow.
+
+Because of the significant variability of thermal properties related
+with the snow compactness,
+the relative density of snow $\rho_s$ is also considered
+ as a prognostic variable.
+Based on Verseghy (1991), $\rho_s$ decreases exponentially at a rate
+of $\tau_f$ per day:
+\begin{eqnarray}
+\rho_s(t)=\left[ \rho_s(t-\Delta t) - \rho_{smax} \right]
+exp \left[ -\tau_f {\Delta t \over \tau } \right] + \rho_{smax}
++ {P_s \Delta t \over W_s} \rho_{smin}  \\
+\rho_{smin} \leq \rho_s \leq  \rho_{smax}
+\end{eqnarray}
+where
+$\rho_{smin} = 0.1$ and $\rho_{smax} = 0.3$
+are the minimum and maximum relative density of snow.
+
+Finally, the average roughness length $z_{0t}$ is
+\begin{eqnarray}
+z_{0t} = ( 1 - p_{snz0} ) z_0 + p_{snz0} z_{0s}
+\end{eqnarray}
+where
+\begin{eqnarray}
+p_{snz0} = { W_s \over W_s + W_{crn} + \beta_s g z_0 }
+\end{eqnarray}
+Here, $\beta_s = 0.408 \ s^2 m^{-1}$ and $g=9.80665 \ m s^{-2}$ are physical constants,
+whereas $z_{0s}$ is the roughness length of the snow.
+
+\subsubsection{Multi-layer snow scheme option}
+
+An additional snow scheme option has been added to ISBA.
+It is a so-called intermediate complexity scheme which
+is representative of a class of snow models which
+use several layers and have simplified physical parameterization schemes
+based on those of the highly detailed internal-process models
+while having computational requirements more closely resembling
+the relatively simple
+composite/force-restore or single layer schemes
+(eg.s Loth et al. 1993; Lynch-Steiglitz 1994; Sun et al. 1999).
+%
+Compared to the baseline ISBA snow scheme,
+the explicit multi-layered approach
+resolves the large thermal and the density gradients
+which can exist in the snow cover, distinguishes the surface
+energy budgets of the snow and non-snow covered portions
+of the surface, includes the effects of liquid water storage
+in the snow cover, models the
+absorption of incident radiation within the pack,
+and calculates explicit heat conduction between the
+snow and the soil.
+
+The conservation equation for the total snow cover mass
+is expressed as
+%
+\begin{eqnarray}
+{\partial W_s \over \partial t} =
+P_s + p_{sn}\,\left(P-P_s\right) - E_{s} - E_{sl} - Q_n
+\,\,\,,
+\end{eqnarray}
+%
+where $E_{sl}$ represents evaporation of liquid water
+from the snow surface, and the product $p_{sn}\,\left(P-P_s\right)$
+represents the portion of the total rainfall that is
+intercepted by the snow surface while the remaining
+rainfall is assumed to be intercepted by the snow-free soil and vegetation
+canopy. The snow-runoff rate, $Q_n$,
+is the rate at which
+liquid water leaves the base of the snow cover.
+
+The snow state variables are the heat content ($H_s$),
+the layer thickness ($D$), and the layer average density ($\rho_s$).
+The temperature ($T_{sn}$) and liquid water content ($w_{sl}$) are defined
+using the heat content.
+The total snow depth, $D_s$ (m) is defined as
+%
+\begin{eqnarray}
+D_s = \sum_{i=1}^{N_s} D_i
+\end{eqnarray}
+%
+where a three-layer configuration is currently used by default (i.e. $N_s=3$).
+%The layering scheme is described in Boone and Etchevers (2000).
+The surface snow layer is always less than or equal to 0.05 m, and this
+temperature is used to calculate the fluxes between the atmosphere
+and the snow surface.
+The snow density is compacted using standard empirical relationships
+(Anderson 1976). Additional changes arise to snowfall which
+generally reduces the snow density, and densification resulting from ripening.
+The snow heat content (J m$^{-2}$) is defined as
+%
+\begin{eqnarray}
+H_{s\,i} = c_{s\,i}\,D_i\,\left(T_{sn\,i}-T_0\right)
+\,-\, L_f\,\rho_w \left(w_{s\,i}- w_{sl\,i}\right)\,\,\,,
+\end{eqnarray}
+%
+where $w_s$ is the total snow layer water equivalent depth (m),
+$w_{sl}$ is the snow layer liquid water content (m), and $c_s$
+is the snow heat capacity (J m$^{-3}$ K$^{-1}$) (using the same
+definition as the baseline ISBA snow scheme).
+The snow heat content is used in order to allow
+the presence of either
+cold (dry) snow which has a temperature less
+than or equal to the freezing point
+%and contains no liquid water,
+or warm (wet)
+snow which is characterized by a temperature at the freezing point
+and contains water in liquid form.
+The snow temperature
+and liquid water content can then be defined as
+%
+\begin{eqnarray}
+T_{sn\,i} &=& T_f \,+\, \left(H_{s\,i}  + L_f\,\rho_w\,w_{s\,i}\right)
+/\left(c_{s\,i}\,D_i \right) \,;
+\hskip.3in
+w_{l\,i} = 0 \\
+%
+w_{sl\,i} &=& w_{s\,i} \,+\, \left(H_{s\,i}/L_f\,\rho_w\right) \,;
+\hskip1.3in
+T_{sn\,i} = T_f \,\,\,{\rm and} \,\,\, w_{sl\,i} \leq w_{sl\,{\rm max}\,i}
+\end{eqnarray}
+%
+where $w_{sl\,{\rm max}\,i}$ is the maximum liquid water
+holding capacity of a snow layer,
+which is based on empirical relations. All
+water exceeding this flows into the layer below where
+it can do one or all of the following;
+add to the liquid water content, refreeze, or continue
+flowing downward.
+
+Snow heat flow is along the thermal gradient
+as any snow melt or percolated water within the snow cover
+is assumed to have zero heat content.
+The layer-averaged snow temperature equation
+($T_{s\,i}$) is expressed as
+%
+\begin{eqnarray}
+c_{s\,i} D_i {\partial T_{sn\,i}\over\partial t}
+= G_{s\,i-1} - G_{s\,i} + R_{s\,i-1} - R_{s\,i}  - S_{s\,i}
+\,\,\,,
+\end{eqnarray}
+%
+where $S_s$ represents an energy sink/source term associated with
+phase changes between the liquid and solid phases of water.
+Incoming short wave radiation ($R_s$)
+transmission within the snowpack decreases exponentially
+with increasing snow depth. At the surface, it is expressed as
+%
+\begin{eqnarray}
+R_{s\,0} = R_g \,\left(1-\alpha_s\right)
+\end{eqnarray}
+%
+where the snow albedo is defined using the same relationships
+as in the baseline version of ISBA (Douville et al. 1995).
+The sub-surface heat ($G_s$) flux terms are evaluated using
+simple diffusion. At the surface, this flux is expressed as
+%
+\begin{eqnarray}
+G_{s\,0}
+= \epsilon_s \left( R_A - \sigma_{SB} {T_{sn\,1}}^4 \right)
+\,-\, H\left(T_{sn\,1}\right) \,-\, LE\left(T_{sn\,1}\right) \,-\,
+c_w \,p_{sn} \left(P-P_s\right)\left(T_f-T_r\right)\,\,\,,
+\end{eqnarray}
+%
+The last term on the right hand side of the above equation
+represents a latent heat source when rain
+with a temperature ($T_r$) greater than $T_0$ falls on the snow cover,
+where $c_w$ represents the heat
+capacity of water (4187 J kg$^{-1}$ K$^{-1}$).
+Rainfall is simply assumed to have a temperature which is the larger of
+the air temperature ($T_a$) and the freezing point.
+The latent heat flux from the snow
+includes the liquid fraction weighted
+contributions from the
+evaporation of liquid water and sublimation.
+
+The ISBA surface soil/vegetation layer temperature is then
+coupled to the snow scheme using
+%
+\begin{eqnarray}
+{1\over C_T}{\partial T_s\over\partial t} &=&
+\left(1-p_n\right) \left[R_g\left(1-\alpha\right) +
+\epsilon_t\left(R_A-\sigma {T_s}^4\right)- H - LE
+- {2\pi \over C_T \tau} \left(T_s-T_2\right)
+\right] \\
+%
+& & \,+\, p_n \, \left[G_{s\,N}+R_{s\,N}
++ c_w\,Q_n\,\left(T_f-T_s\right)
+\right] \,\,\,.
+\end{eqnarray}
+%
+The term on the right hand side of the above equation
+involving the snow runoff ($Q_n$) represents an advective term.
+The net surface fluxes to/from the atmosphere
+are then calculated as the snow-cover
+fraction weighted sums over the snow and non-snow covered
+surfaces. When the 3-layer option is in use, the default ISBA scheme
+is used when the snow cover is relatively thin (arbitrarily
+defined as 0.05 m depth). When the snow depth exceeds this
+threshold, the snow mass and heat is transferred to the multi-layer
+scheme. This prevents numerical difficulties
+%and a more complex computer code
+for vanishingly thin snow packs.
+
+\subsection{The surface fluxes}
+
+Only one energy balance is considered for the whole system
+ground-vegetation-snow (when the 3-layer snow scheme option is not in use).
+As a result, heat and mass transfers between the surface and
+the atmosphere are related to the mean values $T_s$ and $w_g$.
+
+The net radiation at the surface is the sum of the absorbed
+fractions of the incoming solar radiation $R_G$ and of the
+atmospheric infrared radiation $R_A$, reduced by the emitted
+infrared radiation:
+\begin{eqnarray} \label{eqnRN}
+R_n = R_G (1-\alpha_t) + \epsilon_t \left( R_A-\sigma_{SB}{T_s}^4 \right)
+\end{eqnarray}
+where $\sigma_{SB}$ is the Stefan-Boltzmann constant.
+
+The turbulent fluxes are calculated by means of the classical
+aerodynamic formulas.  For the sensible heat flux:
+\begin{eqnarray}
+H = \rho_a c_p C_H V_a (T_s - T_a) \label{eqnH}
+\end{eqnarray}
+where $c_p$ is the specific heat; $\rho_a$, $V_a$, and $T_a$
+are respectively the air density, the wind speed, and the
+temperature at the lowest atmospheric level; and $C_H$,
+as discussed below, is the
+drag coefficient depending upon the thermal stability of the
+atmosphere. The explicit snow scheme sensible heat flux
+is calculated using the same formulation (but with $T_{sn}$).
+The water vapor flux $E$ is the sum of the evaporation
+of liquid water
+from the soil surface (i.e., $E_{g\,l}$), from the vegetation (i.e., $E_v$),
+and sublimation from the snow and soil ice (i.e, $E_s$ and $E_{g\,f}$):
+%
+\begin{eqnarray}
+LE &=& LE_{g\,l} + LE_v + L_i \left(E_s + E_{g\,f}\right) \\
+E_{g\,l} &=& (1-veg)(1-p_{sng})\left(1-\delta_i\right)\, \rho_a C_H V_a
+        \left( h_u q_{sat}(T_s) - q_a \right) \label{eqnLEG} \\
+E_v &=& veg (1-p_{snv}) \rho_a C_H V_a h_v
+        \left( q_{sat}(T_s) - q_a \right) \\
+E_s &=& p_{sn} \rho_a C_H V_a
+        \left( q_{sat}(T_s) - q_a \right) \\
+E_{g\,f} &=&
+\,\left(1-veg\right)\left(1-p_{sng}\right)\,\delta_i\, \rho_a C_H V_a
+\left( h_{ui} \,q_{\rm sat}\left(T_s\right) \,-\, q_a \right)
+\end{eqnarray}
+where $L$ and $L_i$ are the specific heat of evaporation
+and sublimation, $q_{sat}(T_s)$ is the saturated
+specific humidity at the
+temperature $T_s$, and $q_a$ is the atmospheric specific humidity
+at the lowest atmospheric level.
+The water vapor flux $E$
+from the explicit snow surface is expressed as
+%
+\begin{eqnarray}
+LE\left(T_{sn\,1}\right) &=& L E_{sl} + L_i E_s \\
+E_{sl} &=& \delta_{sn} \,\rho_a C_{Hs} V_a
+        \left( q_{sat}\left(T_{sn\,1}\right) - q_a \right) \\
+E_s &=& \left(1-\delta_{sn}\right) \,
+        \rho_a C_{Hs} V_a \left( q_{sat}\left(T_{sn\,1}\right) - q_a \right) \\
+\delta_{sn} &=& w_{sl\,1}/w_{sl\,{\rm max}\,1}\,;
+\hskip2.2in
+0 \leq \delta_{sn} \leq 1
+\end{eqnarray}
+%
+where evaporation of liquid water is zero when $T_{sn\,1}<T_0$.
+The transfer coefficient ($C_{Hs}$) is calculated over the snow
+covered surface using the same formulation as $C_H$.
+
+The surface ice fraction is
+is used to partition the bare soil latent heat flux
+between evaporation and sublimation, and it is defined as
+%
+\begin{eqnarray}
+\delta_i = w_{g\,f}/\left(w_{g\,f}+w_g\right) \,;
+\hskip.5in
+0 \leq \delta_i < 1   \,\,\,.
+\end{eqnarray}
+
+The relative humidity $h_u$ at the ground surface is related to the
+superficial soil moisture $w_g$ following
+\begin{eqnarray}
+h_u &=& {1 \over 2} \left[ 1-cos \left( {w_g \over {w_{fc}}^\ast} \pi \right)
+      \right] \ , \ {\rm if} \ w_g < {w_{fc}}^\ast \\
+h_u &=& 1 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+          \ \ \ \ \ \ \ \ \ , \ {\rm if} \ w_g \geq {w_{fc}}^\ast
+\end{eqnarray}
+%
+where the field capacity with respect to the liquid water
+is defined using the modified soil porosity so
+that ${w_{fc}}^\ast = w_{fc}\,w_{sat}^\ast/w_{sat}$.
+The humidity for the ice covered portion of the grid box
+is calculated in a similar fashion as
+%
+\begin{eqnarray}
+h_{ui} &=& {1 \over 2} \left[ 1-cos \left( {w_{g\,f} \over {w_{fc}}^{\ast\ast}} \pi \right)
+      \right] \ , \ {\rm if} \ w_{g\,f} < {w_{fc}}^{\ast\ast} \\
+h_{ui} &=& 1 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+          \ \ \ \ \ \ \ \ \ , \ {\rm if} \ w_{g\,f} \geq {w_{fc}}^{\ast\ast}
+\end{eqnarray}
+%
+where ${w_{fc}}^{\ast\ast} = w_{fc}(w_{sat}-w_g)/w_{sat}$.
+In case of dew flux when $q_{sat}(T_s) < q_a$, $h_u$ is also set
+to 1 (see Mahfouf and Noilhan 1991 for details).
+When the flux $E_v$ is positive, the Halstead coefficient $h_v$
+takes into account the direct evaporation $E_r$ from the fraction
+$\delta$ of the foliage covered by intercepted water, as well as
+the transpiration $E_{tr}$ of the remaining part of the leaves:
+\begin{eqnarray}
+h_v &=& (1-\delta) R_a / (R_a+R_s) + \delta \\
+E_r &=& veg(1-p_{snv}) {\delta \over R_a}
+        \left( q_{sat} (T_s) - q_a \right) \\
+E_{tr} &=& veg(1-p_{snv}) {1-\delta \over R_a + R_s}
+           \left( q_{sat}(T_s) - q_a \right)
+\end{eqnarray}
+When $E_v$ is negative, the dew flux is supposed to occur
+at the potential rate, and $h_v$ is taken equal to 1.
+
+Following Deardorff (1978), $\delta$ is a power function of the
+moisture content of the interception reservoir:
+\begin{eqnarray}
+\delta = (W_r / W_{rmax})^{2/3}
+\end{eqnarray}
+The aerodynamic resistance is $R_a = ( C_H V_a )^{-1}$.
+The surface resistance, $R_s$, depends upon both atmospheric
+factors and available water in the soil; it is given by:
+\begin{eqnarray}
+R_s = {R_{smin} \over F_1 F_2 F_3 F_4 LAI}
+\end{eqnarray}
+with the limiting factors $F_1$, $F_2$, $F_3$, and $F_4$:
+\begin{eqnarray}
+F_1 &=& {f+R_{smin}/R_{smax} \over 1+f} \\
+F_2 &=& {w_2-w_{wilt} \over w_{fc} - w_{wilt} } \ \ \ \
+and \ 0 \leq F_2 \leq 1 \\
+F_3 &=& 1 - \gamma \left( q_{sat}(T_s) - q_a \right) \\
+F_4 &=& 1-1.6\times 10^{-3} (T_a - 298.15)^2
+\end{eqnarray}
+where the dimensionless term $f$ represents the incoming
+photosynthetically active radiation on the foliage,
+normalized by a species-dependent threshold value:
+\begin{eqnarray}
+f = 0.55 {R_G \over R_{Gl}} {2 \over LAI}
+\end{eqnarray}
+Moreover,
+$\gamma$ is a species-dependent parameter (see Jacquemin and
+Noilhan 1990) and $R_{smax}$ is arbitrarily set to $5000 \ s m^{-1}$.
+
+The surface fluxes of heat, moisture, and momentum can
+be expressed as
+\begin{eqnarray}
+(\overline{w'\theta'})_s &=& {H \over \rho_a c_p T_a / \theta_a} \label{eqn_H} \\
+(\overline{w'r'_v})_s &=& {E \over \rho_a (1-q_a)} \label{eqn_LE} \\
+|\overline{w'V'}|_s &=& C_D |V_a|^2  = u^2_* \label{eqn_FM}
+\end{eqnarray}
+where $r_v$ is the water vapor mixing ratio,
+$w$ is the vertical motion, $\theta_a$ is the potential
+temperature at the lowest atmospheric level.  The primes and
+overbars denote perturbation and average quantities.
+
+For the drag coefficients $C_H$ and $C_D$, the formulation of
+Louis (1979) was modified in order to consider different
+roughness length values for heat $z_0$ and momentum $z_{0h}$
+(Mascart et al. 1995):
+\begin{eqnarray}
+C_D = C_{DN} F_m \ ; \
+C_H = C_{DN} F_h
+\end{eqnarray}
+with
+\begin{eqnarray}
+C_{DN} = {k^2 \over [ln ( z / z_0) ]^2} \\
+\end{eqnarray}
+where $k$ is the Von Karmann constant.  Also
+\begin{eqnarray}
+F_m &=& 1 - {10 Ri \over 1 + C_m
+        \sqrt{|Ri|} }  \ \ \ \ \ if \ Ri \leq 0 \\
+F_m &=& {1 \over 1 + {10Ri \over \sqrt{1+5Ri}}} \
+        \ \ \ \ \ \ \ \ \ \ \ \ \ if \ Ri > 0
+\end{eqnarray}
+and
+\begin{eqnarray}
+F_h = \left[ 1-{15Ri \over 1 + C_h \sqrt{|Ri|}} \right]
+      \times \left[ {ln(z/z_{0}) \over ln(z/z_{0h})} \right] \
+      \ \ \ \ \ \ \ \ if \ Ri \leq 0 \\
+F_h = {1 \over 1+15Ri \sqrt{1+5Ri}}
+      \times \left[ {ln(z/z_{0}) \over ln(z/z_{0h})} \right] \
+      \ \ \ \ \ \ \ \ if \ Ri > 0
+\end{eqnarray}
+where $Ri$ is the gradient Richardson number.
+The coefficients $C_m$ and $C_h$ of the unstable case are given by
+\begin{eqnarray}
+C_m &=& 10 {C_m}^* C_{DN} (z/z_{0})^{p_m} \\
+C_h &=& 15 {C_h}^* C_{DN} (z/z_{0h})^{p_h} \times
+        \left[ {ln(z/z_{0}) \over ln(z/z_{0h})} \right]
+\end{eqnarray}
+where $C^*_m$, $C^*_h$, $p_m$, and $p_h$ are functions of the ratio
+$\mu = ln(z_{0}/z_{0h})$ only:
+\begin{eqnarray}
+C^*_h &=& 3.2165 + 4.3431 \times \mu + 0.5360 \times \mu^2
+        - 0.0781 \times \mu^3 \\
+C^*_m &=& 6.8741 + 2.6933 \times \mu - 0.3601 \times \mu^2
+        + 0.0154 \times \mu^3 \\
+p_h &=& 0.5802 - 0.1571 \times \mu + 0.0327 \times \mu^2
+        - 0.0026 \times \mu^3 \\
+p_m &=& 0.5233 - 0.0815 \times \mu + 0.0135 \times \mu^2
+        - 0.0010 \times \mu^3
+\end{eqnarray}
+
+
+\subsection{Summary of Useful Parameters}
+
+The parameters have been chosen in order to characterize the
+main physical processes, while attempting to reduce the number
+of independant variables.  They can be divided into two
+categories:  primary parameters needing to be specified by
+spatial distribution, and secondary parameters which values
+can be associated with those of the primary parameters.
+\\
+
+In the present state of the method,
+the primary parameters describe the nature of the land surface
+and its vegetation coverage by means of only four numerical
+indices:  the percentage of
+sand and clay in the soil, the dominant vegetation type,
+and the land-sea mask.\\
+
+The secondary parameters associated with the soil type are
+evaluated from the sand and clay composition of the soil, according
+to the continuous formulation discussed in Giordani (1993) and
+Noilhan and Lacarr\`ere (1995) (see Appendix).
+These parameters are:
+\begin{itemize}
+\item the saturated volumetric moisture content $w_{sat}$;
+\item the wilting point volumetric water content $w_{wilt}$;
+\item the field capacity volumetric water content $w_{fc}$;
+\item the slope $b$ of the retention curve;
+\item the soil thermal coefficient at saturation $C_{Gsat}$;
+\item the value of $C_1$ at saturation (i.e., $C_{1sat}$);
+\item the reference value of $C_2$ for $w_2=0.5 w_{sat}$ (i.e., $C_{2ref}$);
+\item the drainage coefficient $C_3$  ;
+\item the diffusion coefficients $C_{4\,ref}$ and $C_{4b}$ ;
+\item and the coefficients $a,p$ for the $w_{geq}$ formulation.
+\end{itemize}
+On the other hand,
+the parameters associated with the vegetation can either
+be derived from the dominant vegetation type, or
+be specified from existing classification or observations.
+They are
+\begin{itemize}
+\item the fraction of vegetation $veg$;
+\item the depth of the soil column $d_2$ (or the root zone depth);
+\item the depth of the soil column $d_3$ (if third soil layer option in use);
+\item the minimum surface resistance $R_{smin}$;
+\item the leaf area index $LAI$;
+\item the heat capacity $C_v$ of the vegetation;
+\item the $R_{Gl}$ and $\gamma$ coefficients found in the formulation
+of the surface resistance $R_s$;
+\item and the roughness length for momentum $z_0$ and for heat $z_{0h}$.
+\end{itemize}
+Other necessary parameters are
+\begin{itemize}
+\item the albedo $\alpha$
+\item the emissivity $\epsilon$.
+\item and characteristic time scale for phase changes (currently constant) $\tau_i$.
+\end{itemize}
+
+
+\subsection{Apendix A: Continuous formulation of the soil secondary parameters}
+Following Giordani (1993), Noilhan and Lacarr\`ere (1995),
+the sand and clay composition (i.e., $SAND$ and $CLAY$) are
+expressed in percentage.
+
+\bigskip
+
+The saturated volumetric water content ($m^3 m^{-3}$):
+\begin{eqnarray}
+w_{sat} =  ( -1.08 SAND + 494.305 ) \times 10^{-3}
+\end{eqnarray}
+
+The wilting point volumetric water content ($m^3 m^{-3}$):
+\begin{eqnarray}
+w_{wilt} = 37.1342 \times 10^{-3} (CLAY)^{0.5}
+\end{eqnarray}
+
+The field capacity volumetric water content ($m^3 m^{-3}$):
+\begin{eqnarray}
+w_{fc} = 89.0467 \times 10^{-3} (CLAY)^{0.3496}
+\end{eqnarray}
+
+The slope of the retention curve:
+\begin{eqnarray}
+b = 0.137 CLAY + 3.501
+\end{eqnarray}
+
+The soil thermal coefficient at saturation ($K m^2 J^{-1}$):
+\begin{eqnarray}
+C_{Gsat} = -1.557 \times 10^{-2} SAND -1.441 \times 10^{-2} CLAY
++ 4.7021
+\end{eqnarray}
+
+The value of $C_1$ at saturation:
+\begin{eqnarray}
+C_{1sat} = (5.58 CLAY + 84.88) \times 10^{-2}
+\end{eqnarray}
+
+The value of $C_2$ for $w_2=0.5 w_{sat}$:
+\begin{eqnarray}
+C_{2ref} = 13.815 CLAY^{-0.954}
+\end{eqnarray}
+
+The coefficient $C_3$:
+\begin{eqnarray}
+C_3 = 5.327 CLAY^{-1.043}
+\end{eqnarray}
+
+The coefficient $C_{4b}$:
+\begin{eqnarray}
+C_{4b} = 5.14 \,+\,0.115 \, CLAY
+\end{eqnarray}
+
+The coefficient $C_{4\,ref}$:
+\begin{eqnarray}
+C_{4\, ref} &=& {2(d_3-d_2)\over (d_2\,{d_3}^2)}
+{\rm {log}_{10}}^{-1}
+\Bigg[
+\beta_0 +
+\sum_{j=1}^3 \left( \beta_j \,{SAND}^{\,j} \,+\,
+\alpha_j \,{CLAY}^{\,j} \right)
+\Bigg]
+\end{eqnarray}
+%
+where the $\beta_j \,(j=0,3)$ coefficients are
+$4.42 \times {10}^{-0},\, 4.88 \times {10}^{-3},\,
+5.93 \times {10}^{-4}$ and $-6.09 \times {10}^{-6}$.
+The $\alpha_j \,(j=1,3)$ coefficients are defined as
+$-2.57 \times {10}^{-1} ,\,
+8.86 \times {10}^{-3}$ and
+$-8.13 \times {10}^{-5}$.
+
+The coefficients for the $w_{geq}$ formulation:
+\begin{eqnarray}
+a&=&732.42 \times 10^{-3} CLAY^{-0.539} \\
+p&=&0.134 CLAY + 3.4
+\end{eqnarray}
+
+\subsection{Appendix B: Gaussian formulation for the $C_1$ coefficient}
+
+Following Giordani (1993) and Braud et al. (1993),
+for dry soils (i.e., $w_g < W_{wilt}$), the $C_1$ coefficient
+in Eq. (13) is approximated by the Gaussian distribution:
+\begin{eqnarray}
+  C_1(w) = C_{1max} exp \left[ - {(w_g-w_{max})^2 \over 2 \sigma^2} \right]
+\end{eqnarray}
+In this expression,
+\begin{eqnarray}
+  C_{1max} &=& (1.19w_{wilt}-5.09) \times 10^{-2} T_s
+           + (-1.464w_{wilt} + 17.86) \\
+  w_{max}  &=& \eta w_{wilt}
+\end{eqnarray}
+with
+\begin{eqnarray}
+  \eta = (-1.815 \times 10^{-2} T_s + 6.41) w_{wilt}
+       + (6.5 \times 10^{-3} T_s -1.4)
+\end{eqnarray}
+and
+\begin{eqnarray}
+  \sigma^2 = - {W^2_{max} \over 2 ln \left( {0.01 \over C_{1max} } \right) }
+\end{eqnarray}
+
+
+\section{References}
+
+\begin{description}
+
+\item
+Anderson, E. A., 1976:
+A point energy and mass balance model of a snow cover.
+{\it NOAA Tech. Rep. NWS 19}, 150 pp. U.S. Dept. of
+Commer., Washington, D.C.
+
+\item
+Bhumralkar, C.M., 1975:
+Numerical experiment on the computation of ground surface
+temperature in an atmospheric general circulation model.
+{\em J. Appl. Meteor.}, {\bf 14}, 1246-1258.
+
+\item
+Blackadar, A.K., 1976:
+Modeling the nocturnal boundary layer.
+{\em Proc. Third Symp. on Atmospheric Turbulence,
+Diffusion and Air Quality }, Boston, Amer. Meteor. Soc., 46-49.
+
+\item
+Boone, A.,
+and P. Etchevers, 2000:
+An intercomparison of three snow schemes of varying complexity
+coupled to the same land-surface and macroscale hydrologic models.
+{\em J. Hydrometeor.},
+(submitted).
+
+\item
+Boone, A.,
+J.-C. Calvet and J. Noilhan, 1999:
+Inclusion of a third soil layer in a
+land-surface scheme using the force-restore method,
+{\em J. Appl. Meteor.},
+{\bf 38},
+1611-1630.
+
+\item
+Boone, A.,
+V. Masson, T. Meyers, and J. Noilhan, 2000:
+The influence of the inclusion of soil freezing
+on simulations by a soil-atmosphere-transfer scheme.
+{\em J. Appl. Meteor.},
+(in press).
+
+\item
+Braud, I., J. Noilhan, P. Bessemoulin, P. Mascart, R. Haverkamp,
+and M. Vauclin, 1993:
+Bare-ground surface heat and water exchanges under dry conditions:
+Observations and parameterization.
+{\em Bound.-Layer Meteror.},
+{\bf 66},
+173-200.
+
+\item
+Deardorff, J.W., 1978:
+Efficient prediction of ground surface temperature and moisture
+with inclusion of a layer of vegetation.
+{\em J. Geophys. Res.},
+{\bf 20},
+1889-1903.
+
+\item
+Deardorff, J.W., 1977:
+A parameterization of ground surface moisture content for
+use in atmospheric prediction models.
+{\em J. Appl. Meteor.},
+{\bf 16},
+1182-1185.
+
+\item
+Dickinson, R.E., 1984:
+Modeling evapotranspiration for three dimensional global
+climate models.
+{\em Climate Processes and Climate Sensitivity.
+Geophys. Monogr.},
+{\bf 29},
+58-72.
+
+\item
+Douville, H., 1994:
+D\'eveloppement et validation locale d'une nouvelle
+param\'etrisation du manteau neigeux.
+Note 36 GMME/M\'et\'eo-France.
+
+\item
+Douville, H., J.-F. Royer, and J.-F. Mahfouf,1995:
+A new snow parameterization for the French community climate
+model.  Part I:  Validation in stand-alone experiments.
+{\em Climate Dyn.},
+submitted.
+
+\item
+Giard, D., and E. Bazile, 1999:
+Implementation of a new assimilation scheme for
+soil and surface variables in a global NWP model.
+{\em Mon. Wea. Rev.},
+(in press).
+
+\item
+Giordani, H., 1993:
+Exp\'eriences de validation unidimensionnelles du sch\'ema
+de surface NP89 aux normes Arp\`ege sur trois sites de la
+campagne EFEDA 91.
+Note de travail 24 GMME/M\'et\'eo-France.
+
+\item
+Jacquemin, B., and J. Noilhan, 1990:
+Validation of a land surface parameterization using the
+HAPEX-MOBILHY data set.
+{\em Bound.-Layer Meteor.},
+{\bf 52},
+93-134.
+
+\item
+Johnsson, H., and L.-C. Lundin, 1991:
+Surface runoff and soil water percolation as affected by snow
+and soil frost.
+{\em J. Hydro.},
+{\bf 122},
+141-158.
+
+\item
+Loth, B.,
+H.-F. Graf, and J. M. Oberhuber, 1993:
+Snow cover model for global climate simulations.
+{\em J. of Geophys. Res.},
+{\bf 98},
+10451-10464.
+
+\item
+Louis, J.F., 1979:
+A parametric model of vertical eddy fluxes in the atmosphere.
+{\em Bound.-Layer Meteor.},
+{\bf 17},
+187-202.
+
+\item
+Lynch-Stieglitz, M., 1994: The development and validation
+of a simple snow model for the GISS GCM.
+{\em J. Clim.},
+{\bf 7},
+1842-1855.
+
+\item
+Mahfouf, J.-F., J. Noilhan, and P. P\'eris, 1994:
+Simulations du bilan hydrique avec ISBA:  Application
+au cycle annuel dans le cadre de PILPS.
+Atelier de mod\'elisation de l'atmosph\`ere,
+CNRM/M\'et\'eo-France,
+December 1994, Toulouse, France, 83-92.
+
+\item
+Mahfouf, J.-F., and J. Noilhan, 1991:
+Comparative study of various formulations of evaporation
+from bare soil using in situ data.
+{\em J. Appl. Meteor.}, {\bf 9}, 1354-1365.
+
+
+\item
+Mascart, P., J. Noilhan, and H. Giordani, 1995:
+A modified parameterization of flux-profile relationships
+in the surface layer using different roughness length
+values for heat and momentum.
+{\em Bound.-Layer Meteor.},{\bf 72}, 331-344.
+
+\item
+Masson, 2000:
+A physically-based scheme for the urban energy budget in atmospheric models.
+{\it Boundary Layer Meteorology}, in press.
+
+\item
+Noilhan, J., and P. Lacarr\`ere, 1995:
+GCM grid-scale evaporation from mesoscale modeling.
+{\em J. Climate},
+in press.
+
+\item
+Noilhan, J., and S. Planton, 1989:
+A simple parameterization of land surface processes for
+meteorological models.
+{\em Mon. Wea. Rev.}, {\bf 117}, 536-549.
+
+\item
+Sun, S.,
+J. Jin, and Y. Xue, 1999:
+A simple snow-atmosphere-soil transfer (SAST) model.
+{\em J. of Geophys. Res.},
+{\bf 104},
+19587-19579.
+
+\item
+Verseghy, D., 1991:
+CLASS - A Canadian land surface scheme for GCMs.
+I:  Soil model.
+{\em Int. J. Climatol.},
+{\bf 11},
+111-133.
+
+\end{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%  END OF THE "Surface Processes Scheme" CHAPTER     %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,639 @@
+\chapter{Coordinate Systems}
+\minitoc
+
+%{\em by V. Ducrocq and P. Bougeault}
+
+In general, it will not be possible to develop the equations of the previous
+chapter in a simple cartesian coordinate system, because
+of the earth sphericity, and of the underlying topography.
+In meteorology, a natural coordinate system is defined by the longitude
+$\lambda$, the latitude $\varphi$, and the distance from the earth center $r$
+(or the altitude above sea surface $z=r-a$, where $a$ is the earth radius).
+The vector basis associated with this natural system will be called
+$(\vec{i}_0, \vec{j}_0,\vec{k})$. $\vec{i}_0$ points towards the east,
+$\vec{j}_0$ towards the north, and $\vec{k}$ is vertical.
+In Meso-NH, we prefer to work with a conformal
+projection allowing for rotation with respect to this natural basis.
+This allows more flexibility in the direction of the coordinate lines
+to study particular processes. This also simplifies the initialization
+of model runs with products of operational weather prediction systems,
+like the Arpege system of Meteo-France, or the ECMWF system.
+
+\section{Conformal Projections and Terrain Following Coordinates}
+
+We use a system of curvilinear coordinates $\widehat{x},\widehat{y},
+\widehat{z}$, defined in the following manner.
+
+\subsection{Gal-Chen and Sommerville vertical coordinate}
+
+$\widehat{z}$ is
+the Gal-Chen and Sommerville (1975) vertical coordinate:
+
+\begin{equation}
+\widehat{z} =H  \dfrac{z - z_{s}}{H - z_{s} },
+\end{equation}
+where $H$ is the height of the model top, and  $z_{s}$ the height of the
+local topography. Since the transformation is purely vertical, $\vec{k}$
+is also parallel to the $\widehat{z}$ lines in the physical space
+(see Fig.~\ref{galchen}).
+
+\begin{figure}[hpbt]
+\psfig{figure=\EPSDIR/fig3.1.eps}
+\caption{The Gal-Chen and Sommerville vertical coordinate and the cartesian
+($\vec{i},\vec{j}$), covariant ($\vec{e}_i$) and contravariant ($\vec{e}^i$)
+bases \label{galchen}}
+\end{figure}
+
+On the other hand, $\widehat{x}$ and $\widehat{y}$
+are the distances counted from an arbitrary origin in two arbitrary orthogonal
+directions on a conformal surface of projection (Fig.~\ref{projection}).
+The traces
+on the sphere of these coordinate lines define two orthogonal directions
+in each point.  We will call hereafter $\vec{i}$ and $\vec{j}$ the horizontal,
+unit length vectors parallel to those directions.
+We note $\gamma$ the angle between from $\vec{i}$ to
+$\vec{i}_0$. In general, this angle will vary with $\widehat{x}$ and
+$\widehat{y}$ because of the earth sphericity.
+
+\begin{figure}[hpbt]
+\psfig{figure=\EPSDIR/fig3.2.eps}
+\caption{Principles of Projections and notations on the sphere
+\label{projection}}
+\end{figure}
+
+Clearly, $\vec{i},\vec{j}$ and $\vec{k}$ form a local, cartesian basis
+which is particularly interesting to develop the wind
+velocity vector. In the following, we will call $ u ,  v , w$ the
+components of ${\vec U}$ on this basis.
+\begin{equation}
+\vec{U}=u\vec{i}+v\vec{j}+w\vec{k}
+\end{equation}
+It is the most natural decomposition of the wind in a local basis.
+
+Three types of conformal projections are supported in Meso-NH: Lambert, Polar
+Stereographic, and Mercator. We recall here the formulae which allow to
+compute the coordinates $\widehat{x},\widehat{y}$ from the latitude $\varphi$
+and the longitude $\lambda$ of a given point, and inversely.
+
+\subsection{Polar stereographic and Lambert Projections:}
+
+The projection is defined by the conicity parameter $K$ ($0<K<1$), the
+earth radius $a$,
+a reference latitude $\phi_0$, a reference
+longitude $\lambda_0$, an arbitrary angle of rotation $\beta$,
+and the coordinates of the pole in the projection
+$\widehat{x}_0, \widehat{y}_0$ (Fig.~\ref{polarstereo}).
+The useful formulae are
+\begin{eqnarray}
+\gamma & = & K (\lambda - \lambda _{0}) - \beta \nonumber \\
+R &  = & \dfrac{a}{K} (\cos\varphi _{0})^{1-K} (1 + \sin\varphi _{0})^{K}
+\left(\dfrac{\cos\varphi }{1 + \sin\varphi}\right)^{K} \nonumber \\
+\widehat{x}& = & \widehat{x}_0 + R sin\gamma \\
+\widehat{y}& = & \widehat{y}_0 - R cos \gamma \nonumber
+\end{eqnarray}
+
+The polar stereographic projection corresponds to $K=1$. The more general case
+of the Lambert conical projection is obtained for $0<K<1$.
+
+The map scale factor, defined as the ratio of distances on the projection
+surface to distances on the sphere, is given by
+
+\begin{equation}
+m=\left( \dfrac{\cos \varphi _{0}}{\cos \varphi}\right)^{1-K}
+\left( \dfrac{1 + \sin\varphi _{0}}{1 + \sin\varphi} \right)^{K}
+\end{equation}
+
+\begin{figure}[hpbt]
+\psfig{figure=\EPSDIR/fig3.3.eps}
+\caption{Polar Sterographic and Lambert Projections: $M_0$ is the point
+at the intersection of the reference latitude and longitude. In $M_0$, the
+angle from $\vec{i}$ to $\vec{i}_0$ is $-\beta$. In any other point $M$,
+this angle has a different value. Note that the North pole may be situated
+inside the model domain in the case of the polar stereographic projection,
+but not in the case of the Lambert projection \label{polarstereo}}
+\end{figure}
+
+\subsection{Mercator Projection:}
+
+The projection is defined by a reference latitude $\phi_0$, a reference
+longitude $\lambda_0$, an arbitrary angle of rotation $\beta$,
+and the coordinates of the origin in the projection
+$\widehat{x}_0, \widehat{y}_0$ (Fig.~\ref{mercator}). The useful formulae are
+
+\begin{eqnarray}
+\nonumber \\ \gamma & = & - \beta \nonumber \\
+\widehat{x}' & = & \widehat{x}_0
++ a \cos \varphi _{0}(\lambda - \lambda _{0})  \nonumber \\
+\widehat{y}' & = & \widehat{y}_0
+ -a\cos\varphi _{0} \ln|\tan(\dfrac{\pi}{4}-\dfrac{\varphi}{2})|  \\
+\widehat{x}  & = & \widehat{x}'\cos\gamma - \widehat{y}'\sin\gamma
+\nonumber \\
+\widehat{y}  & = & \widehat{x}'\sin\gamma + \widehat{y}'\cos\gamma
+\nonumber
+\end{eqnarray}
+
+For this projection, if $\beta$ is chosen equal to zero, the local
+cartesian basis coincides everywhere with the natural basis.
+
+The map scale factor is given by
+
+\begin{equation}
+m = \dfrac{\cos\varphi _{0} }{\cos\varphi }
+\end{equation}
+
+\begin{figure}[hpbt]
+\psfig{figure=\EPSDIR/fig3.4.eps}
+\caption{Mercator Projection: the angle between $\vec{i}$ and $\vec{i}_0$
+is independent of the position in the domain \label{mercator}}
+\end{figure}
+
+Note that allowing for $K=0$ in the expression of the map scale factor of
+the Lambert projection will give exactly the same result. As far as the
+local metrics is concerned, the only useful informations are therefore
+$m$, $K$, and $\gamma$. These quantities
+ will be used in the following equations, without further
+necessity to distinguish between the three types of projection.
+
+\section{Calculus in Non Orthogonal Coordinates}
+
+In the physical space, the $\widehat{x}$ and $\widehat{z}$ coordinate lines
+are not orthogonal, because of the underlying topography $z_s$. Therefore,
+the coordinate system is not orthogonal and it will be necessary to introduce,
+beside the cartesian basis, the covariant and contravariant bases to
+develop the tensor operators of Chapter 2. In Meso-NH, we follow the ideas
+of Viviand (1974), and Vinokur (1974), and use alternatively the
+cartesian and covariant bases, in order to simplify the formulation of
+these operators. We now recall the main classical formulae to work with
+non orthogonal coordinate systems.
+
+\subsection{Metric Coefficients}
+
+Let us call $x,y,z$ the local distances on the sphere in the directions
+$\vec{i},\vec{j},\vec{k}$.
+
+We will use the classical notations $\widehat{d}_{\star \star}$
+for the metric coefficients. Their values in the case of our transformation
+are given by:
+\begin{eqnarray}
+\widehat{d}_{xx} & = & \dfrac{\partial x}{\partial \widehat{x} }
+         = { r \over a m } \nonumber\\
+\widehat{d}_{yy} & = & \dfrac{\partial y}{\partial \widehat{y} }
+         = { r \over a m } \nonumber\\
+\widehat{d}_{zz} & = & \dfrac{\partial z}{\partial \widehat{z} }
+         =  1 - {z_s \over H} \nonumber \\
+\widehat{d}_{zx} & = & \dfrac{\partial z}{\partial \widehat{x} }
+         = {\partial z_s \over \partial \widehat{x} }(1-{\widehat{z}\over H})
+\nonumber\\
+\widehat{d}_{zy} & = & \dfrac{\partial z}{\partial \widehat{y} }
+         = {\partial z_s \over \partial \widehat{y} }(1-{\widehat{z}\over H})
+\\
+\widehat{d}_{xz} & = & \dfrac{\partial x}{\partial \widehat{z} } = 0 \nonumber \\
+\widehat{d}_{yz} & = & \dfrac{\partial y}{\partial \widehat{z} } = 0 \nonumber \\
+\widehat{d}_{xy} & = & \dfrac{\partial x}{\partial \widehat{y} } = 0 \nonumber \\
+\widehat{d}_{yx} & = & \dfrac{\partial y}{\partial \widehat{x} } = 0 \nonumber
+\end{eqnarray}
+
+\subsection{Covariant Basis}
+
+The basis of covariant vectors is defined as
+
+\begin{equation}
+\vec{e}_{i} = \dfrac{\partial \vec{r}}{\partial \widehat{x}^{i}}
+\end{equation}
+(with $\widehat{x}^{i}=\widehat{x}$, $\widehat{y}$ or $\widehat{z}$).
+Those vectors are tangent to the coordinate lines (see Fig. \ref{galchen}).
+They can be projected to the cartesian basis, resulting in
+
+\begin{eqnarray}
+\vec{e}_{1} & = & \dfrac{\partial \vec{r}}{\partial \widehat{x}} =
+\widehat{d}_{xx} \vec{i} + \widehat{d}_{zx} \vec{k} \nonumber \\
+\vec{e}_{2} & = & \dfrac{\partial \vec{r}}{\partial \widehat{y}} =
+\widehat{d}_{yy} \vec{j} + \widehat{d}_{zy} \vec{k} \nonumber \\
+\vec{e}_{3} & = & \dfrac{\partial \vec{r}}{\partial \widehat{z}} =
+\widehat{d}_{zz}\vec{k}
+\end{eqnarray}
+
+\subsection{Jacobian}
+The Jacobian of the transformation from $\widehat{x},\widehat{y},\widehat{z}$
+to $x,y,z$ is given by
+\begin{equation}
+\widehat{J}  = \vec{e}_{1} \cdot ( \vec{e}_{2} \wedge  \vec{e}_{3})
+\end{equation}
+or
+\begin{equation}
+\widehat{J}  = \widehat{d}_{xx} \widehat{d}_{yy} \widehat{d}_{zz} = \left( {r\over am} \right)^2(1 - {z_s \over H})
+\end{equation}
+It is the ratio of the volumes in the transformed and physical spaces.
+
+\subsection{Contravariant Basis}
+
+The basis of contravariant vectors is defined as
+\begin{equation}
+\vec{e}\, ^{i} = \vec{\nabla}\widehat{x}^{i}
+\end{equation}
+These vectors are orthogonal to the surfaces $\widehat{x}^{i}=$Const (see Fig.
+\ref{galchen}).
+
+Since $\vec{e}\, ^{i} \cdot \vec{e} _{j} = \delta_{ij}$, we also have:
+\begin{eqnarray}
+\vec{e}\, ^{1} & = & \dfrac{1}{\widehat{J}}(\vec{e} _{2} \wedge \vec{e} _{3}) =
+\dfrac{1}{\widehat{d}_{xx}} \vec{i}
+\nonumber \\
+\vec{e}\, ^{2} & = & \dfrac{1}{\widehat{J}}(\vec{e} _{3} \wedge \vec{e} _{1}) =
+\dfrac{1}{\widehat{d}_{yy}} \vec{j}
+\\
+\vec{e}\, ^{3} & = & \dfrac{1}{\widehat{J}}(\vec{e} _{1} \wedge \vec{e} _{2}) =
+\dfrac{1}{J}\left(\widehat{d}_{xx} \widehat{d}_{yy} \vec{k}- \widehat{d}_{zx} \widehat{d}_{yy}\vec{i}
+ - \widehat{d}_{zy} \widehat{d}_{xx}\vec{j}\right) \nonumber
+\end{eqnarray}
+These formulae allow to find the expression of the contravariant components
+of any vector, as a function of its cartesian components
+\begin{eqnarray}
+\vec{A} &=& A^{c1} \vec{e} _{1}+ A^{c2} \vec{e} _{2} + A^{c3} \vec{e} _{3}
+\nonumber \\
+\vec{A} &=& a^{1} \vec{i}+ a^{2} \vec{j} + a^{3} \vec{k} \nonumber \\
+A^{c1}&  =& \dfrac{ a^1 }{\widehat{d}_{xx}} \\
+A^{c2}&  =& \dfrac{ a^2 }{\widehat{d}_{yy}} \nonumber \\
+A^{c3}&  =& \dfrac{ a^3 }{\widehat{d}_{zz}}- \dfrac{ a^1 \widehat{d}_{zx}}{\widehat{d}_{xx}\widehat{d}_{zz}}-
+\dfrac{ a^2 \widehat{d}_{zy}}{\widehat{d}_{yy}\widehat{d}_{zz}} \nonumber
+\end{eqnarray}
+
+\subsection{Spatial derivatives of the Cartesian basis}
+
+We will also use the expression of the spatial derivatives of the
+vectors of the cartesian basis, due to the earth sphericity:
+
+\begin{eqnarray}
+\dfrac{\partial \vec{i}}{\partial \widehat{x}} & = & \cos\gamma \;
+\dfrac{\widehat{d}_{xx}}{r \cos\varphi}  \; (\sin\varphi - K)
+\;\vec{j} -   \dfrac{\widehat{d}_{xx}}{r} \;  \vec{k} \nonumber \\
+\dfrac{\partial \vec{i}}{\partial \widehat{y}} & = & \sin\gamma \;
+\dfrac{\widehat{d}_{yy}}{r \cos\varphi}  \; (\sin\varphi - K)
+\;\vec{j} \nonumber \\
+\dfrac{\partial \vec{j}}{\partial \widehat{x}} & = & -\cos\gamma \;
+\dfrac{\widehat{d}_{xx}}{r \cos\varphi}  \; (\sin\varphi - K)
+\;\vec{i}  \\
+\dfrac{\partial \vec{j}}{\partial \widehat{y}} & = & - \sin\gamma \;
+\dfrac{\widehat{d}_{yy}}{r \cos\varphi}  \; (\sin\varphi - K)
+\;\vec{i} -  \dfrac{\widehat{d}_{yy}}{r} \;  \vec{k} \nonumber \\
+\dfrac{\partial \vec{k}}{\partial \widehat{x}} & = & \dfrac{\widehat{d}_{xx}}{r}
+\;\vec{i} \nonumber \\
+\dfrac{\partial \vec{k}}{\partial \widehat{y}} & = & \dfrac{\widehat{d}_{yy}}{r}
+\;\vec{j} \nonumber
+\end{eqnarray}
+
+
+\subsection{Gradient}
+
+For any scalar quantity $\alpha$,
+\begin{equation}
+\vec{\nabla} \alpha =
+\dfrac{\partial \alpha }{\partial \widehat{x}}\vec{e} \, ^{1} +
+\dfrac{\partial \alpha }{\partial \widehat{y}}\vec{e} \, ^{2} +
+\dfrac{\partial \alpha }{\partial \widehat{z}}\vec{e} \, ^{3}
+\end{equation}
+
+This vector may be projected on $(\vec{i},\vec{j},\vec{k})$ resulting in
+the cartesian components of the gradient
+
+\begin{eqnarray}
+{\partial \alpha \over \partial x }  =
+\vec{i} \cdot \vec{\nabla} \alpha & = & \dfrac{1}{\widehat{d}_{xx}}
+\dfrac{\partial \alpha }{\partial \widehat{x}}- \dfrac{\widehat{d}_{zx}}{\widehat{d}_{xx}\widehat{d}_{zz}}
+\dfrac{\partial \alpha }{\partial \widehat{z}}
+\nonumber \\ & &\nonumber  \\
+{\partial \alpha \over \partial y }  =
+\vec{j} \cdot \vec{\nabla} \alpha & = & \dfrac{1}{\widehat{d}_{yy}}
+\dfrac{\partial \alpha }{\partial \widehat{y}}- \dfrac{\widehat{d}_{zy}}{\widehat{d}_{yy}\widehat{d}_{zz}}
+\dfrac{\partial \alpha }{\partial \widehat{z}}
+\nonumber \\ & &  \\
+{\partial \alpha \over \partial z }  =
+\vec{k} \cdot \vec{\nabla} \alpha & = & \dfrac{1}{\widehat{d}_{zz}}
+\dfrac{\partial \alpha }{\partial \widehat{z}} \nonumber
+\end{eqnarray}
+
+
+\subsection{Divergence}
+
+For any vector quantity $\vec{A}$, the contravariant components
+\begin{equation}
+\vec{A} =A^{c \, 1}\vec{e} _{1} + A^{c \, 2}\vec{e} _{2}
+ +A^{c \, 3}\vec{e} _{3} = (\vec{A} \cdot\vec{e}\, ^{1})\vec{e} _{1}
+ + (\vec{A} \cdot\vec{e} \,^{2})\vec{e} _{2}
++ (\vec{A} \cdot\vec{e}\, ^{3})\vec{e} _{3}
+\end{equation}
+allow to compute easily the divergence
+\begin{equation}
+\vec{\nabla}\cdot \vec{A} = \dfrac{1}{\widehat{J}}\left(
+\dfrac{\partial}{\partial \widehat{x}}(\widehat{J} A^{c \, 1})
++\dfrac{\partial}{\partial \widehat{y}}(\widehat{J} A^{c\, 2})
++\dfrac{\partial}{\partial \widehat{z}}(\widehat{J} A^{c\,  3}) \right)
+\end{equation}
+
+\subsection{Divergence of a Tensor Product}
+
+In order to avoid generating a large number of Christoffel symbols (quantities
+involved in the derivatives of the basis vectors), we use the
+contravariant components of $\vec{B}$ and the cartesian components of $\vec{A}$
+
+\begin{eqnarray}
+\vec{B} &=& B^{c \, 1}\vec{e} _{1} +
+B^{c \, 2}\vec{e} _{2} +B^{c \, 3}\vec{e} _{3}\nonumber \\
+\vec{A} &=& {\cal A}^{1} \vec{i} +
+{\cal A}^{2}\vec{j}+{\cal A}^{3} \vec{k} \nonumber
+\end{eqnarray}
+
+The result projected on the cartesian basis reads
+
+\begin{eqnarray}
+\vec{i} \cdot \vec{\nabla}\cdot (\vec{B} \otimes \vec{A}) & = &
+\dfrac{1}{\widehat{J}}\left(\dfrac{\partial}{\partial \widehat{x}}(\widehat{J}
+B^{c \, 1} {\cal A}^{1})
++ \dfrac{\partial}{\partial \widehat{y}}(\widehat{J} B^{c \, 2} {\cal A}^{1})
++ \dfrac{\partial}{\partial \widehat{z}}(\widehat{J} B^{c \, 3}{\cal A}^{1})\right)
+\nonumber \\
+& &  -  B^{c \, 1} {\cal A}^{3}\dfrac{\widehat{d}_{xx}}{r}
+ - B^{c \,1 } {\cal A}^{2} \cos \gamma \dfrac{\widehat{d}_{xx}}{r \cos\varphi}
+ (\sin\varphi - K) \nonumber \\
+& & -  B^{c \, 2}{\cal A}^{2} \sin \gamma \dfrac{\widehat{d}_{yy}}{r \cos\varphi}
+ (\sin\varphi - K)
+ \nonumber \\
+\vec{j} \cdot \vec{\nabla}\cdot (\vec{B} \otimes \vec{A}) & = &
+\dfrac{1}{\widehat{J}}\left(\dfrac{\partial}{\partial \widehat{x}}(\widehat{J}
+B^{c \, 1} {\cal A}^{2})
++ \dfrac{\partial}{\partial \widehat{y}}(\widehat{J} B^{c \, 2}{\cal A}^{2})
+ + \dfrac{\partial}{\partial \widehat{z}}(\widehat{J} B^{c\, 3}{\cal A}^{2})\right)
+\nonumber \\
+ & &  +  B^{c \, 2}{\cal A}^{3}\dfrac{\widehat{d}_{yy}}{r}
+  +  B^{c \, 1}{\cal A}^{1} \cos \gamma \dfrac{\widehat{d}_{xx}}{r cos\varphi}
+  (\sin\varphi - K) \nonumber \\
+& &  +  B^{c \, 2}{\cal A}^{1} \sin \gamma \dfrac{\widehat{d}_{yy}}{r cos\varphi}
+  (\sin\varphi - K)
+  \nonumber \\
+\vec{k} \cdot \vec{\nabla}\cdot (\vec{B} \otimes \vec{A}) & = &
+\dfrac{1}{\widehat{J}}\left(\dfrac{\partial}{\partial \widehat{x}}(J B^{c \, 1}{\cal
+A}^{3})
++ \dfrac{\partial}{\partial \widehat{y}}(\widehat{J} B^{c \, 2}{\cal A}^{3})
+ + \dfrac{\partial}{\partial \widehat{z}}(\widehat{J} B^{c \, 3}{\cal A}^{3})\right)
+ \nonumber \\
+ & &  -  B^{c \, 1}{\cal A}^{1} \dfrac{\widehat{d}_{xx}}{r}
+   -  B^{c \, 2}{\cal A}^{2}  \dfrac{\widehat{d}_{yy}}{r}
+\end{eqnarray}
+
+For each equation, the first line contains the dominant terms, and the
+second and third lines show the additional terms due to the spatial
+variation of the vectors of the local basis. These terms are the
+{\em curvature terms}. The influence of non-orthogonality is also
+present through the use of the contravariant components of $\vec{B}$.
+
+\subsection{Coriolis Force}
+
+Both vectors are expressed in basis $(\vec{i},\vec{j},\vec{k})$.
+We call $f=2\Omega \sin\varphi$ and $f_{\star}=2\Omega \cos\varphi$.
+\begin{eqnarray}
+2\vec{\Omega}\wedge\vec{U}&=&(f_{\star} \cos\gamma w - f v ) \vec{i} \nonumber\\
+& & + (f u + f_{\star} \sin \gamma w ) \vec{j} \nonumber \\
+& & - (f_{\star} \cos\gamma u + f \sin \gamma v ) \vec{k}
+\end{eqnarray}
+
+\section{Model Equations in Non Orthogonal Coordinates}
+\subsection{Prognostic Variables}
+Given the form of the divergence operator, the most convenient choice for the
+model prognostic variables is the product of the wind components, potential
+temperature, and mixing ratios by the dry density of the reference state,
+{\em and by the Jacobian of the coordinate system}.
+
+To simplify the notations, we define $\widehat{\rho}=\rho_{d\,ref}\widehat{J}$.
+The prognostic variables of the model are therefore $\widehat{\rho}u,
+\widehat{\rho}v, \widehat{\rho}w, \widehat{\rho}\theta, \widehat{\rho}r_{*}$,
+and $\widehat{\rho} s_{*}$.
+
+For the water and passive scalars, the prognostic variable represents therefore
+(to the extent that $\rho_{d\,ref}$ is a good approximation of $\rho_d$)
+{\em the mass of substance within the grid volume}, which is a very simple and
+safe quantity to carry in a model.
+
+\subsection{The contravariant components of the wind}
+
+The contravariant components of the velocity vector
+ $\vec{U} = U^{c} \vec{e} _{1}+ V^{c} \vec{e} _{2}
+ + W^{c} \vec{e} _{3} $ will be needed to express the advection operator.
+They may be computed as
+
+\begin{eqnarray}
+U^{c} & = &  \vec{U} \cdot \vec{e}\, ^{1} \\
+V^{c} & = &  \vec{U} \cdot \vec{e}\, ^{2} \\
+W^{c} & = &\vec{U} \cdot \vec{e}\, ^{3}
+\end{eqnarray}
+
+Since $( u , v )$ are the horizontal wind components in the
+basis  $( \vec{i}, \vec{j} )$ we have
+
+\begin{eqnarray}
+U^{c}&  =& \dfrac{ u }{\widehat{d}_{xx}} \\
+V^{c}&  =& \dfrac{ v }{\widehat{d}_{yy}} \\
+W^{c}&  =& \dfrac{ w}{\widehat{d}_{zz}}- \dfrac{ u \widehat{d}_{zx}}{\widehat{d}_{xx}\widehat{d}_{zz}}-
+\dfrac{ v \widehat{d}_{zy}}{\widehat{d}_{yy}\widehat{d}_{zz}}
+\end{eqnarray}
+
+This simple computation is performed at the beginning of each model time
+step.
+
+\subsection{Momentum Equation}
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\widehat{\rho}  u ) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c } \;   u )
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c } \;    u )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }  \;    u )
+\nonumber \\
+& & \nonumber \\
+&  + &\widehat{\rho}  u   v  \dfrac{ \cos\gamma}{r\cos\varphi} (\sin\varphi -K)
+\,+ \,\widehat{\rho}  v ^{2} \dfrac{ \sin\gamma  }{r\cos\varphi} (\sin\varphi -K)
+\nonumber \\
+& & \nonumber \\
+ & - & \widehat{\rho}\dfrac{ u  w}{r} \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{xx}} \dfrac{\partial \Phi}{\partial \widehat{x}}
+\, + \,\widehat{\rho}\dfrac{\widehat{d}_{zx}}{\widehat{d}_{xx}\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}} \nonumber \\
+& & \nonumber \\
+&  - & \widehat{\rho} f^{*} \cos\gamma w \, +  \, \widehat{\rho} f  v
+\,+ \, \widehat{\rho} \vec{F}_{v} \cdot \vec{i}
+\end{eqnarray}
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\widehat{\rho}  v ) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c }\;    v )
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c }\;    v )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c } \;    v )
+\nonumber \\ & & \nonumber \\
+&  - & \widehat{\rho}  u ^{2}  \dfrac{ \cos\gamma}{r\cos\varphi} (\sin\varphi -K)
+ \, - \, \widehat{\rho}  u   v \dfrac{\sin\gamma}{r\cos\varphi} (\sin\varphi -K)
+\nonumber \\ & & \nonumber \\
+ & - & \widehat{\rho}\dfrac{ v  w}{r} \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{yy}} \dfrac{\partial \Phi}{\partial \widehat{y}}
+ \, +  \, \widehat{\rho}\dfrac{\widehat{d}_{zy}}{\widehat{d}_{yy}\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}} \nonumber \\
+& & \nonumber \\
+&  - & \widehat{\rho} f^{*} \sin\gamma w  \, - \,  \widehat{\rho} f  u
+ \,+ \, \widehat{\rho} \vec{F}_{v} \cdot\vec{j}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\widehat{\rho} w) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c } \;   w)
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c } \;   w )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c } \;   w)
+\nonumber \\ & & \nonumber \\
+ & + & \widehat{\rho} u ^{2} \dfrac{1}{r}+
+\widehat{\rho}  v ^{2}\dfrac{1}{r}
+ \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}}
+\, + \,\widehat{\rho} g \dfrac{\theta_v ' }{\widehat{\theta}_v}\nonumber \\
+& & \nonumber \\
+&  + & \widehat{\rho} f^{*}(\sin\gamma  v  + \cos\gamma  u )
+ \,+ \, \widehat{\rho} \vec{F}_{v} \cdot \vec{k}
+\end{eqnarray}
+The right hand side of these equations has been rewritten in Chapter 2 as
+the sum of a dynamical source $\vec{S}_V$ and the pressure gradient. This
+is still valid, except that the source now contains the Jacobian. Note
+that those are still the cartesian components of $\vec{S}_V$,
+i.e. the true horizontal and vertical components of the acceleration.
+
+\subsection{Thermodynamic Equation}
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\widehat{\rho} \theta) &=& \, - \,
+ \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c } \;   \theta)
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c }  \;  \theta )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }  \;
+ \theta) \nonumber \\ & &
++\widehat{\rho} \left[ {R_d+r_vR_v\over R_d}{C_{pd} \over C_{ph}}-1 \right]
+{\theta \over \Pi_{ref}} {w \over \widehat{d}_{zz} }
+ {\partial \Pi_{ref} \over \partial \widehat{z}}
+\nonumber \\ & &
++ {\widehat{\rho}\over \Pi_{ref} C_{ph}} \left[
+ L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right]
+\end{eqnarray}
+
+\subsection{Water and Other Scalars}
+The equations have exactly the same form as the thermodynamic equation,
+except for the source terms.
+
+\subsection{Continuity Equation}
+It has the simple form, using the contravariant velocity components
+\begin{equation}
+\dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c })
++ \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c })
++ \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }) =0.
+\end{equation}
+
+\subsection{Pressure Equation}
+The divergence operators appearing in the pressure equation may be
+evaluated with the contravariant components of the vectors $\vec{\nabla}\Phi$
+and $\vec{S}_V$. The result is an elliptic equation, involving a quasi-laplacian
+operator. This is discussed in Chapter 7.
+
+\section{Degenerated Forms}
+
+\subsection{Thin shell approximation}
+
+The depth of the atmosphere ($\simeq 30$ km) is much smaller than the earth
+radius ($a \simeq 6000 $ km). Therefore, it is customary in meteorology
+to assume that the atmosphere is a thin shell ($z \ll a$ and $r \simeq a$).
+However, if this hypothesis is retained without care, the principle of
+conservation of angular momentum may be violated (Phillips, 1966).
+It is necessary to make the additional hypothesis that the horizontal
+component of the earth rotation is negligible. In the Meso-NH model, we
+decided not to retain the thin shell approximation. However, for the
+purpose of comparison with models making this approximation,
+we introduce a flag $\delta_1$, taking the value 1 in the general case
+and 0 in the case of the thin shell approximation.
+
+\subsection{Cartesian Coordinate System}
+
+For many purposes, one may want to work in the much simpler
+cartesian frame on a plane tangent to the sphere,
+and neglect the curvature terms (e.g. study of very small
+scale processes, or idealized studies of meso-scale processes). This may be
+obtained easily by setting $f=2 \Omega \sin \varphi _{0}$ ,
+$f^{*}=2 \Omega \cos \varphi _{0}$, $\widehat{d}_{xx}=1$, $\widehat{d}_{yy}=1$,
+$m=1$, $r=a=\infty$.
+Note that contrary to the previous case, we may keep here $f^{*} \neq 0$
+without violating the conservation of angular momentum.
+In order to obtain this very simple form, we introduce another flag
+$\delta_2$ in the general system, taking the value 1 for the general case,
+and 0 for the cartesian case.
+
+The combination of the thin shell approximation and the cartesian frame
+will supply the traditional f-plane approximation (no horizontal component
+of the earth rotation).
+
+\subsection{Flagged Equations}
+
+The $\delta_1$ and $\delta_2$ flags modify the momentum equation in the
+following way:
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\widehat{\rho}  u ) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c }\;    u )
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c } \;      u )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }\;     u )
+\nonumber \\
+& & \nonumber \\
+&  + & \delta _{2}\widehat{\rho}  u   v  \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K)
+\,+ \,\delta _{2}\widehat{\rho}  v ^{2}  \dfrac{ \sin\gamma  }{r \cos \varphi} (\sin\varphi -K)
+\nonumber \\
+& & \nonumber \\
+ & - &\delta _{2}\delta _{1} \widehat{\rho}\dfrac{ u  w}{r} \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{xx}} \dfrac{\partial \Phi}{\partial \widehat{x}}
+\, + \,\widehat{\rho}\dfrac{\widehat{d}_{zx}}{\widehat{d}_{xx}\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}} \nonumber \\
+& & \nonumber \\
+&  - &\delta _{1} \widehat{\rho} f^{*} \cos\gamma w \, +  \, \widehat{\rho} f  v
+\, + \, \widehat{\rho} \vec{F}_{v} \cdot \vec{i}
+\\
+& & \nonumber \\
+\dfrac{\partial}{\partial t}(\widehat{\rho}  v ) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c }\;     v )
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c }\;     v )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }\;     v )
+\nonumber \\ & & \nonumber \\
+&  - & \delta _{2}\widehat{\rho}  u ^{2}  \dfrac{ \cos\gamma}{r \cos\varphi} (\sin\varphi -K)
+ \, - \, \delta _{2}\widehat{\rho}  u   v   \dfrac{\sin\gamma}{r \cos \varphi} (\sin\varphi -K)
+\nonumber \\ & & \nonumber \\
+ & - & \delta _{2}\delta _{1} \widehat{\rho}\dfrac{ v  w}{r} \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{yy}} \dfrac{\partial \Phi}{\partial \widehat{y}}
+ \, +  \, \widehat{\rho}\dfrac{\widehat{d}_{zy}}{\widehat{d}_{yy}\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}} \nonumber \\
+& & \nonumber \\
+&  - &\delta _{1}\widehat{\rho} f^{*} \sin\gamma w  \, - \,  \widehat{\rho} f  u
+ \, + \, \widehat{\rho} \vec{F}_{v} \cdot \vec{j}
+\\
+& & \nonumber \\
+\dfrac{\partial}{\partial t}(\widehat{\rho} w) &= &
+ \, - \, \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c }\;    w)
+ \, - \, \dfrac{\partial }{\partial \widehat{y}} (\widehat{\rho} V^{c }\;   w )
+ \, - \, \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }\;  w)
+\nonumber \\ & & \nonumber \\
+ & + & \delta _{2}\delta _{1}\widehat{\rho}\dfrac{ u ^{2}+ v ^{2} }{r}
+ \,  - \, \widehat{\rho}\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial \Phi}{\partial \widehat{z}}
+\, + \,\widehat{\rho} g \dfrac{\theta_v ' }{\widehat{\theta}_v}\nonumber \\
+& & \nonumber \\
+&  + &\delta _{1}\widehat{\rho} f^{*}(\sin\gamma  v  + \cos\gamma  u )
+ \, + \, \widehat{\rho} \vec{F}_{v} \cdot \vec{k}
+ \end{eqnarray}
+with
+\begin{eqnarray}
+\widehat{d}_{xx}&=&\dfrac{a+\delta_1 \delta_2 z}{am} \nonumber \\
+\widehat{d}_{yy}&=&\dfrac{a+\delta_1 \delta_2 z}{am} \nonumber \\
+r &=& a + \delta_1 z \\
+\widehat{J} &=& \left( \dfrac{a+\delta_1 z}{am} \right)^2 (1 - {z_s \over H }) \nonumber
+\end{eqnarray}
+The other equations of the model do not involve the flags.
+
+
+\section{References}
+\por
+Gal-Chen, T., and R. C. J. Sommerville, 1975: On the Use of a Coordinate
+Transformation for the Solution of the Navier-Stokes Equations. J. Comput.
+Phys., 17, 209-228.
+\por
+Vinokur, 1974:?
+\por
+Viviand, H., 1974: Formes Conservatives des Equations de la Dynamique des Gaz.
+La Recherche A\'erospatiale, 1974-1, 65-66.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

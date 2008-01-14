@@ -1,0 +1,456 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "Microphysical Scheme for Warm Clouds"
+% Author : Evelyne Richard
+% Original : October 15, 1997
+% Update   : October 15, 1997
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Microphysical Scheme for Warm Clouds}
+\minitoc
+
+%{\em by E. Richard}
+
+\section{Equations}
+We note $r_v$, $r_c$, and $r_r$ the water vapor, cloud water and rainwater
+mixing ratios, as defined in MESO-NH. For any constituent,
+$r$ is the mass of the
+constituent divided by the reference mass of dry air.\footnote{Notice that
+$\rho_{d\, ref}r = \rho_d \tilde r$ where  $\tilde r$ is the usual mixing ratio
+i.e. the mass of the constituant divided by the mass of dry air.}
+The consevation equations for these quantities are written:
+\begin{eqnarray}
+ &\dfrac{d}{dt}(  \rho_{d\,ref} r_v)&= \rho_{d\,ref} (P_{RE}-  P_{CON})\\
+ &\dfrac{d}{dt}(  \rho_{d\,ref} r_c)&= \rho_{d\,ref}(- P_{RA} -  P_{RC}+  P_{CON})\\
+ &\dfrac{d}{dt}(  \rho_{d\,ref} r_r)&= \rho_{d\,ref} (P_{RA} +  P_{RC} -  P_{RE}
++  P_{RS})
+\end{eqnarray}
+where $P$ designates the sources and where the subscritps
+ $CON$, $RE$, $RA$, $RC$ and $RS$  respectively refer to the following processes:
+evaporation/condensation, rain evaporation, accretion of cloud droplets by
+raindrops, conversion of cloud droplets into raindrops (autoconversion),
+and rain sedimentation.
+Condensation/evaporation is a very fast process, it cannot be computed
+explicitly and is obtained through an implicit saturation adjustment
+procedure, taking subgrid-scale processes into account (see Chapter 13).
+All others terms are computed explicitly.
+
+
+\section{Raindrops characteristics}
+\subsection{Distribution}
+Raindrops are assumed to follow a Marshall-Palmer distribution. The number of
+raindrops whose diameter lies in the interval
+$D$ and $D+dD$ is given by:
+\begin{equation}
+N(D)dD=N_0 \exp (-\lambda D) dD
+\end{equation}
+Observations for different types of rain show a range of values for
+$N_0$ from
+$0.4\ 10^7$ to $3.5\ 10^7\ m^{-4}$. $N_0= 10^7\ m^{-4}$
+is a value frequently used.
+
+
+The $\lambda$ parameter is obtained from
+\begin{equation}
+ \rho_{d\,ref} r_r=\int_0^\infty {\pi \over 6} \rho_{lw} D^3 N_0 \exp(-\lambda D)dD=
+{\pi \rho_{lw} N_0 \over \lambda^4},
+\end{equation}
+which leads to
+\begin{equation}
+\lambda= \Big({\pi \rho_{lw} N_0 \over \rho_{d\,ref} r_r}\Big)^{1 \over 4}.
+\end{equation}
+\subsection{Fall velocity}
+The terminal fall velocity for a raindrop of diameter $D$ is expressed as
+\begin{equation}
+V(D)=  \big( \dfrac{ \rho_{00}}{ \rho_{d\,ref}} \big)^{\alpha} aD ^{b},
+\label{eqvterm}
+\end{equation}
+with $\alpha=0.4$, $a=842 m^{0.2}/s$ and $b=0.8$, $\rho_{00}$ being the air
+density at the reference pressure level $P_{00}$.
+This parameterization follows Liu and Orville (1969) and includes the
+effect of mean density variation as suggested by Foote and Du Toit (1969).
+
+The rain terminal fall velocity is then given by
+\begin{equation}
+V_T \rho_{d\,ref} r_r= \int_0^\infty {\pi \over 6} \rho_{lw} D^3 V(D) N(D)dD,
+\end{equation}
+which leads to
+\begin{equation}
+V_T = {a \over 6} \big( {\rho_{00}\over \rho_{d\,ref}}\big) ^\alpha
+{\Gamma(b+4)\over \lambda ^b},
+\end{equation}
+or
+\begin{equation}
+V_T= {a \over 6} \Gamma(b+4)\big( {\rho_{00}\over \rho_{d\,ref}}\big) ^\alpha
+\big( {\rho_{d\,ref} r_r \over \pi \rho_{lw} N_0}\big)
+^{b \over 4}.
+\end{equation}
+\section{Explicit sources}
+
+\subsection{Autoconversion}
+The sole rainwater initiation mechanism is the autoconversion process which is
+parameterized according to Kessler (1969).
+The Kessler rate relies on intuitive considerations:
+the autoconversion rate increases linearly with the cloud water content
+$(\rho_{d\,ref} r_c)$ but
+cloud conversion does not occur below a threshold value $ q_{crit}$.
+\begin{equation}
+P_{RC}= k\  Max( r_c - \dfrac{q_{crit}}{\rho_{d\,ref}}, 0)
+\end{equation}
+The parameters $k$ and $q_{crit}$ are
+usually set to $10^{-3}\ s^{-1}$ et $0.5g/m^3$.
+
+In the code $P_{RC}$ is written as:
+\begin{equation}
+P_{RC}= C1_{RC} Max ( r_c - \dfrac{C2_{RC}}{\rho_{d\,ref}}, 0)
+\end{equation}
+with $C1_{RC}= k$ and $C2_{RC}=q_{crit}$.
+
+
+\subsection{Accretion}
+Once embryonic precipitation particles are formed, rainwater mixing ratio
+growth occurs
+primarily by accretion of cloud water in the form
+\begin{equation}
+P_{RA}=\int_0^\infty {\pi \over 4}D^2 V(D) E  r_c N(D)dD,
+\end{equation}
+where E is the collision efficiency (here taken equal to 1).
+After integration,
+\begin{equation}
+P_{RA}={\pi \over 4}a N_0( \dfrac{ \rho_{00}}{ \rho_{d\,ref}})^{\alpha}
+ r_c{\Gamma(b+3) \over \lambda ^{b+3}}.
+\end{equation}
+After replacing $\lambda$,
+\begin{equation}
+P_{RA}={\pi \over 4}a N_0( \dfrac{ \rho_{00}}{ \rho_{d\,ref}})^{\alpha}
+ r_c  \Gamma(b+3) \big( {\rho_{d\,ref} r_r \over \pi \rho_{lw} N_0}\big)
+^{b+3 \over 4}.
+\end{equation}
+In the code $P_{RA}$ is written as:
+\begin{equation}
+P_{RA}= C_{RA}( \rho_{d\,ref})^{C'_{RA}-\alpha}  r_c ( r_r )^{C'_{RA}}
+\end{equation}
+with
+$$ C_{RA}={\pi \over 4}a N_0( \rho_{00})^{\alpha} \Gamma(b+3)
+\big( {1 \over \pi \rho_{lw} N_0}\big)
+^{b+3 \over 4}$$
+and $$C'_{RA}={b+3 \over 4}$$
+
+The accretion and autoconversion sources are limited by the amount of available
+cloud water. In the case where both processes are simultaneously operating,
+accretion is computed first.
+
+\subsection{Rain evaporation}
+According to Pruppacher and Klett (1978, p420), the evaporation rate of a drop
+of diameter D is given by
+\begin{equation}
+D {dD \over dt} = {4S \bar f \over \rho_{lw} A}, \label{eq17}
+\end{equation}
+where $\bar f$ is a ventilation factor and
+\begin{eqnarray}
+S&=& {r_{vs}-r_v \over r_{vs}}, \\
+A&=& {R_v T \over e_s(T) D_v} + {L_v(T) \over k_a T}({L_v(T) \over R_v T} -1)\\
+ &\simeq &{R_v T \over e_s(T) D_v} + {L_v(T)^2 \over k_a R_v T^2}  .
+\end{eqnarray}
+
+$r_{vs}$ is the saturated vapor mixing ratio, $D_v$ is the diffusivity of water
+vapor in air and $k_a$ is the heat conductivity of air.
+For simplicity, $D_v$ and  $k_a$ are taken constants:
+$D_v=2.26\ 10^{-5} m^2/s$ and $k_a= 24.3 \ 10 ^{-3} J/(msK)$.
+
+$e_s$ is the saturation vapor pressure and is computed according to
+\begin{equation}
+\label{eq21}
+e_s(T)= exp \big( \alpha_w - {\beta_w \over T} - \gamma_w \ln (T) \big),
+\end{equation}
+with
+\begin{eqnarray}
+&\alpha_w   &= \ln (e_s(T_t))+{\beta_w \over T_t} - \gamma_w \ln (T_t), \\
+&\beta_w   &= {L_v(T_t) \over R_v}\gamma_w T_t, \\
+&\gamma_w  &= {C_l -C_{pv} \over R_v}.
+\end{eqnarray}
+
+$L_v$ is the latent heat of vaporization and is computed according to
+\begin{equation}
+L_v(T) = L_v(T_t) + (C_{pv} - C_l)(T-T_t).
+\end{equation}
+The ventilation factor $\bar f$ is given by
+\begin{equation}
+\bar f = 1 + F (Re) ^{0.5},\label{eq26}
+\end{equation}
+where $Re$ is the Reynolds number which can be expressed as
+\begin{equation}
+Re= {V(D) D \over \nu}, \label{eq27}
+\end{equation}
+$\nu$  being  the air kinematic viscosity which is here assumed to be constant:
+$\nu=0.15 \ 10^{-4} kg/(ms)$.
+
+$F$ is a ventilation coefficient taken equal to 0.22.
+
+After replacing (\ref{eqvterm}) and (\ref{eq27}) in (\ref{eq26}), one gets
+\begin{equation}
+\bar f =  1 + F \big[ \big( {\rho_{00} \over \rho_{d\,ref}} \big) ^\alpha
+{aD^{b+1}  \over \nu} \big] ^{0.5}.
+\end{equation}
+The integration of (\ref{eq17}) over the rain drop spectrum
+leads to  the expression of the evaporation source
+\begin{equation}
+P_{RE} = {1 \over \rho_{d\,ref}}\int_0^{+\infty} {2 \pi S \bar f \over A} D N(D) dD.
+\end{equation}
+After replacing $\bar f$,
+\begin{equation}
+P_{RE} = {2 \pi S N_o \over A}{1 \over \rho_{d\,ref}} \big[ {1 \over \lambda ^2}
++ F ( {\rho_{00} \over \rho_{d\,ref}} )^{\alpha /2} ({a  \over \nu})^{1/2}
+{\Gamma ({b+5 \over 2}) \over \lambda ^{{b+5 \over 2}}} \big],
+\end{equation}
+or
+\begin{equation}
+P_{RE} = {2 \pi S N_o \over A} {1 \over \rho_{d\,ref}} \big[
+\big( {\rho_{d\,ref} r_r \over \pi \rho_{lw} N_o}\big) ^{1 \over 2}
++ F ( {\rho_{00} \over \rho_{d\,ref}} )^{\alpha /2} ({a  \over \nu})^{1/2}
+\Gamma ({b+5 \over 2})
+\big( {\rho_{d\,ref} r_r \over \pi \rho_{lw} N_o}\big) ^{b+5 \over 8} \big].
+\end{equation}
+In the code $P_{RE}$ is written as
+\begin{equation}
+P_{RE}= { S \over A}\big [ C1_{RE} (\rho_{d\,ref}) ^{-{1 \over 2}} (r_r) ^{1 \over 2} +
+ C2_{RE} (\rho_{d\,ref} ) ^{C'_{RE}-1- \alpha/2} (r_r ) ^{C'_{RE}} \big],
+\end{equation}
+with
+$$C1_{RE}=2 \pi  N_o ( {1 \over \pi \rho_{lw} N_o}) ^{1 \over 2}$$
+$$C2_{RE}=2 \pi  N_o  F \big( \rho_{00} )^{\alpha /2} ({a \over \nu})^{1/2}
+\Gamma ({b+5 \over 2})
+\big( { 1 \over \pi \rho_{lw} N_o}\big) ^{b+5 \over 8} \big)$$
+$$C'_{RE}={b+5 \over 8}$$
+
+The rain evaporation source is limited by the amount of available rainwater.
+
+\subsection{Rain sedimentation}
+The sedimentation rate is given by
+\begin{eqnarray}
+&P_{RS} &= {1 \over \rho_{d\,ref}}{\partial \over \partial z} \int_0^\infty N(D)V(D) {\pi \over 6}
+\rho_{lw} D^3 V(D)N(D) dD \\
+&&= {1 \over \rho_{d\,ref}}{\partial \over \partial z} (V_T \rho_{d\,ref} r_r).
+\end{eqnarray}
+
+In the code, $P_{RS}$ is written as
+\begin{equation}
+P_{RS} = {1 \over \rho_{d\,ref}}{\partial \over \partial z} \big[ C_{RS}
+(\rho_{d\,ref})^{C'_{RS}-\alpha} (r_r )^{C'_{RS}}\big],
+\end{equation}
+with
+$$C_{RS}= {a \over 6} \Gamma(b+4)( \rho_{00}) ^\alpha
+\big( {1\over \pi \rho_{lw} N_0} \big)^{b \over 4},$$
+$$C'_{RS}={4+b \over 4}.$$
+
+In order to maintain stability, the rain sedimentation source is computed with
+a time splitting technique and with  an upstream differencing scheme. The small
+time step used for this computation is determined from the CFL stability
+criterium based on a maximum raindrop fall velocity $V_{TRmax}$ of 7m/s.
+
+\section{Implicit sources}
+Once the explicit sources are computed, the condensation/evaporation rate is
+obtained through a saturation adjustment procedure following Langlois (1973).
+If $T^*$ and $r_v^*$ are the temperature and vapor mixing ratio obtained after
+adding the explicit sources, we seek the zero-crossing of $F(T)$, defined as
+\begin{equation}
+F(T)= (T-T^*) + {L_v(T) \over C_{ph}} (r_{vs}(T)-r_v^*).
+\end{equation}
+To obtain a rapidly convergent algorithm, Langlois suggests to use a
+generalized
+Newton-Raphson procedure which employs the first and second derivatives of $F$:
+\begin{equation}
+T \simeq T^*- {F(T^*) \over F'(T^*)} \big[ 1+ {F(T^*)F''(T^*) \over 2 F'^2(T^*)}\big].
+\end{equation}
+The saturated vapor mixing ratio is given by
+\begin{equation}
+r_{vs}(T)= {\epsilon e_s(T) \over p-e_s(T)},
+\end{equation}
+where $\epsilon = M_v/M_d$.
+
+According to (\ref{eq21}),
+\begin{equation}
+e_s'(T)= ( {\beta_w \over T^2} - {\gamma_w \over T}) e_s(T) = A(T) e_s(T).
+\end{equation}
+$r'_{vs}$ is then given by
+\begin{equation}
+r'_{vs} = A(T) r_{vs}(T)(1 + {r_{vs}(T) \over \epsilon}).
+\end{equation}
+It follows:
+\begin{equation}
+T= T^* - \Delta_1 (1 +{1\over 2} \Delta_1 \Delta_2),
+\end{equation}
+with
+\begin{eqnarray}
+\Delta_1&= \dfrac {F(T^*)}{ F'(T^*)}&= {L_v(T) \over C_{ph} + L_v(T)r'_{vs}(T^*)}
+         \big[r_{vs}(T^*)-r_v^*\big], \\
+\Delta_2&= \dfrac {F''(T^*)}{F'(T^*)}&= {L_v(T) r'_{vs}(T^*) \over C_{ph} + L_v(T) r'_{vs}(T^*)}
+         \big[ {A'(T^*) \over A(T^*)} + A(T^*) +
+{2 r_{vs}(T^*) \over \epsilon}\big] ,
+\end{eqnarray}
+and
+\begin{eqnarray}
+A(T)&=\dfrac{\beta_w}{T^2} - \dfrac{\gamma_w}{T}, \\
+A'(T)&=-\dfrac{2\beta_w}{T^3} + \dfrac{\gamma_w}{T^2}. \\
+\end{eqnarray}
+In the above derivation, the variations of $L_v$ with respect to T are ignored,
+being considered much smaller than the variations of $r_{vs}$. Langlois shows
+that with this procedure, iteration is unnecessary.
+
+The condensation/evaporation rate is then computed as:
+\begin{equation}
+P_{CON}= - \Delta_1 (1 +{1\over 2} \Delta_1 \Delta_2){C_{ph}\over L_v(T)}
+{1 \over 2\Delta t}
+\end{equation}
+In the case of evaporation (condensation), $P_{CON}$ is limited by the amount
+of available cloud water (water vapor).
+
+\section{Global correction for negative values}
+The microphysical sink/sources are computed in such a way they never return
+negative values for $r_v$, $r_c$, or $r_r$.
+However, in the present version of the code, the advection
+scheme is not positive definite. It is therefore necessary to remove all the
+negative mixing ratio values before applying the microphysical calculations.
+This is currently done inside the microphysical scheme,
+by a global filling algorithm based on a multiplicative method
+(Rood, 1987). The
+negative values of the mixing ratio source distribution are found and
+corrected (i.e set equal to zero). The total mass of the corrected distribution
+is calculated. Then the corrected distribution is mutiplied grid point by
+grid point by the ratio of the mass of the original distribution to the mass of
+the corrected distribution.
+
+\section{Practical implementation}
+
+The microphysical constants ($N_o$, $a$, $b$, $\alpha$, $C1_{RC}$, $C2_{RC}$,
+$C_{RA}$, $C'_{RA}$, $D_v$, $k_a$, $C1_{RE}$, $C2_{RE}$, $C'_{RE}$, $C_{RS}$,
+$C'_{RS}$ and $V_{TRmax}$) are set up in  routine INI\_CLOUD called during the
+initialization process.
+
+During the model run,  the computations related to the resolved cloud and rain
+parameterization are  monitored by the routine RESOLVED\_CLOUD. When entering
+RESOLVED\_CLOUD, the source array $\psi S$ of a variable $\psi$ contains
+$$ {\hat \rho \psi^{t-1} \over {2 \Delta t}} + \sum_i S_i(\hat \rho \psi^t) $$
+where  $S_i$ designate the previously computed tendencies (i.e. advection,
+numerical diffusion, turbulence, ...). $\psi S$ can be interpreted as a guess
+of $\hat \rho \psi^{t+1} / 2 \Delta t$.  RESOLVED\_CLOUD computes the
+microphysical tendencies and returns updated
+values of the source arrays affected by the explicit cloud and rain
+parameterization i.e.  $\theta S$, $r_v S$, $r_c S$, and $r_r S$. The main steps
+of the scheme are the following
+
+\begin{itemize}
+\item
+The negative mixing ratios sources ( $r_vS$, $r_cS$, and  $r_rS$)
+are corrected according to the global filling algorithm described in 11.5.
+
+\item
+The  $\theta$, $r_v$, $r_c$, and $r_r$ sources are divided by $\hat \rho$
+to minimize computations in this section.
+
+
+\item
+Routine SLOW\_TERMS is called and proceeds to the computation of the
+explicit sources:
+
+\begin{itemize}
+\item
+Computes the rain sedimentation source $P_{RS}$ and updates the rain
+source [$r_r S = r_rS + P_{RS}$].
+
+\item
+Computes the  accretion source $P_{RA}$, limits the accretion source
+by the amount of cloud water available at this stage
+[$P_{RA} = Min (P_{RA}, r_cS)$] and updates the cloud water and rainwater
+sources
+[$r_c S = r_c S - P_{RA}$ and  $r_r S = r_r S + P_{RA}$].
+
+\item
+Computes the  autoconversion source $P_{RC}$, limits the autoconversion
+source by the amount of cloud water available at this stage
+[$P_{RC} = Min (P_{RC}, r_cS)$] and updates the cloud water and rainwater
+sources
+[$r_c S = r_c S - P_{RC}$ and  $r_r S = r_r S + P_{RC}$].
+
+\item
+Computes the  rain evaporation source $P_{RE}$, limits the rain
+evaporation  source by the amount of rainwater available at this stage
+[$P_{RE} = Min (P_{RE}, r_rS)$] and updates the water vapor, rainwater, and
+potential temperature sources
+[$r_v S = r_v S + P_{RE}$,  $r_r S = r_r S - P_{RE}$ and $\theta S = \theta S
+- P_{RE} L_v / (\pi_{ref} C_{ph})$].
+\end{itemize}
+
+\item
+Routine FAST\_TERMS is called and performs the implicit saturation
+adjustment:
+
+\begin{itemize}
+\item
+Computes the condensation/evaporation source $P_{CON}$, limits this
+source by  the amount of cloud water (water vapor) available at this stage in
+the case of evaporation (condensation) [$P_{CON} = Min (P_{CON}, r_vS)$
+or $P_{CON} = Min (P_{CON}, r_cS)$], and updates  the water vapor,
+cloud water, and potential temperature sources
+[$r_v S = r_v S - P_{CON}$,  $r_c S = r_c S + P_{CON}$ and $\theta S = \theta S
++ P_{CON} L_v / (\pi_{ref} C_{ph})$].
+\end{itemize}
+
+\item
+The  $\theta$, $r_v$, $r_c$, and $r_r$ sources are multiplied by $\hat \rho$
+to go back to the original tendencies.
+\end{itemize}
+
+\section{Available options and summary of the ajustable constants}
+According to the value of the CLOUD parameter given in  namelist (see The
+Meso\_NH user's guide), the
+microphysical scheme can be used in three different ways:
+\begin{itemize}
+\item
+CLOUD = 'NONE' :  no microphysics, the water vapor (if present) is computed
+as a passive tracer,
+\item
+CLOUD = 'REVE' : only reversible processes are considered, no rain is generated
+(i.e the call to SLOW\_TERM is by-passed),
+\item
+CLOUD = 'KESS' : the full scheme is operating.
+\end{itemize}
+
+Some others parameters might be reasonably modified  by the user in
+routine INI\_CLOUD. These are:
+
+$N_o$ the Marshall-Palmer distribution parameter,
+
+$a$, $b$, and $\alpha$ the parameters used in the raindrop fall velocity
+expression,
+
+$C1_{RC}$ and $C2_{RC}$, the autoconversion time constant and threshold,
+
+$V_{TRmax}$, the maximum raindrop fall velocity used to ensure stability of
+the sedimentation computation.
+
+\section{References}
+\parindent 0truecm
+\por
+Foote, G.B., and P.S. Du Toit, 1969: Terminal velocity of raindrops aloft.
+{\it J. Apl. Meteor.}, {\bf 8}, 249-253.
+\por
+Kessler, E., 1969: On the distribution and continuity of water sustance in
+atmospheric circulations. {\it Meteor. Monog.}, {\bf 10}, N$^0$ 32, 84pp.
+\por
+Langlois, W.E., 1973: A rapidly convergent procedure for computing large-scale
+condensation in a dynamical weather model. {\it Tellus}, {\bf 25}, 86-87.
+\por
+Liu, J.Y, and H.D. Orville, 1969: Numerical modeling of precipitation and cloud
+shadow effects on mountain-induced cumuli. {\it J. Atmos. Sci.},{\bf 26},
+1283-1298.
+\por
+Pruppacher, H.R and J.D. Klett, 1978: Microphysics of clouds and precipitation.
+Reidel, 714pp
+\por
+Rood, R.B., 1987: Numerical advection algorithms and their role in atmospheric
+transport and chemistry models. {\it Review of Geoph.}, {25}, 71-100.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%  END OF WARM MICROPHYSICS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

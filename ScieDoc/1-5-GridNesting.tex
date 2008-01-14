@@ -1,0 +1,360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "GRID NESTING"
+% Author : P. Lafore
+% Original : June, 1995
+% Last Update   : March, 2000
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Grid Nesting}
+\minitoc
+
+\section{Principles}
+
+ There are many problems in atmospheric fluid dynamic in which higher spatial
+resolution is required in only a limited portion of the computation domain.
+ The two-way interactive grid nesting of Clark and Farley (1984)
+is implemented in the M\'eso-NH code with some modifications
+to allow one to focus on such desired regions
+and obtain higher spatial resolution and greater computational efficiency.
+
+ The main principle is to execute in parallel several simulations on a nested
+grid whose a possible structure is illustrated by  Fig. \ref{nesting-example}.
+The only restriction concerns the temporal and spatial resolution ratio between
+models, that should be an integer. In the present example we have 4 nested models,
+with spatial resolution ratios of 2 and 4 between model 1 and model 2, and
+between model 2 and model 3 or 4, respectively.
+
+
+\begin{figure}
+%\psfig{figure=nest-ex.eps}
+\psfig{figure=\EPSDIR/nest-ex.eps}
+\caption{An example of nested gridsmesh horizontal and temporal structure.}
+\label{nesting-example}
+\end{figure}
+
+ The interactions between each fine mesh (FM) model
+and its coarse mesh (CM) model are treated through either
+one- or two-way interactive nesting.
+
+%${\cal M}_{CM}$ ${\cal M}_{FM}$
+
+\begin{itemize}
+\item
+ In the simpler one-way approach, only CM waves are allowed to enter and affect
+the FM model. It is simply performed by the use of interpolation operators
+{\bf I} to derived boundary conditions of the FM model from its CM model.
+\item
+ In the two-way approach, waves resolved by the FM model can also affect
+the CM model solution. It is done by operators {\bf S} averaging
+FM data down to the CM resolution.
+\end{itemize}
+
+
+\section{Basic choices}
+
+ The following choices have been made:
+
+\begin{itemize}
+\item The nesting is restricted to the horizontal directions. Thus all models
+have the same vertical resolution and level numbering.
+\item The resolution ratio in the x- and y-direction can be different.
+\item Differing temporal resolutions are allowed (Fig. \ref{nesting-example}).
+\item A same CM model can monitor several FM models as illustrated by
+Fig. \ref{nesting-example}, where model 2 monitors models 3 and 4.
+\item No relative translation speed is allowed between CM and FM models.
+\item All models have the same x- and y-axis orientation, and work therefore
+in the same geographic projection system.
+\item As developed later, the FM topography averaged at the CM scale must be
+equal to the one of the CM model.
+\item Different levels of coupling are possible between models:
+\subitem {\bf level 2} for the two-way interaction of all variables,
+\subitem {\bf level 1} for the one-way interaction,
+\subitem {\bf level 0} for the no-interaction case (i.e. model is independent
+from the others).
+\end{itemize}
+
+\section{Averaging and interpolation procedures}
+
+ The original gridnesting method proposed by Clark and Farley (1984)
+have been implemented with two major modifications concerning the
+averaging and interpolation procedures. First we preferred to inject the FM
+model results into the CM model through a relaxation term instead of a
+simple substitution. It allows to strictly respect the anelastic constraint
+independently of the averaging operator, and to get a fully consistant pressure
+field. Second the Clark and Farley interpolation is replaced by an
+algebric interpolator, to avoid discontinuities from one grid box to the next
+one. Contrary to results of Clark and Farley, our validation tests showed that
+the reversibility condition of Kurihara et al (1979) between averaging and
+interpolation operators was not strictly necessary in our case.
+
+\subsection{Interpolation operators}
+
+\subsubsection{The Bikhardt spatial interpolation}
+
+ This algebric interpolator (cited by Floriani et Dettori, 1980)
+uses 16 points. The interpolation formula at a point of coordinate (a,b) can be
+written as:
+
+\begin{equation}
+\label{Bik0}
+g(a,b) \, =  \, \sum_{i=1}^4  \, \sum_{j=1}^4  \,
+f_{ij} \,B_{i}(a) \,B_{j}(b)
+\end{equation}
+
+\noindent where $f_{ij}$ corresponds to values at points $(i,j)$
+(Fig. 2) and the $B_{i}$ are the following third order polynomials:
+
+\vspace{-.3cm}
+\begin{eqnarray}
+B_{1} = &-0.5 t^3 & + \,\,t^2 -0.5t   \nonumber \\
+B_{2} = &+1.5 t^3 & - 2.5 t^2 +1 \\
+B_{3} = &-1.5 t^3 & + \,2 t^2 +0.5t   \nonumber \\
+B_{4} = &         & + 0.5 t^2 (t-1)   \nonumber
+\end{eqnarray}
+
+\noindent obeying the properties $B_{i}(0)=0$ except $B_{2}(0)=1$
+and $B_{i}(1)=0$ except $B_{2}(1)=1$, so that the interpolation surface
+passes exactly through the 4 most inner points (2,2), (2,3), (3,2) and (3,3).
+
+ This Bikhardt operator is used to horizontally interpolate on
+$\overline{z}$ surface the CM models variables and $LS$ fields to obtain the
+corresponding $LB$ and $LS$ fields of the FM model. Finaly a linear vertical
+interpolation is performed on the $LB$ and $LS$ fields to account for the
+topography  differences between CM and FM models.
+
+\begin{figure}[pbh]
+%\psfig{figure=Bikhardt.eps,width=8.cm}
+\psfig{figure=\EPSDIR/Bikhardt.eps,width=8.cm}
+\vspace{1cm}
+\caption{Configuration of points involved in the Bikhardt interpolation.
+The interpolation is valid in the shaded area.}
+\end{figure}
+
+\subsubsection{Temporal interpolation}
+
+ In case of differing time steps, the previous spatial interpolating is
+performed only when the two models are synchronized in time. In between
+a linear temporal interpolation is used to get $LB$ and $LS$ fields at the
+current time.
+In practice it is done by storing the $LB$ and $LS$ tendancies to allow its
+forward temporal integration.
+
+\subsubsection{Lateral boundaries conditions and other treatments}
+
+ The previous interpolations allow to get the $LB$ fields necessary to
+treat lateral boundaries as described in chapter 5. As for a single model
+run different types of l.b.c. formulations (cyclic, rigid wall or open) can
+be used. For instance for open l.b.c. normal velocities are treated owing
+to the use of a modified Sommerfeld equation already presented in chapter 5.
+
+\begin{equation}
+\label{carpenter2}
+{\dr u_n \over \dr t} =             {\l{{\dr u_n \over \dr t}}\r}_{LB}
+- C^*{\l  {\dr u_n \over \dr x}  -  {\l{{\dr u_n \over \dr x}}\r}_{LB}  \r}
+- K \, \, {\l u_n - {u_n}_{LB}   \r}
+\end{equation}
+
+ Also a lateral sponge zone may be applied to smoothly relax FM
+fields towards CM corresponding fields stored in the $LB$ fields.
+
+ The $LS$ fields previously prepared are eventually used for the numerical
+diffusion and the top absorbing layer (chapter 7).
+
+\subsection{Averaging operators}
+
+ Define $\Psi$ to be a CM variable and $\psi$ to be the equivalent
+variable in the FM. We define the following top hat averaging operators
+$S$, $S_u$ and $S_v$ for variables located at scalar, u and v points
+respectively:
+
+\begin{equation}
+\label{averaging-op}
+ S ( \psi) \, = \, \dfrac{
+ \sum_{i=1}^{X_{ratio}} \sum_{j=1}^{Y_{ratio}} \,
+\left( \tilde{\rho}_{FM} \psi \right)_{i,j}          }
+{
+ \sum_{i=1}^{X_{ratio}} \sum_{j=1}^{Y_{ratio}} \,
+\left( \tilde{\rho}_{FM} \right)_{i,j}               }
+\end{equation}
+
+
+\begin{equation}
+\label{averaging-opu}
+ S_u ( u) \, = \, \dfrac{ \,
+\sum_{j=1}^{Y_{ratio}} \, \left( \overline{\tilde{\rho}_{FM}}^{x} u \right)_{j}}
+{ \,
+\sum_{j=1}^{Y_{ratio}} \, \left( \overline{\tilde{\rho}_{FM}}^{x}   \right)_{j}}
+\end{equation}
+
+\begin{equation}
+\label{averaging-opv}
+ S_v ( v) \, = \, \dfrac{ \,
+\sum_{i=1}^{X_{ratio}} \, \left( \overline{\tilde{\rho}_{FM}}^{y} v \right)_{i}}
+{ \,
+\sum_{i=1}^{X_{ratio}} \, \left( \overline{\tilde{\rho}_{FM}}^{y}   \right)_{i}}
+\end{equation}
+
+\noindent
+where $X_{ratio}=\dfrac{\Delta \overline{x}}{\Delta \overline{X}}$
+  and $Y_{ratio}=\dfrac{\Delta \overline{y}}{\Delta \overline{Y}}$ are the
+resolution ratio on the conformal plan in the x- and y-direction respectively.
+
+ The variables $\Psi$ of the CM model are relaxed towards the averaged
+$S( \psi)$ values obtained from the FM model in the entire overlapping domain.
+The corresponding additional source for any prognostic variable $\Psi$ is
+
+
+\begin{equation}
+\label{2w_relaxation}
+S_{2W} = -K_{2W} \big[ \Psi^{t-\Delta T} - S ( \psi^{t-\Delta T}) \big]
+\end{equation}
+
+\noindent
+where subscript $2W$ stands for two-way interactive gridnesting and $K_{2W}$
+is the relaxation coefficient set by default to $1/(4\Delta T)$ with $\Delta T$
+being the CM model timestep.
+The mass continuity remains satisfied owing to the pressure solver passage
+althought the averaging operators
+(\ref{averaging-op}, \ref{averaging-opu} and \ref{averaging-opv}) do not
+strictly guarantee this property.
+
+
+\section{Implementation of the nesting}
+
+In a first stage the gridnesting technics has been implemented on a Cray 90,
+owing to the use of the Cray macrotasking facility to execute each model as a
+specific task. Nevertheless this approach appears to have several desavantages;
+first  macrotasking is specific to Cray computers, second the efficiency of
+the nesting parallelization is weak, as each task is dependent from the others,
+third the model synchronization is quite delicate to code.
+
+We finaly prefered a "sequential" approach, consisting in running at the same time
+only one model for only one time step. The cruder resolution models are run first.
+In case of multiprocessor run, each model time integration is distributed and
+performed on each processor.
+
+
+ \section{Preparation of a nested simulation (Spawning)}
+
+ In order to conduct a gridnesting simulation, each FM model must be first
+initialized by its CM model.
+This operation is performed by a program named SPAWNING,
+designed to generate initial fields by horizontal interpolation
+of fields provided by a given M\'eso-NH file.
+The input CM model for this interpolation task, will be named model 1,
+whereas the model 2 will refer to the one to be spawned (CM model).
+The main possibilities and limitations of the spawning program are:
+
+\begin{itemize}
+\item The model 2 horizontal domain must be included in the model 1 domain.
+\item The resolution ratio between model 2 and 1 must be an integer, and
+can be different in the $\bar x$ and $\bar y$ directions.
+\item As regards other
+characteristics, the two domains remain identical, such as vertical grid,
+geometry or orientation.
+\end{itemize}
+
+\noindent {\bf NB:} A different program, part of the PREP\_REAL\_CASE facilities
+(see the{\it "Initial fields for real case"} Chapter), can be used
+on the FM-File generated by the spawning, to change the vertical grid and
+modify the surface fields, including finer scale information.
+
+\subsection{Horizontal grid configuration}
+
+ Figure \ref{grid-conf} shows the horizontal grid structure of the models 1 and
+2. The physical boundary of the two simulation domains (thick line on
+Fig. \ref{grid-conf}) corresponds to localization of the velocity component
+normal to the boundaries.
+ The  model 2 horizontal grid is defined by 3 input parameters:
+
+%\newpage
+\begin{enumerate}
+\item the resolution ratios between models in the x and y-directions
+(DXRATIO and DYRATIO respectively) which must be integer,
+\item the position of model 2 (XOR,YOR) relative to model 1
+(see Fig. \ref{grid-conf})
+\item and the number of points in each horizontal direction.
+\end{enumerate}
+
+\noindent The only constraint is that the number of points must be a multiple of the
+resolution ratio for each horizontal direction.
+
+\begin{figure}[pbh]
+%\psfig{figure=horzgrid2.eps,width=13.5cm}
+\psfig{figure=\EPSDIR/horzgrid2.eps,width=13.5cm}
+\vspace{1cm}
+\caption{Horizontal structure of the grids for a resolution ratio of 2
+between models 1 and 2.}
+\label{grid-conf}
+\end{figure}
+
+\subsection{Interpolation operators}
+
+ The basic task of the spawning program is to perform horizontal interpolations
+(at constant $\bar{z}$ level). Two different interpolation operators are used:
+
+\begin{enumerate}
+\item a simple linear interpolator, mainly to interpolate the
+$\widehat{x}$ and $\widehat{z}$ coordinates,
+\item and the Bikhardt interpolation previously described for most variables.
+\end{enumerate}
+
+\subsection{Specific treatments for spawning}
+
+\subsubsection{Grid structure and configuration}
+
+ After initialization of model 1 from the corresponding FM-File,
+the program first initializes the model 2 configuration and spatio-temporal
+grid structure. The model configurations are identical except for the
+radiation which is not treated by the spawning, and the lateral boundary
+conditions which are deduced from the model 2 domain position.
+Concerning grid structure, the topography $z_s$ is interpolated by the Bikhardt
+operator, whereas the coordinates are linearly interpolated.
+Some corrections are applied to $z_s$ depending on the land-sea mask and on
+the model 1 topography, to be consistant, to avoid non-zero altitude at
+sea level, and to keep negative altitudes over land where it is the case at
+the model 1 scale.
+
+\subsubsection{3D fields}
+
+ Each of the 3D prognostic or diagnostic fields of model 1 are interpolated
+independtly, with correction of negative values for variables which must be,
+by definition, positive. Finally the pressure solver is used to enforce the
+anelastic constraint, accounting for new surface conditions due
+to the interpolated topography.
+
+\subsubsection{Surface fields}
+
+ The interpolation of surface variables is more complicated, mainly due
+to the existence of non-physical values (flagged), soil characteristic over the
+sea for instance, and of discontinuities (at the sea coast).
+ The method consists in first replacing the model 1 flagged values by
+physical values of the nearest point, secondly the interpolation is
+performed, and finally the flagged values are restored. Several corrections
+are also necessary to avoid overshoots, and to enforce certain constraints
+(consistancy between the sea-land-lake masks or the clay-sand-silt indexes).
+Using such methods it is easy to perform a simulation at finer scale keeping
+the same surface characteristics (except the interpolation). If
+available, finer scale characteristics can be introduced with the use of
+the PREP\_REAL\_CASE facilities.
+
+\section*{References}
+\parindent 0cm
+
+\por
+Clark, T. L., 1984: Severe downslope windstorm calculations in two and three
+spatial dimensions using anelastic interactive grid nesting: a possible
+mechanism for gustiness. {\it J. Atmos. Sci.},  {\bf 41}, 329-350.
+
+\por
+Chen C. 1991:
+A nested grid, non-hydrostatic, elastic model using a terrain-following
+coordinate transformation: the radiative-nesting boundary conditions.
+{\it Mon. Wea. Rev.},  {\bf 119}, 2852-2869.
+\por
+Kurihara, Y., G. J. Tripoli and M. A. Bender, 1979:
+Design of a movable nested-mesh primitive equation model.
+{\it Mon. Wea. Rev.},  {\bf 107}, 239-249.
+
+\end{document}
+

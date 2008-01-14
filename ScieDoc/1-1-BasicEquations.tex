@@ -1,0 +1,995 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "Basic Equations"
+% Author        : Ph. Bougeault, V. Ducrocq, J. Ph. Lafore, and P. J. Mascart
+% Original      : September 1, 1995, Ph. Bougeault and V. Ducrocq (LH system only)
+% Update        : March 1997, J. Ph. Lafore (side paper for Durran an MAE systems)
+% Last Update   : June 2001, P. Mascart (merging with J. Ph. Lafore corrections)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Basic Equations}
+\minitoc
+
+\section{A Family of Anelastic Approximations }
+
+%A beneficial effect of the anelastic approximation is that it has no acoustic modes, and
+%the time discretization may be entirely explicit without introducing an overly restrictive
+%constraint on the time-step.
+As mentioned above in section
+% Provisoire avant d'integrer avec gros BOOK1
+%1.2
+% A utiliser ensuite
+~\ref{CHP1anel},
+the size of time step that produces a stable numerical solution for explicit
+finite-difference approximation to the Navier-Stokes equations is restricted by the rapid
+propagation of sound waves. This time step limitation may be overcome by replacing the full
+Navier-Stokes equations by an approximation that filters out the sound waves.
+In search of such sound--proof systems, a wide family of anelastic approximation has been
+proposed, and all these systems assume that thermodynamic state variables exhibit only
+small departures from a suitably defined static reference state. The original form of the
+anelastic approximation was proposed by Batchelor (1953)
+and later refined by Ogura and Phillips (1962) as an improvement over the Boussinesq
+approximation more suitable for studying convection within deep atmospheric layers. This
+original anelastic system conserved modified forms of both total energy and Ertel potential
+vorticity (Nance and Durran, 1994; Bannon, 1995). Unfortunately, this original anelastic
+approximation only holds for an isentropic reference state, and is not really applicable to
+realistic meteorological
+investigation. Subsequently, this restriction was removed by Wihelmson and Ogura (1972) which
+replaced the constant reference--state potential temperature with a vertically varying
+reference--state potential temperature. This modified anelastic equation  set improves the
+representation of deep convection but sacrifices potential vorticity and energy conservations
+(Bannon, 1995). A major improvement was provided by the Lipps and Hemler (1982) equation set
+which allows an accurate representation of deep troposheric phenomena, and
+simultaneously conserves modified forms of Ertel potential vorticity and total energy for finite
+amplitude disturbances (Bannon, 1995). Finally, Durran (1989) has introduced the
+pseudo-imcompressible approximation  to obtain a better description of
+upper--level isothermal layers, while retaining a good conservation of appropriate forms of
+Ertel potential vorticty and total energy for finite amplitude displacements (Bannon, 1995).
+
+The current formulation of Meso--NH model allows for the use of three of these analastic
+systems: the Lipps and Hemler (1982) system (LH hereafter), the traditional Wihelmson and
+Ogura (1972), a.k.a. the "Modified Anelastic Equations" (MAE hereafter ), and a simplified
+implementation of the pseudo-incompressible system of Durran (1989, DUR hereafter). The
+present chapter tries to describe these three implementations in an orderly way.
+
+\section{Preliminary Definitions}
+
+We will use the following notations:  \\
+
+the rotation velocity of the earth $\vec \Omega$,
+
+the temperature $T$,
+
+the pressure $P$,
+
+the reference value of the pressure $P_{00}=100000 Pa$,
+
+the total density of the moist air $\rho$,
+
+the density of the dry fraction of the air $\rho_d$,
+
+the specific heat at constant pressure of dry air $C_{pd}$,
+
+the specific heat at constant pressure of water vapor $C_{pv}$,
+
+the specific heat of liquid water $C_l$,
+
+the specific heat of ice water $C_i$,
+
+the gas constant for dry air  $R_d$,
+
+the gas constant for water vapor $R_v$,
+
+the latent heat of vaporization $L_v$,
+
+the latent heat of sublimation $L_s$,
+
+the latent heat of melting $L_m$.
+\\
+
+
+Various substances are measured by their mixing ratio $r_\bullet$, which is the
+mass of the substance within a given volume, divided by the mass of dry air
+within the same volume. In the current anelastic formulation, we assimilate
+the dry air mass and the reference state dry air mass (see below), thus
+the volumic mass may be recovered as $\rho_{d\,ref} r_{\bullet}$. \\
+
+The treatment of the different phases of water is flexible.
+Up to seven forms of water may be considered if the user wishes so, the
+mixing ratios being $r_v$ for vapor, $r_c$ for cloud liquid water, $r_r$ for
+liquid rain, $r_i$ for cloud ice, $r_s$ for snow, $r_g$ for graupels, and
+$r_h$ for hail. The same mnemonics are used in the code, inasmuch as possible.
+If a user is not interested by such computations, he may decide to use only a
+subset of these variables. The computations concerning the remaining
+water variables will not be performed, resulting in lesser cost. The
+resulting equations may be obtained by setting the corresponding variables
+to zero in the following of this chapter.\\
+
+Whenever necessary, we use the mixing ratio of total water substance
+\begin{equation}
+r_w=r_v+r_c+r_r+r_i+r_s+r_g+r_h
+\end{equation}
+
+The specific heat at constant pressure of the moist air takes the general form
+\begin{equation}
+C_{ph}=C_{pd}+r_v C_{pv} + (r_c+r_r) C_l + (r_i+r_s+r_g+r_h) C_i .
+\end{equation}
+
+
+An important quantity is the Exner function
+\begin{equation}
+\Pi  =  ( P/P_{00} )^{R_d / C_{pd}} .
+\end{equation}
+
+We use the "dry" potential temperature
+\begin{equation}
+\theta  =  {T \over \Pi}.
+\end{equation}
+
+The virtual temperature is defined as
+\begin{equation}
+T_v= T . (1+r_v R_v/R_d)/(1+r_w),
+\end{equation}
+and the virtual potential temperature as
+\begin{equation}
+\theta_v= \theta . (1+r_v R_v/R_d)/(1+r_w).
+\end{equation}
+
+$\vec{U}$ is the air velocity, and whenever necessary, its cartesian
+components are called $u$, $v$, and $w$.
+
+\section{Reference State}
+
+All anelastic approximation systems rely on the hypothesis
+that the atmosphere will not depart very far from a "reference
+ state", defined as
+an atmosphere at rest, in hydrostatic equilibrium, with horizontally
+uniform profiles of temperature $T_{ref}(z)$ and water vapor
+$r_{v\,ref}(z)$. No condensed water is considered in the reference state.
+For our application, the reference
+profiles are often chosen as the initial horizontal averages of actual fields
+ over the expected domain of
+simulation. Any profile, however, may be used, but the inaccuracy of the
+computation increases if the reference state is far from the actual mean state.
+In the following the dependency in $z$ only will be assumed for all quantities
+subscripted with $()_{ref}$.\\
+
+The hydrostatic relation and the equation of state are used to derive the
+profiles of the virtual temperature and the Exner function of the reference
+state $T_{v\,ref}$, $\Pi_{ref}$:
+
+\begin{equation}
+T_{v\,ref}=T_{ref}(1+r_{v\,ref} R_v/R_d)/(1+r_{v\,ref} )
+\end{equation}
+
+\begin{equation}
+\dfrac{d(Log\Pi_{ref})}{dz} = -\dfrac {g}{C_{pd}T_{v\,ref}}
+\end{equation}
+
+with the upper boundary condition $\Pi_{ref} = \Pi_{ref}^{top}$
+at the model top $z=H$.
+
+\vspace{0.2cm}
+
+$\theta_{v\,ref}$ is then deduced from $\Pi_{ref} $  and
+$T_{v\,ref}$  as
+
+\begin{equation}
+\theta_{v\,ref} = \dfrac{T_{v\,ref}}{\Pi_{ref}}
+\end{equation}
+
+\vspace{0.2cm}
+
+Finally, $\rho_{ref}$ is deduced from the equation of state
+\begin{equation}
+\rho_{ref} =
+\dfrac{\Pi_{ref}^{C_{vd}/R_d}P_{00} }{R_d \theta_{v\,ref}} \label{state}
+\end{equation}
+and the density of the dry air fraction $\rho_{d\,ref}$ is deduced by
+\begin{equation}
+\rho_{d\,ref}={ \rho_{ref} \over (1+r_{v\,ref}) }
+\end{equation}
+
+Note that both the dry air and the water vapor must be considered to build the
+profile of the Exner function of the reference state, since each gas
+is subject to the partial pressure of the other one.
+
+\section{Equation of State}
+
+A primary difference between the three anelastic systems used in Meso--NH is the form
+adopted for the equation of state.
+Both the modified anelastic (MAE) and Lipps-Hemler (LH) systems follow
+the usual framework of the Boussinesq approximation by linearizing the equation of state. On
+the contrary, the Durran system (DUR) keeps the full equation of state, without any
+linearization.
+
+\subsubsection{Modified--Anelastic and Lipps--Hemler Systems}
+
+For the MAE and LH cases, the equation of state $p=\rho R_d T_v$ is replaced by
+the linearized form:
+
+\begin{equation}
+\rho ' =  \rho_{ref} \left( \dfrac{C_{vd}}{R_d}\dfrac{\Pi
+'}{\Pi_{ref}} - \dfrac{\theta_v '}{\theta_{v\,ref}} \right),
+\label{StateEq}
+\end{equation}
+
+where $\rho '= \rho - \rho_{ref}, \Pi '=\Pi - \Pi_{ref}$, and
+$\theta_v '= \theta_v - \theta_{v\,ref}$.
+
+\subsubsection{Durran System}
+
+In the DUR case, contrary to most anelastic systems, the equation of state
+\begin{equation}
+p=\rho R_d T_v
+\end{equation}
+is not linearized, and thus is used without any approximation.
+
+\section{Anelastic Constraint}
+
+For all three anelastic system used in Meso--NH, the continuity equation is may be
+written as the approximated form:
+\begin{equation}
+\vec{ \nabla} \cdot
+(\rho_{d\,eff} \vec{U}) = 0, \label{anelcons}
+\end{equation}
+\\
+where $\rho_{d\,eff}$ is a convenient compact notation for:
+
+%
+\parbox{15cm}{
+\begin{displaymath}
+\rho_{d\,eff} = \left\{
+\begin{array}{r@{\quad}cc}
+\rho_{d\,ref}, \,\,\,\,\,\,\,\,\,\, \,\,\,\,\,\,
+              & \quad &\mbox{(Lipps--Hemler)} \\
+\rho_{d\,ref}, \,\,\,\,\,\,\,\,\,\, \,\,\,\,\,\,
+              & \quad &\mbox{(Mod. Anelastic Eq.)}\\
+\rho_{d\,ref} \theta_{v\,ref} (1+r_{v\,ref}).
+              & \quad  &\mbox{(Durran)} 
+\end{array}
+\right.
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+\ \label{Lhconti} \\ \label{MAEconti}   \\ \label{DUconti}
+\end{eqnarray}
+}
+%
+
+
+Stricly speaking, the Durran (1989) form of the anelastic constraint (equation \ref{DUconti}) 
+only holds in the adiabatic limit, and the r.h.s of (\ref{DUconti}) should be written 
+$\dfrac{\cal H}{C_{pd}\Pi_{ref}}$ in the general case where $\cal H$ is the heating rate per 
+unit volume. However, Durran (1989, p. 1454) argues that this generalized form reduces to 
+(\ref{DUconti}) in the usual case where the anelastic assumption itself holds.\\
+
+
+Also note that the  dimensional definition of $\rho_{d\,eff}$ is slightly inconsistent. It
+corresponds to the dry air density of the reference state when the Lipps--Hemler deep
+convection anelastic  (LH) or the Modified Anelastic Equation (MAE) approximations are used;
+but it includes an extra potential temperature factor when the pseudo-incompressible anelastic
+approximation (DUR) of Durran (1989) is used.\\
+
+Also note that equation (\ref{anelcons}) represents a strong {\em geometrical} constraint on
+the wind field, called the {\em anelastic constraint}. This constraint is enforced by
+solving an elliptic equation for some pressure deviation function, that
+results from the combination of the continuity and momentum equations (see below).
+
+\section{Conservation of Momentum}
+
+The system is written in a referential frame linked to the earth, with
+a rotation velocity $\vec{\Omega}$, and includes a yet un--specified momentum
+source term $\vec{\cal F}$. In Meso-NH, unlike most atmospheric
+models, the total density of the
+air will vary in function of the precipitation and evaporation of water.
+Therefore a consistent flux form of the equations can only be obtained by
+combining the Lagrangian forms and the equation of continuity for dry air.
+Furthermore, we want to allow for an easy transition to the compressible
+system, should this one be adopted in the future. Therefore, we use an
+equation of conservation for {\em the momentum of the dry air fraction} of the
+fluid:
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} \vec{U})
++ \vec{ \nabla} \cdot (\rho_{d\,eff} \vec{U}\otimes \vec{U} )
+%+\rho_{d\,eff} C_{pd} \theta_{v}\vec{ \nabla} \Pi '
++\rho_{d\,eff} \vec{{\cal F}_{\Pi}}
++ \rho_{d\,eff}  \vec{g} \dfrac{\theta_v-\theta_{v\,ref}}{\theta_{v\,ref}}
++ 2\rho_{d\,eff} \vec{\Omega} \wedge\vec{U}= \rho_{d\,eff} \vec{\cal F},
+\label{EqMomentum}
+\end{equation}
+
+where $\rho_{d\,eff} \vec{{\cal F}_{\Pi}}$ is the pressure gradient force, which
+takes different forms in the three systems:
+
+%
+\parbox{15cm}{
+\begin{displaymath}
+\rho_{d\,eff} \vec{{\cal F}_{\Pi}} =  \left\{
+\begin{array}{l@{\quad}cc}
+\rho_{d\,eff}  \vec{ \nabla}(C_{pd} \theta_{v\,ref} \Pi '),
+                                        & \quad &\mbox{(Lipps-Hemler)}\\
+\rho_{d\,eff} C_{pd} \theta_{v\,ref} \vec{ \nabla} \Pi ',
+                                                & \quad &\mbox{(Mod. Anelastic  Eq.)} \\
+\rho_{d\,eff} C_{pd} \theta_{v} \vec{ \nabla} \Pi '. & \quad  &\mbox{(Durran)}
+\end{array}
+\right.
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+\ \label{LhgradP} \\ \label{MAEgradP}   \\ \label{DUgradP}
+\end{eqnarray}
+}
+%
+
+A distinctive property of the Lipp and Hemler (1982) system is that the reference state virtual
+potential temperature is pulled inside the pressure gradient term (\ref{LhgradP}), whereas
+this factor appears outside of the gradient for both the MAE and Durran (1989) systems
+(\ref{MAEgradP} and \ref{DUgradP}). For the MAE system also note that the virtual potential
+temperature of the reference state is used, whereas the Durran (1989) system directly
+retains the un--approximated virtual potential temperature in (\ref{DUgradP}). \\
+
+It is also worth noticing that
+the form adopted for the Durran (1989) system is identical to the momentum equation in the
+complete compressible system. Although the hydrostatic reference state have been removed,
+the pressure-gradient term has not been linearized. The Durran (1989) system is therefore
+expected to provide a particularly accurate description of the (compressible) momentum
+balance.\\
+
+Apart from the differences in expressing the pressure gradient term, the other terms
+retain their usual form, respectively representing the time evolution, the advection,
+the buoyancy force, the Coriolis force, and the diabatic effects. Also note that the flux
+form of the equation is  consistently kept throughout the model, insuring an integral
+conservation of momentum to a very good
+accuracy. For convenience, the model further uses $\theta_v$ rather than $\theta_v '$,
+therefore, in the following equations, we will use $\theta_v-\theta_{v\,ref}$ to denote
+the fluctuation of buoyancy.\\
+
+Finally, enforcing the anelastic constraint (\ref{anelcons}) leads to the improperly
+called "pressure problem" to determine $\Pi '$ (DUR and MAE) or $C_{pd} \theta_{v}  \Pi ' $
+(LH), respectively. In order to simplify the expression of this problem, we introduce the
+dynamical source of momentum:
+
+\begin{equation}
+\vec{S} = - \vec{ \nabla} \cdot
+(\rho_{d\,eff} \vec{U}\otimes \vec{U} )
+ - \rho_{d\,eff}  \vec{g} \dfrac{\theta_v-\theta_{v\,ref}}{\theta_{v\,ref}}
+- 2\rho_{d\,eff} \vec{\Omega} \wedge\vec{U}  + \rho_{d\,eff} \vec{\cal F} ,
+\end{equation}
+
+whereby the momentum conservation equation may be rewritten:
+
+%
+\parbox{9cm}{
+\begin{displaymath}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} \vec{U})   =
+\vec{S} - \left\{
+\begin{array}{c}
+\rho_{d\,eff}  \vec{ \nabla}(C_{pd} \theta_{v\,ref} \Pi ')\\
+\rho_{d\,eff} C_{pd} \theta_{v\,ref} \vec{ \nabla} \Pi '  \\
+\rho_{d\,eff} C_{pd} \theta_{v} \vec{ \nabla} \Pi '
+\end{array}
+\right\}.
+\end{displaymath}
+}
+\hfill
+\parbox{5cm}{
+\begin{displaymath}
+\begin{array}{c@{\quad}c}
+\quad &\mbox{(Lipps-Hemler)} \\
+\quad &\mbox{(Mod. Anelastic Eq.)} \\
+\quad &\mbox{(Durran)}
+\end{array}
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+\ \label{LhMom} \\ \label{MAEMom}   \\ \label{DuMom}
+\end{eqnarray}
+}
+%
+
+\section{Hydrostatic Equation}
+
+When an hydrostatic approximation of the vertical velocity
+equation is required, for instance  within initialization routines or to compute
+diagnostic quantities,
+the hydrostatic form to be used also differs for the three equations systems.\\
+
+With the pseudo--incompressible system of Durran (1989), as the vertical momentum equation
+is written without any approximation, the hydrostatic relation is exact and reads:
+
+\begin{equation}
+\dfrac{\partial \Pi '}{\partial z} = \dfrac{g} {C_{pd} \theta_{v}}
+\dfrac{\theta_v-\theta_{v\,ref}} {\theta_{v\,ref}}.
+\label{hydrodur}
+\end{equation}
+
+With both the MAE and Lipp--Hemler systems, the usual form of the hydrostatic
+relation $dp=-\rho g dz$ should not be used to establish diagnostic quantities
+related to this model. For the Lipps--Hemler (1982) sytem, by consistency with
+(\ref{EqMomentum}--\ref{LhgradP}), one should use instead:
+
+\begin{equation}
+\dfrac{\partial (C_{pd} \theta_{v\,ref} \Pi ')}{\partial z} = g \dfrac{\theta_v-\theta_{v\,ref}}
+{\theta_{v\,ref}}.
+\end{equation}
+
+Whereas the MAE system leads to a formula similar to (\ref{hydrodur}), except for the use
+of the reference state virtual potential temperature instead of the virtual potential
+temperature:
+
+\begin{equation}
+\dfrac{\partial \Pi '}{\partial z} = \dfrac{g} {C_{pd} \theta_{v\,ref}}
+\dfrac{\theta_v-\theta_{v\,ref}} {\theta_{v\,ref}}.
+\end{equation}
+
+\section{Thermodynamic Equation}
+For the time being, the prognostic energy variable is the dry potential
+temperature $\theta$. In order to account for the effects of moisture, its
+equation takes the following original form
+
+\begin{eqnarray}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} \theta)  + \vec{ \nabla} \cdot
+(\rho_{d\,eff} \theta \;\vec{U})
+= \rho_{d\,eff} \left[ {R_d+r_vR_v\over R_d}{C_{pd} \over C_{ph}}-1 \right]
+{\theta \over \Pi_{ref}} w {\partial \Pi_{ref} \over \partial z}
+\nonumber \\
++ {\rho_{d\,eff}\over \Pi_{ref} C_{ph}} \left[
+ L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right].
+\end{eqnarray}
+
+The terms on the right hand side represent respectively the moist correction
+in absence of any phase change (derived from the conservation of total
+energy, with some approximations), the effects of phase changes, and the other
+diabatic effects (radiation and diffusion). The use of the reference state
+Exner function instead of the total one in the above equation allows for an
+effective decoupling of the pressure problem from the thermodynamical
+problem, leading to a great simplification of the resolution, while
+retaining an excellent accuracy.
+
+\section{Conservation of Moisture}
+
+For any of the water substances $r_{\star}$, the conservation equation
+is written:
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} r_{\star})  + \vec{ \nabla} \cdot
+(\rho_{d\,eff} r_{\star} \vec{U}) = \rho_{d\,eff} {\cal Q}_{\star},
+\end{equation}
+
+where ${\cal Q}_{\star}$ stands for the effects of phase changes, sedimentation
+and diffusion. Note the flux form, and the use of $\rho_{d\,eff}$
+(not $\rho_{ref}$),
+insuring the existence of integral conservation properties.
+
+\section{Conservation of Passive Scalars}
+
+Similarly, the model can carry an arbitrary number of passive scalars,
+following the equation:
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} s_{\star})  + \vec{ \nabla} \cdot
+(\rho_{d\,eff} s_{\star} \vec{U}) = \rho_{d\,eff} {\cal S}_{\star},
+\end{equation}
+
+where ${\cal S}_{\star}$ stands for the effects of  diabatic and chemical
+processes.
+
+\section{Conservation of Total Mass}
+
+The total mass inside the model domain is the sum of the mass of dry air
+and the mass of water (other substances are neglected for the time
+being)
+\begin{equation}
+{\cal M}={\cal M}_d + {\cal M}_w
+\end{equation}
+
+The anelastic constraint (see above)
+does not supply the variation of the total mass of dry air ${\cal M}_d (t)$
+inside the model domain, since it uses the reference
+density profile instead of the actual density. It is therefore necessary
+to use an additional equation. This one depends on the general conditions
+of the experiment:
+\begin{itemize}
+\item If periodic or wall boundary conditions are assumed, the total mass
+of dry air may not vary during a simulation. It is therefore specified
+once and for all at the beginning (${\cal M}_d(t)={\cal M}_d(t_0)$).
+\item If the model is driven by larger-scale meteorological information
+(forecasts or analyses), the time variation of the total mass of dry
+air is assumed to be entirely governed by the larger-scale fields. This
+is consistent with procedures currently used in other limited area models. In
+that case, the value ${\cal M}_d(t)$ of the total mass of dry air within the
+simulation volume is regularly updated by linear interpolation in time
+between the values deduced from the larger-scale fields.
+\end{itemize}
+
+On the other hand, the total mass of water ${\cal M}_w(t)$ can be computed
+at each time during the simulation, by a simple volume integration
+
+\begin{equation}
+{\cal M}_w = \int_V \rho_{d\,ref} r_w dV
+\end{equation}
+where $V$ is the total volume of the model domain. Note that this results
+in the total mass varying with precipitation and evaporation of water,
+as it should, contrary to what was assumed in most models in the past.
+Also, when the model is forced by larger-scale fields, the evolution of
+the total mass of water in the model may be different from
+that in the forcing fields, since the representation
+of physical processes is different.
+
+\section{Pressure Equation}
+
+For all three anelastic system implemented in Meso-NH, combining the anelastic constraint
+\ref{anelcons}) and the momentum equations (\ref{LhMom}--\ref{DuMom}), some appropriate
+"pressure function" can be retrieved by solving an elliptic problem:
+
+%
+\parbox{2cm}{
+\quad
+}
+\hfill
+\parbox{6cm}{
+\begin{displaymath}
+\vec{\nabla} \cdot  \left\{
+\begin{array}{c}
+\rho_{d\,eff}  \vec{ \nabla}(C_{pd} \theta_{v\,ref} \Pi ')\\
+\rho_{d\,eff} C_{pd} \theta_{v\,ref} \vec{ \nabla} \Pi '  \\
+\rho_{d\,eff} C_{pd} \theta_{v} \vec{ \nabla} \Pi '
+\end{array}
+\right\}  = \vec{\nabla} \cdot \vec{S},
+\end{displaymath}
+}
+\hfill
+\parbox{4cm}{
+\begin{displaymath}
+\begin{array}{c@{\quad}c}
+\quad &\mbox{(Lipps-Hemler)} \\
+\quad &\mbox{(Mod. Anelastic Eq.)} \\
+\quad &\mbox{(Durran)}
+\end{array}
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+\ \label{LhPres} \\ \label{MAEPres}   \\ \label{DuPres}
+\end{eqnarray}
+}
+%
+
+the details of the procedure, however, are system--depended.\\
+
+\subsubsection{Lipps--Hemler System}
+
+With the Lipps--Hemler (1982) system, it is convenient to define the pressure
+function in (\ref{LhPres}), as:
+
+\begin{equation}
+\Phi= C_{pd} \theta_{v\,ref} \Pi ',
+\end{equation}
+
+and to solve directly (\ref{LhPres}) for $\Phi$, which can be interpreted as
+a geopotential perturbation.\\
+
+As the boundary condition for the elliptic equation (\ref{LhPres}) are
+Neuman ones (see below and Chapter 7) the solution $\Phi$, hence the pressure, is determined
+only to an arbitrary constant. This is sufficient for the dynamical problem;
+however, for thermodynamic computations, it is often necessary to use the
+absolute value of the pressure.
+Let us assume that $\Phi_{fg}$ is a particular solution of the above elliptic
+problem. We want to
+determine the additional constant $\Phi_0$ that will insure the correct
+absolute value of the pressure.  This is achieved by using the total
+mass as defined above, which may be developed following:
+
+\begin{equation}
+{\cal M} = \int _{V} \rho \;  dV =  \int _{V} \rho_{ref} \;  dV +
+\int _{V} \rho '  \; dV
+ =   {\cal M}_{ref}  +
+\int _{V} \rho ' \;  dV,
+\label{MeanMassEq}
+\end{equation}
+where ${\cal M}_{ref}$ is the mass of the reference state (including both
+dry air and water), computed once and for all at the beginning of each
+experiment.
+
+As the linearized equation of state (\ref{StateEq}) replaces the usual ideal--gas law for
+density fluctuations in the Lipps--Hemler system, we have then
+\begin{equation}
+{\cal M}(t)  =    {\cal M}_{ref}  + \int _{V} \rho_{ref} \;  \left(
+ \dfrac{C_{vd}}{R_d} \;  \dfrac{1}{C_{pd}\theta_{v\,ref}}
+ \; \dfrac{\Phi_{fg} +\Phi_{0} }{ \Pi_{ref}} \;
+- \;  \dfrac{\theta_v -\theta_{v\,ref}}{\theta_{v\,ref}}
+\right) dV
+\end{equation}
+which is solved as
+\begin{equation}
+\Phi_{0}   =  \dfrac{{\cal M}(t) - 2 \times {\cal M}_{ref}
+ \; +  \; \int _{V} \dfrac{\rho_{ref}}{\theta_{v\,ref}}
+\left(\theta_v \;  -  \dfrac{C_{vd}}{R_d}
+ \; \dfrac{\Phi_{fg}}{C_{pd}\Pi_{ref}}\right) \;  dV  }{ \int _{V} \;
+ \dfrac{\rho_{ref}}{\theta_{v\,ref}}
+ \;  \dfrac{C_{vd}}{R_d}\dfrac{1}{C_{pd}\Pi_{ref}}  \;  dV }
+\end{equation}
+
+The resulting field of $\Phi_{fg} + \Phi_0$ is used to retrieve the
+absolute pressure
+\begin{equation}
+P= P_{00} \left(\Pi_{ref} + \dfrac{\Phi_{fg} + \Phi_0}{C_{pd}
+\theta_{v\,ref} }\right)^{C_{pd}/R_d}
+\end{equation}
+
+\subsubsection{Modified Anelastic System}
+
+With the MAE system, solving the elliptic equation (\ref{MAEPres}) directly provides
+the Exner function deviation $\Pi '$ from the reference state, instead of the above
+defined  $\Phi$ function. \\
+
+However, the rest of the solution procedure follows the principles outlined for
+the Lipps--Hemler system. As the boundary condition for the elliptic equation (\ref{LhPres})
+are Neuman ones, the Exner function $\Pi '$ is determined to an arbitrary constant only, and
+the absolute value of the pressure is obtained as above. Assuming that $\Pi '_{fg}$ is
+a particular solution of the elliptic problem, the additional constant $\Pi_0$ that
+will insure the correct absolute value of the pressure is derived from the total mass budget,
+written using (\ref{MeanMassEq}) without changes.\\
+
+%\begin{equation}
+%{\cal M} = \int _{V} \rho \;  dV =  \int _{V} \rho_{ref} \;  dV +
+%\int _{V} \rho '  \; dV
+% =   {\cal M}_{ref}  +
+%\int _{V} \rho ' \;  dV
+%\end{equation}
+%where ${\cal M}_{ref}$ is the mass of the reference state (including both
+%dry air and water), computed once and for all at the beginning of each
+%experiment.
+
+As the linearized equation of state (\ref{StateEq}) replaces the usual ideal--gas law
+for density fluctuations in the MAE system, we have then
+\begin{equation}
+{\cal M}(t)  =    {\cal M}_{ref}  + \int _{V} \rho_{ref} \;  \left(
+ \dfrac{C_{vd}}{R_d}
+% \;  \dfrac{1}{C_{pd}\theta_{v\,ref}}
+ \; \dfrac{\Pi '_{fg} +\Pi_{0} }{ \Pi_{ref}} \;
+- \;  \dfrac{\theta_v -\theta_{v\,ref}}{\theta_{v\,ref}}
+\right) dV
+\end{equation}
+which is solved as
+\begin{equation}
+\Pi_{0}   =  \dfrac{{\cal M}(t) - 2 \times {\cal M}_{ref}
+ \; +  \; \int _{V} \rho_{ref}
+ %\dfrac{\rho_{ref}}{\theta_{v\,ref}}
+\left( \dfrac{\theta_v}{\theta_{v\,ref}} \;  -  \dfrac{C_{vd}}{R_d}
+ \; \dfrac{\Pi '_{fg}}{\Pi_{ref}}\right) \;  dV  }{ \int _{V} \;
+ \dfrac{\rho_{ref}}{\Pi_{ref}}
+ \;  \dfrac{C_{vd}}{R_d}  \;  dV }
+\end{equation}
+
+The resulting field of $\Pi '_{fg} + \Pi_0$ is used to retrieve the
+absolute pressure
+\begin{equation}
+P= P_{00} \left(\Pi_{ref} + \Pi '_{fg} + \Pi_0 \right)^{C_{pd}/R_d}
+\end{equation}
+
+\subsubsection{Durran System}
+
+Finally, with the Durran (1989) system, solving the elliptic equation (\ref{DuPres})
+directly provides the Exner function deviation $\Pi '$ from the reference state.
+As it was the case for other systems in previous sections, the Neuman boundary
+conditions only determine $\Pi '$  to an arbitrary constant, and this constant has to be
+obtained from a total mass budget to retrieve the absolute value of the pressure field.
+However, as the Durran (1989) system use the equation of state without linearization, a
+modified procedure is followed. \\
+
+Let us assume that ${\Pi '}_{fg}$ is a particular solution of the above elliptic
+problem. We want to determine the additional constant $\Pi_0$ that will insure the correct
+absolute value of the pressure.  This is achieved by using the total mass as defined above:
+\begin{equation}
+{\cal M} = \int _{V} \rho \;  dV.
+\end{equation}
+
+Combining the ideal--gas equation of state and the Exner function definition:
+\begin{equation}
+\rho =
+\dfrac{\Pi^{C_{vd}/R_d}P_{00} }{R_d \theta_{v}} \label{DURstate}
+\end{equation}
+
+the total mass of the model can be written as:
+\begin{equation}
+{\cal M}(t)  =
+  \int _{V}  \dfrac{P_{00} }{R_d \theta_{v}}
+  \left( \Pi_{ref} + {\Pi '}_{fg} + \Pi_0 \right)^{C_{vd}/R_d} dV.
+\end{equation}
+
+As $\Pi_{ref} + {\Pi '}_{fg} \gg \Pi_0$, a linearization of the $\Pi_0$
+term allows to solve the above equation as
+
+\begin{equation}
+\Pi_{0}   = \left(
+  \dfrac{ {\cal M}_{d}(t) + {\cal M}_{w}(t)
+ \; +  \; \int _{V}  \dfrac{P_{00} }{R_d \theta_{v}}
+  \left( \Pi_{ref} + {\Pi '}_{fg} \right)^{C_{vd}/R_d} dV }
+{ \int _{V}  \dfrac{P_{00} C_{vd}} {R_d^2 \theta_{v}} dV }
+                                  \right)^{R_d/C_{vd}}
+\end{equation}
+
+Eventually, a second iteration is performed using the same equation to get
+an accurate value of $\Pi_0$.
+The resulting constant is used to retrieve the absolute pressure:
+\begin{equation}
+P= P_{00} \left( \Pi_{ref} + {\Pi '}_{fg} + \Pi_0 \right)^{C_{pd}/R_d}
+\end{equation}
+
+\section{Boundary Conditions}
+
+{\bf Top Boundary}
+\\
+\\
+The model is assumed to be limited by a rigid horizontal lid, exerting a
+free slip condition on the atmosphere. The height $H$ of this lid may be
+chosen by the user. In order to obtain realistic results, it is recommended
+to place $H$ somewhere in the stratosphere. At $z=H$, the conditions imposed
+on the model are:
+\begin{equation}
+\vec{U}\cdot\vec{n} = 0
+\end{equation}
+%
+\parbox{2cm}{
+\quad
+}
+\hfill
+\parbox{5cm}{
+\begin{displaymath}
+\vec{\nabla} \left\{
+\begin{array}{c}
+\Phi \\
+\Pi '  \\
+\Pi '
+\end{array}
+\right\} \cdot \vec{n} = \vec{S}\cdot \vec{n}
+\end{displaymath}
+}
+\hfill
+\parbox{5cm}{
+\begin{displaymath}
+\begin{array}{c@{\quad}c}
+\quad &\mbox{(Lipps-Hemler)} \\
+\quad &\mbox{(Mod. Anelastic Eq.)} \\
+\quad &\mbox{(Durran)}
+\end{array}
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+ \\   \\
+\end{eqnarray}
+}
+%
+
+where $\vec{n}$ is a vertical unit vector. \\
+
+In order to prevent the reflexion of gravity waves on this lid, an absorbing
+layer may be activated, where the model prognostic variables are relaxed
+towards the large-scale values.
+\\
+\\
+{\bf Bottom Boundary}
+\\
+\\
+In the adiabatic formulation of the model, the lower boundary condition is
+defined as an insulated rigid lid, with free slip. This may be again
+formulated as
+\begin{eqnarray}
+\vec{U}\cdot\vec{n}&=&0  \\
+\end{eqnarray}
+
+%
+\parbox{2cm}{
+\quad
+}
+\hfill
+\parbox{5cm}{
+\begin{displaymath}
+\vec{\nabla} \left\{
+\begin{array}{c}
+\Phi \\
+\Pi '  \\
+\Pi '
+\end{array}
+\right\} \cdot \vec{n} = \vec{S}\cdot \vec{n}
+\end{displaymath}
+}
+\hfill
+\parbox{5cm}{
+\begin{displaymath}
+\begin{array}{c@{\quad}c}
+\quad &\mbox{(Lipps-Hemler)} \\
+\quad &\mbox{(Mod. Anelastic Eq.)} \\
+\quad &\mbox{(Durran)}
+\end{array}
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+ \\   \\
+\end{eqnarray}
+}
+%
+
+but $\vec{n}$, a unit vector normal to the earth surface, may not be vertical.\\
+
+In the physical package of the model, the turbulent fluxes of heat, moisture,
+and momentum are computed in the usual way.
+\\
+\\
+{\bf Lateral Boundary}
+\\
+\\
+This is a more complicated problem. We allow for several types of conditions:
+
+\begin{itemize}
+\item Periodic conditions
+\item Rigid wall
+\item Free propagation of waves out of the simulation domain
+\item Evolution  of the prognostic variables imposed by external information
+from larger scale
+\item In some cases, a mixture of the previous conditions can be used
+\end{itemize}
+
+This will be discussed in detail in Chapter 5.
+
+\section{Energy and Potential Vorticity Conservation}
+
+A thorough discussion of the conservation properties for all three anelastic systems
+implemented in Meso-NH is given in Bannon (1995). Only a summary of the main conclusions
+is therefore given below, readers being referred to the original paper for
+derivations and details. Following Bannon (1995), we restrict the scope of this discussion to a
+{\em dry} atmosphere, and consider a finite amplitude  flow with $\cal H$ representing
+the heating rate per unit volume, and $\vec{\cal F}$ the frictional forces. When a conservation
+property is existing, it will be given in a flux form, assuring that the volume integral of the
+relevant quantity is conserved for adiabatic inviscid flows in a closed domain for which the
+normal component of the velocity field vanishes on the boundaries.
+
+\subsubsection{Modified Anelastic System}
+
+When the potential temperature of the reference state varies with height, neither a closed form
+of the energy, nor a consistent statement of potential vorticity conservation are possible.
+The case of the constant reference state potential temperature corresponds to the original
+anelastic  equations  (Ogura and Phillips, 1962), which conserve both an energy form and
+an Ertel potential vorticity form (see Bannon 1995, and Durran, 1989, p 1459).
+
+\subsubsection{Lipps--Hemler System}
+
+This system conserves both a form of energy, and an Ertel--like potential vorticity.
+Bannon (1995, p 2305) writes the total energy equation in flux form  as:
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(E_{LH})
+ + \vec{ \nabla} \cdot [(E_{LH} + P ') \vec{U}]
+  = {\cal H} + \rho_{d\,ref} \vec{U} \cdot  \vec{\cal F},
+\end{equation}
+
+where $P '$ is the pressure deviation from reference state,
+and $E_{LH}$ is the appropriate form of total energy in the LH system:
+\begin{equation}
+E_{LH} = \rho_{d\,ref} \left\{ { \frac{1}{2}\, \vec{U} \cdot \vec{U}}
+         + g z  + C_{pd} \theta \right\}
+\end{equation}
+
+Note the use of the reference state density. Bannon (1995) further notes that the
+presence of $C_{pd}$ instead of $C_{vd}$ in the
+internal energy term reveals that in the LH system heating occur at
+constant pressure, as is required by this system's approximations. \\
+
+The Lipps and Hemler (1982) anelastic form of Ertel's conservation theorem is:
+
+\begin{equation}
+\dfrac{D}{Dt}\left({PV}_{LH}\right) =
+\dfrac{\vec{\omega}_a \cdot \vec{\nabla} \dot{\Theta}}{\rho_{d\,ref}}
++ \dfrac{\vec{\nabla}\theta}{\rho_{d\,ref}}
+\left(\vec{\nabla}\times\dfrac{\vec{\cal F}}{\rho_{d\,ref}}\right)
+\end{equation}
+
+where $\vec{\omega_a}  = 2 \vec{\Omega} + \vec{\nabla}\times\vec{U}$ is the absolute
+vorticity, $\dot{\Theta}$ the diabatic warming rate:
+
+\begin{equation}
+\dot{\Theta} = \dfrac{\theta\; \cal H}{\rho_{d\,ref} C_{pd} T}
+\end{equation}
+
+and the appropriate form of the potential vorticity is (Bannon, 1995, p 2306):
+
+\begin{equation}
+{PV}_{LH} = \dfrac{\vec{\omega_a} \cdot \vec{\nabla} \theta}{\rho_{d\,ref}}.
+\end{equation}
+
+Note that the reference state density has to be used, not the true density.
+
+\subsubsection{Durran System}
+
+The pseudo--incompressible system of Durran (1989) also exhibits conservation properties
+for both a total energy and an Ertel--like potential vorticity. \\
+
+Defining the pseudo--incompressible density:
+
+\begin{equation}
+\rho^{\star} = \rho_{d\,ref} \dfrac{\theta_{ref}}{\theta}
+\end{equation}
+
+The flux form of the total energy equation is (Durran, 1989):
+
+\begin{equation}
+\dfrac{\partial}{\partial t}(E_{D})
+ + \vec{ \nabla} \cdot [(E_{D} + P^{\star}) \vec{U}]
+    = {\cal H} + \rho^{\star} \vec{U} \cdot  \vec{\cal F},
+\end{equation}
+
+where $P^{\star} = P_{ref} +  \rho_{d\,ref} C_{pd} \theta_{ref} \Pi ' $,
+and $E_{D}$ is the appropriate form of total energy in the Durran (1989) system:
+\begin{equation}
+E_{D} = \rho^{\star} \left\{ { \frac{1}{2}\, \vec{U} \cdot \vec{U}}
+           + g z \right\} + \rho_{d\,ref} C_{vd} T_{ref}
+\end{equation}
+
+
+The pseudo--incompressible version of Ertel's conservation theorem is:
+
+\begin{equation}
+\dfrac{D}{Dt}\left({PV}_{D}\right) =
+\dfrac{\vec{\omega}_a \cdot \vec{\nabla} \dot{\Theta}}{\rho^{\star}}
++ \dfrac{\vec{\nabla}\theta}{\rho^{\star}}
+\left(\vec{\nabla}\times\dfrac{\vec{\cal F}}{\rho}\right)
+\end{equation}
+
+where ${PV}_{D}$ is the appropriate form of the potential vorticity
+(Bannon, 1995, p 2308):
+
+\begin{equation}
+{PV}_{D} = \dfrac{\vec{\omega_a} \cdot \vec{\nabla} \theta}{\rho^{\star}}.
+\end{equation}
+
+Note that the pseudo--incompressible density has to be used, not the reference
+state one.
+
+
+\section{References}
+
+\por
+Bannon P. R., 1995: Potential vorticity conservation, hydrostatic adjustment, and the
+anelastic approximation, J. Atmos. Sci., {\bf 52}, 2302--2312
+\por
+Batchelor G. K., 1953: The condition for dynamical similarity of motions of frictionless
+perfect-gas atmosphere, Quart. J. Roy. Meteor. Soc., {\bf 79}, 224--235.
+\por
+Durran D. R., 1989: Improving the anelastic approximation, J. Atmos. Sci., {\bf 46}, 1453--1461.
+\por
+Lafore J.P., J. Stein, N. Asencio, P. Bougeault, V. Ducrocq, J. Duron, C. Fischer, P. Héreil,
+P. Mascart, V. Masson, J. P. Pinty, J. L. Redelsperger, E. Richard, J. Vil\'a-Guerau de
+Arellano, 1998: The Meso-NH atmospheric simulation system. Part I: adiabatic formulation and
+control simulations, Ann. Geophysicae, {\bf 16}, 90--109.
+\por
+Lipps F., and R. S. Hemler, 1982: A scale analysis of deep moist convection and some related
+numerical calculations, J. Atmos. Sci., {\bf 39}, 2192--2210.
+\por
+Lipps F., 1990: On the anelastic approximation for deep convection, J. Atmos. Sci, {\bf 47},
+1794--1798.
+\por
+Nance L. B., D. R. Durran, 1994: A comparison of the accuracy of three anelastic systems and
+the pseudo--incompressible system, J. Atmos. Sci., {\bf 51}, 3549--3565.
+\por
+Ogura Y., and N. A. Phillips, 1962: Scale analysis of deep and shallow convection in the
+atmosphere. J. Atmos. Sci., {\bf 19}, 173--179.
+\por
+Wilhelmson, R., and Y. Ogura,1972: The pressure perturbation and the numerical modelling of a
+cloud, J. Atmos. Sci., {\bf 29}, 1295--1307.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  END OF CONTRIBUTION: "Basic Equations"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

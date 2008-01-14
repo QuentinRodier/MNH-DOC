@@ -1,0 +1,460 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH BOOK1: "LATERAL BOUNDARY CONDITIONS"
+% Author : P. Lafore
+% Original : June, 1995
+% Last Update   : March, 2000
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Lateral Boundary Conditions}
+\minitoc
+
+%{\em by J.P. Lafore}
+
+The lateral boundary conditions (l.b.c. hereafter) of Meso-NH
+have been designed to offer various possibilities:
+
+\begin{itemize}
+\item different types of l.b.c. formulations (cyclic, rigid wall or open)
+\item coupling with large-scale fields provided by the ARPEGE or ECMWF models
+ (either analyses or forecasts)
+\item two-way interactive gridnesting (detailed in the following chapter)
+\end{itemize}
+
+\section{Principles and equations}
+
+\subsection{Cyclic boundary condition (CLBCX or CLBCY = 'CYCL')}
+
+This widely used boundary condition is most simple to prescribe. For instance,
+giving the periodicity length $L_x$ (corresponding to the
+model domain width) for the x-direction, the conditions imposed to all
+model variables $\alpha $ are
+\begin{equation}
+\alpha (x,y,z) = \alpha (x+L_x,y,z) \label{perlbc}.
+\end{equation}
+It should be noted that this option implies some specific treatments not only
+in the routine taking care of l.b.c., but at various places in the model.
+First, the normal velocity component at the physical boundaries is explicitly
+predicted by the equations.
+Second, the pressure solver accounts for this hypothesis by using complex
+FFTs, whereas for other types of l.b.c. the solver uses cosine FFTs.
+ In fact the domain is physically unbounded in that case, as cyclic
+boundary condition assumes that the physical domain is infinitely large.
+
+\subsection{Rigid wall lateral boundary condition ('WALL')}
+
+ For a free-slip rigid wall, a mirror type boundary condition is assumed.
+At lateral boundaries, the conditions imposed on the model become:
+\begin{eqnarray}
+\vec{U}\cdot\vec{n}&=&0
+\end{eqnarray}
+where $\vec{n}$ is a horizontal unit vector normal to the lateral boundary.
+ It results that normal velocity components are zero at the boundary,
+whereas all others variables are symmetric relative to the boundary,
+\begin{equation}
+\dfrac{\partial \alpha }{\partial n }=0.
+\end{equation}
+
+\subsection{Wave-radiation open boundary ('OPEN')}
+
+There exists several variants of radiative, or open boundary conditions
+in the literature.  For instance, some authors apply the wave-radiation
+boundary condition to all prognostic variables
+(Xue and Thorpe, 1991), whereas others apply it only to the normal
+velocity component (Klemp and Wilhelmson, 1978). For complex cases
+with ambient wind shear or with intense convection, the second approach
+works better.
+
+For the present version of Meso-NH, we choose the simplest
+formulation, that gives from our experience, satisfactory results.
+The prognostic variables are separated in two groups: on the one hand, the
+scalars, including the tangential velocity components; on the other hand
+the normal wind.
+
+\begin{itemize}
+\item {\bf Case of scalars}
+
+To compute the advection, the basic need is the prescription of the flux
+at the boundary for each scalar. This is done depending
+on the sign of the normal velocity component.
+
+\subitem - {\it For outflow boundaries:} fluxes normal to the boundary are
+extrapolated from the interior using one-sided upstream differencing.
+\subitem - {\it For inflow boundaries:}  each scalar is taken as its
+large-scale value $LB$ at that boundary location.
+
+\item {\bf Case of normal wind}
+
+For open l.b.c., normal velocity components $u_n$ are computed by using a
+general Sommerfeld equation proposed by Carpenter (1982), already used by
+Redelsperger and Lafore (1988):
+
+
+\begin{equation}
+\label{carpenter}
+{\dr u_n \over \dr t} =             {\l{{\dr u_n \over \dr t}}\r}_{LB}
+- C^*{\l  {\dr u_n \over \dr x}  -  {\l{{\dr u_n \over \dr x}}\r}_{LB}  \r}
+- K \, \, {\l u_n - {u_n}_{LB}   \r},
+\end{equation}
+
+\noindent
+ where the subscript $LB$ stands for large-scale value of the field,
+$C^*$ denotes the phase speed of the perturbation field
+$u_n - {\l{u_n}\r}_{LB}$, and $K$ is the inverse of a damping time.
+The large scale gradient
+${\l {\dr u_n} / {\dr x} \r}_{LB}$ and the time evolution
+${\l {\dr u_n} / {\dr t} \r}_{LB}$ are specified by the coupling model.
+For idealized simulations including no larger-scale effects, they are of
+course set to zero.
+
+This formulation allows waves coming from the interior of the model domain
+to pass out freely through the boundary with minimal reflection. It also
+allows the large scale flow to force the evolution of the inner domain at
+large time scales. The last term is a relaxation that has been added to
+avoid a slow drift of the solution away from the LB field.
+
+Sophisticated methods may be used to evaluate the phase speed $C^*$,
+such as proposed by Orlanski (1976). As a first step however,
+we use the simple method proposed by Klemp and Wilhelmson (1978), reading
+\begin{equation}
+C^*= u_n + C,
+\end{equation}
+\noindent
+where C is an adjustable, constant phase speed (20 to 50 ms$^{-1}$ typically).
+
+
+\item {\bf Pressure function}
+
+Prescribing the normal velocity components $u_n$ at the boundaries, owing to
+the use of a Sommerfeld equation or another assumption (rigid wall one),
+infers the knowledge of the normal component of the gradient of the
+pressure function. The result is an elliptic equation for the pressure
+equation, with Neuman type boundary conditions when 'wall' or 'open'
+l.b.c. are used. This is discussed in Chapter 7.
+
+\item {\bf Adjustment for mass conservation}
+
+Since the anelastic continuity equation
+
+\begin{equation}
+\label{continuity}
+  \dfrac{\partial }{\partial \overline{x} } (\tilde{\rho} U^{c} \; )
++ \dfrac{\partial }{\partial \overline{y} } (\tilde{\rho} V^{c} \; )
++ \dfrac{\partial }{\partial \overline{z} } (\tilde{\rho} W^{c} \; ) =0.
+\end{equation}
+
+\noindent
+is enforced throughout the domain,
+it is necessary to guarantee that it is still verified at the model domain
+scale. As the upper and lower boundaries are
+assumed to be rigid walls, the total mass flux through the
+lateral boundaries should be zero. Due to the use of the general Sommerfeld
+equation (Eq. \ref{carpenter}), this requirement is not insured by open lateral boundary
+conditions. An adjustment is thus necessary for this l.b.c. type (see section
+2.4).
+
+
+\end{itemize}
+
+\subsection{Combinations of different types of l.b.c.}
+
+ The three types of l.b.c. can be specified independently for each lateral
+boundary, with the only obvious limitation that
+if the cyclic boundary condition is chosen for one lateral boundary,
+the opposing side b.c. must also be cyclic. Note in particular that it is
+possible to mix a wall condition on one side and an open condition of the
+other side in the same direction.
+ The combination of these different types of l.b.c. offers
+a wide range of geometrical configurations, such as a close tank, a
+channel, etc...
+
+\subsection{The coupling}
+
+One of the most difficult problems inherent to limited area models is the
+specification of the boundary conditions, that should achieve
+two partially contradictory goals:
+
+\begin{enumerate}
+\item evacuate through boundaries the physical (gravity...) and numerical
+waves generated by the LAM,
+\item prescribe the large-scale evolution provided by the {\bf coupling}
+models or analysis.
+\end{enumerate}
+
+ The wave-radiation open l.b.c are well designed to solve the first problem,
+but also to partly treat the coupling, owing to the use of modification proposed by
+Carpenter (1982). Another strategy of coupling used in most hydrostatic models,
+is the flow relaxation scheme (Davies, 1976). Prognostic variables $\alpha$ in
+a marginal zone near the boundaries are forced to relax towards the large-scale
+fields $LB$ on a time scale $1/K$, zero at the boundaries and inwards decreasing,
+using:
+
+\begin{equation}
+  \dfrac{\partial \alpha}{\partial t} =
+ \epsilon (\alpha) - K (\alpha - \alpha_{LB})
+\end{equation}
+
+\noindent
+where $\epsilon (\alpha)$ represents the sources terms of the $\alpha$ prognostic
+equation.
+
+ In practice, to treat the coupling the user has 2 possibilities:
+\begin{enumerate}
+\item either using the wave-radiation open l.b.c ('OPEN' version),
+\item or activating the lateral sponge zones corresponding to the flow
+relaxation scheme (see section 6.3 of this book). To get this treatment
+the user must also force the phase speed to zero ($C^* = 0$).
+ In that case the damping
+coefficient at the boundaries $F_{SZ}^{max}$ must be maximum (relative to the
+time step). As tested by I. Mallet the shape of the variation of the damping
+coefficient in the rim zone may be important to reduce reflections.
+\end{enumerate}
+
+ In practice, the coupling can be performed by a combination of the
+wave-radiation open l.b.c with the flow relaxation scheme.
+
+ Concerning the large-scale fields $LB$, they are available on MNH files provided by
+the user at the segment simulation beginning. The Meso-NH code reads each CouPLing
+FILE [CPLFILE(n)] which must span the whole time duration of the segment.
+The current large-scale fields are linearly interpolated at each
+time step between the closest large-scale states given by the coupling files
+[CPLFILE(n) and CPLFILE(n+1)].
+
+
+\section{Discretization and implementation}
+
+\subsection{Grid structure}
+
+\begin{figure}[pbh]
+\psfig{figure=\EPSDIR/horzgrid1.eps}
+%\psfig{figure=horzgrid1.eps}
+\caption{Horizontal grid structure for HEXT=1  outside the computation domain
+\label{horzgrdlbc} }
+\end{figure}
+
+Figure (\ref{horzgrdlbc}) shows the horizontal grid structure, including the
+outer points. By convention, the physical boundary of the simulation domain
+is shown by the
+thick line and corresponds to localization of the velocity components normal to
+the boundary. To implement the boundary conditions, it is convenient to
+define EXTra grid points outside the physical domain, both Horizontally and
+Vertically (variables HEXT and VEXT respectively). The number of extra points
+in the direction normal to the boundary is parameterized. At present time,
+only the "one extra point" case (HEXT=VEXT=1) is implemented, although
+provision has been made in many places in the code to facilitate further
+implementation of the more general option.
+
+The strategy for coding the l.b.c. has been guided by the idea that
+the advection and diffusion terms should be calculated in the corresponding
+routines, without making any particular cases at the boundaries.
+The adequate values in the boundary zone, are therefore prepared by
+specialized routines (BOUNDARIES and RAD\_BOUND). We take advantage of the
+fact that the computation of advection uses values at $t$, and the
+computation of diffusion uses values at $t-1$: the routine BOUNDARIES and
+RAD\_BOUND are called only once per time step, and they set the boundary
+points to the values needed by the advection scheme for variables at $t$,
+and the values needed by the diffusion scheme for variables at $t-1$. Note
+that these values are, in general, different.
+
+
+
+\subsection{Cyclic l.b.c. ('CYCL')}
+
+In case of cyclic l.b.c., the periodic lengths $L_x$ and $L_y$ involved in
+Eq. (\ref{perlbc}) correspond to the horizontal sizes of the simulation domain
+outlined by the thick line on Fig. 1.
+For instance, at the $\overline x$ boundaries, the cyclic l.b.c. are written
+for the three velocity components and the temperature:
+\begin{verbatim}
+    DO JEXT=1,JPHEXT
+       PRUT  (IIB-JEXT,:,:)   = PRUT  (IIE+1-JEXT,:,:)    !  Left side
+       PRVT  (IIB-JEXT,:,:)   = PRVT  (IIE+1-JEXT,:,:)    !  =========
+       PRWT  (IIB-JEXT,:,:)   = PRWT  (IIE+1-JEXT,:,:)
+       PRTHT (IIB-JEXT,:,:)   = PRTHT (IIE+1-JEXT,:,:)
+!
+       PRUT  (IIE+JEXT,:,:)   = PRUT  (IIB-1+JEXT,:,:)    !  Right side
+       PRVT  (IIE+JEXT,:,:)   = PRVT  (IIB-1+JEXT,:,:)    !  ==========
+       PRWT  (IIE+JEXT,:,:)   = PRWT  (IIB-1+JEXT,:,:)
+       PRTHT (IIE+JEXT,:,:)   = PRTHT (IIB-1+JEXT,:,:)
+    END DO
+\end{verbatim}
+
+Note that the I prefix is used above in all indexes to conform to the DOCTOR
+norm.
+
+\subsection{Rigid wall l.b.c. ('WALL')}
+
+For instance, at the left $\overline x$ boundary, the rigid wall l.b.c.
+reads for the three velocity components and the temperature:
+\begin{verbatim}
+       PRUT  (IIB     ,:,:)   = 0.
+    DO JEXT=1,JPHEXT
+       PRUT  (IIB-JEXT,:,:)   =-999                      !  not used
+       PRVT  (IIB-JEXT,:,:)   = PRVT  (IIB-1+JEXT,:,:)
+       PRWT  (IIB-JEXT,:,:)   = PRWT  (IIB-1+JEXT,:,:)
+       PRTHT (IIB-JEXT,:,:)   = PRTHT (IIB-1+JEXT,:,:)
+    END DO
+\end{verbatim}
+
+\subsection{Wave-radiation open boundary ('OPEN')}
+
+\subsubsection{a. Case of scalars (in routine BOUNDARIES)}
+
+For prognostic variables, except the wind component normal to the lateral
+boundary (hereafter subscript b), all source terms can be computed as for
+points inside the domain,
+except for advection and diffusion in the direction normal to the
+boundary, where the computations involve a point outside
+of the physical domain.
+
+\begin{itemize}
+\item {\bf For outflow boundary at time $t$ and $t - \Delta t$:} gradients
+normal to the boundary are
+extrapolated from the interior using one-sided upstream differencing. In
+fact it is equivalent to extrapolating each scalar at the location of the
+first extra point (hereafter subscript $b+1$).
+
+\begin{equation}
+\label{inflow}
+\alpha^{n}_{b+1} = 2 \alpha^{n}_b -  \alpha^{n}_{b-1}
+\end{equation}
+
+ For instance for the left $\overline x$ boundary and for variables at time $t$,
+it gives for the two
+tangential wind components and the temperature:
+\begin{verbatim}
+    WHERE ( PRUT(IIB,:,:) <= 0. )               !  OUTFLOW condition
+!
+      PRVT  (IIB-1,:,:)   = 2.*PRVT  (IIB,:,:)   -PRVT  (IIB+1,:,:)
+      PRWT  (IIB-1,:,:)   = 2.*PRWT  (IIB,:,:)   -PRWT  (IIB+1,:,:)
+      PRTHT (IIB-1,:,:)   = 2.*PRTHT (IIB,:,:)   -PRTHT (IIB+1,:,:)
+\end{verbatim}
+
+\item {\bf For inflow boundary at time $t$ and $t - \Delta t$:}
+each scalar $\alpha^{n}$ ($\alpha^{n-1}$) is taken as its large-scale value
+$\alpha^{n}_{LB}$ ($\alpha^{n-1}_{LB}$) at the boundary location.
+
+\begin{equation}
+\label{inflow}
+\alpha^{n}_{b+1} =  {\alpha^{n}_{LB}}_{b+1}
+\end{equation}
+
+ For instance for the left $\overline x$ boundary at time t, it gives for the
+two tangential wind components and the temperature:
+
+\begin{verbatim}
+!
+    ELSEWHERE                                   !  INFLOW  condition
+      PVT  (IIB-1,:,:) = ZLBXVT   (1,:,:)
+      PWT  (IIB-1,:,:) = ZLBXWT   (1,:,:)
+      PTHT (IIB-1,:,:) = ZLBXTHT  (1,:,:)
+\end{verbatim}
+
+\end{itemize}
+
+\subsubsection{b. Case of normal wind (in routine RAD\_BOUND)}
+
+ A semi-implicit numerical scheme is used to discretize the
+radiative equation (\ref{carpenter}), as recommended by Orlanski (1976).
+This reads
+
+\begin{equation}
+u^{n+1}_{n_b} =  {1-r_L-K \Delta t \over 1+r_L+K \Delta t} u^{n-1}_{n_b}
+               + {2 r_L            \over 1+r_L+K \Delta t} u^{n  }_{n_{b-1}}
+               + {2 \Delta t       \over 1+r_L+K \Delta t}
+                             {\l F^{n}_{LB} +K \, u^{n}_{{LB}_b} \r},
+\end{equation}
+
+
+\noindent
+where $n$ is the time level, and
+$r_L = C^* \; \Delta  t / \Delta x $ is the normalized phase
+velocity, and $F^{n}_{LB}$ the LB forcing term of Eq. \ref{carpenter}. It should
+be noted that $r_L$ must be positive to be outwards and results in a stable
+numerical scheme.
+
+\subsubsection{c. Adjustment for mass conservation (in routine MASS\_LEAK)}
+
+The adjustment procedure simply consists in the following.
+First, compute the total mass flux through lateral boudaries by integrating
+the continuity equation (Eq. \ref{continuity}) over the whole domain of simulation:
+
+\begin{equation}
+LEAK =
+ \left[{ \sum_{j=JB}^{JE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{xx} } \overline{  {\tilde{\rho} } }^{x} u \;
+d{\overline{y}} d{\overline{z}} }\right]_{i=IB}^{IE+1}
++\left[{ \sum_{i=IB}^{IE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{yy} } \overline{  {\tilde{\rho} } }^{y} v \;
+d{\overline{x}} d{\overline{z}} }\right]_{j=JB}^{JE+1}
+\end{equation}
+
+Second, as it is not strictly equal to zero, all normal wind components are
+corrected of the same value $u_{stop}$ to eliminate this leak of mass
+(positive or negative at left or right lateral boundaries respectively).
+
+\begin{equation}
+u_{stop} = {LEAK \over LINMASS}
+\end{equation}
+
+\noindent where LINMASS is the mass per unit length
+in the direction normal to the open
+lateral boundaries (i.e. $\int \int_{S_{open}}\rho ds$).
+
+\begin{eqnarray}
+LINMASS  = &
+ \left[{ \sum_{j=JB}^{JE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{xx} } \overline{  {\tilde{\rho} } }^{x} \;
+d{\overline{y}} d{\overline{z}} }\right]_{i=IB}
++\left[{ \sum_{j=JB}^{JE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{xx} } \overline{  {\tilde{\rho} } }^{x} \;
+d{\overline{y}} d{\overline{z}} }\right]_{i=IE+1}
+\nonumber \\
++&\left[{ \sum_{i=IB}^{IE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{yy} } \overline{  {\tilde{\rho} } }^{y} \;
+d{\overline{x}} d{\overline{z}} }\right]_{j=JB}
++\left[{ \sum_{i=IB}^{IE} \; \sum_{k=KB}^{KE}
+ \dfrac{1}{d_{yy} } \overline{  {\tilde{\rho} } }^{y} \;
+d{\overline{x}} d{\overline{z}} }\right]_{j=JB+1}
+\end{eqnarray}
+
+ The horizontal wind correction $u_{stop}$ is
+applied only to open l.b., and LINMASS only accounts for these boundaries.
+
+
+\section*{References}
+\parindent 0cm
+
+\por
+Carpenter, K. M., 1982: Note on the paper "Radiation conditions for lateral
+boundaries of limited area numerical models".
+{\it Quart. J. Roy. Meteor. Soc. }, {\bf 110}, 717-719.
+
+\por
+Clark, T. L., 1984: Severe downslope windstorm calculations in two and three
+spatial dimensions using anelastic interactive grid nesting: a possible
+mechanism for gustiness. {\it J. Atmos. Sci.},  {\bf 41}, 329-350.
+
+\por
+Davies, H. C., 1976: A lateral boundary formulation for multi-level prediction
+models.
+{\it Quart. J. Roy. Meteor. Soc. }, {\bf 102}, 405-418.
+
+\por
+Klemp, J. B. and R. B. Wilhelmson, 1978: The simulation of three-dimensional
+convective storm dynamics. {\it J. Atmos. Sci.},  {\bf 35}, 1070-1096.
+
+\por
+Orlanski, I., 1976: A simple boundary condition for unbounded hyperbolic flows.
+{\it J. Comput. Phys.}, {\bf 21}, 251-269.
+
+\por
+Redelsperger, J. L. and J. P. Lafore, 1988: A three-dimensional simulation of a
+tropical squall-line: Convective organization and thermodynamic vertical
+transport. {\it J. Atmos. Sci.},  {\bf 45}, 1334-1356.
+
+\por
+Xue, M. and A. J. Thorpe, 1991: A mesoscale numerical model using nonhydrostatic
+pressure-based sigma coordinate equations: Model experiments with dry mountain
+flows.
+{\it Quart. J. Roy. Meteor. Soc. }, {\bf 119}, 1168-1185.
+
