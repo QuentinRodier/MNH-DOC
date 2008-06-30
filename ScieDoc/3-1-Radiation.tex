@@ -1,21 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CONTRIBUTION TO THE MESONH BOOK1: "The radiation parameterization"
-% Author : Jean-Pierre Pinty
-% Original : October 15, 1997
-% Update   : October 15, 1997
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%% Definition of new commands for LATEX :
-% definition of a new environment mpa and a new command \nr for the footnote that must appear for the
-%  variables in namelist EXSEG which are not read.
-% This command is not at present used.
-%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
-%\renewcommand{\thempfootnote}{\fnsymbol{mpfootnote}}
-%\renewcommand{\thefootnote}{\alph{footnote}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%
 \chapter{The radiation parameterization}\label{RADIATIONS}
 \minitoc
 %
@@ -24,40 +6,23 @@
 \subsection{Purpose}
 %
 
-This section describes in details the radiation scheme which has been interfaced
-with {\bf M\'eso-NH}.
+This chapter summarizes the salient features concerning 
+the radiation scheme in Meso-NH. In collaboration with J.-J. Morcrette
+(ECMWF), a new set of routines corresponding to the version
+of the radiation codes running at ECMWF on March 2002 have been
+interfaced with Meso-NH. The detailed original ECMWF scientific
+documentation is available online at
+http://www.ecmwf.int/research/ifsdocs/CY23r4/  
 
-The radiative scheme\footnotemark
-%
-\footnotetext{Notice that the FORTRAN code is NOT at the {\bf M\'eso-NH} norm.
-The package is not written in F90 and furthermore the physical constants used
-in the different routines (COMMON \/YOMCST\/) may differ from those used
-elsewhere in {\bf M\'eso-NH}}
-%
-is used at ECMWF and so is why a large documentation can be found about it.
-It was described, in particular, in the Technical Memorandum 165 "Description of
-the radiation scheme in the ECMWF model" by Jean-Jacques Morcrette
-(1989).  The present documentation is directly based on this paper and on the
-documentation of ARPEGE-Climat at M\'et\'eo-France (Dandin, 1995). Recent
-modifications have not been taken into account ({\it e.g.} iced clouds, LW
-effects of some trace gases, climatological ozone and aerosol initialisation)
-in the present code version but will be included in the next release of the
-code.\\
-
-The package\footnotemark
-%
-\footnotetext{based upon the Fouquart-Morcrette radiation code}
-%
-calculates the radiative fluxes taking into account
+The package calculates the radiative fluxes taking into account
 absorption-emission of longwave radiation and reflection, scattering and
 absorption of solar radiation by the earth's atmosphere and surfaces.
-Outline of the code, in the format of Stephens's (1984) paper, is given
-in the following table. Notice that although the radiation parameterization
+Notice that although the radiation parameterization
 can deliver a great deal of fluxes (up/down LW/SW in several bands), the
-package and its interface with {\bf M\'eso-NH} provides only an update of the
-surface shortwave and longwave fluxes (with slope angle corrections) and the 3D
+package and its interface with Meso-NH only provides the
+surface shortwave and longwave fluxes with slope angle corrections and the 3D
 net radiative tendency of the thermodynamical variable $\theta$ to the regular
-user. In addition, some specific use of the scheme are available to save
+user. In addition, some specific configurations of the scheme are available to save
 computation ressources when a great accuracy of the radiative effects is
 superfluous. This includes the possibility of calling the package at a different
 rate of the model timestep, with the "clear sky" approximation, for the "cloud
@@ -70,110 +35,63 @@ flux $F$ used to evaluate the potential temperature tendency term:
 
 $$\frac{\partial \theta}{\partial t} = \frac{g}{C_{ph}}\Pi \frac{\partial F}{\partial p}, $$
 
-\noindent where $F$ is a net flux: {\em i.e.} $F = F^{\!\uparrow} + F^{\!\downarrow}$
+\noindent where $F$ is a net flux: i.e. $F = F^{\!\uparrow} + F^{\!\downarrow}$
 sum of the upward $F^{\!\uparrow}$ and downward $F^{\!\downarrow}$ fluxes,
-and a total flux: {\em i.e.}  $F = F_{LW} + F_{SW}$ sum of the solar or
+and a total flux: i.e. $F = F_{LW} + F_{SW}$ sum of the solar or
 shortwave $F_{SW}$ and atmospheric or longwave $F_{LW}$ fluxes. Also in order
-to drive the surface processes scheme, the routine RADIATIONS provides the
-total downward surface flux in the shortwave (PSRFSWD) and longwave (PSRFLWD)
-part of the spectrum. All these fluxes are positive when they contribute to a
-heating of the surface; they are expressed in $W m^{-2}$ unit.
-
+to drive the surface process scheme, the routine RADIATIONS provides the
+total downward surface flux in the shortwave and longwave 
+part of the spectrum. All these fluxes are expressed in W~m$^{-2}$ unit.
+The downward SW surface flux is partitioned into direct and diffuse contributions. Note that the radiation output fluxes are defined on a flat surface. A topographic correction is then applied (routine SURF\_RAD\_MODIF) to get the effective surface fluxes entering in the ISBA scheme (see the specific documentation). A number of other fields are available running the DIAG program as for example the LW and SW flux profiles, the specific LW and SW radiative tendencies, the cloud optical properties, etc (see the DIAG documentation).\\
 %
-\subsection{The Fouquart-Morcrette radiation code and its {\bf M\'eso-NH}
-interface}
+\subsection{The ECMWF radiation code and its Meso-NH interface}
 %
+The code treats successively the longwave and shortwave radiative transfers for independent air columns. The routine named ECMWF\_RADIATION\_VERS2 is the interface between the physical variables available in Meso-NH through routine RADIATIONS and the ECMWF LW and SW codes. This routine is used also to initialise cloud radiative properties that do not directly belong to the radiation scheme. It calls the subroutine LW (SW) which handles the infrared (solar) part, respectively. \\
 
-The code treats successively the longwave and shortwave radiative transfers for
-independent air columns. The routine named ECMWF\_RADIATIONS is the interface
-between the physical variables available in {\bf M\'eso-NH} through routine
-RADIATIONS and the Fouquart-Morcrette parameterization. This routine is used
-also to initialize some radiative properties that do not directly belong to the radiative scheme, namely those for the clouds, aerosols, surface properties and
-ozone. It calls the subroutine LW(SW) which handles the infra-red(solar) part,
-respectively. In addition, external routines are available to compute the
-temporal solar angles and to initialize some surface radiative properties.\\
+\section{Longwave radiation}
 
-\subsection{Outline of the scheme}
-%
-
-\begin{enumerate}
-
-% -------------------- clear sky -----------------------------------------------
-
-\item \underline{Clear sky}
-
-\begin{enumerate}
-\item Shortwave: Two-stream formulation employed together with photon path
-distribution method (Fouquart and Bonnel, 1980) in two spectral intervals
-(0.25-0.68 $\mu m$ and 0.68-4.0 $\mu m$).\footnotemark
-%
-\footnotetext{The first interval is further referenced as the VISible domain
-while the second one is the Near Infra-Red domain for the surface albedo
-nomenclature}
-\begin{itemize}
-               \item Rayleigh scattering (Parametric expression of the Rayleigh optical thickness)
-               \item Aerosol scattering and absorption (Mie parameters for 5 types of aerosols based on climatological models (WMO-ICSU 1984))
-               \item $H_{2}O$ (Two intervals)
-               \item Uniformly mixed gases (One interval)
-              \item $O_{3}$ (Two intervals)
-\end{itemize}
-
-\item Longwave: Broad band flux emissivity method with six intervals covering the spectrum between 0 and 2620 $cm^{-1}$. Temperature and pressure dependence of absorption following Morcrette {\em et al.} (1986). Absorption coefficients fitted from AFGL 1982.
+Two different LW schemes can be activated in Meso-NH (namelist CLW).
 
 \begin{itemize}
-            \item $H_{2}O$ (Six spectral intervals, {\em e}- and {\em p}-type continuum absorption included between 350 and 1250 $cm^{-1}$)
-            \item $CO_{2}$ (Overlap between 500 and 1250 $cm^{-1}$ in three intervals by multiplication of transmission)
-            \item $O_{3}$ (Overlap between 970 and 1110 $cm^{-1}$)
-            \item $CH_{4}$ (Overlap over intervals 3 and 6, not yet implemented)
-            \item $N_{2}O$ (Overlap over intervals 3 and 6, not yet implemented)
-            \item $CFC-11$ (Overlap over interval 6, not yet implemented)
-            \item Aerosols (Absorption effects using an emissivity formulation)
+
+ \item The first one (CLW='MORC') corresponds to the LW scheme operationnal at ECMWF from may 1989
+to June 2000 (Morcrette 1991; Gregory et al. 2000). The main characteristics of the scheme are given
+below (Table \ref{radtable1}). Physical basis of this model are described in the ECMWF radiation documentation (Chapter 2.2.1 to 2.2.4) and are reproduced below.
+
+
+ \item  The second one (CLW='RRTM') corresponds to the Rapid Radiation Transfer Model which is currently operational at ECMWF. The main characteristics of RRTM are recalled below (Table \ref{radtable1}). More details as well as bibliographic references are given in the ECMWF radiation documentation (Chapter 2.2.5) and are reproduced below.
+
 \end{itemize}
 
-\end{enumerate}
+\begin{table}[h]
+ \caption{Main characteristics of LW schemes}
+\begin{center}
+   \begin{tabular}{p{5cm}|p{5cm}|p{5cm}} \label{radtable1}
+          & RRTM & MORC   \\
+    \hline
+    \hline
+    Solution of radiative transfer equation & Two-stream method & Spectral emissivity method \\
+    \hline
+    Number of spectral intervals & 16  & 6 \\
+    \hline
+    Absorbers & $H_{2}O$, $CO_{2}$, $O{3}$, $CH_{4}$, $N_{2}O$, $CFC11$, $CFC12$, aerosols & $H_{2}O$, $CO_{2}$, $O{3}$, $CH_{4}$, $N_{2}O$, $CFC11$, $CFC12$, aerosols \\            
+    \hline
+    Spectroscopic data base & HITRAN 1996 & HITRAN 1992 \\
+    \hline
+    Absorption coefficient & From LBLRTM line-by-line model & Fits on statistical model of transmission \\
+    \hline
+    Cloud handling & True cloud fraction & Effective cloud fraction (CF * emissivity) \\ 
+    \hline
+    Cloud optical properties: method & 16-band spectral emissivity & Whole spectrum emissivity \\
+    \hline
+    Cloud overlap assumption & Maximum random & Maximum random (maximum and random also possible) \\
+    \hline
+    References & Mlawer et al. (1997) & Morcrette et al. (1986, 1991); Gregory et al. (2000)    \\
+   \end{tabular}
+\end{center}
+\end{table}
 
-% -------------------- cloudy sky ----------------------------------------------
-
-\item \underline{Cloudy sky}
-
-\begin{enumerate}
-\item Shortwave:
-
-\begin{itemize}
-            \item Droplet absorption and scattering (Employs a Delta-Eddington
-method with $\tau$, $\omega$ and $g$ determined from the liquid water path
-$u_{LWP}$ and a parameterization of the effective radius $r_{e}$). A recent
-extension to icy clouds has been included. It is based upon the Sun and Shine
-(1995)  parameterization.
-            \item Gas absorption (Included separately through the photon path distribution method)
-\end{itemize}
-
-\item Longwave:
-
-\begin{itemize}
-             \item Scattering   (Neglected)
-             \item Droplet and Ice crystals  absorption and scattering (From
-$u_{LWP}$ and $u_{IWP}$ using an emissivity formulation)
-             \item Gas absorption (As in (1.b))
-\end{itemize}
-
-
-\end{enumerate}
-
-\end{enumerate}
-
-
-
-
-
-
-%----------------------------------------------------------------------
-
-\section[Longwave radiations]{Longwave radiation\footnotemark}
-%
-\footnotetext{Longwave, infra-red or thermal radiations will be used.}
-\label{section2}
-
+\subsection{The Morcrette longwave radiation}
 %
 \subsection{First glance}
 %
@@ -203,8 +121,7 @@ F^{\!\uparrow\!\downarrow} = \int_{-1}^{+1}\!{\mu\,d\mu} \int_0^\infty{\bigl[L_{
 \medskip
 
 where $L_{\nu}(p_s,\mu)$ is the monochromatic radiance of wavenumber
-$\nu$ at level $p$ propagating in a direction such as $\mu =
-cos\vartheta $ is the cosine of the angle
+$\nu$ at level $p$ propagating in a direction such as $\mu \cos\vartheta $ is the cosine of the angle
 $\vartheta $ that this direction makes with the vertical and
 $t_{\nu}(p,p',\mu)$ is the monochromatic transmission through a layer
 whose limits are at $p$ and $p'$, seen under the same angle.
@@ -212,6 +129,7 @@ whose limits are at $p$ and $p'$, seen under the same angle.
 After separating the upward and downward components and integrating by parts,
 we obtain the radiation transfer equation as it is actually estimated in the
 radiation code
+
 
 \medskip
 \begin{eqnarray}\label{ecmwf23}
@@ -226,17 +144,17 @@ F_{\nu}^{\!\downarrow}(p) &=&
 
 Taking benefit of the isotropic nature of the longwave radiations,
 the radiance $L_{\nu}$ of (\ref{ecmwf22}) is replaced by the Planck function
-$B_{\nu}(T)$ in unit of flux $W m^{-2}$ (subroutine LWB) (hereafter
+$B_{\nu}(T)$ in unit of flux W~m$^{-2}$ (subroutine LWB) (hereafter
 $B_{\nu}$ always includes the $\pi$ factor).  Notice that $T_s$ is the surface
 temperature (in fact a radiative surface temperature {\tt PTSRAD} issuing from
 a surface process scheme such as ISBA) and that $T_{0^{+}}$ is the temperature
 of the air just above the surface. $T_{p}$ is the air temperature (PT) at the
-{\bf M\'eso-NH} mandatoy levels where the atmospherique pressure $p$ needs also
+Meso-NH mandatoy levels where the atmospherique pressure $p$ needs also
 to be calculated. $T_t$ is the temperature at the top of the atmosphere
 (standard atmosphere extension above the last atmospheric level) and
 $B_{\nu}(T_{\infty}$ is set to zero. The transmission $t_{\nu}$ is evaluated as
 the radiance transmission in a direction $\vartheta $ to the vertical such
-that $r = sec \, \vartheta $ is the diffusivity factor (Elsasser, 1942).
+that $r = \sec \, \vartheta $ is the diffusivity factor (Elsasser 1942).
 Such an approximation for the integration over the angle is usual in
 radiative transfer calculations and tests on the validity of this
 approximation have been presented by Rodgers and Walshaw (1966) among
@@ -258,27 +176,27 @@ Integrals in (\ref{ecmwf23}) are evaluated numerically, after discretization ove
 \ee
 \medskip
 
-\noindent where $p_l$ and $w_l$ are the pressure corresponding to the gaussian root and the gaussian weight, respectively. $dB_{\nu}(j)$ (PDBDT) and $dB_{\nu}(l)$ (PDBSL) are the Planck function gradients calculated between two interfaces and between mid-layer and interface, respectively.
+\noindent where $p_l$ and $w_l$ are the pressure corresponding to the Gaussian root and the Gaussian weight, respectively. $dB_{\nu}(j)$ (PDBDT) and $dB_{\nu}(l)$ (PDBSL) are the Planck function gradients calculated between two interfaces and between mid-layer and interface, respectively.
 
 %
 \subsection{Spectral integration}
 %
-
+ 
 The integration over wavenumber $\nu$ is performed using a band emissivity method, as first discussed by Rodgers (1967). The longwave spectrum is divided into six spectral regions:
 
 \begin{center}
 \begin{tabular}{c||r|c|l}
-1       &          0 -  350 $cm^{-1}$   &+&     1450 - 1880 $cm^{-1}$   \\
-2       &        500 -  800 $cm^{-1}$   & &                             \\
-3       &        800 -  970 $cm^{-1}$   &+&     1110 - 1250 $cm^{-1}$   \\
-4       &        970 - 1110 $cm^{-1}$   & &                             \\
-5       &        350 -  500 $cm^{-1}$   & &                             \\
-6       &       1250 - 1450 $cm^{-1}$   &+&     1880 - 2820 $cm^{-1}$
+1       &          0 -  350 cm$^{-1}$   &+&     1450 - 1880 cm$^{-1}$   \\
+2       &        500 -  800 cm$^{-1}$   & &                             \\
+3       &        800 -  970 cm$^{-1}$   &+&     1110 - 1250 cm$^{-1}$   \\
+4       &        970 - 1110 cm$^{-1}$   & &                             \\
+5       &        350 -  500 cm$^{-1}$   & &                             \\
+6       &       1250 - 1450 cm$^{-1}$   &+&     1880 - 2820 cm$^{-1}$
 \end{tabular}
 \label{intervalles}
 \end{center}
 
-\noindent corresponding to the centers of the rotation and vibration-rotation bands of $H_2O$, the 15 micron band of $CO_2$, the atmospheric window, the 9.6 $\mu m$ band of $O_3$, the 25 $\mu m$ "window" region and the wings of the vibration-rotation band of $H_2O$, respectively. Over these spectral regions, band fluxes are evaluated with the help of band transmissivities precalculated from the narrow-band model of Morcrette and Fouquart (1985) -- See Appendix of Morcrette {\em et al.} (1986) for details.\\
+\noindent corresponding to the centers of the rotation and vibration-rotation bands of $H_2O$, the 15-$\mu$m band of $CO_2$, the atmospheric window, the 9.6-$\mu$m band of $O_3$, the 25-$\mu$m "window" region and the wings of the vibration-rotation band of $H_2O$, respectively. Over these spectral regions, band fluxes are evaluated with the help of band transmissivities precalculated from the narrow-band model of Morcrette and Fouquart (1985) -- See Appendix of Morcrette et al. (1986) for details.\\
 
 Integration of (\ref{ecmwf23}) over wavenumber $\nu$ within the wide $k^{th}$
 spectral region gives the upward and downward fluxes as
@@ -286,11 +204,11 @@ spectral region gives the upward and downward fluxes as
 \medskip
 \begin{eqnarray}\label{ecmwf25}
 F_{k}^{\!\uparrow}(p) &=&
-\bigl[B_{k}(T_s) - B_{k}(T_{0^{+}})\bigr] \, t_{B_k}(ru(p_s,p),T_u(p_s,p))
-+ B_{k}(T_p) + \int_{p_s}^p{t_{dB_k}(ru(p,p'),T_u(p,p')) \, dB_{k}}, \cr
+\bigl[B_{k}(T_s) - B_{k}(T_{0^{+}})\bigr] \, t_{B_k}(ru(p_s,p),T_u(p_s,p))\cr & &
++ B_{k}(T_p)+ \int_{p_s}^p{t_{dB_k}(ru(p,p'),T_u(p,p')) \, dB_{k}}, \cr
 F_{k}^{\!\downarrow}(p) &=&
-\bigl[B_{k}(T_0) - B_{k}(T_{\infty})\bigr] \, t_{B_k}(ru(p,0),T_u(p,0))
-- B_{k}(T_p) - \int_{p}^0{t_{dB_k}(ru(p',p),T_u(p',p)) \, dB_{k}}.
+\bigl[B_{k}(T_0) - B_{k}(T_{\infty})\bigr] \, t_{B_k}(ru(p,0),T_u(p,0))\cr & &
+- B_{k}(T_p)  - \int_{p}^0{t_{dB_k}(ru(p',p),T_u(p',p)) \, dB_{k}}.
 \end{eqnarray}
 \medskip
 
@@ -318,7 +236,7 @@ t_{dB}(\overline{up},T_p,T_u) = \frac{\int_{\nu_1}^{\nu_2}{dB_{\nu}(T_p) / dT} \
 
 
 In the scheme, the actual dependence on $T_p$ is carried out explicity in the Planck functions integrated over the spectral regions. Although normalized relative to $B(T_p)$ (or $dB(T_p)/dT$), the transmissivities still depend on $T_u$ both through Wien's displacement of the maximum of the Planck function with temperature and through the temperature dependence of the absorption coefficients.
-$O_3$ transmissivity is obtained using the Malkmus band model and $CH_4,\,N_2O,\,CFC-11$ and $CFC-12$ transmissivities with a statistical model.
+$O_3$ transmissivity is obtained using the Malkmus band model and $CH_4,\,N_2O,\,CFC-11$ and $CFC-12$ transmissivities with a statistical model. 
 For computational efficiency, $H_2O$ and $CO_2$ transmissivities have been developed into Pad\'e approximants
 
 
@@ -335,7 +253,7 @@ t(\overline{up},T_u) = \frac{\sum\limits_{i=0}^{2}{C_i \, u_{eff}^{i / 2}}}{\sum
 %(2.8)
 \medskip
 \be
-f(T_u,\overline{up}) = exp [a(\overline{up}) \, (T_u - 250) + b(\overline{up}) \, (T_u - 250)^2].
+f(T_u,\overline{up}) =\exp [a(\overline{up}) \, (T_u - 250) + b(\overline{up}) \, (T_u - 250)^2].
 \label{ecmwf28}
 \ee
 \medskip
@@ -346,7 +264,8 @@ The temperature dependence due to Wien's law is incorporated although there is n
 \subsection{Incorporation of the effects of clouds}
 %
 
-The incorporation of the effects of clouds on the longwave fluxes follows the treatment discussed by Washington and Williamson (1977). Whatever the state of cloudiness of the atmosphere, the scheme starts by calculating the clear-sky fluxes and stores the terms representing exchanges of energy between the levels (integrals in (\ref{ecmwf23})).
+The incorporation of the effects of clouds on the longwave fluxes follows the treatment discussed by Washington and Williamson (1977). Whatever the state of cloudiness of the atmosphere, the scheme starts by calculating the clear-sky fluxes and stores the terms representing exchanges of energy between the levels (integrals in (\ref{ecmwf23}).
+
 
 Let $F_0{^{\!\uparrow}}(i)$ and $F_0{^{\!\downarrow}}(i)$ be the upward and downward clear-sky fluxes (PFUP and PFDN in LWC). For any cloud layer actually present in the atmosphere, the scheme then evaluates the fluxes assuming a unique overcast cloud of unity emissivity. Let $F_n{^{\!\uparrow}}(i)$ and $F_n{^{\!\downarrow}}(i)$ the upward and downward fluxes when such a cloud is present in the $n^{th}$ layer of the atmosphere. Downward fluxes above the cloud and upward fluxes below it have kept their clear-sky values that is:
 
@@ -373,18 +292,8 @@ longwave spectrum) at level $i$ and $F_{cld}^{\!\uparrow}$ and
 $F_{cld}^{\!\downarrow}$ are the fluxes at the upper and lower
 boundaries of the cloud.  Terms under the integrals correspond to
 exchange of energy between layers in the clear-sky atmosphere and have
-already been computed in the first step of the calculationm a
-top-hat function applied to the prognostic cloud water mixing ratio $r_c$.\\
-
-Let $N$ be the index of the layer containing the highest cloud.  $C_i$
-the fractional cloud cover in layer $i$, with $C_0 = 1$ for the upward
-flux at the surface and with $C_{N+1} = 1$ and $F_{N+1}^{\!\downarrow}
-= F_0^{\!\downarrow}$ to have the right boundary condition for downward
-fluxes above the highest cloud.  The cloudy upward ($F^{\!\uparrow}$)
-and downward ($F^{\!\downarrow}$) fluxes are obtained, with the hypothesis
-m a
-top-hat function applied to the prognostic cloud water mixing ratio $r_c$.\\
-
+already been computed in the first step of the calculations.
+This step is repeated for all cloudy layers. The fluxes for the actual atmosphere (with semi-transparent, fractional and/or multi-layered clouds) are derived from a linear combination of the fluxes calculated in previous steps with some cloud overlap assumption in the case of clouds present in several layers. 
 Let $N$ be the index of the layer containing the highest cloud.  $C_i$
 the fractional cloud cover in layer $i$, with $C_0 = 1$ for the upward
 flux at the surface and with $C_{N+1} = 1$ and $F_{N+1}^{\!\downarrow}
@@ -412,32 +321,107 @@ In case of semi-transparent clouds, the fractional cloudiness entering the calcu
 %(2.12)
 \medskip
 \be
-\epsilon_{i} = 1 - exp( - K^{L}_{abs} \, u_{LWP}- K^{I}_{abs} \, u_{IWP})
+\epsilon_{i} = 1 - \exp( - K^{L}_{abs} \, u_{LWP}- K^{I}_{abs} \, u_{IWP})
 \label{ecmwf212}
 \ee
 \medskip
 
-\noindent where $K^{L}_{abs}=158$ is the condensed water mass absorption
-coefficient (in $m^{2}kg^{-1}$) and $K^{I}_{abs}=113$, the corresponding one
-for ice phase\footnotemark
-%
-\footnotetext{Note that an advanced version of the code will contain absorption
-coefficients depending whether ice or liquid water cloud is present and
-whether upward or downward radiations are considered. Following Smith and
-Shi (1992), the recommended values for $K^{L,I}_{abs}$ will be (in $m^{2}kg^{-1}$
-unit):
-\begin{center}
-\begin{tabular}{cccc}
-$K^{\!\uparrow\;L}_{abs} = 130$ & $K^{\!\downarrow\;L}_{abs} = 158$ & $K^{\!\uparrow\;I}_{abs} = 93$ & $K^{\!\downarrow\;I}_{abs} = 113$
-\end{tabular}
-\end{center}
-}
-.
+\noindent where $K^{L}_{abs}$ is the condensed water mass absorption
+coefficient (in m$^{2}$~kg$^{-1}$) and $K^{I}_{abs}$, the corresponding one
+for ice phase. Different parameterisations are avalaible
+(see subsection~\ref{subsecoptical}).
 
-\section[Solar radiation]{Solar radiation\footnotemark}
+\subsection{The Rapid Radiation Transfer Model (RRTM)}
+As stated in Mlawer et al. (1997), the objective in the development of RRTM has been to obtain an accuracy in the calculation of fluxes and heating rates consistent with the best line-by-line models. It utilizes the correlated-k methode and shows its filiation to the Atmospheric and Environmental Research, Inc. (AER) line-by-line model (LBLRTM; Clough et al. 1989, 1992; Clough and Iacono 1995) through its use of absorption coefficients for the relevant k-distributions derived from LBLRTM. Therefore the k-coefficients in RRTM include the effect of the CKD2.2 water vapour continuum (Clough et al. 1989).
+
+The main point in the correlated-k method (Lacis and Oinas 1991; Fu and Liou 1992) is the mapping of the absorption coefficient $k(\nu)$ from the spectral space (where it varies irregularly with wavenumber $\nu$) to the $g$-space (where $g(k)$ is the probability distribution function, i.e. the fraction of the absorption coefficients in the set smaller than $k$). The effect of this reordering is a rearrangement of the sequence of terms in the integral over wavenumber in the radiative transfer equation (RTE), which makes it equivalent to what would be done for monochromatic radiation.
+
+In the ECMWF (hence, Meso-NH) model, no provision is presently taken for scattering in the longwave. Therefore, in order to get the downward radiance, the integration over the vertical dimension is simply done starting from the top of the atmosphere, going downward layer by layer. At the surface, the boundary condition (in terms of spectral emissivity, and potential reflection of downward radiance) is computed, then, in order to get the upward radiance, the integration over the vertical dimension is repeated, this from the surface upward.
+
+The spectrally averaged radiance (between $\nu_1$ and $\nu_2$) emerging from an atmospheric layer is
+\begin{equation}
+\overline{R} = \frac{1}{(\nu_1 - \nu_2)} \int_{\nu_2}^{\nu_1} d\nu
+\left\{ R_0(\nu) + \int_{t_\nu}^{1} \left[ B(\nu, T(t^\prime_\nu))
+\, R_0(\nu) \right] dt^\prime \right\}
+\end{equation}
+where $R_0$ is the incoming radiance to the layer, $B(\nu, T )$ is the Planck function at wavenumber $\nu$ and temperature $T$, $t_\nu$ is the transmittance for the layer optical path, and $t^\prime_\nu$ is the transmittance at a point along the optical path in the layer. Under the mapping $\nu \rightarrow g$, this becomes
+\begin{equation}
+\overline{R} - \int_{0}^{1} dg \left\{  B_{\rm eff}(g,T_g)
++ \left[ R_0(g) - B_{\rm eff}(g,T_g) \right] 
+\exp \left[-k(g,P,T) \frac{\rho \delta z}{\cos \phi} \right] \right\}
+\end{equation}
+where $B_{\rm eff}(g,T)$ is an effective Planck function for the layer that varies with the layer's transmittance such as to ensure continuity of flux across layer boundaries for opaque conditions. The dependence of the transmittance is now written in terms of the absorption coefficient $k(g,P,T)$ at layer pressure $P$ and temperature $T$, the absorber density $\rho$, the vertical thickness of the layer $\delta z$, and the angle $\phi$ of the optical path.
+
+
+For a given spectral interval, the domain of the variable $g$ is partitioned into subintervals (see Table  \ref{tabrrtm}, number of $g$-points), each corresponding to a limited range of $k(g)$ values and for which a characteristic value $\kappa_j$ of the absorption coefficient is chosen. These $\kappa_j$ are then used to compute the outgoing radiance
+
+  	
+\begin{equation}
+\overline{R} = \Sigma_j W_f \left[ B_{{\rm eff}_j} + (R_0(g) - B_{{\rm eff}_j})
+\exp \left( \kappa_j \frac{\rho \delta z}{\cos \phi} \right) \right]
+\end{equation}
+where $W_j$ is the size of the sub-intervals ($\Sigma W_f =1$).
+
+
+The accuracy of these absorption coefficients has been established by numerous and continuing high-resolution validations of LBLRTM with spectroscopic measurements, in particular those from the Atmospheric Radiation Measurement program (ARM). Compared to the original RRTM (Mlawer et al. 1997), the version used at ECMWF (hence, Meso-NH) has been slightly modified to account for cloud optical properties and surface emissivity defined for each of the 16 bands over which spectral fluxes are computed. For efficiency reason, the original number of $g$-points ($256 = 16 \times 16$) has been reduced to 140 (see Table \ref{tabrrtm}). Other changes are the use of a diffusivity approximation (instead of the three-angle integration over the zenith angle used in the original scheme) to derive upward and downward fluxes from the radiances, and the modification of the original cloud random overlapping assumption to include (to the same degree of approximation as used in the operational SW scheme) a maximum-random overlapping of cloud layers. Given the monochromatic form of the RTE, the vertical integration is simply carried out one layer at a time from the top-of-the-atmosphere to the surface to get the downward fluxes. The downward fluxes at the surface are then used with the spectral surface emissivities and the surface temperature to get the upward longwave fluxes in each of the 140 subintervals. Then the upward fluxes are obtained in a similar fashion from the surface to the ToA.
+
+
+\begin{table}[!ht]
+\caption{Spectral distribution of the absorption by atmospheric gases in RRTM}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Spectral intervals & Number of g-points & \multicolumn{2}{c|}{Gases included}\\
+cm$^{-1}$ & & Troposphere & Stratosphere \\ 
+\hline
+10-250   &  8 & H2O & H2O \\ 
+250-500  & 14 & H2O & H2O \\ 
+500-630  & 16 & H2O, CO2 & H2O, CO2 \\ 
+630-700  & 14 & H2O, CO2 & O3, CO2 \\ 
+700-820  & 16 & H2O, CO2, CCl4 & O3, CO2, CCl4 \\ 
+820-980  &  8 & H2O, CFC11, CFC12 & CFC11, CFC12 \\ 
+980-1080 &  12 & H2O, O3 & O3 \\ 
+1080-1180 &  8 & H2O, CFC12, CFC22 & O3, CFC12, CFC22 \\ 
+1180-1390 & 12 & H2O, CH4 & CH4 \\
+\hline
+\end{tabular}
+\label{tabrrtm}
+\end{center}
+\end{table}
+
+
+\section{Shortwave radiation}
+
+The ECMWF operational SW scheme results from successive developments from the initial Morcrette et al. version. In Meso-NH, the SW scheme corresponds to the version which was operational at ECMWF until March 2002. Main characteristics are sumarised below. The physical content of this scheme is described in the ECMWF radiation documentation (Chapter 2.3 to 2.4). 
+
+
+\begin{itemize}
+
+               \item The scheme is based upon a two-stream formulation employed together with photon path
+                   distribution method (Fouquart and Bonnel 1980) in 6 spectral intervals
+                   (0.185-0.25-0.44-0.69-1.19-2.38-4.00 $\mu$m).\footnotemark 
 %
-\footnotetext{Solar or shortwave radiation...}
-\label{section3}
+                   \footnotetext{The first three intervals are further referenced as the VISible domain
+                   while the others are the Near Infra-Red domain for the surface albedo
+                   nomenclature.}
+
+
+               \item Rayleigh scattering (parametric expression of the Rayleigh optical thickness)
+               \item Aerosol scattering and absorption (Mie parameters for 6 types of aerosols based on climatological models, see further for details on aerosol distributions)
+               \item $H_{2}O$ (two intervals)
+               \item Uniformly mixed gases (one interval)
+               \item $O_{3}$ (two intervals)
+\end{itemize}
+
+
+
+\begin{itemize}
+            \item Droplet absorption and scattering (employs a Delta-Eddington
+method with $\tau$, $\omega$ and $g$ determined from the liquid water path
+$u_{LWP}$ and a parameterization of the effective radius $r_{e}$). See the further part for details on cloud optical properties.
+            \item Gas absorption (included separately through the photon path distribution method)
+\end{itemize}
+
 
 %
 \subsection{First glance}
@@ -456,7 +440,7 @@ The rate of atmospheric warming by absorption and scattering of shortwave radiat
 \medskip
 
 \noindent where $F=F_{SW}$ is the net total shortwave flux, expressed in
-$W m^{-2}$ and positive when downward:
+W~m$^{-2}$ and positive when downward:
 
 %(3.2)
 \medskip
@@ -466,7 +450,7 @@ F = \int_0^\infty\!{d\nu} \int_0^\pi\!{d\phi}\int_{-1}^{+1}\!{\mu \, L_{\nu}(\de
 \ee
 \medskip
 
-$L_{\nu}$ is the diffuse radiance at wavenumber $\nu $, in a direction given by $\phi$, the azimuth angle and $\vartheta $ the zenith angle such as $\mu = cos\vartheta $. Notice that $\phi$ ({\tt PAZIMSOL}) and $\mu$ ({\tt PMU0}) are
+$L_{\nu}$ is the diffuse radiance at wavenumber $\nu$, in a direction given by $\phi$, the azimuth angle and $\vartheta $ the zenith angle such as $\mu =\cos\vartheta $. Notice that $\phi$ ({\tt PAZIMSOL}) and $\mu$ ({\tt PMU0}) are
 computed in routine SUNPOS described in the last subsection. In (\ref{ecmwf32}),
 we assume a plane parallel atmosphere with the optical depth $\delta$, as
 a convenient vertical coordinate when the energy source is outside the medium
@@ -492,29 +476,28 @@ L_{\nu}(\delta,\mu,\phi) - \frac{\overline{\omega}_{\nu}(\delta)}{4} \, P_{\nu}(
 \medskip
 
 $E_{\nu}^0$ is the incident solar irradiance in the direction $\mu_0 = cos\vartheta _0$, $\overline{\omega}_{\nu}$ is the single scattering albedo ($= \beta_{\nu}^{sca} / k_\nu$) and $P_{\nu}(\delta,\mu,\phi,\mu',\phi')$ is the scattering phase function which defines the probability that radiation coming from direction $(\mu',\phi')$ is scattered in direction $(\mu,\phi)$.
-The shortwave part of the scheme, originally developed by Fouquart and Bonnel (1980) solves the radiation transfer equation and integrates the fluxes over the whole shortwave spectrum between 0.2 and 4 $\mu m$. Upward and downward fluxes are obtained from the reflectances and transmittances of the layers, and the photon path distribution method allows to separate the parametrization of the scattering processes from that of the molecular absorption.
+The shortwave part of the scheme, originally developed by Fouquart and Bonnel (1980) solves the radiation transfer equation and integrates the fluxes over the whole shortwave spectrum between 0.2 and 4 $\mu$m. Upward and downward fluxes are obtained from the reflectances and transmittances of the layers, and the photon path distribution method allows to separate the parametrization of the scattering processes from that of the molecular absorption.
 
 %
 \subsection{Spectral integration}
 %
 
-Solar radiation is attenuated by absorbing gases, mainly water vapor, uniformly mixed gases ($O_2$, $CO_2$)\footnotemark
-%
-\footnotetext{Absorption by $CH_4$ and by $N_{2}O$ is accounted for in a recent
-version of the code}
-and ozone, and scattered by molecules (Rayleigh scattering), aerosols and cloud particles. Since scattering and molecular absorption occur simultaneously, the
+Solar radiation is attenuated by absorbing gases, mainly water vapor,
+uniformly mixed gases (oxygen, carbon dioxide, methane, nitrous oxide) and
+ozone, and scattered by molecules (Rayleigh scattering), aerosols and cloud 
+particles. Since scattering and molecular absorption occur simultaneously, the
 exact amount of absorber along the photon path length is unknown, and band
 models of the transmission function cannot be used directly as in the shortwave
-radiation transfer (see ~\ref{subsection21}). The approach of the photon path
+radiation transfer (see subsection~\ref{subsection21}). The approach of the photon path
 distribution method is to calculate the probability $p(U) \, dU$ that a photon
-contributing to the flux $F_c$ in the conservative case ({\em i.e.} no
+contributing to the flux $F_c$ in the conservative case (i.e. no
 absorption, $\overline{\omega}_{\nu} = 1, k_{\nu} = 0$) has encountered an
 absorber amount between $U$ and $U + dU$. With this distribution, the radiative flux at wavenumber $\nu $ is related to $F_c$ by
 
 %(3.5)
 \medskip
 \be
-F_{\nu} = F_c \int_0^{\infty}\!{p(U) \, exp( - k_{\nu} U) \, dU}
+F_{\nu} = F_c \int_0^{\infty}\!{p(U) \, \exp( - k_{\nu} U) \, dU}
 \label{ecmwf35}
 \ee
 \medskip
@@ -529,7 +512,7 @@ F = \frac{1}{\Delta\nu} \int_{\Delta\nu}\!{F_{\nu} \, d\nu} = F_c \int_0^{\infty
 \ee
 \medskip
 
-To find the distribution function $p(U)$, the scattering problem is solved first, by any method, for a set of arbitrarily fixed absorption coefficients $k_l$, thus giving a set of simulated fluxes $F_{k_l}$. An inverse Laplace transform is then performed on (\ref{ecmwf35}) to get $p(U)$ (Fouquart, 1974). The main advantage of the method is that the actual distribution $p(U)$ is smooth enough that (\ref{ecmwf35}) gives accurate results even if $p(U)$ itself is not known accurately. In fact, $p(U)(U)$ needs not be calculated explicitly as the spectrally integrated fluxes are, in the two limiting cases of weak and strong absorption:
+To find the distribution function $p(U)$, the scattering problem is solved first, by any method, for a set of arbitrarily fixed absorption coefficients $k_l$, thus giving a set of simulated fluxes $F_{k_l}$. An inverse Laplace transform is then performed on (\ref{ecmwf35}) to get $p(U)$ (Fouquart 1974). The main advantage of the method is that the actual distribution $p(U)$ is smooth enough that (\ref{ecmwf35}) gives accurate results even if $p(U)$ itself is not known accurately. In fact, $p(U)(U)$ needs not be calculated explicitly as the spectrally integrated fluxes are, in the two limiting cases of weak and strong absorption:
 
 %(3.7)
 \medskip
@@ -546,7 +529,7 @@ $<U^{\frac{1}{2}}>$ derived from
 %(3.8)
 \medskip
 \be
-U_e = \frac{1}{k_e} \, ln(\frac{F_{k_e}}{F_c})
+U_e = \frac{1}{k_e} \, \ln(\frac{F_{k_e}}{F_c})
 \label{ecmwf38}
 \ee
 \medskip
@@ -556,13 +539,13 @@ U_e = \frac{1}{k_e} \, ln(\frac{F_{k_e}}{F_c})
 %(3.9)
 \medskip
 \be
-k_e = (\frac{U_{tot}}{\mu_0})^{-1} \, ln(t_{\Delta\nu} \frac{U_{tot}}{\mu_0})
+k_e = (\frac{U_{tot}}{\mu_0})^{-1} \, \ln(t_{\Delta\nu} \frac{U_{tot}}{\mu_0})
 \label{ecmwf39}
 \ee
 \medskip
 
 \noindent with $U_{tot}$ the total amount of absorber in a vertical column and
-$\mu_0 = cos\vartheta _0$ (PMU0 computed in routine SUNPOS). Once the effective
+$\mu_0 =\cos\vartheta _0$ (PMU0 computed in routine SUNPOS). Once the effective
 absorber amounts of $H_{2}O$ and uniformly mixed gases are found, the
 transmission functions are computed using Pad\'e approximants:
 
@@ -590,9 +573,9 @@ for the downward transmission of the direct solar beam, and:
 \[
 U_{O_3}^u = r \, \int_{p_s}^{p}{dU_{O_3}} + U_{O_3}^d(p_s)
 \]
-for the upward transmission of the diffuse radiation with $r = 1,66$ the
+for the upward transmission of the diffuse radiation with $r = 1.66$ the
 diffusivity factor and $M$ (PSEC in SWU), the magnification factor
-(Rodgers, 1967) used instead of $\mu_0$ to account for the sphericity of the
+(Rodgers 1967) used instead of $\mu_0$ to account for the sphericity of the
 atmosphere at very small solar elevations:
 
 %(3.11)
@@ -608,11 +591,11 @@ spectral interval into subintervals in which the surface reflectance can be
 considered as constant. Since the main cause of the important spectral variation
 of the surface albedo is the sharp increase in the reflectivity of the
 vegetation in the near infrared and since water vapor does not absorb below
-$0.68 \mu m$, the shortwave scheme considers two spectral intervals, one for the
-visible ($0,2 - 0,68 \mu m$, subroutine SW1S) containing a fraction of 0.441676
+0.68~$\mu$m, the shortwave scheme considers two spectral intervals, one for the
+visible (0.2 - 0.68~$\mu$m, subroutine SW1S) containing a fraction of 0.441676
 the incoming solar energy and second one for the near infrared
-($0,68 - 4,0 \mu m$, subroutine SW2S) for the 0.558324 remaining part of the
-solar spectrum. This cut-off at $0,68 \mu m$ also makes the scheme more
+(0.68 - 4.0~$\mu$m, subroutine SW2S) for the 0.558324 remaining part of the
+solar spectrum. This cut-off at 0.68~$\mu$m also makes the scheme more
 computationally efficient, in as much as the interactions between gaseous
 absorption (by water vapor and uniformly mixed gases) and scattering processes
 are accounted for only in the near-infrared interval.
@@ -621,12 +604,12 @@ are accounted for only in the near-infrared interval.
 \subsection{Vertical integration}
 %
 
-Considering an atmosphere where a fraction $f$ (as seen from the surface or the top of the atmosphere) is covered by clouds (the fraction $f$ depends on which cloud overlap assumption is assumed for the calculations), the final fluxes are given as
+Considering an atmosphere where a fraction $C_{tot}$ (as seen from the surface or the top of the atmosphere) is covered by clouds (the fraction $C_{tot}$ depends on which cloud overlap assumption is assumed for the calculations), the final fluxes are given as
 
 %(3.110)
 \medskip
 \be
-F^{\!\downarrow} = f \, F^{\!\downarrow}_{cloudy} \, + \, (1-f) \, F^{\!\downarrow}_{clear}
+F^{\!\downarrow} = C_{tot} \, F^{\!\downarrow}_{cloudy} \, + \, (1-C_{tot}) \, F^{\!\downarrow}_{clear}
 \label{ecmwf3110}
 \ee
 \medskip
@@ -654,13 +637,13 @@ cloud in the layer:
 %(3.13)
 \medskip
 \begin{eqnarray}\label{ecmwf313}
-R_t &=& C \, R_{cdy} + (1 - C) \, R_{clr}, \cr
-T_b &=& C \, T_{cdy} + (1 - C) \, T_{clr}.
+R_t &=& C_j \, R_{cdy} + (1 - C_j) \, R_{clr}, \cr
+T_b &=& C_j \, T_{cdy} + (1 - C_j) \, T_{clr}.
 \end{eqnarray}
 \medskip
 
 The subscripts $_{clr}$ and $_{cdy}$ respectively refer to the clear-sky and
-cloudy fractions of the layer while $C$ is the cloud fractional.\\
+cloudy fractions of the layer with $C_j$ the cloud fraction of the layer j.\\
 
 
 %
@@ -670,32 +653,31 @@ cloudy fractions of the layer while $C$ is the cloud fractional.\\
 
 $R_{t_{cdy}}$ and $T_{b_{cdy}}$ are the reflectance at the top and transmittance
 at the bottom of the cloudy fraction of the layer calculated with the
-Delta-Eddington Approximation. Given $\delta_c$ (PTAU), $\delta_a$ (PAER) and
-$\delta_g$, the optical thicknesses for the cloud, the aerosol and the molecular
-absorption ($= k_e U$), $g_c$ (PCG) and $g_a$ (CGA) the cloud and aerosol
-asymetry factors, $R_{t_{cdy}}$ and $T_{b_{cdy}}$ are calculated as functions of:
+Delta-Eddington approximation. Given $\delta_c$ (PTAU) and $\delta_a$ (PAER), the optical thicknesses for the cloud and the aerosol, $g_c$ (PCG) and $g_a$ (CGA) the cloud and aerosol
+asymmetry factors, $R_{t_{cdy}}$ and $T_{b_{cdy}}$ are calculated as functions of:
 
 \begin{itemize}
 \item{the total optical thickness of the layer $\delta^{*}$:}
 
 %(3.14)
 \[
-\delta^{*} = \delta_c + \delta_a + \delta_g
+\delta^{*} = \delta_c + \delta_a 
 \]
 
 \item{the total single scattering albedo:}
 
 %(3.14)
 \be
-\omega^{*} = \frac{\delta_c + \delta_a}{\delta_c + \delta_a + \delta_g}
+\omega^{*} = \frac{\omega_c  \, \delta_c+ \omega_a \, \delta_a}{\delta_c + \delta_a }
 \label{ecmwf314}
 \ee
 
-\item{the total asymetry factor:}
+\item{the total asymmetry factor:}
 
 %(3.14)
 \[
-g^{*} = \frac{\delta_c}{\delta_c + \delta_a} g_c + \frac{\delta_a}{\delta_c + \delta_a} g_a
+g^{*} = \frac{\omega_c  \, \delta_c  \,  g_c+ \omega_a  \, \delta_a  \, g_a}
+{\omega_c  \, \delta_c+ \omega_a  \, \delta_a}
 \]
 \end{itemize}
 
@@ -704,31 +686,9 @@ g^{*} = \frac{\delta_c}{\delta_c + \delta_a} g_c + \frac{\delta_a}{\delta_c + \d
 below the $j^{th}$ interface) and of the effective solar zenith angle $\mu_e(j)$
 which accounts for the decrease of the direct solar beam and the corresponding
 increase of the diffuse part of the downward radiation by the upper scattering
-layers:
+layers (see further).
 
-%(3.15)
-\medskip
-\be
-\mu_e(j) = \biggl[\frac{(1 - C^{al}(j))}{\mu} + r \, C^{al}(j)\biggr]^{-1},
-\label{ecmwf315}
-\ee
-
-\noindent with:
-
-\[
-C^{al}(j) = 1 - \prod_{i=j+1}^N{(1 - C(i) \, E(i))}
-\]
-
-\noindent and
-
-%(3.16)
-\be
-E(i) = 1 - exp\biggl[ - \frac{(1 - \omega_c(i) \, g_c(i)^2)}{\mu}\biggr].
-\label{ecmwf316}
-\ee
-\medskip
-
-$\delta_c(i)$, $\omega_c(i)$ and $g_c(i)$ are the optical thickness, single scattering albedo and asymetry factor of the cloud in the $\, i^{th}$ layer, and $r$ is the diffusivity factor. The scheme follows the Eddington approximation, first proposed by Shettle and Weiman (1970), then modified by Joseph {\em et al.} (1976) to account more accurately for the large fraction of radiation directly transmitted in the forward scattering peak in case of highly asymetric phase functions. Eddington's approximation assumes that, in a scattering medium of optical thickness $\delta^{*}$, of single scattering albedo $\omega$, and of asymetry factor $g$, the radiance $L$ entering (\ref{ecmwf34}) can be written as:
+The scheme follows the Eddington approximation, first proposed by Shettle and Weiman (1970), then modified by Joseph et al. (1976) to account more accurately for the large fraction of radiation directly transmitted in the forward scattering peak in case of highly asymmetric phase functions. Eddington's approximation assumes that, in a scattering medium of optical thickness $\delta^{*}$, of single scattering albedo $\omega$, and of asymmetry factor $g$, the radiance $L$ entering (\ref{ecmwf34}) can be written as:
 
 %(3.17)
 \medskip
@@ -742,7 +702,7 @@ In that case, when the phase function is expanded as a series of associated Lege
 
 \medskip
 \[
-P(\theta) = 1 + \beta_1(\theta) \, cos\theta,
+P(\theta) = 1 + \beta_1(\theta) \, \cos\theta,
 \]
 \medskip
 
@@ -756,11 +716,11 @@ P(\theta) = 1 + \beta_1(\theta) \, cos\theta,
 \ee
 \medskip
 
-\noindent where $g$, the asymetry factor identifies as
+\noindent where $g$, the asymmetry factor identifies as
 
 \medskip
 \[
-g = \frac{\beta}{3} = \frac{1}{2} \int_{-1}^{+1}\!{P(\theta) \, cos\theta \, d(cos\theta)}.
+g = \frac{\beta}{3} = \frac{1}{2} \int_{-1}^{+1}\!{P(\theta) \,\cos\theta \, d(\cos\theta)}.
 \]
 \medskip
 
@@ -769,7 +729,7 @@ Using (\ref{ecmwf318}) in (\ref{ecmwf34}) after integrating over $\mu$ and divid
 %(3.19)
 \medskip
 \be
-\mu \, \frac{d(L_0+\mu L_1)}{d\delta} = - (L_0+\mu L_1) + \omega \, (L_0+g \mu L_1) + \frac{1}{4} \omega \, F_0 \, exp(\frac{-\delta}{\mu_0}) \, (1+3 g \mu_0 \, \mu).
+\mu \, \frac{d(L_0+\mu L_1)}{d\delta} = - (L_0+\mu L_1) + \omega \, (L_0+g \mu L_1) + \frac{1}{4} \omega \, F_0 \,\exp(\frac{-\delta}{\mu_0}) \, (1+3 g \mu_0 \, \mu).
 \label{ecmwf319}
 \ee
 \medskip
@@ -779,13 +739,13 @@ We obtain a pair of equations for $L_0$ and $L_1$ by integrating (\ref{ecmwf319}
 %(3.20)
 \medskip
 \be
-\frac{d(L_0)}{d\delta} = -3 (1 - \omega) \, L_0 + \frac{3}{4} \omega \, F_0 \, exp(\frac{-\delta}{\mu_0}),
+\frac{d(L_0)}{d\delta} = -3 (1 - \omega) \, L_0 + \frac{3}{4} \omega \, F_0 \, \exp(\frac{-\delta}{\mu_0}),
 \label{ecmwf320}
 \ee
 
 %(3.21)
 \be
-\frac{d(L_1)}{d\delta} = - (1 - \omega g) \, L_1 + \frac{3}{4} \omega \, g \, \mu_0 \, F_0 \, exp(\frac{-\delta}{\mu_0}).
+\frac{d(L_1)}{d\delta} = - (1 - \omega g) \, L_1 + \frac{3}{4} \omega \, g \, \mu_0 \, F_0 \, \exp(\frac{-\delta}{\mu_0}).
 \label{ecmwf321}
 \ee
 \medskip
@@ -797,8 +757,8 @@ $0 \leq \delta \leq \delta^{*}$:
 %(3.22)
 \medskip
 \begin{eqnarray}\label{ecmwf322}
-L_0(\delta) &=& C_1 \, exp(-k\delta) + C_2 \, exp(+k\delta) - \alpha \, exp(\frac{-\delta}{\mu_0}), \cr
-L_1(\delta) &=& p (C_1 \, exp(-k\delta) - C_2 \, exp(+k\delta)) - \beta \, exp(\frac{-\delta}{\mu_0}),
+L_0(\delta) &=& C_1 \, \exp(-k\delta) + C_2 \, \exp(+k\delta) - \alpha \, \exp(\frac{-\delta}{\mu_0}), \cr
+L_1(\delta) &=& p (C_1 \, \exp(-k\delta) - C_2 \, \exp(+k\delta)) - \beta \, \exp(\frac{-\delta}{\mu_0}),
 \end{eqnarray}
 \medskip
 
@@ -839,7 +799,7 @@ diffuse and direct fluxes by the corresponding diffuse and direct reflectances
 
 \medskip
 \[
-F^{\!\uparrow}(\delta^{*}) = \bigl[ L_0(\delta^{*}) - \frac{2}{3} \, L_1(\delta^{*}) \bigr] = R\_ \, \bigl[ L_0(\delta^{*}) + \frac{2}{3} \, L_1(\delta^{*}) \bigr] + R_d \, \mu_0 \, F_0 \, exp(\frac{-\delta^{*}}{\mu_0}),
+F^{\!\uparrow}(\delta^{*}) = \bigl[ L_0(\delta^{*}) - \frac{2}{3} \, L_1(\delta^{*}) \bigr] = R\_ \, \bigl[ L_0(\delta^{*}) + \frac{2}{3} \, L_1(\delta^{*}) \bigr] + R_d \, \mu_0 \, F_0 \, \exp(\frac{-\delta^{*}}{\mu_0}),
 \]
 \medskip
 
@@ -848,10 +808,10 @@ F^{\!\uparrow}(\delta^{*}) = \bigl[ L_0(\delta^{*}) - \frac{2}{3} \, L_1(\delta^
 %(3.24)
 \medskip
 \begin{eqnarray}\label{ecmwf324}
-(1 - R\_ - \frac{2p}{3} \, (1 + R\_) ) \, C_1 \, exp(-k \, \delta^{*}) +
-(1 - R\_ + \frac{2p}{3} \, (1 + R\_) ) \, C_2 \, &exp(+k \, \delta^{*})& \cr
+(1 - R\_ - \frac{2p}{3} \, (1 + R\_) ) \, C_1 \, \exp(-k \, \delta^{*}) +
+(1 - R\_ + \frac{2p}{3} \, (1 + R\_) ) \, C_2 \, &\exp(+k \, \delta^{*})& \cr
 \mbox{} = ( (1 - R\_)\alpha - \frac{2}{3} \, (1 + R\_)\beta +
-R_d \, \mu_0 \, F_0 ) \, &exp(\frac{-\delta^{*}}{\mu_0})&.
+R_d \, \mu_0 \, F_0 ) \, &\exp(\frac{-\delta^{*}}{\mu_0})&.
 \end{eqnarray}
 \medskip
 
@@ -861,36 +821,64 @@ phase function
 
 \medskip
 \[
-P(\theta) = 2 f \, (1 - cos\theta) + (1 - f) \, (1 + 3g' \, cos\theta),
+P(\theta) = 2 f \, (1 - \cos\theta) + (1 - f) \, (1 + 3g' \, \cos\theta),
 \]
 
-\noindent where $f$ is the fractional scattering into the forward peak and $g'$ the asymetry factor of the truncated phase function. As shown by Joseph {\em et al.} (1976), these parameters are:
+\noindent where $f$ is the fractional scattering into the forward peak and $g'$ the asymmetry factor of the truncated phase function. As shown by Joseph et al. (1976), these parameters are:
 
 %(3.25)
 \medskip
 \begin{eqnarray}\label{ecmwf325}
-f  &=& g^2, \cr
+f  &=&  \frac{\omega_c \, \delta_c \, g_c^2+ \omega_a \, \delta_a \, g_a^2}
+{\omega_c \, \delta_c + \omega_a \, \delta_a} \cr
 g' &=& \frac{g}{1+g}.
 \end{eqnarray}
-\medskip
 
-The solution of the Eddington's equations remains the same provided that the total optical thickness, single scattering albedo and asymetry factor entering (\ref{ecmwf319})-(\ref{ecmwf324}) take their transformed values:
+The solution of the Eddington's equations remains the same provided that the total optical thickness, single scattering albedo and asymmetry factor entering (\ref{ecmwf319})-(\ref{ecmwf324}) take their transformed values:
 
 %(3.26)
 \medskip
 \begin{eqnarray}\label{ecmwf326}
-\delta^{*'} &=& (1 - \omega f) \, \delta^{*}, \cr
+\delta^{'} &=& (1 - \omega f) \, \delta^{*}, \cr
 \omega^{'}  &=& \frac{(1 - f) \, \omega}{1 - \omega f}.
 \end{eqnarray}
 
 Practically, the optical thickness, single scattering albedo, asymmetry factor,
 and solar zenith angle entering (\ref{ecmwf323})-(\ref{ecmwf326}) are $\delta^{*}$, $\omega^{*}$, $g^{*}$ and $u_e$ defined in (\ref{ecmwf314}) and (\ref{ecmwf315}).
 
+
+The effective solar zenith angle $\mu_e(j)$ is equal to:
+%(3.15)
+\medskip
+\be
+\mu_e(j) = \biggl[\frac{(1 - C^{al}(j))}{\mu} + r \, C^{al}(j)\biggr]^{-1},
+\label{ecmwf315}
+\ee
+with $r$ is the diffusivity factor and is prescribed at 1.66, that corresponds to a zenith angle of 52.95$^\circ$. The accuracy of this approximation in fact depends on the actual solar zenith angle, which implies that the fluxes cannot be determined at all the incoming solar zenith angles with the same accuracy. $C^{al}(j)$ is the cumulated scattering efficiency from the top of the atmosphere to the layer $j$:
+\noindent
+
+\[
+C^{al}(j) = 1 - \prod_{i=j+1}^N{(1 - CC(j))}
+\]
+
+\noindent
+with $CC(j)$ is the direct solar light scattering efficiency defined in each layer of the cloud column as:
+
+%(3.16)
+\be
+CC(j) =C'_j \, (1 -\exp\biggl[ - \frac{\delta^{*'}_c(j)}{\mu}\biggr])+(1-C'_j) \, (1 -\exp\biggl[ - \frac{\delta^{*'}_a(j)}{\mu}\biggr] )
+\label{ecmwf316a}
+\ee
+\medskip
+with $C'_j$ the cloud sub-fraction of the layer $j$
+defined with respect to the column fraction $C_{tot}$ as:
+\be
+C'_j=C_j/C_{tot}		
+\ee
+
 %
 \subsubsection{Clear-sky fraction of the layers}
 %
-
-
 In the clear-sky fraction of the layers, the shortwave scheme accounts for scattering and absorption by molecules and aerosols. As optical thickness for both Rayleigh and aerosol scattering is small, $R_{clr}(j-1)$ and $T_{clr}(j)$ the reflectance at the top and transmittance at the bottom of the $j^{th}$ layer can be calculated using respectively a first and a second-order expansion of the analytical solutions of the two-stream equations similar to that of Coakley and Chylek (1975). For Rayleigh scattering (subroutine SW1S), the optical thickness, single scattering albedo and asymmetry factor are respectively $\delta_R$, $\omega_R = 1$ and $g_R = 0$, so that
 
 %(3.27)
@@ -911,7 +899,7 @@ The optical thickness $\delta_R$ of an atmospheric layer is simply:
 
 \noindent where $\delta_R^{*}$ is the Rayleigh optical thickness of the whole
 atmosphere parameterized as a function of solar zenith angle
-(Deschamps {\em et al.} 1983):
+(Deschamps et al. 1983):
 
 \[
 \delta_R^{*} = \sum_{i=0}^5{a_i \, \mu_0^{i-1}}.
@@ -926,6 +914,7 @@ albedo and asymmetry factor are respectively $\delta_a$, $\omega_a$ (with $1-\om
 \[
 den = 1 + ( 1 - \omega_a + back(\mu_e) \, \omega_a ) \, \frac{\delta_a}{\mu_e} + ( 1 - \omega_a ) \, (1 - \omega_a + 2 \,  back(\mu_e) \, \omega_a ) \, \frac{{\delta_a}^2}{{\mu_e}^2}
 \]
+%
 \be
 R(\mu_e) = \frac{back(\mu_e) \, \omega_a \, \delta_a/\mu_e} {den}
 \label{ecmwf328}
@@ -936,7 +925,28 @@ T(\mu_e) = \frac{1}{den}
 \medskip
 
 \noindent where $back(\mu_e) = (2 - 3 \mu_e g_a)/4$ is the
-backscattering factor.
+backscattering factor and $\mu_e(j)$ is the effective solar zenith angle:
+%(3.15)
+\medskip
+\be
+\mu_e(j) = \biggl[\frac{(1 - C^{al}(j))}{\mu} + r \, C^{al}(j)\biggr]^{-1},
+\label{ecmwf315}
+\ee
+with $r$ is the diffusivity factor and is prescribed at 1.66, that corresponds to a zenith angle of 52.95$^\circ$. The accuracy of this approximation in fact depends on the actual solar zenith angle, which implies that the fluxes cannot be determined at all the incoming solar zenith angles with the same accuracy. $C^{al}(j)$ is the cumulated scattering efficiency from the top of the atmosphere to the layer $j$:
+\noindent
+
+\[
+C^{al}(j) = 1 - \prod_{i=j+1}^N{(1 - CC(j))}
+\]
+
+\noindent
+with $CC(j)$ is the direct solar light scattering efficiency defined in each layer of the cloud column as:
+%(3.16)
+\be
+CC(j) = 1 -\exp\biggl[ - \frac{\delta^{*'}_a(j)}{\mu}\biggr]
+\label{ecmwf316b}
+\ee
+\medskip
 
 Practically, $R_{clr}$ and $T_{clr}$ are computed using (\ref{ecmwf328}) and the
 combined effect of aerosol and Rayleigh scattering comes from using modified
@@ -945,18 +955,30 @@ the highly asymmetric aerosol phase function through a Delta-Eddington
 approximation of the forward scattering peak
 (as in (\ref{ecmwf325})-(\ref{ecmwf326})):
 
+\begin{eqnarray}
+f  &=&  \frac{ \delta_R + \omega_a \, \delta_a \, g_a^2}
+{\delta_R + \omega_a \, \delta_a} \cr
+g^{'} &=& \frac{g}{1+g}. \cr
+\delta^{'} &=& (1 - \omega f) \, \delta, \cr
+\omega^{'}  &=& \frac{(1 - f) \, \omega}{1 - \omega f}.
+\end{eqnarray}
+
+with:
+
 %(3.29)
 \medskip
 \[
-\delta^{+} = \delta_R + \delta_a \, (1 - \omega_a \, g_a^2)
+\delta = \delta_R + \delta_a 
 \]
 \be
-g^{+} = \frac{g_a}{1 + g_a} \, \bigl(\frac{\delta_a}{\delta_R + \delta_a}\bigr)
+g = \frac{ \delta_R  + \omega_a  \, \delta_a  \, g_a}
+{\delta_R+ \omega_a  \, \delta_a}
 \label{ecmwf329}
 \ee
 \[
-\omega^{+} = \frac{\delta_R}{\delta_R + \delta_a} \, \omega_R + \frac{\delta_a}{\delta_R + \delta_a} \frac{\omega_a \, (1 - g_a^2)}{1 - \omega_a \, g_a^2}.
+\omega = \frac{ \delta_R+ \omega_a \, \delta_a}{\delta_R + \delta_a }
 \]
+
 \medskip
 
 As for their cloudy counterparts, $R_{clr}$ and $T_{clr}$  must account for the multiple reflections due to the layers underneath:
@@ -975,20 +997,19 @@ is the reflectance of the underlying medium and $r$ is the diffusivity factor.
 Since interactions between molecular absorption and Rayleigh and aerosol
 scattering are negligible, the radiative fluxes in a clear-sky atmosphere are
 simply those calculated from (\ref{ecmwf312}) and (\ref{ecmwf330}) attenuated
-by the gaseous transmissions (\ref{ecmwf310})(subroutine SW2S).\\
+by the gaseous transmissions (\ref{ecmwf310}) (subroutine SW2S).\\
 
 These calculations are practically done twice, the first time for the clear-sky
-fraction ($1-f$) of the atmospheric column with $\mu$ equal to $\mu_0$, simply
-modified for the effect of Rayleigh and aerosol scattering (subroutine SWR),
-the second time for the clear-sky fraction of each individual layer within the
-fraction $f$ of the atmospheric column with $\mu$ equal to $\mu_e$
-(subroutine SWR).
+fraction ($1-C_{tot}$) of the atmospheric column with $\mu_e$ computed using
+(\ref{ecmwf316b}),  simply
+modified for the effect of Rayleigh and aerosol scattering (subroutine SWCLR),
+the second time for the clear-sky fraction $(1-C'_j)$ of each individual layer
+within the fraction $C_{tot}$ of the atmospheric column with $\mu_e$
+computed using (\ref{ecmwf316a}) (subroutine SWR).
 
 %
 \subsection{Multiple reflections between layers}
 %
-
-
 To deal properly with the multiple reflections between the surface and the
 cloud layers, it should be necessary to separate the contribution of each
 individual reflecting surface to the layer reflectances and transmittances
@@ -1030,19 +1051,19 @@ working the formulas upward:
 %(3.32)
 \medskip
 \[
-U_{e_0}^{\!\downarrow} = \frac{1}{k_e} ln(\frac{T_{b_0}}{T_{b_c}}),
+U_{e_0}^{\!\downarrow} = \frac{1}{k_e} \ln(\frac{T_{b_0}}{T_{b_c}}),
 \]
 \[
-U_{e_{\not{=}}}^{\!\downarrow} = \frac{1}{k_e} ln(\frac{T_{b_{\not{=}}}}{T_{b_c}}),
+U_{e_{\not{=}}}^{\!\downarrow} = \frac{1}{k_e} \ln(\frac{T_{b_{\not{=}}}}{T_{b_c}}),
 \]
 \be
 \label{ecmwf332}
 \ee
 \[
-U_{e_0}^{\!\uparrow} = \frac{1}{k_e} ln(\frac{R_{t_0}}{R_{t_c}}),
+U_{e_0}^{\!\uparrow} = \frac{1}{k_e} \ln(\frac{R_{t_0}}{R_{t_c}}),
 \]
 \[
-U_{e_{\not{=}}}^{\!\uparrow} = \frac{1}{k_e} ln(\frac{R_{t_{\not{=}}}}{R_{t_c}}),
+U_{e_{\not{=}}}^{\!\uparrow} = \frac{1}{k_e} \ln(\frac{R_{t_{\not{=}}}}{R_{t_c}}),
 \]
 \medskip
 
@@ -1070,125 +1091,291 @@ F^{\!\downarrow}(j) = F_0 \, \biggl[T_{b_0} \, t_{\Delta\nu}(U_{e_0}^{\!\downarr
 
 As seen in section (\ref{subsubsection321}), the cloud radiative properties
 depend on three different parameters: the optical thickness $\delta_c$, the
-asymetry factor $g_c$ and the single scattering albedo $\omega_c$. Presently
+asymmetry factor $g_c$ and the single scattering albedo $\omega_c$. Presently
 the cloud optical properties are derived from Fouquart (1987) for the cloud
-water droplets and from Sun and Shine (1995) for the cloud ice crystals
-\footnotemark
-%
-\footnotetext{Ebert and Curry (1992) provided also another set of parameters
-for the cloud containing ice particles}. In case of mixed phase cloud, one has
+water droplets and from Ebert and Curry (1992) for the cloud ice crystals.
+Alternate sets of cloud optical properties are also available,
+see subsection~\ref{subsecoptical}. In case of mixed phase cloud, one has
 to consider the combination formula:
 
 \medskip
 \begin{eqnarray}\label{combination}
 \delta_{c} &=& \delta_{L} + \delta_{I} \cr
 \omega_{c} &=& (\omega_{L} \; \delta_{L} + \omega_{I} \; \delta_{I})/\delta_{c} \cr
-g_c        &=& (\omega_{L} \; \delta_{L} \; g_{L} + \omega_{I} \; \delta_{I} \; g_{I})/\omega_{c}
+g_c        &=& (\omega_{L} \; \delta_{L} \; g_{L} + \omega_{I} \; \delta_{I} \; g_{I})/(\omega_{L} \; \delta_{L} + \omega_{I} \; \delta_{I})
 \end{eqnarray}
 \medskip
 
 %
 \subsubsection{Warm cloud case}
 %
+By default, the option {\bf Fouquart} is used for the computation of the warm cloud optical properties. In that case, the optical thickness $\delta_L$ depends on the cloud liquid water path $u_{LWP}$ and on the mean effective radius of the cloud droplets size distribution $r_e$ (Fouquart 1987):
 
-The optical thickness $\delta_{L}$ is related to the cloud liquid water path
-$u_{LWP}$ by:
+$$\displaystyle{\delta_L=(a+b/r_e)u_{LWP}}$$ 
+The liquid water path $u_{LWP}$ is defined by $\int_{\Delta z} \rho r_c dz = \int_{\Delta p} r_c/gdp$. $r_e$ can be computed either through Martin 1994 parameterization (for the one-moment cloud schemes) or directly as the ratio of the 3$^{\rm rd}$ and the 2$^{\rm nd}$ moments of the cloud droplets distribution (for the two-moment cloud schemes).
 
-%(3.34)
-\medskip
-\be
-\delta_{L} = 1.5 \times 10^3 \frac{u_{LWP}}{r_e},
-\label{ecmwf334}
-\ee
-\medskip
+The cloud single scattering albedo is computed in each of the six shortwave bands as a function of the cloud droplet chemical composition and diameter. In a first approximation, the cloud droplet composition can be retrived assuming that the cloud droplets form from the aerosols given by the global climatologies (Tegen 1997 or Tanre 1984).
 
-\noindent where $r_e=11 \times 10^3(\rho r_c)+4$ is the mean effective radius of
-the size distribution of the cloud droplets (in $\mu m$) and where the liquid
-water path $u_{LWP}$ is defined by
-$\int_{\Delta z} \rho r_c dz=\int_{\Delta p} r_c/g dp$. In the two spectral
-intervals (1 for VIS and 2 for NIR) of the shortwave radiation scheme, $g_L$ is
-kept constant to a value of 0.85 while $\omega_L$ is given as a function of
-$\delta_L$, following to Fouquart (1987):
+The global climatologies supply the extinction coefficient for 6 aerosol classes (Continental, Maritime, Desert, Urban, Volcanic and Stratospherical background). Each of these classes can be decomposed in five elementary aerosol types: dust, water soluble compounds, soot, sea-salt, sulphates (d'Almeida et al. 1991). Using the percentage of elementary aerosol types entering in one class and their normalized extinction coefficients (for 1 particle/cm$^3$) (Table 4.3 of d'Almeida et al. 1991), one can deduce the normalized extinction coefficients of the 6 aforementioned classes. The number concentration in each class and the total number concentration (cm$^{-3}$) of the elementary types can be retrieved from the total number of aerosols entering in one class (derived as the ratio between the total extinction and the normalised extinction for 1 particle for that class).
 
-%(3.35)
-\medskip
-\begin{eqnarray}\label{ecmwf335}
-\omega_{L_1} &=& 0.9999 - 5 \, 10^{-4} \, exp(-0.5 \, \delta_L), \cr
-\omega_{L_2} &=& 0.9988 - 2.5 \, 10^{-3} \, exp(-0.05 \, \delta_L).
-\end{eqnarray}
-\medskip
+The volume fraction of one aerosol type into the cloud droplet is then computed as the ratio of the volume of all the particles of that type corresponding to one droplet and the droplet's volume: $v_f^i=(N_i/N_c)\cdot (R_i/R_e)^3$. $N_i$ and $R_i$ are the number concentration and a typical value of the mean radius of the aerosol of type $i$, $N_c$ and $R_e$ are the number concentration and the effective radius of the cloud droplets. 
 
-\noindent These cloud shortwave radiative parameters have been fitted to
-{\em in situ} measurements of stratocumulus clouds
-(Bonnel {\em et al.}, 1983).\\
+\bigskip
+
+\begin{table}[!ht]
+\caption{Percentage of the aerosol types in the ECMWF classes (d'Almeida et al 1991)}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+   \hline
+     &   &   &  &  &    \\
+      ECMWF classes & dust & water soluble & soot & sea salts & sulfates  \\
+     &   &   &  &  &    \\
+   \hline
+   \hline
+marine & -  &  -   &  -   &  65 $\%$   & 35  $\%$        \\
+  \hline
+continental & $2.27\cdot 10^{-4}$  $\%$  & 93.877 $\%$    &  6.123  $\%$   & -   & -    \\
+  \hline
+urban & $1.67\cdot 10^{-5}$ $\%$   & 59.45  $\%$   &  40.55  $\%$   & -   & -    \\
+  \hline
+desert & 100  $\%$  & -   &  -   & -   & -    \\
+  \hline
+volcanic & 40  $\%$  & -   &  40  $\%$   & -   & 20  $\%$    \\
+  \hline
+stratospherical background & 100  $\%$  & -   &  -   & -   & -    \\
+  \hline
+\end{tabular} 
+\end{center}
+\end{table} 
+\bigskip
+
+The cloud-droplet single scattering albedo (SSA) is then computed following an extention of Chuang et al. (2002) parameterization for the computation of the SSA of cloud droplets containing black carbon (Sandu et al. 2005):
+$$\omega = 1- C_{abs}/C_{ext}$$
+
+where the absorption and extinction coefficients are given by:
+
+\begin{equation}
+ C_{abs}=\frac{\pi}{6}d^3\frac{\delta[n_{eff}^3-(n_{eff}^2-1)^{3/2}]}{n_{eff} (1+0.8d \delta)}\nonumber
+ \end{equation}
+\begin{equation}
+C_{ext}=\pi d^2 /2
+ \end{equation}
+
+where $n_{eff},k_{eff}$ are the real and the imaginary parts of the cloud droplet effective indice of refraction, d is the cloud droplet diameter, $\lambda$ is the central wavelenght of the 6 SW bands.
+
+The SSA of a cloud droplet containing various types of inclusions may be calculated through this method if the effective medium approximation can be used to compute the cloud droplet's complex effective dielectric constant ($\epsilon_{eff}=m^2=(n_{eff}+i\cdot k_{eff})^2$). The Maxwell-Garnett mixing rule can be applied to determine $\epsilon_{eff}$ if any of the following set of assumptions are considered: 
+\begin{enumerate}
+\item the aerosols are externally mixed, all the particles being spherical and randomly distributed in the cloud droplet (Bohren and Hauffman 1983). 
+\item the particles included into a cloud droplet form an internal mixture. The resulting aerosol is considered spherical and has not a preferential location near the drop's surface (extrapolation of Chylek et al. (1996) results for BC inclusions).
+\end{enumerate}
+With these assumptions, for $n$ spherical inclusions embedded in a water cloud drop, $\epsilon_{eff}$ given by the Maxwell-Garnett theory is equal to:
+
+\begin{equation}
+\epsilon_{eff}=\frac{(1-f)\epsilon_w+\sum_{i=1}^n f_i \beta_i \epsilon_i}{1-f+\sum_{i=1}^n f_i \beta_i}
+ \end{equation}
+
+where $\epsilon_w$ is the complex dielectric constant of water, $\epsilon_i$ and $f_i$ are the dielectric constant and the volumic fraction of the $i^{th}$ inclusion, $f=\sum_{i=1}^n f_i$. If all the inclusions are spherical $\beta_i=(3 \epsilon_w)/(\epsilon_i+2 \epsilon_w)$.
 
 %
 \subsubsection{Ice cloud case}
 %
-
-The optical properties of cirrus clouds from measurements during the ICE89
-experiment have been taken in order to calibrate the scheme. Sun and Shine
-(1995) indicate that it is important to account for the effect of small crystals
-through a correcting factor (function of T expressed in Celsius degree), namely:
-
-\medskip
-\be\label{correct}
-Corr(T) = 1.047 - 0.913 \times 10^{-4} T + 0.203 \times 10^{-3} T^2 - 0.106 \times 10^{-4} T^3.
-\ee
-\medskip
-
-Using (\ref{correct}), the optical thickness $\delta_I$ has been adjusted to:
-
-\medskip
-\be
-\delta_I = Corr(T) \frac{u_{IWP}}{30.6 + 254.8 \times 10^3 (\rho r_i)}.
-\ee
-\medskip
-
-In the VISible part of the solar spectrum, ice crystals are non absorbing
-($\omega_{I_1}=1$) while in the NIR region their single scattering albedo is
-given by:
-
-\medskip
-\be
-\omega_{I_2} = (1.0 - 0.086822 (10^3 \rho r_i)^{0.096277}) \times (1 +23.204 \times 10^{-3} \frac{Corr(T)-1}{Corr(T)}).
-\ee
-\medskip
-
-Finally the asymmetry factors are given by
-
-\medskip
+For the optical properties of ice clouds, we have
 \begin{eqnarray}
-g_{I_1} &=& (0.8522 (10^3 \rho r_i)^{0.0162})\times (1 + 0.327 \times 10^{-1} \frac{Corr(T)-1}{Corr(T)}) \cr
-g_{I_2} &=& (0.8819 (10^3 \rho r_i)^{0.0163})\times (1 + 0.418 \times 10^{-1} \frac{Corr(T)-1}{Corr(T)})
+\delta_{I} &=& {\rm IWP}\, (a_{I} + b_{I} / r_{e} )\cr
+\omega_{I} &=& c_{I}  + d_{I}\, r_{e} \cr
+g_I        &=& c_{I} + f_{I}\,r_{e}
 \end{eqnarray}
-\medskip
+By default,  the coefficients have been derived from Ebert and Curry (1992),
+and $r_{e}$ is parameterized (see subsection~\ref{subsecoptical}).
+Alternate sets of cloud optical properties are also available.
 
-%
-\section{Additional features of the radiation computations}
-\label{section4}
-%
+%----------------------------------------------------------------------
+\section{Input to the radiation scheme}
 
-%
+\subsection{Pressure, temperature, humidity, cloud water and ice fields}
+
+They are directly provided by the corresponding prognostic variables of Meso-NH. In order to allow for better fluxes in the stratosphere and above, the vertical profiles of temperature and humidity are completed aloft by using reference atmospheres (Mc Clatchey et al. 1972). One among the five different standard atmospheres:
+\begin{itemize}
+
+\item tropical
+\item mid-latitude in summer and winter
+\item polar in summer and winter
+
+\end{itemize}
+
+is selected to extend the relevant fields up to 50 km high.\\
+
+The TSRAD radiative surface temperature calculated from surface scheme is used for lower boundary conditions.
+Presently, no radiative effects of rain water, graupel and snow are considered. 
+
+\subsection{Ground albedo and emissivity }
+
+The SW radiation scheme requires albedo for each spectral band (6 bands in the 
+most recent version, 0.185-0.25-0.44-0.69-1.19-2.38-4.00 $\mu$m). In  Meso-NH, only visible and near infra-red bands are differentiated: the albedo components entering effectively in the SW scheme are then defined according to these two main bands. The SW radiation code requires also a distinction between "direct" albedo (i.e. for direct radiation) and diffuse albedo. Such a distinction does not exist in Meso-NH so a single albedo value is used for diffuse and direct fluxes. 
+The LW surface emissivity directly corresponds to the value calculated in Meso-NH. 
+
+\subsection{Aerosols}
+
+Aerosol effects on SW and LW radiations are now taken into account provided that CAER is set to a value different of 'NONE'. Presently, six classes of aerosols are considered in the radiation scheme: The continental class including organic and sulfate-type aerosols, the sea class (i.e. sea-salt aerosols), the urban class (mainly  black-carbon type aerosols), the desert class (soil dust type aerosols), the volcanic class and a stratospheric background class. Each one of these class are characterized by specific optical properties (optical depth, single scattering albedo, asymmetry factor, ...). The optical depth is directly linked to the effective concentration of aerosol and therefore must be spatially and temporally specified. Presently the spatial and temporal distributions of optical thickness are defined in the model initialisation step (subroutine INI\_RADIATIONS).  
+
+\begin{itemize}
+
+\item The 'TANR' option directly refers to Tanr\'e et al. (1984)
+  climatological distributions. Total optical thickness (ground to top
+  of the atmosphere TOA) associated to the land, sea, desert, and continental class are horizontally distributed on a T5 grid. This spectral distribution has been redefined on a regular "lat-lon" grid by the Arpege-climat team and imported in Meso-NH. The horizontal fields are interpolated on the Meso-NH domain (INI\_HOR\_AERCLIM routine). Then the total optical thickness are associated to typical vertical distribution (based on pressure levels) depending on the aerosol class, this leading to the 3D aerosol fields. Note that the resulting fields are very smooth, and no temporal evolution is considered here.  
+
+\item The 'TEGE' option refers to the Tegen et al. (1997) climatological distribution. The total optical thickness fields are monthly provided at a ($4^\circ \times 5^\circ$) resolution. Time and spatial interpolation on the Meso-NH domain are made in the INI\_HOR\_AERCLIM routine. The same vertical profiles as in TANR case are considered. 
+
+\item The 'SURF' option provides an alternative method compared to climatical distributions. In this case the total optical thickness is directly linked to the nature and the percent of ground covers in the grid cell (sea, desert, urban, continental). This option allows to better represent localized sources like urban area at fine resolution. The considered vertical distribution are the same than in TANR and TEGE cases. Note that the user can easily modify the maximum total optical thickness associated to the aerosol classes in the INI\_RADIATIONS routine.
+
+\end{itemize}
+
+
+Remark: The stratospheric background represents a horizontally homogenous field defined by default in all cases.
+
+The optical depth associated to the volcanic class are forced to an "epsilon" value in INI\_RADIATIONS step but, this can be modified easily if necessary. A historical climatology for volcanic aerosol is also available in the routines called by the TEGE option. This option is not activated.
+
+It is always possible to define the aerosol fields from user's own data base at the INI\_RADIATIONS step.
+
+\subsection{Radiatively active compounds}
+
+The concentrations of trace gases other than ozone are supposed to be constant spatially and temporally with the following characteristic values: 
+\begin{itemize}
+\item  $CO_{2}$: 360 ppm
+\item  $CH_{4}$: 1.72 ppm
+\item  $N_{2}O$: 0.31 ppm
+\item  $CFC11$: 280 ppt
+\item  $CFC12$: 484 ppt
+\item  $O{3}$: The ozone field is defined from the Fortuin and Langematz (1994) climatology. The concentration depends on height, latitude and month. The 3-D climatology is loaded and interpolated on the Meso-NH domain in the INI\_RADIATIONS step. The ozone field can be visualised running DIAG (see DIAG documentation). 
+\end{itemize}
+
+
+
+\subsection{Cloud optical properties}\label{subsecoptical}
+For the SW radiation, the cloud radiative properties depend on three different parameters: the optical thickness, the asymmetry factor and the single scattering albedo of particles. For LW the cloud properties (linked to emissivity and spectral optical thickness) depends of the scheme used (MORC or RRTM). All these properties are defined for water and ice particles in the ecmwf\_radiation\_vers2 routine. They depend on liquid (or ice) water path or on the effective radius of the particles. This characteristic parameter can be calculated by different ways according to CEFRADL and CEFRADI (ice particles) keywords:\\
+
+{\bf Cloud liquid particles}\\
+\begin{itemize}
+
+\item CEFRADL='PRES': the cloud water effective radius is calculated as a function of pressure (old parameterisation).
+
+\item CEFRADL='OCLN': the cloud effective radius is equal to 10~$\mu$m over land and equal to 13~$\mu$m over the ocean.
+
+\item CEFRADL='MART': parameterisation based on Martin et al. (1994).
+
+        \item CEFRADL='C2R2': the effective radius of cloud particle is calculated from the 2-moment microphysical scheme C2R2 when explicitly called (see the microphyical scheme section for the nomenclature).
+$$ r_{e}=0.5\frac{\int_0^{+\infty} D^3 n(D) dD}{\int_0^{+\infty} D^2 n(D) dD}0.5\frac{\Gamma(\nu+3/\alpha)^{2/3}}{\Gamma(\nu+2/\alpha)}\Big(\frac{\Gamma(\nu)}{\pi/6 \rho_w}\frac{\rho\ r_c}{N_c}\Big)^{1/3}$$
+\end{itemize}
+
+{\bf Cloud ice particles}\\
+\begin{itemize}
+\item CEFRADI='FX40': the ice particle effective radius is fixed at 40~$\mu$m. The user can eventually change this value by modifying the ecmwf\_radiation\_vers2 routine.
+
+\item CEFRADI='LIOU': ice particle effective radius calculated as f(T) from Liou and Ou (1994).
+
+\item CEFRADI='SURI': Ice effective radius calculated as a function of temperature and ice content from Sun and Rikus (1999).
+
+\item CEFRADI='C3R5': the effective radius of ice particle is calculated from C3R5 prognostic particle concentrations. Of course it works only when C3R5 microphysical scheme is activated (not yet available). \\
+\end{itemize}
+
+Several options are also possible to define the optical properties from the primary parameters: \\
+
+{\bf SW radiation}\\
+
+Cloud water optical properties depend on COPWSW:
+
+\begin{itemize}
+
+\item COPWSW ='SLIN', refers to Slingo (1989).
+
+\item COPWSW ='FOUQ', refers to Fouquart (1987).
+
+\end{itemize}
+
+Ice water optical properties depend on COPISW:
+\begin{itemize}
+
+\item COPISW =' FULI', refers to Fu and Liou (1993).
+
+\item COPISW =' EBCU', refers to Ebert and Cury (1992).
+
+\item COPISW =' FU96', refers to Fu (1996).
+
+\end{itemize}
+
+
+{\bf MORC LW radiation} \\
+
+Cloud water optical properties depend on COPWLW:
+\begin{itemize}
+
+\item COPWLW='SMSH', refers to Smith and Shi (1992).
+
+\item COPWLW='SAVI', refers to Savijarvi and Raisanen (1997).
+\end{itemize}
+
+Ice water optical properties depend on COPILW:
+\begin{itemize}
+\item COPILW='EBCU', refers to Ebert and Cury (1992).
+
+\item COPILW='SMSH', refers to Smith and Shi (1992).
+
+\item COPILW='FULI', refers to Fu and Liou (1993).
+
+\item COPILW='FU98', refers to Fu et al. (1998).
+\end{itemize}
+
+{\bf RRTM LW radiation} \\
+
+Cloud water optical properties depend on COPWLW:
+\begin{itemize}
+\item COPWLW='SMSH', refers to Smith and Shi (1992).
+
+\item COPWLW='SAVI', refers to Savijarvi and Raisanen (1997).
+
+\item COPWLW='LILI', refers to Lindner and Li (2000).
+
+\end{itemize}
+
+
+Ice water optical properties depend on COPILW
+
+\begin{itemize}
+\item COPILW='EBCU', refers to Ebert and Cury (1992).
+
+\item COPILW='FULI', refers to Fu and Liou (1993).
+
+\item COPILW='FU98', refers to Fu et al. (1998).
+\end{itemize}
+
+Note: The resulting cloud optical properties as well as effective radius, liquid and ice water path can be visualized, running DIAG program (see DIAG documentation).
+
+
+
+\subsection{Cloud inhomogenity factor and cloud overlap assumption}
+
+In the initial ECMWF radiation code, an empirical cloud factor XFUDG is introduced to account for cloud subgrid inhomogenity in large cells following Tiedke (1996). This factor weights the above defined optical properties and is initially set to 0.7. But it has been resized to 1 by default for Meso-NH applications, assuming that grid cell are smaller than in ECMWF model. However, as Meso-NH can be used on a wide range of resolution the value of XFUDG can be fixed by namelist.\\ 
+
+The cloud overlap  assumption is used for the determination of $C_{tot}$ (see the SW documentation) and is important for the determination of radiation in cloudy columns when the subgrid condensation scheme is actived. It is determined by the NOVLP variable: NOVLP=5 means "random overlap", NOVLP=6 means "maximum-random overlap " and NOVLP=7 means "maximum overlap". By default NOVLP is set to 6 in the INI\_RADCONF routine except if the Morcrette longwave radiation scheme is used. In this case, NOVLP is set to 5. 
+
+
 \subsection{Solar astronomy}
-%
-
 To run the shortwave radiative computations it is necessary to feed the code
 with the time varying solar zenithal and azimuthal angles and
 the daily solar constant, all derived by analytical formulae of astronomy
-(Paltridge and Platt, 1976).
+(Paltridge and Platt 1976).
 For instance, the daily solar constant $S_{sun}$, the solar declination angle
 $\delta_{sun}$, the cosine of the solar zenithal angle $\mu$ and the azimuthal
 solar angle $\beta$ are given by:
 \begin{eqnarray}
-S_{sun} &=& S_0(1.000110+0.034221cos(d_r)+0.001280sin(d_r) \cr
-        & &              \mbox{} +0.000719cos(2d_r)+0.000077sin(2d_r)), \\
-\delta_{sun} &=& 0.006918-0.399912 cos(d_r)+0.070257 sin(d_r) \cr
-             & &          \mbox{} -0.006758 cos(2d_r)+0.000907 sin(2d_r) \cr
-             & &          \mbox{} -0.002697cos(3d_r)+0.001480sin(3d_r), \\
-\mu &=& cos(\phi)cos(\delta_{sun})cos(h_r)+sin(\phi)sin(\delta_{sun}), \\
-\beta &=& sin^{-1}\displaystyle{\biggl(
-        \displaystyle{cos(\delta_{sun}) sin(h_r) \over sin(arcos(\mu))}
+S_{sun} &=& S_0(1.000110+0.034221\cos(d_r)+0.001280\sin(d_r) \cr
+        & &              \mbox{} +0.000719\cos(2d_r)+0.000077\sin(2d_r)), \\
+\delta_{sun} &=& 0.006918-0.399912 \cos(d_r)+0.070257 \sin(d_r) \cr
+             & &          \mbox{} -0.006758 \cos(2d_r)+0.000907 \sin(2d_r) \cr
+             & &          \mbox{} -0.002697\cos(3d_r)+0.001480\sin(3d_r), \\
+\mu &=& \cos(\phi)\cos(\delta_{sun})\cos(h_r)+\sin(\phi)\sin(\delta_{sun}), \\
+\beta &=& \sin^{-1}\displaystyle{\biggl(
+        \displaystyle{\cos(\delta_{sun}) \sin(h_r) \over \sin(arcos(\mu))}
                                 \biggr)},
 \end{eqnarray}
 respectively where $S_0=1370$ W/m$^2$, $\phi$ is the latitude,
@@ -1196,111 +1383,34 @@ $d_r=2\pi n_{day}/365$ ($n_{day}$ is the day number) and
 $h_r=2\pi {hour}/24$ with ${hour}$, the true hour of the day at the time $t$
 and at the longitude $\lambda$, defined by:
 \begin{eqnarray}
-{hour} = mod(24+mod(t/3600,24),24) + \lambda (12/\pi) - t_{sideral}^{cor},
+{hour} = \mod(24+\mod(t/3600,24),24) + \lambda (12/\pi) - t_{sideral}^{cor},
 \end{eqnarray}
 with $mod$, the modulo arithmetic function and the sideral time correction
 $t_{sideral}^{cor}$ given by:
 \begin{eqnarray}
-t_{sideral}^{cor} &=& (7.67825 sin(1.00554*n_{day}-6.28306) + \cr
-        & &              \mbox{} 10.09176 sin(1.93946*n_{day}+23.35089))/60.
+t_{sideral}^{cor} &=& (7.67825 \sin(1.00554*n_{day}-6.28306) + \cr
+        & &              \mbox{} 10.09176 \sin(1.93946*n_{day}+23.35089))/60.
 \end{eqnarray}
 
 \noindent All these calculations are performed in routine SUNPOS prior calling
 the radiation code.
 
-%
-\subsection{Surface slope angles}
-%
-
-In case of non flat terrain, the surface radiative fluxes need to be corrected
-to account for the mean terrain slopes (Kondratyev, 1969) (through the slope
-angle $\alpha=tan^{-1}
-\sqrt{(\partial{z_{surf}}/\partial{x})^2+(\partial{z_{surf}}/\partial{y})^2}$
-and the azimuthal slope angle $\gamma=\pi/2-
-tan^{-1}((\partial{z_{surf}}/\partial{y})/(\partial{z_{surf}}/\partial{x}))$)
-that is the direct shortwave surface flux $F^{\!\downarrow}_{SW}$ is corrected
-into $F^{\!\downarrow}_{{SW}^{sl}}$ while the isotropic longwave surface flux
-$F^{\!\downarrow}_{LW}$ becomes $F^{\!\downarrow}_{{LW}^{sl}}$ with
-\begin{eqnarray}
-F^{\!\downarrow}_{{SW}^{sl}} &=& F^{\!\downarrow}_{SW} cos(i), \\
-F^{\!\downarrow}_{{LW}^{sl}} &=& F^{\!\downarrow}_{LW} cos^2(\alpha/2)
-\end{eqnarray}
-and where
-$$cos(i) = cos(\alpha)+sin(\alpha)tan(arcos(\mu))cos(\beta-\gamma).$$
-No corrections are made to account for the mutual interaction of facing slopes
-in the infra red.
-
-\begin{figure}[hpbt]
-\psfig{figure=\EPSDIR/kondratyev.eps,width=9cm}
-\caption{Angle definition for the slope correction (from Kontratyev, 1969)}
-\end{figure}
-
-%
-\subsection{Upper level extensions}
-%
-
-In order to allow for a better solar absorption by ozone and more realistic
-infra red fluxes in the stratosphere and above, the vertical profiles of
-temperature and humidity is completed aloft by using reference atmospheres
-(Mc Clatchey et al., 1972). One among the five different standard atmospheres:
-
-\begin{itemize}
-\item tropical,
-\item mid-latitude in summer and winter,
-\item polar in summer and winter,
-\end{itemize}
-
-\noindent is selected to extend the relevant fields up to 50 km high.\\
-
-%
 \section{Intermittent radiation call}
-\label{section5}
-%
 
-Due to its relatively high cost, the radiation code can be unreasonably
-expensive if called at each model time step. Furthermore as the radiative time
-scales are significantly larger than the time step involved in the integration
-of a mesoscale model, it is recommended to refresh the radiative thermal
-tendency and downward surface fluxes at an adapted rate. To run even faster,
-some approximations of the radiative computations have been made available.\\
-
-The basic time step to call the radiation computation is {\tt XDTRAD}. Il must
-be a multiple of the model time step {\tt XTSTEP} and a default value is set to
-900 s. Note that the radiative code operates on instantaneous fields but the
-angular position of the sun is calculated at the current time plus
-{\tt XDTRAD}/2. Actually, three parameters can be set to enable partial
-radiative computations:
+Due to its relatively high cost, the radiation code can be unreasonably expensive if called at each model time step. Furthermore as the radiative time scales are significantly larger than the time step involved in the integration of a mesoscale model, it is recommended to refresh the radiative thermal tendency and downward surface fluxes at an adapted rate. To run even faster, some approximations of the radiative computations have been made available. The basic time step to call the radiation computation is {\tt XDTRAD}. Il must be a multiple of the model time step {\tt XTSTEP} and a default value is set to 900 s. Note that the radiative code operates on instantaneous fields but the angular position of the sun is calculated at the current time plus {\tt XDTRAD}/2. Actually, three parameters can be set to enable partial radiative computations:
 
 \begin{itemize}
-\item {\tt LCLEAR\_SKY}: when .TRUE. means that radiative computations over
-clear sky columns are made for the ensemble mean column only. This option is
-meaningful if the terrain is flat.
-\item {\tt XDTRAD\_CLONLY}: is the time step of refreshment of the radiative
-fluxes and tendeny for the cloudy columns only\footnotemark
-%
-\footnotetext{it can be used together with {\tt LCLEAR\_SKY} == .TRUE.}
-. Choosing {\tt XDTRAD\_CLONLY} as a divider of {\tt XDTRAD} allows a faster
-update of the radiative transfer through cloudy columns as they are known to be
-the most perturbating ones for the radiations.
-\item {\tt NSPOT}\footnotemark
-%
-\footnotetext{if larger than 1, it cannot be used with the {\tt LCLEAR\_SKY}
-option}: gives the stepping of a steady geometric sweep out of the air columns
-in the computational domain. The radiative tendency and fluxes of the
-non-selected air columns are bilinearly interpolated. Notice that no care is
-taken to check if is air columns are cloudy or not.
+\item LCLEAR\_SKY when .TRUE. means that radiative computations over clear sky columns are made for the ensemble mean column only. This option is meaningful if the terrain is flat.
+
+\item XDTRAD\_CLONLY is the time step of refreshment of the radiative fluxes and tendency for the cloudy columns and the "new" clear columns i.e. where the cloud have just disappeared. Choosing XDTRAD\_CLONLY as a divider of XDTRAD allows a faster update of the radiative transfer through cloudy columns as they are known to be the most perturbating ones for the radiations. 
+
 \end{itemize}
 
-Also taking the opportunity of more advanced radiation code release, it is
-planned to give to the user the opportunity to perform the radiation
-computations on instantaneous fields (as done actually) or on mean accumulated
-fields between two successive calls as suggested recently by Xu and
-Randall (1995).
-
-%
 \section{References}
-\label{section5}
-%
+\decrefname
+Bohren, C.~F., and D.R.Hauffman, 1993: Absorption and Scattering of Light by
+  Small Particles, Wiley, New York.
+
 \decrefname
 Bonnel, B., Y. Fouquart, J.-C. Vanhoutte, C. Fravalo, and R. Rosset, 1983:
       Radiative properties of some African and mid-latitude stratocumulus
@@ -1309,12 +1419,45 @@ Bonnel, B., Y. Fouquart, J.-C. Vanhoutte, C. Fravalo, and R. Rosset, 1983:
       {\bf 56},
       409-428.
 \decrefname
-Coakley, J.A., Jr., and P. Chylek, 1975:
+Chuang, C.~C., J.~E. Penner, J.~M. Prospero, K.~E. Grant, G.~H. Rau, and
+  K.~Kawamoto, 2002: Cloud susceptibility and the first aerosol indirect
+  forcing: Sensitivity to black carbon and aerosol concentrations,
+  {\it J. Geophys. Res.}, {\bf 107}, 4564.
+
+\decrefname
+Chylek, P., G.~Lesins, G.~Videen, J.~G.~D. Wong, R.~G. Pinnick, D.~Ngo, and
+  J.~D. Klett, 1996: Black carbon and absorption of solar radiation by clouds,
+ {\it J. Geophys. Res.}, {\bf 101}, 23365-23372.
+
+\decrefname
+Coakley, J. A., Jr., and P. Chylek, 1975:
       The two-stream approximation in radiation transfer: Including the angle
       of the incident radiation.
       {\it J. Atmos. Sci.},
       {\bf 32},
       409-418.
+\decrefname
+Clough, S. A. and M. I. Iacono, 1995: Line-by-line calculation of atmospheric fluxes and cooling rates, 2. Application to carbon dioxide, ozone, methane, nitrous oxide and the halocarbons.
+ {\it J. Geophys. Res.},
+ {\bf  100D},
+ 16519-16536
+\decrefname
+Clough, S. A., F.X. Kneizys, and R. W. Davies, 1989:
+Line shape and the water vapor continuum.
+ {\it Atmos. Res.},
+ {\bf 23},
+ 229-241.
+\decrefname
+Clough, S. A., M. J. Iacono, and J.-L. Moncet, 1992: Line-by-line calculations of atmospheric fluxes and cooling rates: Application to water vapor.
+ {\it J. Geophys. Res.},
+ {\bf  97D},
+15761-15786.
+
+\decrefname
+d'Almeida, G.~A., P.~Koepke, and E.~P. Shettle, 1991: Atmospheric aerosols:
+  Global climatology and Radiative characteristics, A. Deepak, Hampton, Va.
+
+
 \decrefname
 Dandin, Ph., 1995:
       The radiation code in ARPEGE-Climat AGCM.
@@ -1326,22 +1469,39 @@ Deschamps, P.-Y., M. Herman, and D. Tanr\'e, 1983:
       la Terre, entre 0,35 et 4 microns.
       {\it Rapport ESA 4393/80/F/DD(SC)},
       156 pp.
+
 \decrefname
 Ebert, E. E., and J. A. Curry, 1992:
       A parameterization of ice cloud optical properties for climate models.
       {\it J. Geophys. Res.},
       {\bf 97D},
       3831-3836.
+
+\decrefname
+Ebert, E. E. and Curry, J. A., 1993: An intermediate one-dimensional thermodynamic sea ice model for investigating ice-atmosphere interactions.
+{\it  J. Geophys. Res.}, {\bf 98C}, 10 085-10 109.
+
 \decrefname
 ECMWF, 1989:
       Physical Parametrization, ECMWF Forecast Model.
       {\it Research Manual RM-3},
       3rd ed.
 \decrefname
-Elsasser, W.M., 1942:
+Elsasser, W. M., 1942:
       Heat Transfer by infrared Radiation in the Atmosphere.
       {\it Harvard University Press},
       43 pp.
+\decrefname
+Fels, S. B., 1979: Simple strategies for inclusion of Voigt effects in infrared cooling rate calculations.
+ {\it Appl. Optics},
+ {\bf 18},
+ 2634-2637.
+
+\decrefname
+Fortuin, J. P. F., and Langematz, U., 1994: An update on the global ozone climatology and on concurrent ozone and temperature trends.
+{\it Proceedings SPIE, Atmos. Sensing and Modeling},
+{\bf 2311}, 207-216.
+
 \decrefname
 Fouquart, Y., 1974:
       Utilisation des approximants de Pad\'e pour l'\'etude des largeurs
@@ -1363,6 +1523,18 @@ Fouquart, Y., and B. Bonnel, 1980:
       {\it Beitr. Phys. Atmosph.},
       {\bf 53},
       35-62.
+
+\decrefname
+Fu, Q. and K.-N. Liou, 1992: On the correlated k-distribution method for radiative transfer in non-homogeneous atmosphere.
+{\it  J. Atmos. Sci.}, {\bf 49}, 2139-2156.
+
+\decrefname
+Fu, Q. A., 1996: An accurate parameterization of the solar radiative properties of cirrus clouds for climate models.
+{\it  J. Climate}, {\bf 9}, 2058-2082.
+
+\decrefname
+Fu, Q., P. Yang, and W. B. Sun, 1998: An accurate parametrization of the infrared radiative properties of cyrrus clouds of climate models.
+{\it  J. Climate}, {\bf 11}, 2223-2237.
 \decrefname
 Geleyn, J.-F., and A. Hollingsworth, 1979:
       An economical analytical method for the computation of the interaction
@@ -1371,15 +1543,62 @@ Geleyn, J.-F., and A. Hollingsworth, 1979:
       {\bf 52},
       1-16.
 \decrefname
-Joseph, J.H., W.J. Wiscombe, and J.A. Weinman, 1976:
+Gregory, D., J.-J. Morcrette, C. Jakob, and A. C. M. Beljaars, and T. Stockdale,
+2000: Revision of convection, radiation, and cloud schemes in the ECMWF
+integrated forecasting system.
+{\it  Quart. J. Roy. Meteor. Soc.},
+{\bf 126A}, 1685-1710.
+
+\decrefname
+Giorgetta, M. A. and Morcrette, J.-J., 1995:
+Voigt line approximation in the ECMWF radiation scheme. 
+{\it Mon. Weather Rev.},
+{\bf 123}, 3381-3383.
+
+\decrefname
+Joseph, J. H., W. J. Wiscombe, and J. A. Weinman, 1976:
       The Delta-Eddington approximation for radiative flux transfer.
       {\it J. Atmos. Sci.},
       {\bf 33},
       2452-2459.
+
 \decrefname
 Kondratyev, J., 1969:
       {\it Radiations in the Atmosphere}.
       Academic Press.
+
+\decrefname
+Lacis, A. A., and V. Oinas, 1991: A description of the correlated k distribution method for modeling nongray gaseous absorption, thermal emission, and multiple scattering in vertically inhomogeneous atmospheres.
+ {\it J. Geophys. Res.},
+ {\bf 96D},
+ 9027-9063.
+
+\decrefname
+Lindner, T.H., and J. Li, 2000: Parameterization of the optical properties for water clouds in the infrared.
+{\it J. Climate},
+{\bf 13},
+1797-1805.
+
+\decrefname
+Liu, Q. and Schmetz, J., 1988: On the problem of an analytical solution to the diffusivity factor.
+ {\it Beitr. Phys. Atmos. }
+ {\bf 61 }
+ 23-29.
+
+\decrefname
+Martin, G. M., D. W. Johnson, and A. Spice, 1994: The measurement and
+parameterization of effective radius of droplets in warm
+stratocumulus. 
+{\it J. Atmos. Sci.},
+{\bf 51}, 1823-1842
+
+\decrefname
+Mlawer, E. J., S. J. Taubman, P. D. Brown, M. J. Iacono, and S. A. Clough, 1997:
+Radiative transfer for inhomogeneous atmospheres: RRTM, a validated correlated-k model for the longwave. 
+{\it J. Geophys. Res.},
+{\bf 102D},
+16 663-16 682.
+
 \decrefname
 Morcrette, J.-J., and Y. Fouquart, 1985:
       On systematic errors in parametrized calculations of longwave radiation
@@ -1395,57 +1614,94 @@ Morcrette, J.-J., L. Smith, and Y. Fouquart, 1986:
       {\bf 59},
       455-469.
 \decrefname
+Morcrette, J.-J., 1991: Radiation and cloud radiative properties in the ECMWF operational weather forecast model.
+ {\it J. Geophys. Res.},
+ {\bf 96D},
+ 9121-9132.
+\decrefname
+Morcrette, J.-J., S.A. Clough, E.J. Mlawer, and M.J. Iacono, 1998: Impact of
+a validated radiative transfer scheme, RRTM, on the ECMWF model climate and
+10-day forecasts.
+{\it  ECMWF Technical Memo.},
+{\bf  No. 252}.
+
+\decrefname
+Morcrette, J.-J., E. J. Mlawer, M. J. Iacono, and S. A. Clough, 2001: Impact
+of the radiation transfer scheme RRTM in the ECMWF forecasting system.
+{\it ECMWF Newsletter},
+{\bf 91},
+ 2-9.
+
+\decrefname
 Paltridge, G. W. and C. M. R. Platt, 1976:
       {\it Radiative Processes in Meteorology and Climatology}.
       Elsevier.
 \decrefname
-Rodgers, C.D., and C.D. Walshaw, 1966:
+Rodgers, C. D., and C. D. Walshaw, 1966:
       The computation of infrared cooling rate in planetary atmospheres.
       {\it Quart. J. Roy. Meteor. Soc.},
       {\bf 92},
       67-92.
 \decrefname
-Rodgers, C.D., 1967:
+Rodgers, C. D., 1967:
       The radiative Heat Budget of the troposphere and lower stratosphere.
       {\it Report N$^0$12},
       A2, Planetary Circulation Project, Dept. of Meteorology, Mass. Instit.
       Technology, Cambridge, Mass.,
       99 pp.
 \decrefname
-Rothman, L.S., 1981:
+Rothman, L. S., 1981:
       AFGL atmospheric absorption line parameters compilation: 1980 version.
       {\it Appl. Opt.},
       {\bf 21},
       791-795.
 \decrefname
-Shettle, E.P., and J.A. Weinman, 1970:
+Sandu, I., P. Tulet, and J.-L. Brenguier, 2005:
+      Parameterization of the cloud droplet single scattering albedo based on
+      aerosol chemical composition for LES modelling of boundary layer clouds.
+      {\it Geophys. Res. Lett.},  {\bf 32}, L19814, doi:10.1029/2005GL023994.
+\decrefname
+Savijarvi, H. and P. Raisanen, 1997: Long-wave optical properties of water clouds and rain. 
+{\it Tellus},
+{\bf 50A},
+1-11
+
+\decrefname
+Shettle, E. P., and J. A. Weinman, 1970:
       The transfer of solar irradiance through inhomogeneous turbid atmospheres
       evaluated by Eddington's approximation.
       {\it J. Atmos. Sci.},
       {\bf 27},
       1048-1055.
+
 \decrefname
-Smith, E. A., and Lei Shi, 1992:
+Slingo, A., 1989: A GCM parameterization for the shortwave radiative properties of water clouds. 
+{\it J. Atmos. Sci.},
+{\bf 46},
+1419-1427
+
+\decrefname
+Smith, E. A., and L. Shi, 1992:
       Surface forcing of the infrared cooling profile over the Tibetan plateau.
       Part I: Influence of relative longwave radiative heating at high altitude.
       {\it J. Atmos. Sci.},
       {\bf 49},
       805-822.
 \decrefname
-Stephens, G.L., 1984:
+Stephens, G. L., 1984:
       The parametrization of radiation for numerical weather prediction and
       climate models.
       {\it Mon. Wea. Rev.},
       {\bf 112},
       826-867.
 \decrefname
-Stephens, G.L., 1979:
+Stephens, G. L., 1979:
       Optical properties of eight water cloud types.
       {\it CSIRO, Div. Atmos. Phys.},
-      Technical Paper N$^0$12.36,
+      Technical Paper n$^\circ$12.36,
       Australia.
 \decrefname
-Stephens, G.L., 1978:
+Stephens, G. L., 1978:
       Radiative properties of extended water clouds. Part II.
       {\it J. Atmos. Sci.},
       {\bf 35},
@@ -1458,12 +1714,27 @@ Sun, Z., and K. P. Shine, 1995:
       {\bf 8},
       1874-1888.
 \decrefname
-Tanr\'e D., J.-F. Geleyn, and J. Slingo, 1984:
+Tanr\'e, D., J.-F. Geleyn, and J. Slingo, 1984:
       First results of the introduction of an advanced aerosol-radiation
       interaction in the ECMWF low resolution global model.
       {\it Aerosols and their Climatic Effects},
       H.E. Gerber and A. Deepak, Eds., A. Deepak Publishing, Hampton, Va.,
       133-177.
+
+\decrefname
+Tegen, I, P. Hoorigl, M. Chin, I. Fung, D. Jacob, and J. Penner, 1997:
+Contribution of different aerosol species to the global aerosol extinction
+optical thickness: Estimates from model results. 
+{\it J. Geophys. Res.},
+{\bf 102},
+23,895-23,915.
+
+\decrefname
+Tiedtke, M., 1996: An Extension of Cloud-Radiation Parameterization in the ECMWF Model: The Representation of Subgrid-Scale Variations of Optical Depth.
+      {\it Mon. Wea. Rev.},
+{\bf 124},
+745-750.
+
 \decrefname
 Washington, W.M., and D.L. Williamson, 1977:
       A description of the NCAR GCMs.
@@ -1476,22 +1747,10 @@ WMO-ICSU, 1984:
       {\it WCP-55},
       World Climate Program, Geneva, Switzerland.
 \decrefname
-Xu, K.-M., and D.A. Randall, 1995:
+Xu, K.-M., and D. A. Randall, 1995:
       Impact of interactive radiative transfer on the macroscopic behavior of
       cumulus ensembles. Part I: Radiation parameterization ans sensitivity
       tests.
       {\it J. Atmos. Sci.},
       {\bf 52},
       785-799.
-
-\vskip 1cm
-\noindent Acknowledgements are due to Jean-Jacques Morcrette (ECMWF) and to
-Philippe Dandin (CNRM) whose help was really appreciated.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%% END OF RADIATION CHAPTER  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%\end{document}
-

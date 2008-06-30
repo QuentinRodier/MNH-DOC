@@ -12,7 +12,7 @@
 
 %{\em by V. Masson}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{General Presentation}
+\section{General presentation}
 The simulation of realistic meteorological situations is an important scope
 of Meso-NH. The preparation of initial and coupling (LB and LS) fields
 by interpolation of larger-scale
@@ -36,31 +36,31 @@ time steps. The coupling files are of the same nature than the initial file.
 Here is presented the way to produce these initial and coupling files.\\
 
 This sequence for real cases contains three procedures or
-programs (figure \ref{schematicsequence}).
-In the following, a fortran program is written in CAPITAL letters,
-and is run with the Meso-NH procedure {\sl prepmodel} (unix procedure
+programs (Fig. \ref{schematicsequence}).
+In the following, a Fortran program is written in CAPITAL letters,
+and is run with the Meso-NH procedure {\sl prepmodel} (Unix procedure
 written in lower case letters).
 
 \begin{enumerate}
 \item
 {PREP\_PGD}: this Meso-NH program computes the physiographic data file
-(called PGD file below). At this step, you choose the projection, resolution
+(called PGD file below). At this step, you choose the projection, resolution,
 and horizontal domain. The PGD file contains all the physiographic data
 necessary to run the Meso-NH model with interactive surface schemes for
 vegetation and town.
 \item
-{\sl extractecmwf}\footnote{A user is necessary on the station ecgate1 of Reading to run
+{\sl extractecmwf}\footnote{A user is necessary on the station ecaccess of Reading to run
 {\sl extractecmwf}} or {\sl extractarpege}: these two friendly procedures extract
 the surface and altitude fields for one date, respectively from MARS archive
 (ECMWF forecast model) or from
 Meteo-France operational archive (ARPEGE and ALADIN models).
-In both cases, the fields are written in a GRIB format file, on the gaussian
+In both cases, the fields are written in a GRIB format file, on the Gaussian
 grid. The extraction must be done separately for each date and time (for
 the initial file and each of the coupling file).
 \item
 {PREP\_REAL\_CASE}: this Meso-NH program performs the change of
-orography and vertical grid and writes the Meso-NH file which will be used
-either for the begining of the simulation or for coupling.
+orography and vertical grid and writes the Meso-NH file, which will be used
+either for the beginning of the simulation or for coupling.
 \end{enumerate}
 
 \subsection{Initialization for a one-model run, from a Meso-NH file}
@@ -68,7 +68,7 @@ either for the begining of the simulation or for coupling.
 In this case, the initial and coupling files are interpolated from a
 previous Meso-NH run (at coarser resolution). It is again necessary to
 produce separately one initial file and the coupling files.
-The following steps are used (figure \ref{schematicsequence2}):
+The following steps are used (Fig. \ref{schematicsequence2}):
 \begin{enumerate}
 \item
 {PREP\_PGD}
@@ -99,7 +99,7 @@ is to start a nested model only if all the coarser models containing it
 have already started, or are starting.\\
 
 The initialisation sequence is a merging of the two previous ones
-(initialisation and coupling files of the first model ; initialisation
+(initialisation and coupling files of the first model; initialisation
 files from Meso-NH model for the nested files).  However, there is a {\bf
 major change} at the beginning of the sequence: {\bf all the PGD files for
 all models must be computed \underline{before} the PREP\_REAL\_CASE
@@ -155,20 +155,16 @@ file for the model~3. {\bf Do not change the vertical grid}.
 {MESONH}: here is now your complete nested run.
 \end{enumerate}
 
-\begin{figure}[htb]
-\hspace*{-1.2cm}
-\psfig{file=\EPSDIR/realcas.filiere_amont.eps,width=15.cm}
-\vspace*{-0.4cm}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=14cm]{\EPSDIR/realcas.filiere_amont.eps}}
 \caption{schematic view of the interactions between the different files
 during the initialization sequence of a real case simulation from a global file
 of ECMWF or METEO-FRANCE archive.
 \label{schematicsequence}}
 \end{figure}
 
-\begin{figure}[htb]
-\hspace*{-1.2cm}
-\psfig{file=\EPSDIR/realcas.filiere_amont_spawning.eps,width=15.cm}
-\vspace*{-0.4cm}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=14cm]{\EPSDIR/realcas.filiere_amont_spawning.eps}}
 \caption{schematic view of the interactions between the different files
 during the initialization sequence of a real case simulation from a Meso-NH file.
 \label{schematicsequence2}}
@@ -183,7 +179,7 @@ during the initialization sequence of a real case simulation from a Meso-NH file
 The Meso-NH program PREP\_REAL\_CASE performs the following tasks:
 \begin{itemize}
 \item the horizontal interpolation of the large-scale GRIB data fields
-(in case of Aladin, Arpege or ECMWF archive).
+(in case of ALADIN, ARPEGE, or ECMWF archive).
 \item the truncation of the horizontal domain (for convenience, one may want
 to use very large horizontal domains for the large-scale files
 (Aladin, Arpege, ECMWF or spawned\footnote{spawned file: file obtained after the
@@ -215,7 +211,7 @@ The remainder of the chapter describes those treatments in detail.
 
 The first step of PREP\_REAL\_CASE is the horizontal interpolation of the data fields
 of the GRIB file (either ECMWF, ALADIN or ARPEGE archive) from the archive grid to the
-choosen grid.\\
+chosen grid.\\
 
 The following fields are interpolated :
 \begin{itemize}
@@ -238,44 +234,44 @@ The following fields are interpolated :
 \end{itemize}
 
 The next sections of the paragraph present the general interpolation scheme
-and the specificity of each fields.
+and the specificity of each field.
 
 \subsection{The interpolation algorithm}
 The interpolations are performed on the 12 surrounding colocation points
-(figure \ref{3Dhorinterp}), with a first interpolation along the latitudes
+(Fig. \ref{3Dhorinterp}), with a first interpolation along the latitudes
 (with third order polynoms interpolation with 4 points and linear interpolation
 for 2 points) and a second along the longitude (third order polynoms
 interpolation):
 
-\begin{figure}[h]
-\hspace*{2.5cm}
-\psfig{figure=\EPSDIR/realcas.3Dhorinterp.eps,width=10.cm}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=10cm]{\EPSDIR/realcas.3Dhorinterp.eps}}
 \caption{Horizontal interpolations in FULL-POS.
 \label{3Dhorinterp}}
 \end{figure}
 
 Masks may be used for surface fields. In this case, points are interpolated with
 points of the same nature (mask value). For example, if we are interpolating a
-point in the sea and we find that from the twelwe surrounding points, only eleven
+point in the sea and we find that from the twelve surrounding points, only eleven
 are sea points, the interpolation will take only these eleven points into account.
 \\
-For points wich can not be correctly interpolated (points which are not surrounded
-by enough data points of the same type), a special extrapolation is performed ; the
+For points which can not be correctly interpolated (points which are not surrounded
+by enough data points of the same type), a special extrapolation is performed; the
 given value is the one of the nearest data point of the same type.
 
 \subsection{Definition of interpolated fields}
 \begin{itemize}
-\item Absolute Temperature\\
+\item Absolute temperature\\
 From the archived absolute temperature is computed the virtual potential temperature
 which is interpolated and then converted back to absolute temperature.\\
-The used formula is the following one :\\
-$\theta_v = T ( \frac{P}{P_0})^{-\frac{R_d}{C_pd}} (\frac{1+\frac{R_v}{R_d}r_v}{1+r_v})$
+The used formula is the following one:\\
+$\theta_v = T ( \frac{P}{P_0})^{-\frac{R_d}{C_pd}}
+\; (1+\frac{R_v}{R_d}r_v)/(1+r_v)$
 
-\item Specific Humidity\\
+\item Specific humidity\\
 The relative humidity is computed from the archived specific humidity and the archived
-absolute temperature using the following formula :\\
-$H=\frac{P.q}{\frac{R_d}{R_v}\epsilon_s(T)}$\\
-$\epsilon_s(T)=e^{\alpha_w-\frac{\beta_w}{T}-\gamma_w\log(T)}$\\
+absolute temperature using the following formula:\\
+$H=P\,q \, / ( \frac{R_d}{R_v}\epsilon_s(T) )$\\
+$\epsilon_s(T)=\exp ( \alpha_w-\frac{\beta_w}{T}-\gamma_w\log(T) )$\\
 H is interpolated and then the specific humidity is computed back.
 
 \item Wind components u and v\\
@@ -286,10 +282,10 @@ The projection of these vectors depends on the archive grid:
 \begin{itemize}
 \item ECMWF:\\
 The grid used is a standard latitude, longitude one. The projection consists of a rotation
-in the tangent plane. The rotation angle is given by the formula :\\
+in the tangent plane. The rotation angle is given by the formula:\\
 $\alpha=R_{pk}(\lambda-\lambda_0)-\beta$\\
-where :\\
-$R_{pk}$ if the projection coefficient of the Meso-NH domain,\\
+where:\\
+$R_{pk}$ is the projection coefficient of the Meso-NH domain,\\
 $\lambda$ is the longitude of the point,\\
 $\beta$ is the angle of rotation of the Meso-NH domain.
 \item ARPEGE: \\
@@ -317,7 +313,7 @@ as for the soil temperature.
 \item Soil and deep soil moisture\\
 These fields are first converted from specific humidity to relative humidity, the
 interpolation is performed and then they are converted back into specific humidity.\\
-The value given are dependent of the soil model choosen for the archive. Therefore they
+The value given are dependent of the soil model chosen for the archive. Therefore they
 have to be converted to Meso-NH soil model.
 \item Snow\\
 Snow is interpolated using the same mask as for soil temperature.
@@ -329,19 +325,18 @@ Snow is interpolated using the same mask as for soil temperature.
 \section{The different grids}
 Six grids are used in PREP\_REAL\_CASE: the first five share the same
 location of the points on the horizontal, and the last one is a purely
-vertical grid used for reference state computations
-(figure~\ref{fivegrids}).
+vertical grid used for reference state computations (Fig.~\ref{fivegrids}).
 \begin{itemize}
 \item
-{\bf{The Large-scale grid}}: this grid is the one used either in the Aladin file
+{\bf{The large-scale grid}}: this grid is the one used either in the ALADIN file
 or large-scale Meso-NH file. In the case of an ALADIN input file, this grid is
 defined by the hybrid coordinate $\eta$, and has L levels. The position of
-variables on this grid is shown in detail on figure \ref{grids}. The
+variables on this grid is shown in detail in Fig.~\ref{grids}. The
 index of level on the large scale grid will be called $l$ hereafter.
 \item
 {\bf{The Meso-NH grid}}: this grid is the grid of the output Meso-NH file, which will be
 used during the Meso-NH simulation for the 3D fields. It has (KE-KB+1)
-physical levels (see figure \ref{grids}), plus some levels under the ground or
+physical levels (see Fig.~\ref{grids}), plus some levels under the ground or
 at and over the model top ($z=H$) for boundary treatments.
 This grid is defined by the Meso-NH orography and the vertical discretization
 of the Gal-Chen coordinate $\widehat{z}$. The index of level will be called
@@ -357,7 +352,7 @@ orography, but it is not a Gal-Chen-Sommerville type grid.
 It has the same number of levels as the Meso-NH grid, and the
 levels are known by their altitudes.
 \item
-{\bf{The profiles grid}}: this is the Gal-Chen-Sommerville grid with
+{\bf{The profile grid}}: this grid is the Gal-Chen-Sommerville grid with
 the same $\widehat{z}$ levels as the Meso-NH grid and an orography defined
 as the minimum of both orographies, $z_{min}$.
 This grid allows to represent the free-atmosphere $\theta_v$ profiles
@@ -373,9 +368,8 @@ grid above, without orography. This grid is only used for the reference state.
 For sake of clarity, the horizontal coordinates of the 3D fields are omitted
 in the following equations.
 
-\begin{figure}[htb]
-\hspace*{-1.7cm}
-\psfig{figure=\EPSDIR/realcas.6grids.eps,width=18.cm}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=16cm]{\EPSDIR/realcas.6grids.eps}}
 \caption{The six grids used in PREP\_REAL\_CASE, shown here for the case
 where the Meso-NH orography is lower than the large-scale orography.
 \label{fivegrids}}
@@ -383,31 +377,30 @@ where the Meso-NH orography is lower than the large-scale orography.
 
 \clearpage
 
-\begin{figure}[htb]
-\hspace*{-0.5cm}
-\psfig{figure=\EPSDIR/realcas.grid.eps,width=19.cm}
-\caption{Aladin grid (left) and Meso-NH grid (right).
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=17cm]{\EPSDIR/realcas.grid.eps}}
+\caption{ALADIN grid (left) and Meso-NH grid (right).
 The main 3D-variables used or defined in this chapter
 are shown, except v in the cross section of the Meso-NH grid because it
 is located one half-mesh in front of the mass point.
 \label{grids}}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Altitude of the Aladin points and conversion of the variables}
+\section{Altitude of the ALADIN points and conversion of the variables}
 
 This step is performed only when the input atmospheric large-scale file
-is an GRIB one (if the input large-scale file is a Meso-NH one,
+is a GRIB one (if the input large-scale file is a Meso-NH one,
 the variables are directly the correct ones). To preserve the largest
 accuracy in the hydrostatic balance and the continuity equation through the
 vertical interpolation process, we want to interpolate the quantities
 $r_v$, $\theta_v$, $\rho u$, $\rho v$ and $w$. On the other hand, the GRIB
 file contains the specific humidity $q$, the absolute temperature $T$,
 and the wind components $u$ and $v$. All four variables are located on
-the mass points of the Aladin grid (figure~\ref{grids}),
+the mass points of the ALADIN grid (Fig.~\ref{grids}),
 therefore the altitudes of
 those points must also be evaluated as accurately as possible. \\
 
-{\bf Mixing Ratio}
+{\bf Mixing ratio}
 
 The mixing ratio of water vapor $r_v$ is readily obtained from the specific
 humidity $q$ as
@@ -415,9 +408,9 @@ humidity $q$ as
 r_v=\left(\frac{1}{q}-1\right)^{-1}
 \end{equation}
 
-{\bf Virtual Potential Temperature}
+{\bf Virtual potential temperature}
 
-The virtual temperature at the mass points of the Aladin grid is readily obtained
+The virtual temperature at the mass points of the ALADIN grid is readily obtained
 as
 \begin{equation}
 T_v= T  (1+r_v R_v/R_d)/(1+r_v)
@@ -426,7 +419,7 @@ To obtain the virtual potential temperature $\theta_v$, we must know the
 Exner function $\Pi$ at the same levels.
 
 Let us call $\tilde{\Pi}_l$ the
-value of the Exner function at the mass level $l$ of the Aladin grid, and
+value of the Exner function at the mass level $l$ of the ALADIN grid, and
 $\Pi_l$ the Exner function at the half levels of the same grid. The
 latter is easy to compute because $P$ is known there:
 \begin{equation}
@@ -434,17 +427,17 @@ latter is easy to compute because $P$ is known there:
 \end{equation}
 Then, we want to preserve the mass in each layer as accurately as possible
 in the interpolation. We note that the discretization of the
-hydrostatic relation in the Aladin file would read with the alternative
+hydrostatic relation in the ALADIN file would read with the alternative
 variables $T_v$ and $\theta_v$
 \begin{eqnarray}
 \label{pi1}
-z_l-z_{l-1}=&-\frac{C_{pd}T_{v_l}}{g}&(ln\Pi_l-ln\Pi_{l-1})\\
+z_l-z_{l-1}=&-\frac{C_{pd}T_{v_l}}{g}&(\ln\Pi_l-\ln\Pi_{l-1})\\
 \label{pi2}
 z_l-z_{l-1}=&-\frac{C_{pd}\theta_{v_l}}{g}&(\Pi_l-\Pi_{l-1})
 \end{eqnarray}
 This leads to the optimal way of computing
 \begin{equation}
-\tilde\Pi_l=\frac{\Pi_l-\Pi_{l-1}}{ln\Pi_l-ln\Pi_{l-1}}
+\tilde\Pi_l=\frac{\Pi_l-\Pi_{l-1}}{\ln\Pi_l-\ln\Pi_{l-1}}
 \end{equation}
 from which the virtual potential temperature follows
 \begin{equation}
@@ -453,7 +446,7 @@ from which the virtual potential temperature follows
 
 {\bf Altitude of the points of the large-scale grid}
 
-Since all variables are located at the mass points of the Aladin grid,
+Since all variables are located at the mass points of the ALADIN grid,
 in order to perform the vertical interpolation, one must compute the
 altitudes of these points.
 
@@ -469,27 +462,27 @@ of the mass point on level l is given by:
 +\frac{1}{4}\theta_{v_{l+1}}\right)}{g}(\tilde\Pi_l-\Pi_l)
 \end{equation}
 
-{\bf Horiozontal Wind Components}
+{\bf Horiozontal wind components}
 
-The wind components are initially contravariant on the Aladin grid
+The wind components are initially contravariant on the ALADIN grid
 (i.e. following the iso-$\eta$ surfaces and not true horizontal planes).
 They are projected onto each true horizontal plane containing the considered
 point.\\
 
-{\bf Vertical Wind Components}
+{\bf Vertical wind components}
 
 It is retrieved from the approximated formula of diagnostic vertical velocity
 in models with $\eta$ coordinate. If $\eta$ equal 0 at model top
 and 1 at ground, and with  $p=A(\eta)p_{0}+B(\eta)p_{s}$:
-\begin{displaymath}
-gw=\frac{1}{\rho}\int^\eta_0\vec{\nabla}_\eta
-\l (\frac{dA}{d\eta '}p_0+\frac{dB}{d\eta '}p_{s})\vec{U}\r d\eta '
--\frac{B(\eta)}{\rho}\int^1_0\vec{\nabla}_\eta
-\l(\frac{dA}{d\eta '}p_0+\frac{dB}{d\eta '}p_{s})\vec{U}\r d\eta '
-+\frac{\rho_{s}}{\rho}B(\eta)\vec{U}\cdot \vec{\nabla}(g\, z_{s})
-\end{displaymath}
+\begin{eqnarray}
+gw & = & \frac{1}{\rho}\int^\eta_0\vec{\nabla}_\eta
+\l (\frac{dA}{d\eta '}p_0+\frac{dB}{d\eta '}p_{s})\vec{U}\r d\eta ' \nonumber \\
+& & -\frac{B(\eta)}{\rho}\int^1_0\vec{\nabla}_\eta
+\l(\frac{dA}{d\eta '}p_0+\frac{dB}{d\eta '}p_{s})\vec{U}\r d\eta ' 
++\frac{\rho_{s}}{\rho}B(\eta)\vec{U}\cdot \vec{\nabla}(g\, z_{s}) \nonumber
+\end{eqnarray}
 
-\section{Interpolation to mixed grid}
+\section{Interpolation to the mixed grid}
 
 The fields are interpolated to the mixed grid (there is no
 change of orography).
@@ -506,9 +499,9 @@ to top (surface pressure is known).
 This integration is performed on the mixed grid, where all
 variables have been interpolated, because its discretization
 will be approximately the same as the Meso-NH grid (only change of orography).
-If computed with the Aladin grid, even with attention paid to mass
-conservation, one could have for Aladin levels spaced more than 3km apart
-an error of 1hPa on the surface pressure, when reintegrated with the Meso-NH
+If computed with the ALADIN grid, even with attention paid to mass
+conservation, one could have for ALADIN levels spaced more than 3~km apart
+an error of 1~hPa on the surface pressure, when reintegrated with the Meso-NH
 grid. This error is evident at the model top.
 
 The field of Exner function at model top is hereafter noted
@@ -529,7 +522,7 @@ The values of $\rho u$ and $\rho v$ follow.
 
 \section{The shifting process}
 
-The next step is to account for the differences in the Aladin and Meso-NH
+The next step is to account for the differences in the ALADIN and Meso-NH
 orographies. There is no standard way of doing this, and the treatment
 relies on conceptual ideas on the way the flow reacts to the presence of
 the orography. We also want to preserve some information on the boundary
@@ -543,24 +536,24 @@ aloft, the displacement diminishes, and is negligible at some height
 $z_{scale}$ above the ground. So, we define the shifting function
 \begin{equation}
 \label{shift}
-f(z)=z+(h_{NH}-h_{LS})\left( 1-\textstyle{tanh}^2
+f(z)=z+(h_{NH}-h_{LS})\left( 1-\mbox{tanh}^2
 \left(\frac{z-h_{LS}}{z_{scale}}\right)\right)
 \end{equation}
 as the vertical displacement experienced by a parcel located at altitude
 $z$ on the large-scale grid.
-By default, $z_{scale}$ takes the value $1000m$.\\
+By default, $z_{scale}$ takes the value of 1000~m.\\
 
 The next problem is to choose those quantities which will be conserved
 during the shifting process. This clearly has important consequences: for
 instance, if $r_v$ and $\theta_v$ were conserved, this would generate
 warm and dry anomalies in the valleys resolved by the Meso-NH orography,
-and unresolved by the large-scale orography. This is not acceptable.
+and unresolved by the large-scale orography. This is not desirable.
 
 \clearpage
 
-\begin{figure}[htb]
-\hspace*{-0.5cm}
-\psfig{figure=\EPSDIR/realcas.physhift.eps,width=16.cm}
+
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=16cm]{\EPSDIR/realcas.physhift.eps}}
 \caption{Action of the shift on the variables for one point shifted down
 \label{physhift}}
 \end{figure}
@@ -574,23 +567,23 @@ the difference between $\theta_v$ (virtual potential temperature)
 and $\theta_v$ 'free atmosphere profile'.
 This profile is the one where the boundary layer has been removed.
 It is constructed in the following
-manner, which has been found to work fairly well from polar to saharian
+manner, which has been found to work fairly well from polar to Saharian
 boundary layers:
 \begin{enumerate}
 \item the boundary layer top is found with an algorithm checking
 $\partial \theta_v / \partial z$, and comparing it to
-the gradient between 5000m of height and the ground.
+the gradient between 5000~m of height and the ground.
 \item the $\theta_v$ values under this boundary layer top are replaced
-considering a constant gradient equal to the one between 5000m of height
-and the bounary layer top.
+considering a constant gradient equal to the one between 5000~m of height
+and the boundary layer top.
 \end{enumerate}
 \item
 the relative humidity $H_u=100 * p/e_s(T)/(R_d/R_v/r_v + 1)$
 \item
 The difference between pressure and hydrostatic pressure.
-This quantity is zero per definition when input file is an Aladin one, but
+This quantity is zero per definition when input file is an ALADIN one, but
 is non-zero for a Meso-NH one. This allows to interpolate in some
-extend the non-hydrostatic effects.
+extent the non-hydrostatic effects.
 \item
 the horizontal mass flux $\rho J u, \rho J v$
 in the corresponding grid layer. $J$ is the Jacobian, or volume of the grid
@@ -607,7 +600,7 @@ guess by the pressure solver.
 \end{itemize}
 
 Therefore there is usually cooling, moistening, and wind speed decrease
-if the point is shifted down (in a valley, see figure \ref{physhift}),
+if the point is shifted down (in a valley, see Fig.~\ref{physhift}),
 and warming, drying and wind speed increase if the point is shifted up
 (above a peak or ridge).
 
@@ -636,7 +629,7 @@ Finally, the wind components on the Arakawa C-grid are written as
 \end{eqnarray}
 The fields are now correctly localized on the final Meso-NH grid.
 
-\section{Reference State}
+\section{Reference state}
 
 The reference state is computed on the reference grid, as the horizontal
 average of the actual state.
@@ -676,7 +669,7 @@ The total dry mass is deduced
 {\cal{M}}_d=\int\int\int_V\rho_ddV
 \end{equation}
 
-\section{Anelastic Constraint}
+\section{Anelastic constraint}
 
 The final step is to enforce the anelastic constraint.
 The first guess velocity field $\vec{U}_{fg}$ = ($u$, $v$, $w$) does not verify the lower

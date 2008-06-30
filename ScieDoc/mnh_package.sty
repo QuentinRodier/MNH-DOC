@@ -1,15 +1,19 @@
 %% Informations générales
 \NeedsTeXFormat{LaTeX2e}[1999/01/01]
-\ProvidesPackage{mnh_package}[2008/01/05]
+\ProvidesPackage{mnh_package}[2008/06/30]
 
 %% Chargement des extensions
 \RequirePackage[a4paper]{geometry}
 \RequirePackage[dvips]{graphicx}
 \RequirePackage{epsfig}
+\RequirePackage{longtable}
 \RequirePackage{times}
 \RequirePackage{natbib}
+\RequirePackage{bibtopic}
 \RequirePackage{fancyhdr}
 \RequirePackage{minitoc}
+\RequirePackage{latexsym}
+\RequirePackage{amsmath}
 
 %% Déclaration des options
 \DeclareOption{option}{...}
@@ -27,7 +31,7 @@
 
 %% Header and footer
 %\renewcommand\partmark[1]{\markboth{#1}{#1}}
-\newcommand{\mnhversion}{Meso-NH Masdev4.7$\beta$ January 2008}
+\newcommand{\mnhversion}{Meso-NH Masdev4.7 30 June 2008}
 \newcommand{\partoto}{\title}
 \pagestyle{fancy} 
 \renewcommand{\footrulewidth}{0.4pt} 
@@ -47,19 +51,61 @@
 \renewcommand\tableofcontents{%
   \newpage
   \null
-  \vskip 2em%
-    \begin{center}%
-    {\LARGE Meso-NH Scientific Documentation}%
-    \vskip 3em%
+%  \vskip 2em%
+  \begin{figure}[h]
+    \includegraphics[width=5cm]{EPS/logopro.eps}
+    \hspace*{7cm} \includegraphics[width=4cm]{EPS/logoCNRS.eps}
+  \end{figure}
+    \vskip 1em%
+  \begin{center}%
+    {\LARGE The Meso-NH Atmospheric Simulation System: }%
+    \vskip 2em%
+    {\LARGE Scientific Documentation}%
+    \vskip 2em%
     {\LARGE \@title \par}%
     \vskip 3em%
   \end{center}\par
     {\large \@starttoc{toc}}%
-    }
+\newpage
+\vspace{7cm}
+\begin{center}
+\bf     Acknowledgments
+\end{center}
+\normalsize
+\vspace{2cm}
+
+This volume contains contributions from P. Bechtold, S. Belair,
+Ph. Bougeault, J.M. Carri\`ere, J. Cuxart, V. Ducrocq,
+C. Fischer, M. Georgelin, P. H\'ereil, J.P. Lafore, C. Liousse, C. Mari,
+I. Mallet, P. J. Mascart, V. Masson, J.P. Pinty, E. Richard, K. Suhre,
+J. Stein, P. Tulet, and J. Vil\`a-Guerau de Arellano.
+As editors, we would like to express our deep appreciation for
+the dedicated work of all contributors. The M\'eso-NH project is the
+achievement of a much larger team. Our thanks extend to all those who are
+not cited here, but have given their best to create this unique tool.\\
+
+{\em Philippe Bougeault and Patrick Mascart}
+
+\vspace{2cm}
+Since the 2002 edition, in addition to the contributors cited above, 
+thanks have to be extended to
+J.-P. Chaboureau, O. Geoffroy, O. Nuissier, C. Lac, P. Le Moigne, M. Leriche,
+F. Solmon, and M. Tomasini.\\
+
+{\em Jean-Pierre Chaboureau}
+
+\vspace{11cm}
+
+Copyright \copyright\quad 1995, 1999, 2000, 2001, 2002, 2008
+by M\'et\'eo France and C.N.R.S. \\
+All Rights Reserved. Printed in France.}
 \makeatother
 
 %% less fussy about line breaking
 \sloppy
+
+%% Selecting citation style and punctuation
+\bibpunct{(}{)}{;}{a}{}{,}
 
 %% Directory of Figures
 \def\EPSDIR{EPS}
@@ -88,7 +134,7 @@
 \def\etal{{\it et al.}~~}
 \newcommand{\beq}{\begin{equation}}
 \newcommand{\eeq}{\end{equation}}
-\newcommand{\dfrac}[2]{\frac{\displaystyle#1}{\displaystyle#2}}
+% \newcommand{\dfrac}[2]{\frac{\displaystyle#1}{\displaystyle#2}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  MACROS POUR CONTRIBUTIONS DE JPP%%%%%%%%%%%%%%%%%

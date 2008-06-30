@@ -1,0 +1,273 @@
+\chapter{Clouds and chemistry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author: Celine Mari, CNRS/LA (20/03/08)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\minitoc
+%
+Clouds play an important role in atmospheric chemistry.
+Convective clouds transport pollutants vertically from the boundary layer to 
+the upper troposphere. Clouds and associated precipitations scavenge pollutants 
+from the air. Once inside the cloud or rain water, some compounds 
+dissociate into ions and/or react with the one another through aqueous 
+chemistry.
+Another important role for clouds is the removal of pollutants trapped in 
+rain water and its deposition onto the ground. Clouds can also affect 
+gas-phase chemistry by attenuating solar radiation below the cloud base,
+which has a significant impact on the photolysis reactions. 
+The model currently incorporates parameterizations for sub-grid convective 
+clouds (precipitating and non-precipitating). Parameterization for grid-scale 
+resolved clouds is not yet available. 
+%-------------------------------------
+\section{Model description}
+%-------------------------------------
+The cloud scheme can be divided into two main components: the 
+{\bf sub-grid} cloud
+model and the {\bf resolved} cloud model. 
+For large horizontal grid resolutions, the grid size will be larger than the 
+size of a typical convective cloud, requiring a parameterization for these
+sub-grid clouds. The sub-grid cloud scheme simulates convective 
+precipitating and non-precipitation clouds (see Chapter:Convection Scheme).
+The second component of the cloud model considers clouds which occupy the 
+entire grid cell and have been "resolved" by the model. The rate of change in 
+pollutant concentrations ($s_i$) due to cloud processes is given by:
+$$
+\frac{\partial C_i}{\partial t} = \frac{\partial C_i}{\partial t}_{subcld} + \frac{\partial C_i}{\partial t}_{rescld}
+$$
+%-------------------------------------
+\section{Subgrid convective cloud scheme}
+%-------------------------------------
+%-------------------------------------
+\subsection{Wet scavenging}
+%-------------------------------------
+
+Scavenging by subgrid wet convective updrafts is applied within the 
+convective mass transport algorithm (see Chapter:Convection Scheme) in 
+order to prevent soluble tracers from being transported to the top of the 
+convective updraft and then dispersed on the grid scale. The transport model 
+provide wet convective air mass fluxes through each grid level in the 
+updraft. As air is lifted a distance $\Delta z$ from one level to the next, 
+it loses a fraction $\rm F_i$ of soluble tracer $i$ to scavenging. This 
+fraction depends on (1) the rate constant $k$ ($\rm s^{-1}$) for conversion 
+of cloud condensate (including liquid and ice) to precipitation; 
+(2) the fraction $f_{i,L}$ of tracer present in the liquid cloud condensate; 
+(3) the fraction $f_{i,I}$ of tracer present in the ice cloud condensate; 
+and (4) the retention efficiency $R_i$ of tracer in the liquid cloud condensate
+as it is converted to precipitation ($R_i <$ 1 accounts for volatilization 
+during riming). Thus the rate constant $k_i$ ($\rm s^{-1}$) for loss of 
+tracer from the updraft is given by \citet{Mari2000}:
+$$
+k_i = (R_i f_{i,L} + f_{i,I}) k
+$$
+and the fraction $F_i$ of tracer scavenged as the air is lifted by $\Delta z$ 
+is
+$$
+F_i = 1 - \exp\left[ -k_i \frac{\Delta z}{w} \right]
+$$
+where $w$ is the updraft velocity. The scavenged tracer is directly deposited 
+to the surface, there can be no re-evaporation.
+\subsubsection*{$\rm HNO_3$} 
+$\rm HNO_3$ is 100\% in the cloud condensate phase ($\rm f_{i,L} + f_{i,I}=1$) 
+and we assume $R_i = 1$, therefore $k_i = k$ \citep{Mari2000,Liu2001}.
+\subsubsection*{Gases other than $\rm HNO_3$} 
+For gases other than $\rm HNO_3$, a significant fraction of tracer may be in 
+the gas phase so that $k_i < k$. The phase partitioning of the tracer depends 
+on the cloud liquid water content, L ($\rm cm^3$water$\rm cm^{-3}$air), and the 
+cloud ice water content W ($\rm cm^3$ice$\rm cm^{-3}$ air). 
+
+Let $C_{i,G}, C_{i,L}, C_{i,I}, C_{i,T}$ represent the atmospheric mixing 
+ratios of tracer in the gas, liquid, cloud condensate, ice cloud condensate, 
+and all phases, respectively, so that 
+$$
+ C_{i,T} = C_{i,G} + C_{i,L} + C_{i,I}
+$$
+$$
+f_{i,L} = \frac{C_{i,L}}{C_{i,T}} = \frac{\frac{C_{i,L}}{C_{i,G}}}{1 + \frac{C_{i,L}}{C_{i,G}} + \frac{C_{i,I}}{C_{i,G}}}
+$$
+$$
+f_{i,I} = \frac{C_{i,I}}{C_{i,T}} = \frac{\frac{C_{i,I}}{C_{i,G}}}{1 + \frac{C_{i,L}}{C_{i,G}} + \frac{C_{i,I}}{C_{i,G}}}
+$$
+The ratio $C_{i,L}/C_{i,G}$ is obtained from Henry's law:
+$$
+\frac{C_{i,L}}{C_{i,G}} = K_i^* LRT
+$$
+where $K_i^*$ (M atm$^{-1}$) is the effective Henry's law constant including 
+contributions from dissociated species in fast equilibrium with the dissolved 
+tracer, $R = 8.32\times 10^{-2}$ atm M$^{-1}$ K$^{-1}$ is the ideal gas constant, and T is the local temperature in K. We calculate $K_i^*$ from the van't Hoff
+equation: 
+$$
+K_i^* = K_{i 298}^* \exp\left[ -\frac{\Delta H^0_{i 298}}{R}\left(\frac{1}{T} - \frac{1}{T_0} \right) \right]
+$$
+where $T_0 = 298 K$. 
+
+The retention efficiency $R_i$ is unity for all gases in a warm cloud
+(T$\ge$268 K). Values of $R_i$ in a mixed cloud 
+($\rm 248 < T < 268$ K) are 0.02 for $\rm CH_3OOH$ and $\rm CH_2O$ and 0.05 for $\rm H_2O_2$ \citep{Mari2000}.
+
+The ratio $C_{i,I}/C_{i,G}$ for $\rm H_2O_2$ is obtained by assuming scavenging
+by co-condensation: 
+$$
+\frac{C_{i,I}}{C_{i,G}}=
+\frac{W}{C_{H_2O}}
+\left( \frac{\alpha_{H_2O_2}}{\alpha_{H_2O}} \right) 
+\left( \frac{M_{H_2O_2}}{M_{H_2O}} \right) ^{\frac{1}{2}}
+$$
+where $C_{H_2O}$ is the water vapor mixing ratio (to be calculated from 
+saturation over ice at the local temperature), $\alpha_{H_2O_2}/\alpha_{H_2O}$=0.6 is the ratio of sticking coefficients on the ice surface, and $M_{H_2O_2}/M_{H_2O}$=1.9 is the ratio of molecular weights. 
+
+For $\rm CH_3OOH$ and $\rm CH_2O$ scavenging by co-condensation is inefficient
+and we assume $C_{i,I}/C_{i,G}$=0.
+
+%-------------------------------------
+\subsection{Lightning produced NOx}
+%-------------------------------------
+The mass flux formalism applied to the convective transport of a chemical 
+compound $\overline{C}$, writes :
+%
+\begin{equation}\label{transport_convectif}
+{\frac {\partial \overline C}{\partial t}}\bigg\vert_{convection} =
+-\frac{1}{\rho A} \frac {\partial (MC)}{\partial z} 
+- \overline{w} {\frac {\partial \overline C}{\partial z}}
+\end{equation}
+%
+where $A$ is the grid mesh area, $\rho$ is the air density, $M$ is the mass flux
+(in kg/s) and $\overline{w}$ is the environmental subsidence to compensate the
+upward mass flux. $C$ is the mixing ratio of chemical compound in the 
+convective cells. The mass flux term of Eq. (\ref{transport_convectif}) is
+further decomposed into:
+%
+\begin{equation}\label{decomposition}
+\frac {\partial (MC)}{\partial z} = \frac {\partial (M^u C^u)}{\partial z} + \frac {\partial (M^d C^d)}{\partial z}
+\end{equation}
+%
+where the superscripts $u$ and $d$ refer to the "updrafts" and to the 
+"downdrafts" components, respectively. The different mass flux divergences are 
+expressed 
+as:
+%
+\begin{equation}\label{div_mass_fluxes_u}
+\frac{\partial}{\partial z} (M^u C^u) = \epsilon^u\overline{C}-\delta^u C^u
+\end{equation}
+\begin{equation}\label{div_mass_fluxes_d}
+\frac{\partial}{\partial z} (M^d C^d) = \epsilon^d\overline{C}-\delta^d C^d
+\end{equation}
+%
+where $\epsilon$ and $\delta$ are the parameterized entrainment and detrainment
+rates, respectively. Selecting $C$ as the mixing ratio of nitrogen monoxide, 
+$[NO]$, Eqs (\ref{div_mass_fluxes_u})-(\ref{div_mass_fluxes_d}) are modified to
+include the internal LiNOx production rates \citep{Mari2006}:
+%
+\begin{equation}\label{div_flux_NO_u}
+\frac{\partial}{\partial z} (M^u[NO]^u) = \epsilon^u\overline{[NO]}-\delta^u[NO]^u + (\overline{\rho} A) \frac{\partial [NO]^u}{\partial t}\bigg\vert_{LiNOx}
+\end{equation}
+\begin{equation}\label{div_flux_NO_d}
+\frac{\partial}{\partial z} (M^d[NO]^d) = \epsilon^d\overline{[NO]}-\delta^d[NO]^d
+\end{equation}
+%\begin{equation}\label{div_flux_NO_d}
+%{\partial\over\partial z} (M^d[NO]^d) = \epsilon^d\overline{[NO]}-\delta^d[NO]^d + (\overline{\rho} A) \frac{\partial [NO]^d}{\partial t}\bigg\vert_{LiNOx}
+%\end{equation}
+%
+The two terms on the right hand side of 
+Eqs (\ref{div_flux_NO_u}) and (\ref{div_flux_NO_d})
+represent the subgrid scale
+transport of NO.
+Transport of NO 
+is assumed to take place instantaneously during each model timestep. 
+The third term is the LiNOx term to be parameterized.
+It is worth noting that 
+no a-priori vertical placement of LiNOx is necessary with this approach.
+Once produced inside the convective column, NO molecules are redistributed 
+by upward and downward transport and detrained in the environment. The 
+vertical placement of LiNOx is a direct consequence of the redistribution by 
+mass fluxes inside the convective scheme. 
+
+The electrical activity in the thunderstorms is related to the vertical 
+extension of the glaciated region where ice-ice particle rebounding collisions 
+are efficient enough to explain the charging mechanisms 
+\citep{Reynolds1957,Takahashi1978,Saunders1992}. 
+A growing electrical 
+field then results from the organization of dipolar, tripolar or even 
+more complex charge 
+structures at storm scale \citep{Rust2002,Rust1996,Stolzenburg2002,Barthe2005}. 
+The electrical field is broken down by a partial 
+neutralization of the electrical charges. This is realized by a repetitive 
+triggering of intra-cloud (IC) and cloud-to-ground (CG) flashes. The flashes 
+lead to the formation of NO in the lightning channels after dissociation
+of air molecules at high temperature followed by a rapid cooling. 
+According to 
+the statistical regression formula of \citet{Price1992}, 
+the total lightning
+frequency over land and ocean, $f_f$ can be grossly estimated from 
+mean cloud morphological parameters: 
+%
+\begin{equation} \label{eqn : fréquence}
+f_f=3.44 \times 10^{-5}{H_{ct}}^{4.9} \quad
+\end{equation}
+over land and 
+\begin{equation} \label{eqn : fréquence2}
+f_f=6.40 \times 10^{-4}{H_{ct}}^{1.73} \quad
+\end{equation}
+over ocean.
+$H_{ct}$ is the cloud top height of the convective cells (in km).
+
+\citet{Price1993} proposed the following polynomial relationship
+between the thickness of the cold icy cloud ($H_{fr}$ in km) and the 
+IC/CG ratio, $\beta$:
+\begin{equation} \label{eqn : rapport}
+\beta =0.021H_{fr}^4-0.648H_{fr}^3+7.493H_{fr}^2-36.54H_{fr}+63.09 \quad
+\end{equation}
+with $\rm 1<\beta<50$.
+%
+A scaling factor 
+$c_{pr}=0.97241 \; \exp(0.048203\times \Delta lat \Delta lon)$ is introduced 
+by \citet{Price1994} to adapt $f_f$ to different mesh sizes in 
+interval of latitude ($\Delta lat$) and longitude ($\Delta lon$) given in 
+degree. 
+
+The combination of Eqs (\ref{eqn : fréquence})-(\ref{eqn : rapport}), leads to
+the final expression of the LiNOx production rates to be inserted in
+Eq (\ref{div_flux_NO_u}). It can be written in condensed form :
+\begin{equation}\label{LiNOx_rate_ud}
+{\frac {\partial (NO)^{u}}{\partial t}} \bigg\vert_{LiNOx} = \frac{\beta f_f}{1+\beta}\times P(IC) + \frac{f_f}{1+\beta}\times P(CG)
+\end{equation}
+where the value of the mean production rate per CG and IC namely, 
+$P(CG) = 6.7\times 10^{26}$ of NO molecules, and 
+$P(IC) = 6.7\times 10^{25}$ of NO molecules, of
+\citet{Price1997} have been retained. 
+It is worth noting that recent studies based on airborne observations and 
+cloud scale modeling found that intracloud flashes are likely to be as 
+effective 
+in producing NO as cloud-to-ground flashes 
+\citep{DeCaria2000,Fehr2004,Ridley2005}. 
+It is also important to note that the estimates for the lightning 
+NOx production based on \citet{Price1992,Price1994,Price1997}
+are on the high end of current estimates in the  literature
+\citep{Labrador2005}. 
+
+The practical implementation of the LiNOx parameterization is based on critical 
+vertical levels defined in the deep convection scheme. IC flashes are equally 
+distributed between the cloud top and the freezing levels. The CGs are located 
+between the -10$^{\circ}$C level (or the level of free sink if below) and the 
+ground. The NO production in flashes 
+is assumed to be proportional to air density following 
+\citet{Goldenbaum1993}. 
+Recent studies have shown that unimodal or bimodal distributions would be more 
+realistic than uniform distributions as discussed in 
+\citet{MacGorman1998,DeCaria2000,DeCaria2005}. 
+
+%-------------------------------------
+\section{Resolved Cloud Scheme}
+%-------------------------------------
+ \subsection{Aqueous chemistry extensions}
+To be implemented
+ \subsection{Wet scavenging}
+To be implemented
+ \subsection{Lightning produced NOx at cloud scale}
+To be implemented
+%\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{btSect}{4-3-CloudGas}
+\section{References}
+\btPrintCited
+\end{btSect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%

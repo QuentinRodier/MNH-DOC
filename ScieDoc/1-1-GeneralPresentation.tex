@@ -61,10 +61,10 @@ although these two goals sometimes appeared contradictory.
 It is well known that the fast propagation of acoustic waves in the
 Euler equation system sets a very strong constraint on the computational
 time step. Generally speaking, three different
-methods have been developed to avoid this problem: (i)the use of two different
-time steps for acoustic and non-acoustic types of motions; (ii)the implicit
+methods have been developed to avoid this problem: (i) the use of two different
+time steps for acoustic and non-acoustic types of motions; (ii) the implicit
 treatment of some terms, which usually involves a linearization around some
-mean atmospheric state; (iii)finally the various "anelastic" approximations.
+mean atmospheric state; (iii) finally the various "anelastic" approximations.
 In presence of steep orography, the separation of the terms responsible
 for acoustic waves becomes much more difficult, and the problem is more
 complex. An extensive comparison of these method has been done by Ikawa (1988).
@@ -115,21 +115,21 @@ of the anelastic system.
 %atmosphere.
 Finally, among the various available versions of the anelastic approximation, we have
 implemented three formulations: the Lipps and Hemler (1982) anelastic system,
-the Wilhelmson an Ogura (1972) "modified anelastic equations", and the "psedo--incompressible"
+the Wilhelmson and Ogura (1972) "modified anelastic equations", and the "pseudo--incompressible"
 system of Durran (1989), which offer some flexibility for the representation of meteorological
 flow depending on horizontal and vertical scales. A brief examination of the respective merits
 of these three systems is given in next chapter, but most of the rest of this manual simply
-illustrates the case of the  Lipps and Hemler (1982) formalism for the sake of brevity.
+illustrates the case of the Lipps and Hemler (1982) formalism for the sake of brevity.
 
-\section{Thermodynamic Variables}
+\section{Thermodynamic variables}
 
 The exact conservation of energy in presence of water, and especially liquid
 and ice phase, is a very difficult problem. The use of entropy as a prognostic
 thermodynamic variable appears to be the ultimate solution, however the
 computation of temperature, and the various mixing ratios of water from the
 entropy appears technically difficult, and subject to approximations.
-Alternative proposals by Pointin(1984), Hauf and H\"oller (1987), and
-Marquet(1991), do not get rid of these problems. Therefore, although
+Alternative proposals by Pointin (1984), Hauf and H\"oller (1987), and
+Marquet (1991), do not get rid of these problems. Therefore, although
 we did not rule out the use of entropy in Meso-NH, we have decided that the
 first version of the model would rather use a "dry" potential temperature as a
 thermodynamic variable. The evolution
@@ -156,7 +156,7 @@ by the model, corresponding to vapor, cloud liquid water, rain water, cloud ice,
 snow, graupel, and hail. The user may choose to use only a few of these,
 depending of his interest.
 
-\section{Geographical Systems}
+\section{Geographical systems}
 Here the classical alternative is between the latitude/longitude system on the
 sphere, with possible stretching of the grid, and the conformal projection.
 Although all options may be maintained simultaneously in the code, we
@@ -168,12 +168,12 @@ approximation may be relaxed, this does not preclude, in our opinion, the
 use of Meso-NH for the study of very large scale (though not global)
 processes. On the projection plane, the coordinates may be stretched,
 which allows for the use of effective variable resolution grid, much like
-the Canadian EFR System (Chouinard et al., 1994).
+the Canadian EFR System (Chouinard et al. 1994).
 In fact the combination in the same code of the
 grid-nesting capacity and the variable resolution option renders this tool
 rather unique to adress problems of scale interactions.
 
-\section{Vertical Coordinate}
+\section{Vertical coordinate}
 Again, we were faced with a difficult choice between the classical Gal-Chen
 and Sommerville (1975)
  system of vertical coordinates, featuring a purely vertical,
@@ -184,9 +184,10 @@ benefit expected from the generalized curvilinear transformation
 is to simplify the solution of the pressure problem in case of steep and
 nearly angulous topography. We have developed a prototype 2D version of
 the Meso-NH system, supporting both coordinate systems, in order to examine
-this point. Stein (1995) has demonstrated that in most cases of interest for
-the foreseen use of Meso-NH, the Gal-Chen and Sommerville approach would
-do nearly as well as the generalized curvilinear system, for a much reduced
+this point. Stein (personal communication 1995) has demonstrated that
+in most cases of interest for the foreseen use of Meso-NH, the Gal-Chen and
+Sommerville approach would do nearly as well as the generalized curvilinear
+system (as developed by Satomura 1989 for example), for a much reduced
 memory occupation and computation time. We therefore opted for the previous
 one, resulting in a huge simplification of the code. The major limitation
 of this system is not in terms of {\em slope}, since idealized flows over slopes
@@ -200,39 +201,39 @@ We feel this limitation would have been present with any other system anyway.
 \por
 Chouinard, C., J. Mailhot, H. L. Mitchell, A. Staniforth, and R. Hogue, 1994:
 The Canadian Regional Data Assimilaton System: Operational and Research
-Applications. Mon. Wea. Rev., 122, 1306-1325.
+Applications. {\it Mon. Wea. Rev.}, {\bf 122}, 1306-1325.
 \por
 Gal-Chen, T., and R. C. J. Sommerville, 1975: On the Use of a Coordinate
-Transformation for the Solution of the Navier-Stokes Equations. J. Comput.
-Phys., 17, 209-228.
+Transformation for the Solution of the Navier-Stokes Equations. {\it J. Comput.
+Phys.}, {\bf 17}, 209-228.
 \por
-Hauf, T., and H. H\"oller, 1987: Entropy and Potential Temperature. J. Atmos.
-Sci., 44, 2887-2901.
+Hauf, T., and H. H\"oller, 1987: Entropy and Potential Temperature. {\it J. Atmos.
+Sci.}, {\bf 44}, 2887-2901.
 \por
 Ikawa, M., 1988: Comparison of Some Schemes for Nonhydrostatic Models with
-Orography. J. Meteor. Soc. Jap., 66, 753-776.
+Orography. {\it J. Meteor. Soc. Jap.}, {\bf 66}, 753-776.
 \por
 Lipps, F. B., and R. S. Hemler, 1982: A scale analysis of deep moist convection
-and some related numerical calculations. J. Atmos. Sci., 39, 2192-2210.
+and some related numerical calculations. {\it J. Atmos. Sci.}, {\bf 39}, 2192-2210.
 \por
 Marquet, P., 1991: On the Concept of Exergy and Available Enthalpy: Application
-to Atmospheric Anergetics. Quart. J. Roy. Meteor. Soc., 117, 449-475.
+to Atmospheric Anergetics. {\it Quart. J. Roy. Meteor. Soc.}, {\bf 117}, 449-475.
 \por
 Pointin, Y., 1984: Wet Equivalent Potential Temperature and Enthalpy as
-Prognostic Variables in Cloud Modeling. J. Atmos., Sci., 15, 651-660.
+Prognostic Variables in Cloud Modeling. {\it J. Atmos., Sci.}, {\bf 15}, 651-660.
 \por
-Stein, J., 1995: to appear.
+Durran D. R., 1989: Improving the anelastic approximation, {\it J. Atmos. Sci.}, {\bf 46}, 1453--1461.
 \por
-Durran D. R., 1989: Improving the anelastic approximation, J. Atmos. Sci., {\bf 46}, 1453--1461.
-\por
-Lafore J.P., J. Stein, N. Asencio, P. Bougeault, V. Ducrocq, J. Duron, C. Fischer, P. Héreil,
+Lafore J.P., J. Stein, N. Asencio, P. Bougeault, V. Ducrocq, J. Duron, C. Fischer, P. H\'ereil,
 P. Mascart, V. Masson, J. P. Pinty, J. L. Redelsperger, E. Richard, J. Vil\'a-Guerau de
 Arellano, 1998: The Meso-NH atmospheric simulation system. Part I: adiabatic formulation and
-control simulations, Ann. Geophysicae, {\bf 16}, 90--109.
+control simulations, {\it Ann. Geophysicae}, {\bf 16}, 90--109.
 \por
 Lipps F., and R. S. Hemler, 1982: A scale analysis of deep moist convection and some related
-numerical calculations, J. Atmos. Sci., {\bf 39}, 2192--2210.
+numerical calculations, {\it J. Atmos. Sci.}, {\bf 39}, 2192--2210.
 \por
-Wilhelmson, R., and Y. Ogura,1972: The pressure perturbation and the numerical modelling of a
-cloud, J. Atmos. Sci., {\bf 29}, 1295--1307.
+Satomura, T., 1989: Compressible flow simulations on numerically generated grids. {\it J. Meteor. Soc. Japan}, {\bf 67}, 473-482. 
+\por
+Wilhelmson, R., and Y. Ogura, 1972: The pressure perturbation and the numerical modelling of a
+cloud, {\it J. Atmos. Sci.}, {\bf 29}, 1295--1307.
 

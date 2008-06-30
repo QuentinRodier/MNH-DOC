@@ -1,0 +1,709 @@
+\chapter{Aerosol Schemes}
+%
+% Mise à jour: Celine Mari, CNRS/LA (20/03/08)
+%
+\minitoc
+Aerosols are treated in two different ways in Meso-NH. 
+First, aerosols are treated independently from 
+the gas phase chemistry with a prescribed chemical composition. This is the 
+case for dust or sea-salt aerosols. 
+These aerosols however can interact with the radiative code and/or the cloud 
+dynamics. Second, organic and inorganic aerosols can be fully coupled with the
+gas phase chemistry allowing subsequent interactions with gaseous 
+source precursors. 
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dust aerosols}
+%\author{Alf Grini, CNRM/GMEI}
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{General theory}
+
+Dust is mobilized from dry desert surfaces when the wind friction 
+speed reaches a threshold wind friction speed of approximately
+0.2 m/s. Dust is an important aerosol with annual global
+ emissions ranging from 1000 to 3000 $Tg~yr^{-1}$ and average global
+load around 10-30 $Tg$ \citep{Zender2004}.
+
+Dust aerosols both scatter and absorb solar radiation, and it absorbs and
+re-emits terrestrial radiation. Since the dust is emitted to the atmosphere
+when there are large winds, dust emission often occur in the form of
+{\it dust storms} and optical depths near the source can be very large.
+
+\subsection{Sources and transport}
+
+A detailed description of the dust emissions processes is provided in a 
+preceding chapter "Surface Processes Scheme".
+
+The dust is produced depending on the wind speed. 
+The externalized surface
+of Meso-NH takes care of the mobilization, and sends moments of the size 
+distribution
+to the atmospheric model. The size distribution of dust is assumed to consist
+of lognormal modes, and these modes are described by their $0^{th}$, $3^{rd}$ 
+and
+$6^{th}$ moment. The moments can be transformed to diagnostic variables of 
+the size distribution ($\sigma$ (dispersion coefficient), $r$ (median radius) 
+and $N$ (number concentration) following \citet{Tulet2005})
+Dust is currently lost through sedimentation and rain out in convective clouds.
+The sedimentation takes into account the size of the aerosol where large 
+particles have larger sedimentation velocity 
+(see Sedimentation - Dry deposition in next section).
+The convective rainout assumes that the 
+aerosols are completely soluble in rain water. 
+(Henry's law coefficient similar to $HNO_3$).
+
+\subsection{Radiation and optical properties}
+
+The dust influences the radiation scheme of Meso-NH.
+Optical properties in the 
+short wave are calculated using the Mie code SHDOM \citep{Evans1998} 
+{\it http://nit.colorado.edu/~evans/shdom.html}
+They are calculated off line, assuming a refractive index of $1.48 -0.0014$ 
+for all wavelengths in the shortwave, similar to what was used by 
+\citet{Myhre2003}. The results of the Mie calculations are stored in a look up
+table as {\it asymetry factor $[no~unit]$}, 
+{\it single scattering albedo $[no~unit]$} and 
+{\it extinction coefficient $[m^2~g^{-1}]$}.
+These values are looked up as a function of wavelength, number median radius 
+and dispersion coefficient of the aerosols. 
+
+The long wave code is not modified for special treatment of dust. 
+There is a default {\it Longwave absorption coefficient} defined in 
+{\it yoesw.f90} of the radiation code. The coefficient is used
+to calculated absorption of terrestrial radiation from optical depth at 
+550 ${nm}$. Although this treatment could be refined, the longwave effect of 
+dust is supposed to be smaller than the shortwave effect \citep{Myhre2003}. 
+
+%-----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Organic and inorganic log-normal aerosols model (ORILAM)}
+%\author{Pierre Tulet, CNRM/GMEI}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+The prognostic evolution of the aerosol size distribution is determined by a 
+general dynamical
+equation \citep{Friedlander1977,Seinfeld1997} without analytical 
+solution: 
+
+\begin{equation}
+\frac{\partial n(r_p)}{\partial t} = f(n(r_p))
+\label{eqanal}
+\end{equation}
+where $n$ is the function of aerosol size distribution ($ particles / cm^3$) 
+and $r_p$ is the aerosol radius ($\mu m$).
+This equation can be integrated to obtain an equation system such as: 
+\begin{equation}
+\frac{\partial M_k}{\partial t} = f(M_k)
+\label{genmoment}
+\end{equation}
+where the $k^{th}$ moment is given by $M_k = \int_{0}^{\infty} r_{p}^{k} n(r_p) 
+dr_p \ (\mu m^k / cm^3) $.
+Using several assumptions (choice of the aerosol spectral distribution) the 
+equation (\ref{genmoment})
+can be closed giving $f(M_k)$ in terms of moments.
+Three modes have been implemented; the first one to represent the new particles 
+formed (nuclei mode); the second one
+for bigger and evoluted particles (accumulation mode); the last one is devoted to 
+dust particles and introduced as a passive mode (no interaction with the nuclei and 
+accumulation mode). Each mode is represented by a log-normal distribution as:
+\begin{equation}
+ n(\ln D) = \frac{N}{\sqrt{2 \pi} \ln{\sigma_g}} \exp \left(- \frac{\ln^2 (\frac{D}{D_g})}{2 \ln^2(\sigma_g)}\right) \label{distribution}
+\end{equation}
+where $N$ is the particle number concentration (in $ particles /cm^3$), $D$ is the particle diameter ($\mu m$) and $D_g$
+, $\sigma_g$ are respectively the number median diameter and the geometric 
+standard deviation of the modal distribution.
+The $k^{th}$ moment of the mode i is defined as :
+\begin{equation}
+M_{k,i} = \int_{0}^{\infty} r^k n_i(r) dr
+\label{defmomentint}
+\end{equation}
+After integration (variable change as $ x = \frac{\ln (r/D_g)}{\ln(\sigma)}$) we 
+obtain:
+
+\begin{equation}
+M_{k,i} =  N R^{k}_g \exp \left(\frac{k^2}{2} \ln^2 (\sigma)\right)
+\label{defmoment}
+\end{equation}
+
+A simple combination with equation (\ref{defmoment}) gives a relationship between 
+$M_k$ and the log-normal parameters $\sigma_g$, $R_g$ and $N$:
+\begin{equation}
+N = M_0 \\
+\label{number}
+\end{equation}
+\begin{equation}
+R_g = \left( \frac{M_3^4}{M_6 M_0^3} \right)^{1/6} \\
+\label{radius}
+\end{equation}
+\begin{equation}
+\sigma_g = \exp \left( \frac{1}{3} \sqrt{\ln \left( \frac{M_0 M_6}{M_3^2} 
+\right)} \right)
+\label{sigma}
+\end{equation}
+
+
+For aerosol with many monomers, it is possible to modelize the aerosol size 
+distribution by 
+a continuous function $n$ relative to mean radius $r_p$. The general dynamical 
+equation is given by \citet{Friedlander1977}:
+\begin{equation}
+\frac{\partial n(r_p)}{\partial t} = (f_{convection} + f_{diffusion} + 
+f_{coagulation} +
+f_{growth} + f_{sources/sink} + f_{external})(n(r_p))
+\label{GDE}
+\end{equation}
+This equation can be integrated in terms of moments of the distribution as:
+\begin{equation}
+\frac{\partial M_k}{\partial t} = (f_{convection} + f_{diffusion} + 
+f_{coagulation} +
+f_{growth} + f_{sources/sink} + f_{external})(M_k)
+\label{GDE_M}
+\end{equation}
+
+The aerosol dynamics are modeled  as described by
+\citet{Whitby1991,Binkowski1995,Ackermann1998,Binkowski2003} 
+with notable differences: (1) We chose to integrate 3 moments (0, 3 and 6th) as 
+prognostic variables. This
+procedure permits us to keep all parameters of the modal distribution variable.
+(2) Different sets of parameterization of sulfate nucleation and inorganic 
+chemistry solvers are given.
+(3) The aerosol module is coupled on-line with meteorological fields and chemical 
+species (organic condensation).
+(4) Sedimentation is integrated analytically for all moments.
+(5) Surface exchange is coupled to a mesoscale 
+atmosphere/biosphere model.
+
+One can note that the moments of order 0 and 3 are well known ; the integration 
+of $M_k = \int_{0}^{\infty} r_{p}^{k} n(r_p) dr_p$ gives for $M_{0,i}=N_i$ where 
+$N_i$ is the total concentration of particles for mode i and $M_{3,i}= 
+\frac{3}{4 \Pi} V_i$  is a direct function of the total volume of mode i.
+
+\subsection{Coagulation}
+\subsubsection*{General description}
+Aerosol size distribution evolves by collision between particles, leading to 
+coagulation process. Numerical cost of coagulation treatment is expensive but less expensive when
+a log-normal approach is used. 
+
+Several assumptions has been made to solve the binary coagulation:
+(1) A collision between two particles forms a new particle
+(2) The new particle is spherical
+(3) The new volume is equal to the sum of both initial particle volumes.
+Moments of the new particle formed after collision of particles of respective radius 
+$r_{p1}$ and $r_{p2}$ is 
+\begin{equation}
+r_{p12}^k = (r_{p1}^3 + r_{p2}^3)^{\frac{k}{3}}
+\label{rp12}
+\end{equation}
+It is necessary to consider coagulation as a transfer process  of particles in 
+the lognormal distribution: to update the moment evolution due to coagulation, 
+ we first consider the loss in moment due to extinction of 
+both initial particles 
+ $r_{p1}$ and $r_{p2}$ (term ($r_{p1}^k + r_{p2}^k$ )), and the supply of moment 
+due to the
+ creation of a new particle  $r_{p12}$ (term  $r_{p12}^k$). 
+ The coagulation process can be integrated:
+ \begin{eqnarray}
+\frac{\partial M_k}{\partial t} = \frac{1}{2} \int_{0}^{\infty} 
+\int_{0}^{\infty} r_{p12}^k
+\beta(r_{p1},r_{p2}) n(r_{p1}) n(r_{p2}) dr_{p1} dr_{p2} \nonumber \\
+- \frac{1}{2} \int_{0}^{\infty} \int_{0}^{\infty} (r_{p1}^k + r_{p2}^k)
+\beta(r_{p1},r_{p2}) n(r_{p1}) n(r_{p2})  dr_{p1} dr_{p2}
+\label{coag1}
+\end{eqnarray}
+with $\beta(r_{p1},r_{p2})$ representing the coagulation rate between particles 
+$r_{p1}$ and 
+$ r_{p2}$ in $cm^3.s^{-1}$.
+
+For the particular case of $N=2$, different modes i and j  ($N > 2$ is an 
+extrapolation of results below),  we 
+obtain from (\ref{coag1}) and (\ref{rp12}):
+
+ \begin{eqnarray}
+\frac{\partial M_k}{\partial t} = \frac{1}{2} \int_{0}^{\infty} 
+\int_{0}^{\infty} (r_{p1}^3 + r_{p2}^3)^{\frac{k}{3}}
+\beta(r_{p1},r_{p2}) (n_i + n_j)(r_{p1}) (n_i + n_j)(r_{p2}) dr_{p1} dr_{p2} 
+\nonumber \\
+- \frac{1}{2} \int_{0}^{\infty} \int_{0}^{\infty}
+(r_{p1}^k + r_{p2}^k)  \beta(r_{p1},r_{p2}) (n_i + n_j)(r_{p1}) (n_i + 
+n_j)(r_{p2}) dr_{p1} dr_{p2}
+\label{coag2}
+\end{eqnarray}
+It is easy to solve terms of equation (\ref{coag2}) with the following convention:
+(1) When two particles collide in the same mode (intra-modal coagulation), the 
+new one stays in this mode.
+(2) When two particles of different modes collide (inter-modal coagulation), the 
+new one 
+is in the mode with largest radius (here j).
+The second convention implies for the inter-modal coagulation that each 
+particle of the lowest
+mode is transferred into the largest one.
+Nevertheless, the intra-modal coagulation of the lowest mode (i) is able to 
+reach beyond the largest mode (j). As a consequence, we use an hybrid approach 
+discussed by \citet{Ackermann1998}. First, the model resolves the intersection 
+diameter ($d_{eq}$) of both modes, with the equation:
+ \begin{equation}
+ \ln \left(\frac{N_i \ln \sigma_i}{N_j \ln \sigma_j}\right) = \frac{(\ln d_{eq} 
+- \ln d_{pi})^2}{2\ln^2 \sigma_{gi}} - \frac{(\ln d_{eq} - \ln d_{pj})^2}{2\ln^2 
+\sigma_{gj}}
+\label{coag3}
+\end{equation}
+At the end of the time-step, particles of the lowest mode (Aitken mode) with diameter greater than  $d_{eq}$
+are transferred into the largest one (Accumulation mode).
+
+\subsubsection*{Coagulation rate}
+Coagulation is represented by an harmonic function which is an
+average between both coagulation limit regimes : 'free-
+molecular' and 'near continuum' \citep{Whitby1991}. Knudsen number defined by  $Kn = 
+\frac{\lambda}{r_p}$ permits to define
+the nature of the relationship between atmospheric gas and the particle. For $Kn < 
+0.1$, the particle is in a continuous fluid (continuum regime), whereas for $Kn > 
+10$  the particle moves as a gas molecule (free molecular regime).
+
+\begin{itemize}
+\item Free molecular regime $Kn > 10$
+
+In this regime, \citet{Friedlander1977} gave the expression of coagulation rate 
+as:
+\begin{equation}
+\beta^{fm}(r_{p1},r_{p2}) = \left(\frac{6 k 
+T}{\rho_p}\right)^{\frac{1}{2}}\left(\frac{1}{r^3_{p1}} 
++ \frac{1}{r^3_{p2}}\right)^{\frac{1}{2}} (r_{p1} + r_{p2})^2 
+\label{coagfm}
+\end{equation}
+To integrate this equation, we need to make the same assumption as in 
+\citet{Lee1984}:
+ \begin{equation}
+\left(\frac{1}{r^3_{p1}} + \frac{1}{r^3_{p2}}\right)^{\frac{1}{2}} \approx 
+\left(\frac{1}{r^{\frac{3}{2}_{p1}}} 
+                                                               + 
+\frac{1}{r^{\frac{3}{2}_{p2}}}\right)
+\label{coag_ap}
+\end{equation}
+
+Now the equation (\ref{coagfm}) is written on the form:
+\begin{equation}
+\widetilde{\beta}^{fm}(r_{p1},r_{p2})
+= \left(\frac{6 k_B T}{\rho_p}\right)^{\frac{1}{2}}
+\left(r^{\frac{1}{2}}_{p1} + 2 \frac{r_{p2}}{r^{\frac{1}{2}}_{p1}} + 
+\frac{r_{p2}^2}{r^{\frac{3}{2}}_{p1}} 
++ \frac{r_{p1}^2}{r^{\frac{3}{2}}_{p2}} +  2\frac{r_{p1}}{r^{\frac{1}{2}}_{p2}} 
++ r^{\frac{1}{2}}_{p2}\right)
+\end{equation}
+
+With this assumption, we can compute the variation of the moment due to 
+coagulation process. But it is clear that this approximation is valid only in a 
+short range of particle radius. To minimize the limitation of the 
+approximation, a correction factor is defined 
+as (for the mode i and $k^{th}$ moment) :
+
+
+\begin{equation}
+%\label{coag_betafm}
+b_{(6,i),intra} = \frac{\int_{0}^{\infty} \int_{0}^{\infty} r_{p1}^6 \beta^{fm} 
+n_i(r_{p1}) n_i(r_{p2}) dr_{p1} dr_{p2}}
+{\int_{0}^{\infty} \int_{0}^{\infty} r_{p1}^6 \widetilde{\beta}^{fm} n_i(r_{p1}) 
+n_i(r_{p2}) dr_{p1} dr_{p2}}
+\end{equation}
+
+These factors are tabulated  in function of the log-normal 
+parameters.
+Finally, we obtain:
+
+\begin{equation}
+(\frac{\partial M_{6,i}}{\partial t})_{intra}  \approx - b_{6,i,intra} 
+\int_{0}^{\infty} \int_{0}^{\infty} r_{p1}^6 \widetilde{\beta}^{fm} n_i(r_{p1}) 
+n_i(r_{p2}) dr_{p1} dr_{p2}
+%\label{coag_betafm}
+\end{equation}
+
+
+\item Near-continuum regime $Kn < 1$
+
+For particles larger than their free mean path $\lambda$,
+\citet{Friedlander1977} suggested
+the following  expression for the coagulation rate:
+\begin{equation}
+\widetilde{\beta}^{nc}(r_{p1},r_{p2}) = 4 \Pi (D_{p1} + D_{p2}) (r_{p1} + 
+r_{p2})
+\label{coagne}
+\end{equation}
+
+where $D_{p} = (k_B T Cc / 6 \Pi \mu r_p)$,\\
+the Cunningham coefficient $Cc=1 + 
+Kn(a+b \exp(-c/Kn))$, with  a=1.126; b=0.42 and c= 0.87. \\
+Equation (\ref{coagne}) cannot be integrated analytically. If we consider only the 
+continuum/near-continuum regime, we can approximate Cc as:
+\begin{equation}
+Cc \approx 1 + A^{nc'} Kn
+\label{Cc}
+\end{equation}
+
+with $ A^{nc'} = 1.392 Kn^{0.0783}$. After substitution, equation (\ref{coagne}) 
+becomes:
+\begin{equation}
+\widetilde{\beta}^{nc}(r_{p1},r_{p2}) = \frac{2 k_B T}{3 \mu}\left(2+\lambda 
+A^{nc'}_i 
+\left(\frac{1}{r_{p1}} + \frac{r_{p2}}{r_{p1}^2}\right) + \lambda A^{nc'}_j 
+\left(\frac{1}{r_{p2}} + \frac{r_{p1}}{r_{p2}^2}\right) + \frac{r_{p1}}{r_{p2}}
++ \frac{r_{p2}}{r_{p1}}\right)
+\label{coagne_cor}
+\end{equation}
+As previously, correction factor can be considered. Nevertheless, the 
+approximation used is
+precise enough in the continuum/near-continuum regime to be exempted.
+
+\item Generalization of Brownian Coagulation:\\
+\citet{Seinfeld1997} developed a general formulation for the coagulation rate $
+\beta(r_{p1},r_{p2})$ using \citet{Fuchs1964} formulation and a Cunningham 
+coefficient
+due to \citet{Philips1975}. But the expression is too complicated to be 
+integrated in
+a log-normal distribution approach.
+That is why \citet{Whitby1991} proposed an alternative solution to compute all 
+coagulation coefficients averaging previously expression of free-molecule and 
+near continuum regime as:
+
+\begin{equation}
+\frac{\partial M_k}{\partial t}  \approx \frac{ (\frac{\partial M_k}{\partial 
+t})^{fm} (\frac{\partial M_k}{\partial t})^{nc}}
+{(\frac{\partial M_k}{\partial t})^{fm} +  (\frac{\partial M_k}{\partial 
+t})^{nc}}
+%\label{coag_betafm}
+\end{equation}
+
+\end{itemize}
+
+\subsection{Gas-particles conversion}
+
+Pre-existing particles grow by gaseous transfer upon their surface. A second way 
+of gaseous-particles transfer is related to the formation of new particles by 
+nucleation.
+
+Just after the emission of a combustion particle, some of the gaseous species 
+fix on the aerosol surface as an adsorption process. When these atmospheric 
+molecules are either in sufficient number or on aerosol site with low curve 
+radius, a phase change appears. At this stage, adsorption classical formalism on
+dry surface is not applicable. If the surface film is composed by an unique 
+constituent in balance with the gas phase, when the atmospheric concentration of 
+the constituent increases,
+molecules condense upon the aerosol surface to restore
+the thermodynamic balance.\\
+The condensation process is discontinuous: the partial pressure needs to exceed 
+a critical step to allow the phase change. In this case, the aerosol 
+surface is crucial to transfer gaseous molecules into aerosol by condensation.
+The absorption process needs to have a pre-existing liquid film at the aerosol 
+surface.
+The problem becomes different: as soon as a quantity of a species appears in 
+gaseous
+phase, some molecules are transferred into particle phase by thermodynamical 
+balance. In this model, we assume the aerosol is old enough to have a short
+liquid film at the surface. 
+So, absorption has been retained as the dominant process
+of aerosol growth.\\
+Gaseous species that interact with aerosol phase are from two different 
+categories: mineral and organic species. Mineral species are fundamental to 
+predict the condensation of water $H_2O$ and thus the aerosol growth.
+Organic species include a large number of different 
+species with particular specificity of solubility, saturation vapor pressure and hearthless.
+The organic aerosol fraction is able to modify the aerosol hygroscopic 
+specificity. It is necessary to distinguish the organic matter issued from urban 
+and rural areas. The first one  is mainly primary (emitted) and hydrophobic 
+whereas the second one is mainly secondary (condensed) and hydrophilic 
+\citep{Saxena1986}.
+
+\subsubsection*{Growth processing}
+Several parameters, such as temperature, relative humidity, total aerosol surface and 
+the condensation matter rate determine which one is the principal growth factor 
+of the aerosol.  
+\citet{Whitby1991} gave the growth rate of the $k^{th}$ moment relative to $i$ 
+mode as:
+\begin{equation}
+\frac{\partial M_{k,i}}{\partial t} = \frac{2 k}{\Pi} \int_{0}^{\infty} r_p^{k-
+3} \Psi_p(r_p)n_i(r_p) dr_p
+\label{growth_gen}
+\end{equation}
+where $\Psi_p$ is the condensation law on particles ($\mu m^3.s^{-1}$). $\Psi_p$ 
+can be separated in a $\Psi_T$ and $\Psi$ respectively independent and dependant 
+on particle size.
+\begin{equation}
+\Psi_p = \Psi_T . \Psi
+\label{psi}
+\end{equation}
+
+Equation (\ref{growth_gen}) can be written as:
+\begin{equation}
+\frac{\partial M_{k,i}}{\partial t} = \frac{2 k}{\Pi} \Psi_T I_{k,i}
+\label{growth_sec}
+\end{equation}
+
+with 
+\begin{equation}
+I_{k,i} = \int_{0}^{\infty} r_p^{k-3} \Psi(r_p) n_i(r_p) dr_p
+\label{ik}
+\end{equation}
+and 
+\begin{equation}
+\Psi_T = \frac{m_w . (P_l - P_{surf,l})}{\rho_l R T}
+\label{psit}
+\end{equation}
+
+where $m_w$ is the molar mass of species $l$, $P_l$ the partial pressure of 
+species l, $P_{surf,l}$ the pressure of species l at the particle surface,  
+$\rho_l$ the volumic mass of $l$ and $T$ the ambient temperature of 
+the system (the aerosol is supposed to be in thermal equilibrium with its 
+environment).
+$\Psi(r_p)$ is the size contribution with two asymptotic forms:
+\begin{itemize}
+\item Free molecular regime;
+\begin{equation}
+\Psi^{fm} = \pi \alpha \overline{c} r_p^2
+\label{psifm}
+\end{equation}
+where $\alpha$ is the accommodation coefficient, $\overline{c}$ the kinetic 
+velocity of vapor molecules ($\overline{c} = \sqrt{8 RT/\pi m_w}$).
+Integration of equation (\ref{psifm}) gives:
+\begin{equation}
+I^{fm}_{k,i} = \pi \alpha \overline{c} M_{k-1,i}
+\label{psifmint}
+\end{equation}
+\item Near continuum regime;
+\begin{equation}
+\Psi^{nc} = 4 \pi D_v r_p
+\label{psinc}
+\end{equation}
+where $D_v$ the diffusivity of species $l$ in the air.
+Integration of equation (\ref{psinc}) gives:
+\begin{equation}
+I^{nc}_{k,i} = 4 \pi D_v M_{k-2,i}
+\label{psincint}
+\end{equation}
+\end{itemize}
+
+Finally, with the same average as for coagulation we can approximate the general
+form of $I_{k,i}$ as:
+\begin{equation}
+I_{k,i} = \frac{I^{fm}_{k,i} I^{nc}_{k,i}}{I^{fm}_{k,i} + I^{nc}_{k,i}}
+\label{ik_fin}
+\end{equation}
+\citet{Pratsini1988} estimated that this kind of procedure to average 
+growth process is a very good approximation in the transitional regime.
+In our model, we assume thermodynamical equilibrium ($P_l = P_{surf,l}) $) in equation (28).
+We calculate $\delta \Psi_p$ as a diagnostic at the end of the timestep for use in equation (24).
+
+\subsubsection*{Nucleation}
+
+To activate the nucleation process of aerosol, it is necessary to 
+have
+the partial vapor pressure of gas species greater than associated saturated 
+vapor pressure.
+Nevertheless  there is few knowledge about nucleation of organic matter. In this 
+model, only the sulfur nucleation is considered. We choose the \citet{Kulmala1998} 
+parameterization for its consistence with the classical theory of binary 
+homogeneous
+nucleation \citep{Wilemski1984} and for taking into account the hydratation 
+effect.
+The nucleation rate is parameterized as: 
+\begin{equation}
+J = \exp \left( 25.1289 N_{sulf} - 4890.8 \frac{N_{sulf}}{T} -\frac{1743.3}{T} 
+-2.2479 \delta N_{sulf} RH + 7643.4 \frac{x_{al}}{T} - 1.9712 \frac{x_{al}}{RH} 
+\right)
+\label{nucleation}
+\end{equation}
+
+with  
+$x_{al}=1.2233 - \frac{0.0154 RA}{RA+RH} + 0.0102 \ln(N_{av})-0.0415\ln(N_{wv}) 
++ 0.0016 T$ the molar fraction of $H_2SO_4$ in the critical nucleus (stable);\\
+$N_{av}$ and $N_{wv}$ respectively the concentration  of sulfuric acid vapor and water vapor in 
+$cm^{-3}$; \\
+$T$ the atmospheric temperature (K), RA and RH absolute and relative humidity. 
+$N_{sulf} = \ln\left(\frac{N_a}{exp(-14.5125+0.1335T-10.5462 RH+1958.4(RH/T))} 
+\right)$ 
+is the logarithm ratio between $N_a$ (ambient concentration of sulfur acid in 
+$cm^{-3}$) and $N_{a,c}$ the concentration sulfur acid need to reach a nucleation 
+rate of $J= 1 cm^{-3}.s^{-1}$; 
+and $\delta = 1 + \frac{T - 273.15}{273.15}$.
+$N_{a,c}$ can be given by:
+\begin{equation}
+N_{a,c} = \exp (-14.5125 + 0.1335 T - 10.5462 RH + 1958.4 (RH/T)) 
+\label{nac}
+\end{equation}
+
+\subsubsection*{Mineral thermodynamic balance}
+In this version, two sets of mineral thermodynamical equilibrium has been 
+introduced for 
+the prediction of the balance between aerosol and gas phases of the  system $NH_3$-
+$SO_4$-$HNO_3$-$H_2O$.
+The first parameterization is ARES, a revised version of MARS \citep{Saxena1986}, 
+developed by \citet{Binkowski1995}.
+The second parameterization introduced is ISORROPIA from \citet{Nenes1998}. 
+
+\subsubsection*{Heterogenous chemistry}
+The aerosol phase can modify the gaseous composition by heterogeneous and 
+multiphase reactions
+\citep{Ravi1997}. Following \citet{Jacob2000}, we introduced the 
+minimal set of reactions which is presented here with their associated uptake 
+coefficients $\lambda$ to improve the  ozone model:
+
+\begin{equation}
+HO_2 \rightarrow 0.5 H_2O_2 \qquad   \lambda = 0.2 
+\label{hetero1}
+\end{equation}
+\begin{equation}
+NO_3 \rightarrow HNO_3   \qquad   \lambda = 10^{-3} 
+\label{hetero2}
+\end{equation}
+\begin{equation}
+NO_2 \rightarrow 0.5 HNO_3 + 0.5 HONO  \qquad    \lambda = 10^{-4}  
+\label{hetero3}
+\end{equation}
+\begin{equation}
+N_2O_5 \rightarrow 2 HNO_3 \qquad    \lambda \in [0.01,1] 
+\label{hetero4}
+\end{equation}
+The first order rate constant for gas heterogeneous loss onto particles is given 
+by:\\
+\begin{equation}
+ka = \sum_{k}\left(\frac{d_k}{2D_g} +  \frac{4}{\nu \lambda} \right)^{-1} A_k
+\label{ka}
+\end{equation}
+with $d_k$ the particle diameter ($m$), $D_g$ the reacting gas molecular 
+diffusivity ($m^2.s^{-1}$), $\mu$ 
+the mean molecular velocity ($m.s^{-1}$), $A_k$ the total surface area of mode 
+$k$ and $\lambda$ the uptake coefficient of reactive species.
+
+\subsubsection*{Organic condensation}
+
+In the troposphere, Volatil Organic Compounds (VOCs) are mainly oxidized by $OH$ 
+radical, $NO_3$ and $O_3$. Some of these products have a very low 
+saturated vapor pressure to be absorbed and form SOA (secondary organic aerosol).
+To take into account correct condensation process we need to restore 
+thermodynamical balance for all species. 
+With this aim, some new chemical schemes, such as CACM \citep{Griffin2002} 
+distinguish VOCs products in
+accordance with their capability to condense on the aerosol phase.
+The default scheme (ReLACS) do not allow these secondary organic aerosol parent:
+in this case the use of ORILAM do not compute organic condensation.
+Otherwise, using CACM scheme (or it's reduced version ReLACS2), one can active two
+different set of organic thermodynamic balance which are MPMPO \citep{Griffin2005} and the AER module of \citet{Pun2002}.  The SOA precursor lumped groups are partitioned to distinguish hydrophobic, hydrophilic structural characteristics \citet{Pun2002} together with sources (biogenic versus anthropogenic), volatility and potential dissociation  \citep{Griffin2005},  chemical and structural characteristics defined by \citet{Pun2002} in previous applications of CACM.  The predictions of lumped SOA precursors can be coupled with thermodynamic equilibrium modules for aerosol prediction.  SOA are group into ten different aerosol class.
+To active SOA, it is necessary to compile CACM.chf or ReLACS.chf using the preprocessor m9 (or m10).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dry deposition and sedimentation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Dry deposition and sedimentation of aerosols are driven by the Brownian 
+diffusivity:
+\begin{equation}
+D_p = \left(\frac{k T}{6 \pi \nu \rho_{air} r_p} \right) C_c
+\label{diff_bro}
+\end{equation}
+and by  the gravitational velocity:
+\begin{equation}
+V_g = \left(\frac{2 g}{9 \nu}\left(\frac{\rho_{p,i}}{\rho_{air}}\right) r_p^2 
+\right) C_c
+\label{vitesse_grav}
+\end{equation}
+where $k$ is the Bolzmann constant, $T$ the ambient temperature, $\nu$ the air 
+kinematic velocity, $\rho_{air}$ the air density, $g$ the gravitational 
+acceleration, $\rho_{p,i}$ the aerosol density of mode $i$, and $C_c = 1 + 
+1.246\frac{\lambda_{air}}{r_p}$ the gliding coefficient. 
+These expressions need to be averaged on the $k^{th}$ moment and mode $i$ as:
+\begin{equation}
+\hat{X} = \frac{1}{M_{k,i}} \int_{-\infty}^{\infty} X r^k_p n_i(\ln r_p)d(\ln r_p)
+\label{moyenne}
+\end{equation}
+where $X$ represents either $D_p$ or $v_g$.
+After integration, we obtain for  Brownian diffusivity:
+\begin{equation}
+\hat{D}_{p_{k,i}} = \tilde{D}_{p_{g,i}}\left[\exp\left(\frac{-2k+1}{2} 
+\ln^2\sigma_{g,i} \right) + 1.246 Kn_g 
+\exp \left(\frac{-4k+4}{2} \ln^2\sigma_{g,i}\right) \right]
+\label{diff_brow}
+\end{equation}
+with $\tilde{D}_{p_{g,i}} = \left(\frac{kT}{6 \pi \nu \rho_{air} R_{g,i}} 
+\right)$
+
+and for gravitational velocity: 
+\begin{equation}
+\hat{Vg}_{p_{k,i}} = \tilde{Vg}_{p_{g,i}}\left[\exp\left(\frac{4k+4}{2} 
+\ln^2\sigma_{g,i} \right) + 1.246 Kn_g \exp \left(\frac{2k+4}{2} 
+\ln^2\sigma_{g,i}\right) \right]
+%\label{gravi_vel}
+\end{equation}
+with $\tilde{Vg}_{p_{g,i}} = \left(\frac{2g \rho_{p,i}}{9 \nu \rho_{air}} 
+R_{g,i}^2 \right)$
+
+\subsubsection*{Dry deposition}
+According to \citet{Seinfeld1997} and using the resistance concept of 
+\citet{Wesely1989}, aerosol dry deposition
+velocity for the $k^{th}$ moment and mode $i$ is:
+\begin{equation}
+\hat{v}_{d_{k,i}} = ( r_a + \hat{r}_{d_{k,i}} + r_a  \hat{r}_{d_{k,i}} 
+\hat{Vg}_{p_{k,i}})^{-1} + \hat{Vg}_{p_{k,i}}
+%\label{gravi_vel}
+\end{equation}
+where surface resistance $\hat{r}_{d_{k,i}}$ is given by
+\begin{equation}
+\hat{r}_{d_{k,i}} = \left[(\hat{Sc}_{k,i}^{-2/3} + 10^{-3/\hat{St}_{k,i}}) 
+\left(1+ 0.24 \frac{w_*^2}{u_*^2} \right) u_* \right]^{-1}
+\label{surfres}
+\end{equation}
+Schmidt and Stokes number are respectively equal to $\hat{Sc}_{k,i} = \nu / 
+\hat{D}_{p_{k,i}}$ and
+$\hat{St}_{k,i}= (u_*^2/g\nu)\hat{v}_{d_{k,i}}$.
+One can observe that the friction velocity $u_*$ and the convective velocity 
+$w_*$ depend on meteorological
+and surface conditions. 
+
+\subsubsection*{Sedimentation}
+For sedimentation process, we can use the above parameterization of 
+$\hat{Vg}_{p_{k,i}}$. When
+vertical resolution is high, it is necessary to use 
+a classical time splitting to compute sedimentation fluxes.
+It can be noted that the sedimentation / deposition processing modifies the 
+particle distribution
+with  an important loss of large particles in comparison to the small ones. 
+After integration 
+of the three moments, the distribution does not preserve the log-normal shape. 
+If we consider after 
+sedimentation processing the distribution as log-normal, the  
+reconstruction of
+log-normal parameters $\sigma$, $R_g$ induces a decrease of $\sigma$ and an 
+increase of $R_g$. 
+The variation of $\sigma$ is stronger than the $R_g$ one. Nevertheless, in nature
+sedimentation process must decrease simultaneously  $\sigma$ and $R_g$.
+ Therefore, we cannot consider the integration of the 
+three moments to solve this problem. Two choices are possible:\\
+\begin{itemize}
+\item Sedimentation process with $\sigma$ fixed :
+$M_{6,i}$ can be computed by maintaining $\sigma$ equal to the previous values:
+\begin{equation}
+M_{6,i} = M_{0,i} \left(\frac{M_{3,i}}{M_{0,i}} \right)^{1/3}  \exp \left( -3/2 
+\log(\sigma_g)^2\right)^6  \exp\left(18 \log(\sigma_g)^2\right)
+\label{sigmafix}
+\end{equation}
+
+\item Sedimentation process with $R_g$ fixed :
+A simple combination of $M_{k,i}$ gives $M_{6,i}$ in function of $M_{0,i}$, 
+$M_{3,i}$, and $R_{g,i}$ as:
+
+\begin{equation}
+M_{6,i} = \frac{M_{3,i}^4}{R_{g,i}^6 M_{0,i}^3}
+\label{rgfix}
+\end{equation}
+
+\end{itemize}
+
+To decrease $\sigma$ and $R_g$, a solution is to consider alternatively
+both treatment of $M_{6,i}$ for each time step.
+
+%\end{article}
+
+%\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{btSect}{4-4-Aerosol}
+\section{References}
+\btPrintCited
+\end{btSect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%

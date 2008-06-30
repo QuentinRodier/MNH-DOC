@@ -1,4 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% March 2008, J.-P. Chaboureau, editorial corrections
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \chapter{Discretization}
 \minitoc
 
@@ -66,14 +69,14 @@ expression as found in the previous chapter, substituting
 This reads
 
 \begin{itemize}
-\item \underbar{Continuity Equation}
+\item \underbar{Continuity equation}
 \begin{equation}
 \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \; )
 + \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \; )
 + \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \; ) =0.
 \end{equation}
 
-\item\underbar{Momentum Equation}
+\item\underbar{Momentum equation}
 \begin{eqnarray}
 \dfrac{\partial}{\partial t}(\tilde{\rho}  u ) &= &
  \, - \, \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;   u )
@@ -127,7 +130,7 @@ This reads
  \, + \, \tilde{\rho} \vec{F}_{v} \cdot \vec{k}
  \end{eqnarray}
 
-\item\underbar{Thermodynamic Equation}
+\item\underbar{Thermodynamic equation}
 
 \begin{eqnarray}
 \dfrac{\partial}{\partial t}(\tilde{\rho}\theta) &=& \, - \,
@@ -145,9 +148,9 @@ This reads
 \end{itemize}
 
 
-\section{Location of the Variables on the Grid}
+\section{Location of the variables on the grid}
 
-We use a C-grid in the Arakawa and Mesinger (1976) terminology,
+We use a C-grid in the Arakawa convention (Mesinger and Arakawa 1976),
 both on the horizontal and on the vertical.
 
 \begin{figure}[pbh]
@@ -188,7 +191,7 @@ The Jacobian $J$ is located on the mass points.
 
 The orography $z_{s}(i,j)$ is defined on the lowest $w$ point.
 
-\section{Schuman Operators}
+\section{Schuman operators}
 The discretization is based on second-order finite differences, and two point
 averages. We will adopt the traditional notations of Schuman:
 $\delta_{x}\alpha$, $\delta_{y}\alpha$ and $\delta_{z}\alpha$ for finite
@@ -210,7 +213,7 @@ derivation also follows Schuman notation:
 \dfrac{\alpha (i,j,k,t+\Delta t)-\alpha (i,j,k,t-\Delta t)}{2 \Delta t}
 \end{equation}
 
-\section{Grid Generation}
+\section{Grid generation}
 
 The parameters needed to generate the grids are:
 \begin{itemize}
@@ -236,7 +239,7 @@ of the mass points are deduced:
 2) The latitude and longitude of each mass point is retrieved:
 \\
 \\
-{\bf Case of the Polar stereographic or Lambert Projection}
+{\bf Case of the polar stereographic or Lambert projection}
 \\
 \\
 Applying the general equations to the point (1,1) of the grid, one gets
@@ -306,7 +309,7 @@ f_{*}&=&2\Omega \cos\varphi
 \end{eqnarray}
 
 
-\section{Metric Coefficients and Jacobian}
+\section{Metric coefficients and Jacobian}
 
 \begin{eqnarray}
 z & = & z_{s} + \widehat{z} \left( 1 - \dfrac{z_{s}}{H} \right) \\
@@ -322,7 +325,7 @@ z & = & z_{s} + \widehat{z} \left( 1 - \dfrac{z_{s}}{H} \right) \\
 \delta_x \widehat{x} \; \delta_y \widehat{y} \; \delta_z z
 \end{eqnarray}
 
-\section{Contravariant Velocity Components}
+\section{Contravariant velocity components}
 
 \begin{eqnarray}
 \overline{\tilde{\rho}}^{x} U^{c} \;  &  = & \overline{\tilde{\rho}}^{x} \dfrac{ u }{ d_{xx}} \\
@@ -337,7 +340,7 @@ d_{zx}\right)}^{x}
 d_{zy}\right)}^{y}\right]
 \end{eqnarray}
 
-\section{Time Derivatives}
+\section{Time derivatives}
 
 \begin{eqnarray}
 \dfrac{\partial}{\partial t}(\tilde{\rho}  u ) & \Longrightarrow &
@@ -401,7 +404,7 @@ d_{zy}\right)}^{y}\right]
 \overline{ \tilde{\rho}}^{z}  W^{c} \;  \right)}^{z}\overline{w}^{z} \right]
  \end{eqnarray}
 
-\section{Curvature Terms}
+\section{Curvature terms}
 
 \begin{eqnarray}
  \delta _{2}\tilde{\rho}  u   v
@@ -443,7 +446,7 @@ d_{zy}\right)}^{y}\right]
 {\overline{a+\delta _{1} z}^{z}}\right)}^{z}
 \end{eqnarray}
 
-\section{Coriolis Force}
+\section{Coriolis force}
 
 \begin{eqnarray}
  - \delta _{1} \tilde{\rho} f \cos\gamma w & \Longrightarrow &
@@ -463,7 +466,7 @@ d_{zy}\right)}^{y}\right]
  \sin\gamma  \overline{   v  }^{y}\right)}^{z }
   \end{eqnarray}
 
-\section{Pressure Gradient}
+\section{Pressure gradient}
 \begin{eqnarray}
 - \tilde{\rho}\dfrac{1}{d_{xx}}
 \dfrac{\partial \Phi}{\partial \overline{x}}
@@ -489,14 +492,14 @@ d_{zy}\right)}^{y}\right]
  \Phi}{d_{zz}}
    \end{eqnarray}
 
-\section{Buoyancy Term}
+\section{Buoyancy term}
 \begin{equation}
 \tilde{\rho} g \dfrac{\theta_v ' }{\overline{\theta}_v}
 \Longrightarrow g \overline{ \left(
 \tilde{\rho}\dfrac{\theta_v ' }{\overline{\theta}_v}\right) }^{z}
 \end{equation}
 
-\section{Thermodynamic Equation}
+\section{Thermodynamic equation}
 
 \begin{eqnarray}
 \delta _{t } \left[ \overline{ \left( \tilde{\rho} \theta
@@ -515,7 +518,7 @@ d_{zy}\right)}^{y}\right]
 \end{eqnarray}
 
 
-\section{Continuity Equation}
+\section{Continuity equation}
 
 \begin{equation}
 \delta_{x} \left[ \overline{\tilde{\rho}}^{x} U^{c} \; \right] +
@@ -523,11 +526,16 @@ d_{zy}\right)}^{y}\right]
 \delta_{z} \left[ \overline{\tilde{\rho}}^{z} W^{c} \; \right] =0
 \end{equation}
 
-\section{Pressure Equation}
+\section{Pressure equation}
 
 For convenience, the discretization of the pressure equation is described
-in Chapter 7.
+in Chapter \ref{PressureProblem}.
 
+\section{References}
+\decrefname
+Mesinger, F., and A. Arakawa, 1976:
+Numerical methods used in atmospheric models.
+GARP Publications Series No. 17, WMO/ICSU Joint Organizing Committee, 64 pp.
 
-\end{document}
+%\end{document}
 

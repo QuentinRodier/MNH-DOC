@@ -1,0 +1,209 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%     NUMERICAL DIFFUSION SECTION    %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% March 2008, J.-P. Chaboureau, editorial corrections
+% June 2008,  E. Richard, adding the horizontal diffusion over montains
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Numerical Diffusion Terms}
+\label{NumericalDiffusion}
+\minitoc
+
+%{\em by J.P. Pinty}
+
+As in most numerical models, it is necessary to prevent the occurrence of
+numerical waves due to the inaccurate representation of the dynamical
+processes and reflection at the top or lateral boundaries. This is done
+in a fairly classical way, through (i) a weak background diffusion, (ii) a
+top absorbing layer, and (iii) a lateral sponge zone. Note that in these
+three regions, the flow is relaxed towards the "large-scale" values, which
+may be non uniform in space, and time dependent. For idealized runs, the
+user may of course choose uniform and steady large-scale values.
+
+\section{Background diffusion}
+\subsection{Diffusion operator}
+A diffusion operator is applied to the {\em fluctuations} of the prognostic
+variables $\phi$. The fluctuations are defined here as the departure
+from the large scale value $\phi_{LS}$.
+The diffusion operator is a fourth-order operator
+($\delta_{x^4}$) used everywhere except at the first interior grid point where
+a second-operator ($\delta_{x^2}$) is substituted in the case of non-periodic
+boundary conditions.
+The background diffusion source for any prognostic variable noted $\phi$
+is
+$$
+S_{BD}=-K4 \big[ \delta_{x^4}[\phi(t-\delta t)- \phi_{LS}]+
+\delta_{y^4}[\phi(t-\delta t)- \phi_{LS}]\big]
+$$
+or
+$$
+S_{BD}=+K2 \big[ \delta_{x^2}[\phi(t-\delta t)- \phi_{LS}]+
+\delta_{y^2}[\phi(t-\delta t)- \phi_{LS}]\big]
+$$
+where $K2$ and $K4$ are positive coefficients, and $\phi_{LS}$ represents the
+Large Scale value of the considered variable.
+
+
+\subsection{Choice of the diffusion coefficient}
+Let us consider a single harmonic wave defined by:
+$$ \phi(x,t)=\Phi(t)e^{ikx}$$
+where $\Phi(t)$ is the wave amplitude and $k$ the wavenumber.
+
+The application of a second-order diffusion operator during $N$ time steps leads
+to:
+$$\phi(x,t+N \Delta t)=\Phi(t)[1- 2 {K_2 \Delta t \over {d_{xx}}^2}
+(1- cos k d_{xx} )]^N$$
+where $\Delta t$ is the time step, ${d_{xx}}^2$ the grid interval, and
+$K2=K_2/{d_{xx}}^2$ the diffusion coefficient.
+The time $T_2$ at which the initial wave is damped by $e^{-1}$ is then:
+$$T_2=N \Delta t= {-\Delta t \over \ln [1- 2{K_2 \Delta t \over {d_{xx}}^2}
+(1-cos k d_{xx} )]}$$
+which can be approximated by:
+$$ T_2 \simeq {{d_{xx}}^2 \over 2 K_2 (1-cos k d_{xx})}$$
+The corresponding time in the case of a fourth-order diffusion operator is given
+by:
+$$T_4=N \Delta t= {-\Delta t \over \ln [1 - 4{K_4 \Delta t \over {d_{xx}}^4}
+(1-cos k d_{xx})^2]} $$
+which can be approximated by:
+$$ T_4 \simeq {{d_{xx}}^4 \over {4 K_4 (1-cos k d_{xx})^2}} $$
+
+If $k$ is the wavenumber associated to the $n d_{xx}$ wavelength, $T_2$ and
+$T_4$ are given by
+\begin{equation}
+T_2 (n) \simeq {{d_{xx}}^2 \over {2 K_2 (1-cos (2 \pi /n))}}
+\end{equation}
+\begin{equation}
+T_4 (n) \simeq {{d_{xx}}^4 \over {4 K_4 (1-cos (2 \pi /n))^2}}
+\end{equation}
+
+To set up  the diffusion coefficients, it might be more convenient
+to specify $T_2$ or $T_4$ rather than $K_2$ or $K_4$. $T_2$ and
+$T_4$  can be more easily related to the physical processes being studied.
+From previous experience, $T_4(2)$
+was set to 10-15 mn in the case of PBL convective
+rolls, 20-30 mn for moist convection, 1-2 hours for orographic flows.
+
+For a specified wavelength $n_0 d_{xx}$, an equivalent damping timescale with
+a second-order or a fourth-order diffusion scheme requires
+\begin{equation}
+ K_4= - {K_2 \over 2} {{d_{xx}}^2 \over 1-cos(2 \pi /{n_0}) }.
+\end{equation}
+The same arguments hold for the diffusion in the $y$ direction.
+
+
+In the code $n_0$ is set equal to 2 to select the highest wavenumber and so
+the user specifies $T_4(2)$.
+Noting that  $K2= K_{2x}/{d_{xx}}^2= K_{2y}/{d_{yy}}^2$,
+ $K4= K_{4x}/{d_{xx}}^4 = K_{4y}/{d_{yy}}^4$, and according to (1), (2)
+and (3)
+$K4$ and $K2$ are then given by:
+$$K4={1 \over 16T_{4}(2)}$$
+and
+$$K2=K4  ( 1-cos(2 \pi /n_0))= 4K4$$
+\vskip 2truecm
+
+\subsection{Horizontal diffusion over mountains}
+Calculating the horizontal diffusion along terrain-following surfaces may 
+introduce serious errors over mountainous terrain, particularly for 
+atmospheric properties having a strong vertical gradient. Temperature
+diffusion along such surfaces, for example, tends to cool the air in valleys
+and to heat that air above mountains and likewise, diffusion of the water mixing
+ratio tends to dry the air in valleys and to moisten the atmosphere above 
+mountains. To reduce the unphysical impact of horizontal diffusion applied 
+on terrain following surfaces, the modifications suggested in Z\"angl (2002)
+have been implemented in the code. At model levels sufficiently far away from 
+the ground, vertical interpolation is used to compute diffusion truly 
+horizontally when the coordinate surfaces are sloping. Close to the ground, 
+where truly horizontal computation of diffusion is not possible without 
+intersecting the topography, diffusion is treated differently for momentum,
+moisture and temperature. A simple transition to diffusion along the
+coordinate surface is chosen for momentum. For the moisture variables, 
+one-sided truly horizontal diffusion is used in combination with 
+orography-adjusted diffusion along the $\hat z$ surfaces. This orography 
+adjustment is achieved by strongly reducing the diffusion coefficient 
+when the grid points involved in the diffusion computation are located 
+at greatly different heights. For temperature, one sided horizontal diffusion 
+is not used because it affects the slope wind circulation in an unphysical
+way. However, a temperature gradient is applied to the terrain-following
+part of diffusion so as to ensure that diffusion behaves neutrally with 
+respect to the local vertical temperature gradient.
+
+\section{Top absorbing layer}
+To prevent spurious reflection from the model top boundary, an absorbing layer
+in which damping increases with height occupies the top fraction of the
+ domain. A Rayleigh damping has been chosen, it is applied on the three
+components of the wind and on the thermodynamical variable. Only the
+perturbations of a variable from its local large scale values are damped
+on $\bar z$ surfaces. In the absorbing layer, the implicit damping source
+for any variable $\phi$ is written as:
+$$
+S_{AL}=-K_{AL} (\bar z)\big[\phi(t+\Delta t)- \phi_{LS} \big]
+      =-KAL(\bar z) \big[\phi(t-\Delta t)- \phi_{LS} \big]$$
+where
+$$ KAL= {K_{AL}(\bar z) \over 1+2 \Delta t K_{AL}(\bar z)}$$
+and where $K_{AL}(\bar z)$ is given by
+$$K_{AL}(\bar z)= K_{AL} (H) \sin ^2
+\Big({\pi \over 2}
+     { \bar z - \bar z_{alb} \over H- \bar z_{alb}} \Big)
+\qquad for  \quad  \bar z \geq  \bar z_{alb}$$
+with $ \bar z_{alb}$  the Gal-Chen and Sommerville
+ height of the absorbing layer base and
+$ \phi_{LS} $ the relaxation value of $\phi$. In the first version of the model
+the relaxation fields are the initial fields and the maximum damping rate
+$K_{AL} (H)$ must be provided for each model run.
+\vskip 2truecm
+
+\section{Lateral sponge zone}
+An additional sponge zone is inserted close to the lateral boundaries to either
+damp outward propagating waves or slowly incorporate inward propagating
+larger scale waves. A first order damping rate has been retained and its
+application to any prognostic variable $\phi$ leads to a source term of the
+form:
+$$
+S_{SZ}=-K_{SZ} (\bar x, \bar y)\big[\phi(t+\Delta t)- \phi_{LS} \big]
+      =-KSZ(\bar x, \bar y) \big[\phi(t-\Delta t)- \phi_{LS} \big]$$
+where
+$$ KSZ= {K_{SZ}(\bar x, \bar y) \over 1+2 \Delta t K_{SZ}(\bar x, \bar y)}.$$
+The damping coefficient $KSZ(\bar x, \bar y)$ is non-zero in a rim zone of
+width ${rim}_{\bar x}$ and ${rim}_{\bar y}$ (in each $x$ and $y$ direction,
+respectively) following immediately the lateral boundaries. For example, near
+the left ($x$) lateral boundary, the damping coefficient has the generic form:
+%\begin{equation}
+$$
+KSZ(\bar x) = \left\{ \begin{array}{ll}
+K_{SZ}^{max} \sin^2 \Big(\displaystyle{{\pi \over 2}{\bar x-{rim}_{\bar x} \over {rim}_{\bar x}}} \Big)
+            & \mbox{if $0 < \bar x < {rim}_{\bar x}$,} \\
+ \\
+ 0          & \mbox{otherwise,}
+                   \end{array}
+        \right.
+$$
+%\end{equation}
+In the four corners of the domain of simulation, there is a smooth transition
+between the pure $\bar x$ and pure $\bar y$ dependencies of the damping
+coefficient $KSZ$ that is obtained in the following manner:
+%\begin{equation}
+$$
+KSZ(\bar x, \bar y) = \left\{ \begin{array}{ll}
+K_{SZ}^{max}& \mbox{if $1 \le d_{rim}^2$,} \\
+ \\
+K_{SZ}^{max} \sin^2 \Big({\pi \over 2} d_{rim} \Big)
+            & \mbox{if $d_{rim}^2 \le 1$,} \\
+ \\
+ 0          & \mbox{if $\bar x \ge {rim}_{\bar x}$ and $\bar y \ge {rim}_{\bar y}$} \\
+                         \end{array}
+        \right.
+$$
+%\end{equation}
+where
+$d_{rim}= \sqrt{\Big( \displaystyle{{\bar x-{rim}_{\bar x} \over {rim}_{\bar x}}\Big)^2 +
+                \Big( {\bar y-{rim}_{\bar y} \over {rim}_{\bar y}}\Big)^2 }}$.
+The maximum value of the relaxation coefficient $K_{SZ}^{max}$ and the rim zone
+depths ${rim}_{\bar x}$ and ${rim}_{\bar y}$ are prescribed externally by the
+user.
+
+\section{References}
+\decrefname
+Z\"angl, G., 2002:  An improved method for computing horizontal diffusion
+in a sigma-coordinate model and its application to simulations over
+mountainous topography. {\it Mon. Wea. Rev.}, {\bf 130}, 1423-1432 

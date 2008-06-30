@@ -1,4 +1,4 @@
-\chapter{Sub-Grid Condensation Scheme}
+\chapter{Sub-Grid Condensation Schemes}
 \minitoc
 
 \section{Sub-Grid Condensation Scheme for warm-phase clouds}
@@ -719,6 +719,147 @@ the expressions (\ref{eqsp}) and (\ref{var3}), respectively.  A value $\alpha=3\
 using the cloud mass flux from the CRM.
 
 
+\section{Treatment of mixed-phase clouds}
+
+\subsection{Definition of new conservative variables}
+
+The standard Meso-NH sub-grid condensation scheme computes the turbulent fluxes
+in a moist atmosphere assuming a reversible condensation/evaporation process 
+for non-precipitating cloud droplets. The inclusion of the ice phase leads to
+a generalization of the scheme to mixed-phase clouds. This is done using new
+quasi-conservative variables. First, the total {\it non precipitating} mixing 
+ratio is redefined by
+\begin{equation} \label{newdefrnp}
+r_{np} = r_v+r_c+r_i,
+\end{equation}
+where the additional term $r_i$ is the non-precipitating pristine ice mixing 
+ratio. Second, the ice-liquid potential temperature, $\theta_{il}$, is 
+substituted for
+$\theta_l$ which is only applicable to warm clouds 
+\begin{equation} \label{defthetail}
+\theta_{il} = \theta - {\dfrac{L_v}{C_{ph}}{\Pi_{ref}}^{-1}r_c} 
+                   - {\dfrac{L_s}{C_{ph}}{\Pi_{ref}}^{-1}r_i},
+\end{equation}
+where $L_s$ is the latent heat of sublimation of ice and with the usual
+definition of $C_{ph}$. Note that $r_{np}$ and $\theta_{il}$ still revert to 
+$r_v$ and $\theta$ in a cloudless atmosphere so the moist turbulence scheme 
+can be employed with only slight modifications to account for the presence of 
+the ice phase. 
+
+\subsection{Some weighted thermodynamical functions}
+
+In most of the cases, a simple weighting function 
+$f_{ice}=\dfrac {r_i}{r_c+r_i}$ is sufficient to update some ancillary 
+thermodynamical functions from their "warm cloud" definition. For instance the 
+mixed-phase saturation mixing ratio is defined by the barycentric formula
+$r_{vs}({T})=(1-f_{ice})r^l_{vs}({T}) +f_{ice} r^i_{vs}({T})$
+with ${r^l_{vs}}(T)$ and ${r^i_{vs}}(T)$ being the saturation mixing ratios over
+water and ice, respectively. Consequently, the function 
+$J=\left( \dfrac {\partial  r^l_{vs}} {\partial \theta} \right)_{\theta_{il}}$
+which is introduced in the warm cloud case ($J \equiv J_l$) becomes
+\begin{equation} \label{newdefJ}
+J \equiv J_{il}=(1-f_{ice}) J_l + f_{ice} J_i,
+\end{equation}
+where $J_i=\dfrac {r^i_{vs}(T_{il}) L_s} {R_v T_{il} \theta_{il}} $. 
+The same approximation is made for the function $M$, for the 
+stability functions $\phi_i$ and $\psi_i$, and hence for the resulting
+$A_{moist}$ and $A_{\theta}$ functions. We recall that the assumption of 
+saturation mixing ratio is always made when a cloud is present (although this 
+may not be accurate in the case of cold ice clouds where a significant degree
+of supersaturation over ice can be found), so:
+\begin{equation}
+r_c + r_i = \dfrac {r_{np}-r_{vs}(\theta_l)} {1+M},
+\end{equation}
+with a new definition of $M$ which can be derived analytically as
+$ M \equiv M_{il} = J_{il} \dfrac{L_v (1-f_{ice})+L_s f_{ice})}{C_{ph}}\Pi_{ref}^{-1} $. \\
+
+
+\subsection{Ice and liquid fluxes}
+
+Then we need to compute the divergence of the  turbulent fluxes 
+$\overline{{u'_{i}}{r'_{c}}}$ and
+$\overline{{u'_{i}}{r'_{i}}}$, where $u_{i}$ can be any of the three components
+of the velocity. This is done using the same theory developed in the pure warm 
+cloud case but with $r'_{(c+i)}=r'_{c}+r'_{i}$
+\begin{equation}\label{eqn:s'rc+i'}
+\dfrac{\overline{{s'}{r'_{(c+i)}}}}{2{{\sigma}_{s}}^2} =
+\int_{-Q_{1}}^{+\infty} t(Q_{1}+t)G(t) dt~,
+\end{equation}
+and with an actualized definition of 
+$s' = \dfrac {r'_{np} - J \theta_{il}'} {2(1+M)}$ which now incorporates both 
+$r'_c$ and $r'_i$ fluctuations. $Q_1$ still has its usual meaning. Similar 
+characteristics of the probability distribution $G(t)dt$ are implicitly assumed
+for liquid and mixed-phase clouds. The simplest way to partition the liquid and
+ice turbulent fluxes of condensed material is to consider the following closure
+\begin{equation}
+\overline{{u'_{i}}{r'_{(c+i)}}}=\lambda_i \dfrac{\overline{u'_i s'}\;.\;\overline{s' r'_{(c+i)}}}{\sigma_s^2} = \overline{{u'_{i}}{r'_{c}}}+\overline{{u'_{i}}{r'_{i}}}
+\end{equation}
+with $\overline{{u'_{i}}{r'_{c}}} = (1-f_{ice})\overline{{u'_{i}} r'_{(c+i)}}$ 
+and
+with $\overline{{u'_{i}}{r'_{i}}} =    f_{ice} \overline{{u'_{i}} r'_{(c+i)}}$.
+
+
+\subsection{Buoyancy flux}
+
+The last point of concern is the computation of the buoyancy term in presence of
+ice in the TKE equation. The expression of $\theta_{v}$ in \ref{eqn:thetav} is
+slightly modified when switching from $\theta_l$ to $\theta_{il}$ and when
+using the new expression for $r_{np}$
+\begin{eqnarray}\label{eqn:newthetav}
+\theta_{v} &=& \theta (1+\delta\dfrac{r_{v}}{1+r_{w}}-
+\dfrac{r_{c}+r_{i}}{1+r_{w}}-\dfrac{r_{w}-r_{v}-r_{c}-r_{i}}{1+r_{w}}) 
+\nonumber\\
+&=& \left( \theta_{il}+\dfrac{L_{v}}{{C_{p}}_{h}}{{\Pi}_{ref}}^{-1}r_{c}
+                      +\dfrac{L_{s}}{{C_{p}}_{h}}{{\Pi}_{ref}}^{-1}r_{i} \right)
+\nonumber\\
+&\times& \left( 1+ \delta \dfrac{r_{np}}{1+r_{w}}-
+(1+\delta)\dfrac{r_{c}+r_{i}}{1+r_{w}}-\dfrac{r_{w}-r_{np}}{1+r_{w}} \right),
+\end{eqnarray}
+where again $\delta = \dfrac{R_{v}}{R_{d}}-1$.
+The fluctuations of $\theta_v$ now depend on both ${r_{c}}$ and ${r_{i}}$
+\begin{eqnarray}\label{eqn:newtheta'v}
+{\theta}'_{v} &\approx&
+\delta \dfrac {\overline{\theta}}{1+\overline{r_{w}}} {r'_{np}}\nonumber\\
+&+& \left(\dfrac{L_{v}}{{C_{p}}_{h}}{{\Pi}_{ref}}^{-1}
+\left( 1+\delta \dfrac{\overline{r_{np}}}{1+\overline{r_{w}}}-
+(1+\delta)\dfrac{\overline{r_{c}}+\overline{r_{i}}}{1+\overline{r_{w}}}-
+\dfrac{\overline{r_{w}}-\overline{r_{np}}}{1+\overline{r_{w}}}\right)-(1+\delta)
+\dfrac{\overline{\theta}}{1+\overline{r_{w}}}\right) {r'_{c}}\nonumber\\
+&+& \left(\dfrac{L_{s}}{{C_{p}}_{h}}{{\Pi}_{ref}}^{-1}
+\left( 1+\delta \dfrac{\overline{r_{np}}}{1+\overline{r_{w}}}-
+(1+\delta)\dfrac{\overline{r_{c}}+\overline{r_{i}}}{1+\overline{r_{w}}}-
+\dfrac{\overline{r_{w}}-\overline{r_{np}}}{1+\overline{r_{w}}}\right)-(1+\delta)
+\dfrac{\overline{\theta}}{1+\overline{r_{w}}}\right) {r'_{i}}\nonumber\\
+&+& \left(1+\delta \dfrac{\overline{r_{np}}}{1+\overline{r_{w}}} -
+(1+\delta)\dfrac{\overline{r_{c}}+\overline{r_{i}}}{1+\overline{r_{w}}}
+-\dfrac{\overline{r_{w}}-\overline{r_{np}}}{1+\overline{r_{w}}}\right)
+{\theta}'_{il},
+\end{eqnarray}
+After recasting the above expression as
+${\theta}'_{v}=A^{il}{\theta}'_{il}+B{r'_{np}}+C^l{r'_{c}}+C^i{r'_{i}}$
+(see \ref{ErEtheta}), a good approximation of $\overline{u'_{i}\theta'_{v}}$ 
+is deduced
+\begin{equation} \label{newErEtheta}
+\overline{{u'_{i}}{{\theta}'_{v}}} \approx 
+E_{\theta} \overline{u'_{i}\theta'_{il}} +
+E_{moist}  \overline{u'_{i}r'_{np}},
+\end{equation}
+where the updated factors $E_{\theta} = A + C A_{\theta}$ and 
+$E_{moist} = B + C A_{moist}$ are a function of $A \equiv A^{il}$ (including
+$\overline{r_{i}}$) and of $C=(1-f_{ice}) C^l + f_{ice} C^i$.
+
+\section{Mixing length}
+
+No modification is brought for the moment.
+
+\section{Fractional nebulosity of mixed-phase clouds}
+
+Although all ingredients of the "warm cloud" scheme are available and are
+directly applicable to mixed-phase clouds, the partial cloudiness $N$ has not 
+yet been tested in this case. Note that $N$ is already coupled to the radiative 
+transfer scheme.
+
+
 
 
 \section{References}
@@ -746,8 +887,12 @@ using the cloud mass flux from the CRM.
 \por
 Chaboureau J.-P., and P. Bechtold, 2002: A simple cloud parameterization derived from
 cloud resolving model data: Diagnostic and prognostic applications.
-{\it J. Atmos. Sci.,} in press
-
+{\it J. Atmos. Sci.}, {\bf 59}, 2362-2372.
+\por
+Chaboureau J.-P., and P. Bechtold, 2005: Statistical representation of clouds
+in a regional model and the impact on the diurnal cycle of convection
+during Tropical Convection, Cirrus and Nitrogen Oxides (TROCCINOX). 
+{\it J. Geophys. Res.}, {\bf 110}, D17103, doi:10.1029/2004JD005645.
 \por
 Cuxart, J., P. Bougeault, and J.-L. Redelsperger, 2000:
 A turbulence scheme allowing for mesoscale and large-eddy simulations.

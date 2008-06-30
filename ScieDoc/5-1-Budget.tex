@@ -21,10 +21,11 @@ analysis is performed in three steps.
 \begin{enumerate}
 \item In-line computation of the budget for all prognostic variables of the
 model. The results are written on a diachronic MNH file.
-\item Post-processing programs read these files, in order
-to derive new budgets of non-prognostic variables (such as kinetic energy,
-potential vorticity,...), or diagnostics (such as apparent source of heat, or
-moisture sink,...). The results are also written on a diachronic MNH file.
+%\item Post-processing programs read these files, in order
+%to derive new budgets of non-prognostic variables (such as kinetic energy,
+%potential vorticity,...), or diagnostics (such as apparent source of heat, or
+%moisture sink,...). The results are also written on a diachronic MNH file.
+\item The results are written on a diachronic MNH file.
 \item Finally the graphical package reads these files, and visualizes
 the results.
 \end{enumerate}
@@ -40,7 +41,8 @@ the budget analysis has been limited to only one model.
 \subsection{Equations}
 
  The budget analysis is based on the model equations written in flux form,
-discretized on the computational grid (see chapter 4).
+discretized on the computational grid 
+(see chapter on discretization in Part I).
  For instance for a prognostic variable
 $\alpha$, we have the following generic equation;
 

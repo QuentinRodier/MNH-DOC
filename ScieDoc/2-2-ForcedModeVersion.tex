@@ -34,11 +34,11 @@ equation.
 
 Actually, only the most usual physical forcing terms have been taken into
 account for simplicity. The forcing terms are prescribed empirically from
-external sources of information ({\it e.g.} series of observation) and are
+external sources of information (e.g. series of observation) and are
 mutually independent when acting on the same prognostic variable. Generally
 they are non-stationary and horizontally homogeneous, only the case of
 flat terrain is addressed. Furthermore, forcing terms are considered for
-the restricted cartesian geometry of Meso-NH (constant Coriolis parameter).
+the restricted Cartesian geometry of Meso-NH (constant Coriolis parameter).
 
 The effects of several forcings are considered:
 
@@ -69,7 +69,7 @@ $\bullet$ Large scale horizontal transport of $\alpha \in [\theta, r_{v} ]$:
                                                & \\
 $\bullet$ Large scale variables $\alpha \in [u, v, \theta, r_{v} ]$:
    & $\dfrac{\partial \alpha}{\partial t}\Big|_{FRC}=- \dfrac{\alpha - \alpha_{frc}}{\tau_{frc}}$ \\
-for a newtonian relaxation with damping time $\tau_{frc}$
+for a Newtonian relaxation with damping time $\tau_{frc}$
                                                &\\
                                                &\\
 \end{tabular}
@@ -149,7 +149,7 @@ where $u_{frc}$ and $v_{frc}$ are the horizontal components of the geostrophic
 wind and $f = 2 \vec \Omega \cdot \vec k$, the (constant) Coriolis parameter.
 
 The forced temperature gradients are deduced from these relations but beware
-that condensation modify gradients of $\theta$ or $r_{v}$ and so forced
+that condensation modifies gradients of $\theta$ or $r_{v}$ and so forced
 gradients of $\theta$ or forced advection of humidity might be excessive in
 some circumstances.
 
@@ -186,7 +186,7 @@ used during the model integration starting at time DTEXP.
 \section{Discretization}
 The vertical transport $w_{frc}(\dfrac{\partial \alpha}{\partial z})$ is lagged
 and integrated with a first order upstream scheme to ensure positivity in some
-situation, {\it e.g.} the case of large scale subsidence over a shallow
+situation, e.g. the case of large scale subsidence over a shallow
 inversion in the stratus cloud modeling problem. The numerical scheme of the
 large scale horizontal transport is time centered and the horizontal forcing
 gradients

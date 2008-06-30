@@ -1,10 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% March 2008, J.-P. Chaboureau, editorial corrections
+% June 2008,  E. Richard, adding the SLEVE coordinate part
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \chapter{Coordinate Systems}
 \minitoc
-
+ 
 %{\em by V. Ducrocq and P. Bougeault}
 
 In general, it will not be possible to develop the equations of the previous
-chapter in a simple cartesian coordinate system, because
+chapter in a simple Cartesian coordinate system, because
 of the earth sphericity, and of the underlying topography.
 In meteorology, a natural coordinate system is defined by the longitude
 $\lambda$, the latitude $\varphi$, and the distance from the earth center $r$
@@ -17,31 +22,68 @@ projection allowing for rotation with respect to this natural basis.
 This allows more flexibility in the direction of the coordinate lines
 to study particular processes. This also simplifies the initialization
 of model runs with products of operational weather prediction systems,
-like the Arpege system of Meteo-France, or the ECMWF system.
+like the ARPEGE system of Meteo-France, or the ECMWF system.
 
-\section{Conformal Projections and Terrain Following Coordinates}
+\section{Conformal projections and terrain following coordinates}
 
 We use a system of curvilinear coordinates $\widehat{x},\widehat{y},
 \widehat{z}$, defined in the following manner.
 
-\subsection{Gal-Chen and Sommerville vertical coordinate}
-
-$\widehat{z}$ is
-the Gal-Chen and Sommerville (1975) vertical coordinate:
-
+\subsection{Vertical coordinate}
+The vertical coordinate $\hat z$ is a height-based 
+terrain-following coordinate which can be alternatively selected as 
+the classical Gal-Chen and Sommerville (1975) coordinate or as the 
+SLEVE coordinate more recently proposed by Sch\"ar et al. (2002).   
+The Gal-Chen and Sommerville coordinate is defined by 
 \begin{equation}
-\widehat{z} =H  \dfrac{z - z_{s}}{H - z_{s} },
+\hat z = H \frac{z-z_s}{H-z_s},
 \end{equation}
-where $H$ is the height of the model top, and  $z_{s}$ the height of the
-local topography. Since the transformation is purely vertical, $\vec{k}$
+where $H$ is the height of the model top, and $z_s$ the height of the local
+topography.
+
+Being terrain following, the Gal-Chen and Sommerville coordinate allows a
+straightforward implementation of the lower boundary condition. However,
+in the presence of steep orography, the small-structures in the coordinate 
+surface render the computation of advection inaccurate and imbalances in
+the discretization of the horizontal pressure gradient may lead to spurious 
+motions over mountains. An easy way to alleviate these shortcomings is to 
+use the so-called Smooth-Level Vertical-Coordinate (SLEVE) where small-scale
+features in the coordinate surfaces decay rapidly with height, thus limiting
+the existence of steep coordinate surfaces to the lowermost few kilometers
+above ground. This new transformation relies on the definition of two scale 
+heights, which govern the vertical decay of the larger- and smaller-scale
+contributions of the topography, respectively. To this end, the topography is
+split into
+\begin{equation}
+z_s = z_{s1} +z_{s2}
+\end{equation}
+where the suscripts 1 and 2 refer to large-scale and small-scale contributions,
+respectively. In practice, the large-scale contribution is obtained from the 
+full topography by an appropriate smoothing operation. The SLEVE coordinate 
+is then defined by the relationship 
+\begin{equation}\label{slevecoord}
+ z=  \hat z 
++ z_{s1} \frac {\sinh [(H-\hat z)/s_1]} {\sinh [(H/s_1)]}
++ z_{s2} \frac {\sinh [(H-\hat z)/s_2]} {\sinh [(H/s_2)]}
+\end{equation}
+The second and the third terms in the right-hand side of (\ref{slevecoord})
+govern the decay with height of large- and small-scale terrain features 
+with the scale heights $s_1$ and $s_2$, respectively.
+The optimal choice of these scale 
+heights depends upon the problem under consideration. For instance, for a 
+topography reaching 1500~m and a model top height of 25~km, the values 
+$s_1=$15~km and $s_2=$2.5~km represent a reasonable choice.
+
+Since the transformation is purely vertical, $\vec{k}$
 is also parallel to the $\widehat{z}$ lines in the physical space
 (see Fig.~\ref{galchen}).
 
-\begin{figure}[hpbt]
-\psfig{figure=\EPSDIR/fig3.1.eps}
-\caption{The Gal-Chen and Sommerville vertical coordinate and the cartesian
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/fig3.1.eps}}
+\caption{The Gal-Chen and Sommerville vertical coordinate and the Cartesian
 ($\vec{i},\vec{j}$), covariant ($\vec{e}_i$) and contravariant ($\vec{e}^i$)
-bases \label{galchen}}
+bases.}
+\label{galchen}
 \end{figure}
 
 On the other hand, $\widehat{x}$ and $\widehat{y}$
@@ -55,13 +97,13 @@ We note $\gamma$ the angle between from $\vec{i}$ to
 $\vec{i}_0$. In general, this angle will vary with $\widehat{x}$ and
 $\widehat{y}$ because of the earth sphericity.
 
-\begin{figure}[hpbt]
-\psfig{figure=\EPSDIR/fig3.2.eps}
-\caption{Principles of Projections and notations on the sphere
-\label{projection}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=\textwidth]{\EPSDIR/fig3.2.eps}}
+\caption{Principles of projections and notations on the sphere.}
+\label{projection}
 \end{figure}
 
-Clearly, $\vec{i},\vec{j}$ and $\vec{k}$ form a local, cartesian basis
+Clearly, $\vec{i},\vec{j}$ and $\vec{k}$ form a local, Cartesian basis
 which is particularly interesting to develop the wind
 velocity vector. In the following, we will call $ u ,  v , w$ the
 components of ${\vec U}$ on this basis.
@@ -70,12 +112,12 @@ components of ${\vec U}$ on this basis.
 \end{equation}
 It is the most natural decomposition of the wind in a local basis.
 
-Three types of conformal projections are supported in Meso-NH: Lambert, Polar
-Stereographic, and Mercator. We recall here the formulae which allow to
+Three types of conformal projections are supported in Meso-NH: Lambert, polar
+stereographic, and Mercator. We recall here the formulae which allow to
 compute the coordinates $\widehat{x},\widehat{y}$ from the latitude $\varphi$
-and the longitude $\lambda$ of a given point, and inversely.
+and the longitude $\lambda$ of a given point, and conversely.
 
-\subsection{Polar stereographic and Lambert Projections:}
+\subsection{Polar stereographic and Lambert projections}
 
 The projection is defined by the conicity parameter $K$ ($0<K<1$), the
 earth radius $a$,
@@ -103,17 +145,18 @@ m=\left( \dfrac{\cos \varphi _{0}}{\cos \varphi}\right)^{1-K}
 \left( \dfrac{1 + \sin\varphi _{0}}{1 + \sin\varphi} \right)^{K}
 \end{equation}
 
-\begin{figure}[hpbt]
-\psfig{figure=\EPSDIR/fig3.3.eps}
-\caption{Polar Sterographic and Lambert Projections: $M_0$ is the point
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=\textwidth]{\EPSDIR/fig3.3.eps}}
+\caption{Polar stereographic and Lambert projections: $M_0$ is the point
 at the intersection of the reference latitude and longitude. In $M_0$, the
 angle from $\vec{i}$ to $\vec{i}_0$ is $-\beta$. In any other point $M$,
 this angle has a different value. Note that the North pole may be situated
 inside the model domain in the case of the polar stereographic projection,
-but not in the case of the Lambert projection \label{polarstereo}}
+but not in the case of the Lambert projection.}
+\label{polarstereo}
 \end{figure}
 
-\subsection{Mercator Projection:}
+\subsection{Mercator projection}
 
 The projection is defined by a reference latitude $\phi_0$, a reference
 longitude $\lambda_0$, an arbitrary angle of rotation $\beta$,
@@ -133,7 +176,7 @@ $\widehat{x}_0, \widehat{y}_0$ (Fig.~\ref{mercator}). The useful formulae are
 \end{eqnarray}
 
 For this projection, if $\beta$ is chosen equal to zero, the local
-cartesian basis coincides everywhere with the natural basis.
+Cartesian basis coincides everywhere with the natural basis.
 
 The map scale factor is given by
 
@@ -141,10 +184,11 @@ The map scale factor is given by
 m = \dfrac{\cos\varphi _{0} }{\cos\varphi }
 \end{equation}
 
-\begin{figure}[hpbt]
-\psfig{figure=\EPSDIR/fig3.4.eps}
-\caption{Mercator Projection: the angle between $\vec{i}$ and $\vec{i}_0$
-is independent of the position in the domain \label{mercator}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=\textwidth]{\EPSDIR/fig3.4.eps}}
+\caption{Mercator projection: the angle between $\vec{i}$ and $\vec{i}_0$
+is independent of the position in the domain.}
+\label{mercator}
 \end{figure}
 
 Note that allowing for $K=0$ in the expression of the map scale factor of
@@ -154,19 +198,19 @@ $m$, $K$, and $\gamma$. These quantities
  will be used in the following equations, without further
 necessity to distinguish between the three types of projection.
 
-\section{Calculus in Non Orthogonal Coordinates}
+\section{Calculus in non orthogonal coordinates}
 
 In the physical space, the $\widehat{x}$ and $\widehat{z}$ coordinate lines
 are not orthogonal, because of the underlying topography $z_s$. Therefore,
 the coordinate system is not orthogonal and it will be necessary to introduce,
-beside the cartesian basis, the covariant and contravariant bases to
+beside the Cartesian basis, the covariant and contravariant bases to
 develop the tensor operators of Chapter 2. In Meso-NH, we follow the ideas
-of Viviand (1974), and Vinokur (1974), and use alternatively the
-cartesian and covariant bases, in order to simplify the formulation of
+of Viviand (1974) and Vinokur (1974), and use alternatively the
+Cartesian and covariant bases, in order to simplify the formulation of
 these operators. We now recall the main classical formulae to work with
 non orthogonal coordinate systems.
 
-\subsection{Metric Coefficients}
+\subsection{Metric coefficients}
 
 Let us call $x,y,z$ the local distances on the sphere in the directions
 $\vec{i},\vec{j},\vec{k}$.
@@ -193,7 +237,7 @@ are given by:
 \widehat{d}_{yx} & = & \dfrac{\partial y}{\partial \widehat{x} } = 0 \nonumber
 \end{eqnarray}
 
-\subsection{Covariant Basis}
+\subsection{Covariant basis}
 
 The basis of covariant vectors is defined as
 
@@ -202,7 +246,7 @@ The basis of covariant vectors is defined as
 \end{equation}
 (with $\widehat{x}^{i}=\widehat{x}$, $\widehat{y}$ or $\widehat{z}$).
 Those vectors are tangent to the coordinate lines (see Fig. \ref{galchen}).
-They can be projected to the cartesian basis, resulting in
+They can be projected to the Cartesian basis, resulting in
 
 \begin{eqnarray}
 \vec{e}_{1} & = & \dfrac{\partial \vec{r}}{\partial \widehat{x}} =
@@ -225,7 +269,7 @@ or
 \end{equation}
 It is the ratio of the volumes in the transformed and physical spaces.
 
-\subsection{Contravariant Basis}
+\subsection{Contravariant basis}
 
 The basis of contravariant vectors is defined as
 \begin{equation}
@@ -247,7 +291,7 @@ Since $\vec{e}\, ^{i} \cdot \vec{e} _{j} = \delta_{ij}$, we also have:
  - \widehat{d}_{zy} \widehat{d}_{xx}\vec{j}\right) \nonumber
 \end{eqnarray}
 These formulae allow to find the expression of the contravariant components
-of any vector, as a function of its cartesian components
+of any vector, as a function of its Cartesian components
 \begin{eqnarray}
 \vec{A} &=& A^{c1} \vec{e} _{1}+ A^{c2} \vec{e} _{2} + A^{c3} \vec{e} _{3}
 \nonumber \\
@@ -261,7 +305,7 @@ A^{c3}&  =& \dfrac{ a^3 }{\widehat{d}_{zz}}- \dfrac{ a^1 \widehat{d}_{zx}}{\wide
 \subsection{Spatial derivatives of the Cartesian basis}
 
 We will also use the expression of the spatial derivatives of the
-vectors of the cartesian basis, due to the earth sphericity:
+vectors of the Cartesian basis, due to the earth sphericity:
 
 \begin{eqnarray}
 \dfrac{\partial \vec{i}}{\partial \widehat{x}} & = & \cos\gamma \;
@@ -294,7 +338,7 @@ For any scalar quantity $\alpha$,
 \end{equation}
 
 This vector may be projected on $(\vec{i},\vec{j},\vec{k})$ resulting in
-the cartesian components of the gradient
+the Cartesian components of the gradient
 
 \begin{eqnarray}
 {\partial \alpha \over \partial x }  =
@@ -330,11 +374,11 @@ allow to compute easily the divergence
 +\dfrac{\partial}{\partial \widehat{z}}(\widehat{J} A^{c\,  3}) \right)
 \end{equation}
 
-\subsection{Divergence of a Tensor Product}
+\subsection{Divergence of a tensor product}
 
 In order to avoid generating a large number of Christoffel symbols (quantities
 involved in the derivatives of the basis vectors), we use the
-contravariant components of $\vec{B}$ and the cartesian components of $\vec{A}$
+contravariant components of $\vec{B}$ and the Cartesian components of $\vec{A}$
 
 \begin{eqnarray}
 \vec{B} &=& B^{c \, 1}\vec{e} _{1} +
@@ -343,7 +387,7 @@ B^{c \, 2}\vec{e} _{2} +B^{c \, 3}\vec{e} _{3}\nonumber \\
 {\cal A}^{2}\vec{j}+{\cal A}^{3} \vec{k} \nonumber
 \end{eqnarray}
 
-The result projected on the cartesian basis reads
+The result projected on the Cartesian basis reads
 
 \begin{eqnarray}
 \vec{i} \cdot \vec{\nabla}\cdot (\vec{B} \otimes \vec{A}) & = &
@@ -386,7 +430,7 @@ variation of the vectors of the local basis. These terms are the
 {\em curvature terms}. The influence of non-orthogonality is also
 present through the use of the contravariant components of $\vec{B}$.
 
-\subsection{Coriolis Force}
+\subsection{Coriolis force}
 
 Both vectors are expressed in basis $(\vec{i},\vec{j},\vec{k})$.
 We call $f=2\Omega \sin\varphi$ and $f_{\star}=2\Omega \cos\varphi$.
@@ -396,8 +440,8 @@ We call $f=2\Omega \sin\varphi$ and $f_{\star}=2\Omega \cos\varphi$.
 & & - (f_{\star} \cos\gamma u + f \sin \gamma v ) \vec{k}
 \end{eqnarray}
 
-\section{Model Equations in Non Orthogonal Coordinates}
-\subsection{Prognostic Variables}
+\section{Model equations in non orthogonal coordinates}
+\subsection{Prognostic variables}
 Given the form of the divergence operator, the most convenient choice for the
 model prognostic variables is the product of the wind components, potential
 temperature, and mixing ratios by the dry density of the reference state,
@@ -439,7 +483,7 @@ W^{c}&  =& \dfrac{ w}{\widehat{d}_{zz}}- \dfrac{ u \widehat{d}_{zx}}{\widehat{d}
 This simple computation is performed at the beginning of each model time
 step.
 
-\subsection{Momentum Equation}
+\subsection{Momentum equation}
 
 \begin{eqnarray}
 \dfrac{\partial}{\partial t}(\widehat{\rho}  u ) &= &
@@ -493,10 +537,10 @@ step.
 The right hand side of these equations has been rewritten in Chapter 2 as
 the sum of a dynamical source $\vec{S}_V$ and the pressure gradient. This
 is still valid, except that the source now contains the Jacobian. Note
-that those are still the cartesian components of $\vec{S}_V$,
+that those are still the Cartesian components of $\vec{S}_V$,
 i.e. the true horizontal and vertical components of the acceleration.
 
-\subsection{Thermodynamic Equation}
+\subsection{Thermodynamic equation}
 
 \begin{eqnarray}
 \dfrac{\partial}{\partial t}(\widehat{\rho} \theta) &=& \, - \,
@@ -512,11 +556,11 @@ i.e. the true horizontal and vertical components of the acceleration.
  L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right]
 \end{eqnarray}
 
-\subsection{Water and Other Scalars}
+\subsection{Water and other scalars}
 The equations have exactly the same form as the thermodynamic equation,
 except for the source terms.
 
-\subsection{Continuity Equation}
+\subsection{Continuity equation}
 It has the simple form, using the contravariant velocity components
 \begin{equation}
 \dfrac{\partial }{\partial \widehat{x}} (\widehat{\rho} U^{c })
@@ -524,13 +568,13 @@ It has the simple form, using the contravariant velocity components
 + \dfrac{\partial }{\partial \widehat{z}} (\widehat{\rho} W^{c }) =0.
 \end{equation}
 
-\subsection{Pressure Equation}
+\subsection{Pressure equation}
 The divergence operators appearing in the pressure equation may be
 evaluated with the contravariant components of the vectors $\vec{\nabla}\Phi$
-and $\vec{S}_V$. The result is an elliptic equation, involving a quasi-laplacian
-operator. This is discussed in Chapter 7.
+and $\vec{S}_V$. The result is an elliptic equation, involving a
+quasi-Laplacian operator. This is discussed in Chapter \ref{PressureProblem}.
 
-\section{Degenerated Forms}
+\section{Degenerated forms}
 
 \subsection{Thin shell approximation}
 
@@ -538,7 +582,7 @@ The depth of the atmosphere ($\simeq 30$ km) is much smaller than the earth
 radius ($a \simeq 6000 $ km). Therefore, it is customary in meteorology
 to assume that the atmosphere is a thin shell ($z \ll a$ and $r \simeq a$).
 However, if this hypothesis is retained without care, the principle of
-conservation of angular momentum may be violated (Phillips, 1966).
+conservation of angular momentum may be violated (Phillips 1966).
 It is necessary to make the additional hypothesis that the horizontal
 component of the earth rotation is negligible. In the Meso-NH model, we
 decided not to retain the thin shell approximation. However, for the
@@ -546,10 +590,10 @@ purpose of comparison with models making this approximation,
 we introduce a flag $\delta_1$, taking the value 1 in the general case
 and 0 in the case of the thin shell approximation.
 
-\subsection{Cartesian Coordinate System}
+\subsection{Cartesian coordinate system}
 
 For many purposes, one may want to work in the much simpler
-cartesian frame on a plane tangent to the sphere,
+Cartesian frame on a plane tangent to the sphere,
 and neglect the curvature terms (e.g. study of very small
 scale processes, or idealized studies of meso-scale processes). This may be
 obtained easily by setting $f=2 \Omega \sin \varphi _{0}$ ,
@@ -559,13 +603,13 @@ Note that contrary to the previous case, we may keep here $f^{*} \neq 0$
 without violating the conservation of angular momentum.
 In order to obtain this very simple form, we introduce another flag
 $\delta_2$ in the general system, taking the value 1 for the general case,
-and 0 for the cartesian case.
+and 0 for the Cartesian case.
 
-The combination of the thin shell approximation and the cartesian frame
+The combination of the thin shell approximation and the Cartesian frame
 will supply the traditional f-plane approximation (no horizontal component
 of the earth rotation).
 
-\subsection{Flagged Equations}
+\subsection{Flagged equations}
 
 The $\delta_1$ and $\delta_2$ flags modify the momentum equation in the
 following way:
@@ -626,14 +670,27 @@ The other equations of the model do not involve the flags.
 
 
 \section{References}
-\por
-Gal-Chen, T., and R. C. J. Sommerville, 1975: On the Use of a Coordinate
-Transformation for the Solution of the Navier-Stokes Equations. J. Comput.
-Phys., 17, 209-228.
-\por
-Vinokur, 1974:?
-\por
-Viviand, H., 1974: Formes Conservatives des Equations de la Dynamique des Gaz.
-La Recherche A\'erospatiale, 1974-1, 65-66.
+\decrefname
+Gal-Chen, T., and R. C. J. Sommerville, 1975:
+On the use of a coordinate transformation for the solution
+of the Navier-Stokes equations.
+{\it J. Comput. Phys.}, {\bf 17}, 209-228.
+\decrefname
+Phillips, N. A., 1966:
+The equations of motion for a shallow rotating atmosphere and the "traditional approximation".
+{\it J. Atmos. Sci}, {\bf 23}, 626-628
+\decrefname
+Sch\"ar,  C., D. Leuenberger,  O. Fuhrer,  D. L\"uthi, and C. Girard, 2003:
+A new terrain-following vertical coordinate formulation
+for atmospheric prediction models.
+{\it Mon. Wea. Rev.}, {\bf 130}, 2459-2480 
+\decrefname
+Vinokur, M., 1974:
+Conservation equations of gas-dynamics in curvilinear coordinate systems.
+{\it J. Comp. Phys.}, {\bf 14},  105-125.
+\decrefname
+Viviand, H., 1974:
+Formes conservatives des \'equations de la dynamique des gaz.
+{\it La Recherche A\'erospatiale}, {\bf 1}, 65-66.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

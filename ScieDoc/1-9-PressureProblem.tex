@@ -1,11 +1,17 @@
-\chapter{The pressure problem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% March 2008, J.-P. Pinty, addition of the CRESI section
+% March 2008, J.-P. Chaboureau, editorial corrections
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{The Pressure Problem}
+\label{PressureProblem}
 \minitoc
 
 %{\em by P. Hereil}
 
 \section{Continuous pressure equation}
 \subsection{Full elliptic problem}
-\par In the  Meso-NH model formulation, the equations of motion are
+\par In the Meso-NH model formulation, the equations of motion are
 expressed as:
 \begin{eqnarray}
 \label{motion1}
@@ -28,7 +34,7 @@ The anelastic constraint reads\\
    + \dfrac {\partial{\tilde{\rho} V^{c} } } {\partial{\overline{y} } }
    + \dfrac {\partial{\tilde{\rho} W^{c} } } {\partial{\overline{z} } } = 0
 \end{equation}
-If we combine the equations (\ref{motion1}-\ref{motion3}) in order to build and
+If we combine Eqs. (\ref{motion1})--(\ref{motion3}) in order to build and
 nullify the divergence of the wind at the future instant in (\ref{conti}), we
 obtain a diagnostic equation for the pressure:
 \begin{equation}
@@ -86,10 +92,10 @@ GDIV(\tilde{\rho} \overrightarrow{\nabla})$.
 
 Note that because an iterative method is used to solve the pressure equation,
 the residual term $GDIV(\tilde{\rho} \vec{U}_{(t-\Delta t)})$
-must be kept and injected in the right hand side
-of 6.5 to get the most accurate solution for $\Phi$.
+must be kept and injected in the right-hand side
+of (\ref{conteq}) to get the most accurate solution for $\Phi$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Top and Bottom Boundaries}
+\subsubsection{Top and bottom boundaries}
 For the highest and the lowest vertical level, a Neumann condition is
 imposed:\\
 \begin{equation}
@@ -100,7 +106,7 @@ imposed:\\
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-\subsubsection{Lateral Boundaries}
+\subsubsection{Lateral boundaries}
 We allow for several possibilities:
 \begin{itemize}
 
@@ -117,9 +123,8 @@ are performed by the Sommerfeld's equations:
 {\partial{\tilde{\rho} { v }} } {\partial{y} }
 \end{eqnarray}
 where $c_x$ and $c_y$ are the phase velocities
-of the fastest waves in  respectively x and y directions and determined by the
-Orlanski's method (1976\nocite {orl76}) or fixed (Klemp and Wilhelmson, 1978
-\nocite{kle78}). \\
+of the fastest waves in  respectively $x$ and $y$ directions and determined
+by the Orlanski's method (1976) or fixed (Klemp and Wilhelmson 1978).\\
 \item If a Davies' scheme is used, the tendency on the boundary is given by:\\
 \begin{eqnarray}
 \frac {\partial{\tilde{\rho} { u }} } {\partial{t} } =
@@ -129,7 +134,7 @@ Orlanski's method (1976\nocite {orl76}) or fixed (Klemp and Wilhelmson, 1978
 \left( \frac {\partial{\tilde{\rho} { v }} } {\partial{t} } \right)_{Large
 \; Scale}
 \end{eqnarray}
-\item If we use a Carpenter's scheme (Carpenter, 1982\nocite{car82}),
+\item If we use a Carpenter's scheme (Carpenter 1982),
 the tendency on the boundary is expressed as:
 \begin{eqnarray}
 \frac {\partial{\tilde{\rho} { u }} } {\partial{t} } =
@@ -151,8 +156,8 @@ the tendency on the boundary is expressed as:
 %%
 \end{itemize}
 Therefore, in every case, the temporal evolution of the horizontal momentum is
-known at the boundary by these equations and from (\ref{motion1}-
-\ref{motion2}), we can infer the normal component of the pressure gradient
+known at the boundary by these equations and from (\ref{motion1})--
+(\ref{motion2}), we can infer the normal component of the pressure gradient
 when the sources components $\vec{S} \cdot \vec{n}$ is known.
 The result is a non-homogeneous Neumann condition for the full elliptic
 problem. We can make this condition homogeneous if we replace in
@@ -160,7 +165,7 @@ problem. We can make this condition homogeneous if we replace in
 boundaries by the prescribed values of $\frac {\partial{\tilde{\rho} { u }}
 } {\partial{t} }$ and $\frac {\partial{\tilde{\rho} { v }} }
 {\partial{t} }$ respectively. This leads to an algebraic simplification
-in the pressure equation (\ref{conteq}).The homogeneous boundary condition
+in the pressure equation (\ref{conteq}). The homogeneous boundary condition
 for the pressure field is:
 \begin{equation}
 \label{hb1}
@@ -172,16 +177,17 @@ for the pressure field is:
 (\ref{conteq}) where the source term $\overrightarrow {S}$ is known and with
 the previous boundary conditions. As it is
 difficult and time-consuming to invert such a large system, we have
-implemented two iterative methods in order to offer a good compromise between
-versatility and efficiency. Both methods are described
-in Golub and Meurant (1983\nocite{gol83}): the first one consists in
+implemented three iterative methods in order to offer a good compromise between
+versatility and efficiency. The first two methods are described
+in Golub and Meurant (1983): the first one consists in
 a conjugate gradient algorithm and the second one is the Richardson's method.
+The third method was suggested by Skamarock et al. (1997).
 The convergence of such algorithms is considerably speeded-up with the use
 of preconditioning techniques. Here, we precondition with the "flat"
-problem (Bernardet\nocite{ber94}, 1994), i.e. without orography, which
+problem (Bernardet 1995), i.e. without orography, which
 compresses the eigenvalue spectrum of the original problem, leaving only a few
 eigenvalues significantly different from 1, resulting in much faster
-convergence. For both methods, the first guess is also set equal to the
+convergence. For all the methods, the first guess is also set equal to the
 solution of the flat problem.
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,8 +195,8 @@ solution of the flat problem.
 \subsection{Conjugate gradient algorithm}
 \par The Golub and Meurant's version of the conjugate gradient (CG) is devoted
 to symmetric matrices. As our problem is non symmetric, we use a
-generalization of the CG called ORTHOMIN, detailled in Young and Jea
-(1981\nocite{you81}). Considering the linear system:
+generalization of the CG called ORTHOMIN, detailled in Young and Jea (1980).
+Considering the linear system:
 \begin{equation}
 Qx = y
 \end{equation}
@@ -201,8 +207,8 @@ F^{-1} Q x = F^{-1} y
 \end{equation}
 where $F^{-1}$ is the preconditioner with $F$ defined as the $QLAP$ operator
 where the topography is neglected (flat problem).\\
-The ORTHOMIN algorithm can be put in the following form (Kapitza and Eppel,
-1992\nocite{kap92}):
+The ORTHOMIN algorithm can be put in the following form
+(Kapitza and Eppel 1992):
 \begin{eqnarray*}
 %%
 x^{(n+1)} &=& x^{(n)} + \lambda _n p^{(n)}\\
@@ -229,11 +235,11 @@ invert three times the $F$ matrix.
 %%
 \subsection{Richardson's method}
 \par This technique allows to divide by 3 the number of matrix inversion,
-compared to the CG algorithm . Furthermore, this method, including a
+compared to the CG algorithm. Furthermore, this method, including a
 relaxation factor $\alpha$, allows an under-relaxation  which is useful to
 improve the solver convergence in the context of simulations with large slopes.
 For example, for slopes greater than 1, preliminary tests have shown that the
-optimal value of $\alpha$ is equal to 1. for such simulations. If we assume the
+optimal value of $\alpha$ is equal to 1 for such simulations. If we assume the
 following linear system preconditioned with the inverse of the "flat" problem:
 \begin{equation}
 F^{-1} Q x = F^{-1} y
@@ -243,6 +249,34 @@ the Richardson's method reads:
 x^{(n+1)} &=& x^{(n)} + \alpha (F^{-1} y - F^{-1} Q x^{(n)} )
 \end{eqnarray*}
 where $x^{(n)}$ is the n-th iteration of $x$.\\
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+\subsection{Preconditioned conjugate-residual algorithm}
+\par The method was suggested by Skamarock et al. (1997). It is based on a conjugate-residual algorithm that is accelerated by a "flat Laplacian" preconditionner (see next section). It is interpreted physically as a finite-difference scheme for integrating, in a pseudo-time $\tau$ to a steady state, a damped oscillation equation with forcing equal to the residual error $\delta \equiv Qx-y$ of the linear elliptic problem $Qx=y$, that is:
+\begin{eqnarray*}
+\dfrac{\partial^{2}{Fx} } {\partial{\tau^{2}} } + \frac{1}{T}
+\dfrac{\partial{Fx} } {\partial{\tau} } = \delta,
+\end{eqnarray*}
+where $T$ is an arbitrary damping coefficient and $Fx$ the preconditioner operator so $F^{-1}x$ is the $QLAP$ operator. After initializing the residual $\delta^{0}$, $p^{0}=F^{-1}\delta^{0}$ and $Qp^{0}$, the resulting algorithm is used:
+\begin{eqnarray*}
+%%
+\lambda &=& -\dfrac{<\delta^{n-1} \dot Qp^{n-1}>}{<Qp^{n-1} \dot Qp^{n-1}>}\\
+%%
+x^{n} &=& x^{n-1} + \lambda p^{n-1} \\
+%%
+\delta^{n} &=& \delta^{n-1} + \lambda Qp^{n-1} \\
+%%
+q^{n} &=& F^{-1}\delta^{n} \\
+%%
+\alpha &=& -\dfrac{<Qq^{n} \dot Qp^{n-1}>}{<Qp^{n-1} \dot Qp^{n-1}>} \\
+%%
+p^{n} &=& q^{n} + \alpha p^{n-1} \\
+%%
+Qp^{n} &=& Qp^{n} + \alpha Qp^{n-1} \\
+%%
+\end{eqnarray*}
+where $< \dot >$ is the inner product. The iteration stops when $||r^{n}||\leq\epsilon$. The method is the most efficient converging one compared to the Richardson and CG algorithms. It is now set as the default value of pressure solver algorithm in Meso-NH ({\tt CPRESOPT  = 'CRESI'}).
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -286,7 +320,7 @@ We have applied a spatial averaging on a whole $xy$ plan because
 $\tilde{\rho}$ and $\overline{z}$ are functions of $z$. When
 the orography is neglected, we must recover a function of only $\overline{z}$ (this
 is also necesary to lead to a separable problem). A Fast Fourier Transform
-(Schumann and Sweet, 1988\nocite{sch88}) is used for the inversion of the
+(Schumann and Sweet 1988) is used for the inversion of the
 horizontal part of $F$. The form of this FFT depends on the lateral boundary
 conditions. The vertical part of $F$ leads to a tridiagonal matrix and thus a
 classical inversion algorithm is applied (the double sweep method, see
@@ -400,7 +434,7 @@ For the first inner points, the calculation of the pseudo-Laplacian
 operator $QLAP$ requires the evaluation of pressure outside the physical
 domain. \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection {Vertical boundaries }
+\subsubsection {Vertical boundaries}
 The discrete form of the boundary equation (\ref{vb1}) is expressed as:
 \begin{equation}
 \left(\vec{S}\right)^{c3} = \left( \tilde{\rho} \overrightarrow{\nabla} \Phi
@@ -431,7 +465,7 @@ pressure gradient over the surface:
 \end{eqnarray*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-\subsubsection {Horizontal boundaries }
+\subsubsection {Horizontal boundaries}
 Here, we have to consider how to evaluate the pressure gradient terms at the
 boundary (wind point), i.e. $i = 1+jphext$, $i= imax+1+jphext$, $j = 1+jphext$,
 $j = jmax+1+jphext$ and this for $kmax+1+jpvext > k > jpvext$. $jphext$ and
@@ -441,7 +475,7 @@ distinguish three cases:\\
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-$\bullet$\underline{Cyclic case:}\\
+$\bullet$\underline{Cyclic case}\\
 The periodic condition reads:\\
 \begin{eqnarray}
 \label{cyclic1}
@@ -449,18 +483,18 @@ The periodic condition reads:\\
 \nonumber
 \Phi (imax+1+jphext, j, k) &=& \Phi (1+jphext, j, k)
 \end{eqnarray}
- in the x direction and
+ in the $x$ direction and
 \begin{eqnarray}
 \label{cyclic2}
  \Phi (i, jphext, k) &=& \Phi (i, jmax+jphext, k) \\
 \nonumber
 \Phi (i, jmax+1+jphext, k) &=& \Phi (i, 1+jphext, k)
 \end{eqnarray}
-in the y direction.\\
+in the $y$ direction.\\
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-$\bullet$\underline{Open and Davies' cases:}\\
+$\bullet$\underline{Open and Davies' cases}\\
 The x lateral boundary condition $\dfrac{\partial{\Phi } } {\partial{x} } = 0
 $ for $i = 1+jphext, i= imax+1+jphext$ ($jmax+1+jphext>j>jphext$) becomes:
 \begin{equation}
@@ -481,22 +515,23 @@ becomes:
 \end{equation}
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$\bullet$\underline{Mixed boundary conditions:}\\
-In this case, we have to combine the previous set of equations (\ref{cyclic1})-
-(\ref{open2}) to be consistent with the specification of the horizontal
-boundaries. For example, if we assume a periodic condition along $y$ and a
+$\bullet$\underline{Mixed boundary conditions}\\
+In this case, we have to combine the previous set of equations
+(\ref{cyclic1})-(\ref{open2}) to be consistent with the specification
+of the horizontal boundaries. For example, if we assume a periodic
+condition along $y$ and a
 Davies' condition along $x$ we use (\ref{cyclic2}) and (\ref{open1}).\\
 \\
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-\underline {\bf Edges:}\\
+\underline {\bf Edges}\\
 The edges points at $k = jpvext$, (i.e. $\Phi (jphext, j, jpvext)$,
 $\Phi (imax+1+jphext, j, jpvext)$, $\Phi (i, jphext,$  $jpvext)$,
 $\Phi (i, jmax+1+jphext, 1)$, where $imax+jphext+1> i >  jphext$ and
 $jmax+jphext+1 > j > jphext$) and their corresponding points located at the
 coordinate $k = kmax+1+jpvext$, are necessary for the calculation of the
-pseudo-Laplacian of the first inner grid points. So, we have imposed boundary
+pseudo-Laplacian of the first inner grid points. So we have imposed boundary
 conditions consistent with the Neumann staggered condition defined for the
 horizontal boundaries. These conditions are expressed as:\\
 - for $i=1+jphext$, $imax+1+jphext$ and $z = \Delta z/2, H-\Delta z/2$:
@@ -558,7 +593,7 @@ doing parallel transforms.
 \subsubsection{Horizontal discretization}
 The FFT form depends on the lateral boundary conditions:\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$\bullet$ \underline{Cyclic case:}\\
+$\bullet$ \underline{Cyclic case}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In the aim of no confusion with the complex number $i$ ($i^2 = -1$), we adopt
 for a while the convention $(i, j, k) \rightarrow (I, J, K)$. With the boundary
@@ -566,11 +601,11 @@ conditions (\ref{cyclic1})-(\ref{cyclic2}), we have:
 \begin{equation}
 \label{foux1}
 \Phi (I, J, K) =   \sum_{m=0}^{imax-1} \sum_{n=0}^{jmax-1}
-\widehat{\Phi}_{m\, n}(K) e^ {i\frac {2\pi}{imax} m I \, + \,
-i\frac {2\pi}{jmax} n J }
+\widehat{\Phi}_{m\, n}(K)\, \exp \left( i\frac {2\pi}{imax} m I \, + \,
+i\frac {2\pi}{jmax} n J \right)
 \end{equation}
 We denote $\tilde{\Phi} _{m n}(K) = \widehat{\Phi} _{m n}(K)
-e^ {i\frac {2\pi}{imax} m I \, + \, i\frac {2\pi}{jmax} n J } $ where
+\exp \left( i\frac {2\pi}{imax} m I \, + \, i\frac {2\pi}{jmax} n J \right) $ where
 $\tilde{\Phi}_{m\, n}(K)$ is complex. Using the FFT decomposition
 (\ref{foux1}), we have:\\
 \begin{eqnarray*}
@@ -595,7 +630,7 @@ b_{mn} = - 4 <\tilde{\rho}>_{x,y} \left[
 \end{displaymath}
 where $m\,=\,0, \, 1...imax-1$ and $n\,=\,0,\, 1,...jmax-1$.\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$\bullet$ \underline{Open and Davies' cases:}\\
+$\bullet$ \underline{Open and Davies' cases}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The degeneracy of the full discrete operator with orography gives:
 \begin{eqnarray*}
@@ -622,7 +657,7 @@ b_{mn} = - 4 <\tilde{\rho}>_{x,y} \left[
 \end{displaymath}
 where $m\,=\,0, \, 1...imax-1$ and $n\,=\,0,\, 1,...jmax-1$.\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$\bullet$ \underline{Mixed boundary conditions:}\\
+$\bullet$  \underline{Mixed boundary conditions}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Here, the decomposition of $\Phi$ results from a combination of (\ref{foux1})
 and (\ref{foux2}). If we have a cyclic condition along $x$ and an open
@@ -630,7 +665,7 @@ condition along $y$, we have:
 \begin{equation}
 \Phi (I, J, K) =   \sum_{m=0}^{imax-1} \sum_{n=0}^{jmax-1}
 \widehat{\Phi}_{m\, n}(K)
-\left[ e^ {i\frac {2\pi}{imax} m I } \times
+\left[ \exp \left( i\frac {2\pi}{imax} m I \right) \times
 \cos \left( \dfrac {(2J - 1) \pi}{2 \, jmax} n\right) \right]
 \end{equation}
 and the eigenvalues are defined by:
@@ -646,7 +681,7 @@ condition along $y$, the decomposition of $\Phi$ reads:
 \Phi (I, J, K) =   \sum_{m=0}^{imax-1} \sum_{n=0}^{jmax-1}
 \widehat{\Phi}_{m\, n}(K)
 \cos \left( \dfrac {(2I - 1) \pi}{2 \, imax} m\right) \times
-e^ { i\frac {2\pi}{jmax} n J }
+\exp \left( i\frac {2\pi}{jmax} n J \right)
 \end{equation}
 and the eigenvalues are expressed by:
 \begin{equation}
@@ -718,16 +753,60 @@ For this reason, this particular mode is inverted apart. Moreover, as all the
 $F_{mn}$ vertical matrices are independent,
 this computation can easily be vectorized for the $m \, n$ different modes.
 
-{\bf Algorithm Performance}
+{\bf Algorithm performance}
 
 Both iterative methods presented above showed a good convergence for the
 solution of the elliptic equation. All in all, the Richardson method
 requires less computation time than the CG method, because it needs less
 matrix inversions.
 
-{\bf Current Limitations}
+{\bf Current limitations}
 
 At the present time, the algorithm is not adapted for large stretching
 of the horizontal grid. A practical maximum ratio of the larger to the
 smaller grid size is about two, which is sufficient to allow simulations
 on small domains in conformal projection.
+
+\section{References}
+\decrefname
+Bernardet, P., 1995:
+The pressure term in the anelastic model:
+A symmetric elliptic solver for an Arakawa C grid in generalized coordinates.
+{\it Mon. Wea. Rev.}, {\bf 123}, 2474-2490.
+\decrefname
+Carpenter, K. M., 1982:
+Note on the paper "Radiation conditions for lateral boundaries
+of limited area numerical models".
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 110}, 717-719.
+\decrefname
+Kapitza, H. and D. P. Eppel, 1992:
+The non-hydrostatic meso-scale model GESIMA.
+Part I: Dynamical equations and tests
+{\it Beitr. Phys. Atmos.}, {\bf 65}, 129-146.
+\decrefname
+Klemp, J. B., and R. B. Wilhelmson, 1978:
+The simulation of three-dimensional convective storm dynamics.
+{\it J. Atmos. Sci.}, {\bf 35}, 1070-1096.
+\decrefname
+Golub, G. H., and G. A. Meurant, 1983:
+{\it R\'esolution des Grands Syst\`emes Lin\'eaires}.
+Eyrolles, 329 pp.
+\decrefname
+Orlanski, I., 1976:
+A simple boundary condition of unbounded hyperbolic flows.
+{\it J. Comp. Phys.}, {\bf 21}, 251-269.
+\decrefname
+Schumann, U., and R. Sweet, 1988:
+Fast Fourier transforms for direct solution of Poisson's equation
+with staggered boundary conditions.
+{\it J. Comput. Phys.}, {\bf 75}, 123-137
+\decrefname
+Skamarock, W. C., P. K. Smolarkiewicz, and J. B. Klemp, 1997:
+Preconditioned conjugate-residual solvers for Helmholtz equations in
+nonhydrostatic models.
+{\it Mon. Wea. Rev.}, {\bf 125}, 587-599.
+\decrefname
+Young, D. M. and K. C. Jea, 1980:
+Generalized conjugate--gradient acceleration
+of nonsymmetrizable iterative methods,
+{\it Linear Algebra Appl.}, {\bf 34}, 159-194.

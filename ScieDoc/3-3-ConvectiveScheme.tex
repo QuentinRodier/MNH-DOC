@@ -69,10 +69,10 @@ especially if they involve severe convection.  In addition, convective
 parameterization plays a critically important role in the accurate quantitative
 prediction of rainfall, especially heavy rain episodes, which present a major
 challenge for forecasters (Kuo et al. 1997; Fritsch et al. 1998).
-In contrast,  for long-range
+In contrast, for long-range
 GCM integrations a convective parameterization may be judged to be successful if
 it enhances the ability of the model to accurately represent the mean climate
-and variability of the tropical atmosphere.  Because of these seemingly
+and variability of the tropical atmosphere. Because of these seemingly
 disparate expectations, cumulus parameterizations have been developed typically
 with a particular application in mind and may contain inherent biases toward
 that application.
@@ -86,7 +86,7 @@ that, beyond the detection of convective activity, a primary purpose of
 convective parameterization is to mitigate the effects of inappropriate
 scale-selection in a modeling system's representation of deep convection.  In
 particular,  we propose that if a parameterization nudges towards a reasonable
-adjusted state, that it's imposed time-scale of adjustment is reasonable, and
+adjusted state, that its imposed time-scale of adjustment is reasonable, and
 that it activates in a timely manner, it can perform well in a variety of
 convective environments and model configurations.
 In this context a convection parameterization has been developped
@@ -96,7 +96,6 @@ The parameterization is intended to provide an efficient representation
 of atmospheric
 shallow and deep convection for both mesoscale and global applications.
 
-
 A detailed description of the scheme is provided below, however
  numerical applications  in different 1D, mesoscale and global contexts
 are discussed in Bechtold et al. (2001) and Mallet et al. (1999).
@@ -105,10 +104,10 @@ and intercomparisons with other models/schemes are presented in
 Xie et al. (2002) and Bechtold et al. (2000) in the context of the international program
 GCSS (GEWEX Cloud System Study).
 The corresponding computer code is also available as an optimized
-portable routine (both in M\'eso-nh and ECMWF/ARPEGE IFS code structure) in Fortran 90  on
-{\it http://www.aero.obs-mip.fr/becp/convect/}.
+portable routine (both in Meso-NH and ECMWF/ARPEGE IFS code structure) in Fortran 90 on
+upon request from P. Bechtold (now at ECMWF).
 
-\section{Mass Flux equations}
+\section{Mass flux equations}
 
 Briefly, with the aid of the mass flux approximation
 the effect of a
@@ -128,7 +127,7 @@ Gregory and Miller (1989), Betts (1997) for various derivations)
 \bigg[
  M^u\Psi^u+ M^d\Psi^d-( M^u+ M^d)\overline{\Psi}
 \bigg],
-\label{eq3}
+\label{eqc3}
 \end{eqnarray}
 
 \noindent
@@ -137,7 +136,7 @@ the mass flux (kg s$^{-1}$), $w$ the vertical velocity, and
 $A=A^u+A^d+\tilde A$  denotes the horizontal domain (grid size).
 Overbars denote ensemble mean (horizontal grid mean) values, tildes
 denote environmental values, up-and downdraft values are denoted
-by superscripts $u$ and $d$, respectively.  Furthermore,
+by superscripts $u$ and $d$, respectively. Furthermore,
 describing the mass exchange of the cloud ensemble with its environment by
 entrainment $\epsilon$ and detrainment $\delta$, i.e.
 
@@ -159,20 +158,19 @@ we obtain the final result
 %[ M^{u}+ M^{d}]\overline{\Psi}) &-&
 %[\epsilon^u+\epsilon^d]\overline{\Psi}^{}\nonumber\\&+&
 %\delta^u \Psi^{u}+\delta^d \Psi^{d}\bigg].
-\label{eq10}
+\label{eqc10}
 \end{eqnarray}
 It can be shown that this equation is also valid for non-conserved
 variables, i.e. temperature or water mixing ratios.
 
-\section{Cloud Model}
+\section{Cloud model}
 
 The ensemble average updraft and downdraft properties in
-(\ref{eq10}) are determined with the aid of a one-dimensional cloud model
+(\ref{eqc10}) are determined with the aid of a one-dimensional cloud model
 that consists of a classical
 steady-state plume convective updraft, and a corresponding
 steady-state plume convective downdraft.
-The cloud model
- is designed to represent shallow
+The cloud model is designed to represent shallow
 and deep convective clouds that are characterized by their respective
 cloud radius.
 
@@ -180,10 +178,7 @@ cloud radius.
 \subsection{Key cloud levels}
 
 \begin{figure}
-\begin{tabular}{c}
-\psfig{figure=\EPSDIR/conv_fig1.eps,width=10cm}
-%\psfig{figure=conv_fig1.eps,width=10cm}
-\end{tabular}
+\centerline{\includegraphics[width=10cm]{\EPSDIR/conv_fig1.eps}}
 \caption{Environmental (thick solid line) and parcel sounding (thin solid line)
 of $\theta_v$ in a deep convective cloud. The convective available
 energy (CAPE) corresponds to the shaded area. The different key cloud
@@ -196,10 +191,10 @@ to precipitate).}
 First, it is useful to define the
 model cloud and a certain number
 of important levels in the cloud that will be needed in the
-following discussion. As illustrated in Fig.\ref{conv_fig1}
+following discussion. As illustrated in Fig.~\ref{conv_fig1}
 the model cloud extends upward from the lifting condensation level (LCL) of
 an air parcel with departure level DPL (DPL actually denotes a
-60 hPa thick mixed layer) to
+60~hPa thick mixed layer) to
 the cloud top level (CTL).
  The level of free convection (LFC)
 is the level where the updraft becomes positively buoyant with respect
@@ -224,7 +219,7 @@ structure of the scheme.
 
 
 
-\subsection{Trigger Function}
+\subsection{Trigger function}
 
 At present time, the physical processes initiating convection
 are not well understood. There is no general criterion that tells
@@ -238,7 +233,7 @@ issue is the determination of the moist source layer for convection that
 will be lifted up and will finally determine the properties of the
 convective cloud (cloud top level, precipitation, etc.).
 It turns out that over the tropical ocean this initial
-moist layer corresponds to the 500 m deep boundary layer (Raymond 1995)
+moist layer corresponds to the 500-m deep boundary layer (Raymond 1995)
 and the most difficult
 problem is to locate the convection. However, in midlatitude convection,
 especially at night time, convection might root at upper
@@ -246,7 +241,7 @@ atmospheric levels.
 
 The numerical formalism is as follows.
 Starting from the ground level, we first
-construct an at least 60hPa deep mixed layer with mean potential
+construct an at least 60-hPa deep mixed layer with mean potential
 temperature
 $\overline{\theta}^{mix}$ and vapor mixing ratio $\overline{r}_v^{mix}$.
 Then this mixed air parcel is lifted
@@ -266,8 +261,8 @@ convection if at the LCL
 \noindent
 with $\theta_v$ the virtual potential temperature, and
 with the Exner function defined as $\Pi=(P/P_{00})^{R_d/C_{pd}}$. For shallow
-convection the temperature increment $\Delta T$ is simply set to .2 K. For
-deep convection $\Delta T$ is intendend to crudely trigger/suppress
+convection the temperature increment $\Delta T$ is simply set to 0.2~K. For
+deep convection $\Delta T$ is intended to crudely trigger/suppress
 convection as a function of grid-scale motion, where it is defined by
 $\Delta T = \pm c_{w}\,\,\,\vert \overline{w}\vert^{1/3}$,
 with $c_w$=6 (K  m$^{-1/3}$ s$^{1/3}$).  The sign of $\Delta T$ is
@@ -275,9 +270,9 @@ equal to the sign of $\overline{w}$. As the large-scale vertical
 velocity varies quasi-linearly as a function of the grid size, it
 is normalized by $\overline{w}
 \sqrt{A}/\Delta x_{ref}$,  with
-$\Delta x_{ref}$ the 25 km reference grid space. Furthermore,
+$\Delta x_{ref}$ the 25-km reference grid space. Furthermore,
 we test if the air parcel is able to produce a sufficient cloud depth
-(at least 3 km for deep convection, and 500 m for shallow convection) by
+(at least 3~km for deep convection, and 500~m for shallow convection) by
 lifting the  mixed layer parcel conserving the equivalent potential temperature
 $\theta_e(\overline{\theta}^{mix},\overline{r}_v^{mix})$, and searching for the
 intersection with the environmental saturated curve
@@ -285,7 +280,7 @@ $\theta_{es}(\overline{T})$ (see e.g. Raymond 1995).
 If the air parcel is stable with
 respect to moist convection or if its probable cloud thickness
 is smaller than the specified value, the above procedure
-is repeated starting at the next higher 60 hPa mixed layer, and so on.
+is repeated starting at the next higher 60-hPa mixed layer, and so on.
 
 
 \subsection{Updraft}
@@ -299,8 +294,8 @@ of enthalpy or "liquid water static energy" $h_{il}$ and total
 water mixing ratio $r_w$
 
 \begin{eqnarray}
-h_{il}&=& C_{pm} T - L_v r_c - L_s r_i + ( 1 + r_w ) g z\label{eqh}\\
-r_w&=&r_v+r_c+r_i\label{eqr}.
+h_{il}&=& C_{pm} T - L_v r_c - L_s r_i + ( 1 + r_w ) g z\label{conv-eqh}\\
+r_w&=&r_v+r_c+r_i\label{conv-eqr}.
 \end{eqnarray}
 \noindent
 where the specific heat of moist air is defined as
@@ -319,24 +314,23 @@ The updraft computations are initiated at the LCL using
 $h_{il}^u=C_{pm} T({\rm LCL}) + ( 1 + r_v^{mix} ) g z({\rm LCL})$ and $r_w^u=
 r_v^{mix}$. The initial updraft mass flux is set to a unit value of
 $M^u({\rm LCL})=\overline{\rho}\,w_{\rm LCL}\,\pi R_0^2,$
-with a vertical velocity $w_{\rm LCL}$ of 1 m s$^{-1}$ and
-an updraft radius $R_0$ of 1500 m for deep and 50 m for shallow convection -
+with a vertical velocity $w_{\rm LCL}$ of 1~m~s$^{-1}$ and
+an updraft radius $R_0$ of 1500~m for deep and 50~m for shallow convection -
 all the different parameter switches for deep and shallow convection are
-summarized in Table 1.
+summarized in Table \ref{conv-table1}.
 
 \begin{table}
 %\small
-\caption{ Parameters and  settings for deep and shallow convection}
-\label{table1}
-
+\caption{Parameters and  settings for deep and shallow convection}
+\label{conv-table1}
 \begin{center}
 \begin{tabular}{||c|c|c||} \hline
 {\bf Parameter} &{\bf deep}&\bf{shallow}\\
 \hline \hline
 cloud radius (m)&1500&50\\
 minimum cloud thickness (m)&3000&500\\
-adjustment time (h)&$.5 < \tau<1$&3\\
-$\Delta T$ (K) in "trigger"&computed from $\overline{w}$&.2\\
+adjustment time (h)&$0.5 < \tau<1$&3\\
+$\Delta T$ (K) in "trigger"&computed from $\overline{w}$&0.2\\
 downdraft&yes&no\\
 precipitation&yes&no\\
 \hline
@@ -353,7 +347,7 @@ If no superscript
 is indicated we simply mean the current model level $k$. Furthermore, it
 is convenient to denote the entrainment/detrainment rates $\epsilon$
 and $\delta$ in mass flux units  kg s$^{-1}$ instead of units mass flux per
-length as used in (\ref{eq3})-(\ref{eq10}).
+length as used in (\ref{eqc3})-(\ref{eqc10}).
 In this notation the updraft mass flux as well as the updraft values of $h_{il}$
 and $r_w$ change through mixing, detrainment and precipitation according to
 
@@ -371,7 +365,7 @@ and $r_w$ change through mixing, detrainment and precipitation according to
 The system (\ref{eqc0})-(\ref{eqc2}) is solved together with a
 parameterization of microphysics and mixing that are described separately.
 
-{\vskip .2 cm\noindent\it Microphysics and updraft velocity}
+\subsubsection{Microphysics and updraft velocity}
 
 The condensate mixing ratios  $r_c^u, r_i^u$ are deduced
 from $h_{il}^u$ and $r_w^u$ using a saturation adjustment, and allowing
@@ -413,7 +407,7 @@ precipitation flux produced by the updraft is simply given by
 \eeq
 
 
-\subsubsection {Entrainment and Detrainment}
+\subsubsection {Entrainment and detrainment}
 
 Unfortunately, the performance of a plume cloud model critically depends on
 the specification of updraft entrainment/detrainment rates which are
@@ -449,17 +443,13 @@ The critical mixed fraction $\chi_c$
 is solved for directly, knowing that the virtual temperature difference between
 updraft-environment mixtures and that of the unmixed environment varies
 linearly as a function of the environmental mass fraction $\chi$
-(see Fig. \ref{conv_fig2} ). The zero crossing of this curve is evaluated from
+(see Fig. \ref{conv_fig2}). The zero crossing of this curve is evaluated from
 
 \begin{figure}
-\begin{tabular}{c}
-\psfig{figure=\EPSDIR/conv_fig2.eps,width=10cm}
-%\psfig{figure=conv_fig2.eps,width=10cm}
-\end{tabular}
-\caption{ Plot of typical virtual temperature differences between
+\centerline{\includegraphics[width=10cm]{\EPSDIR/conv_fig2.eps}}
+\caption{Plot of typical virtual temperature differences between
 updraft-environment mixtures and that of the environment as a
-function of the fraction of environmental mass in the mixtures.
-}
+function of the fraction of environmental mass in the mixtures.}
 \label{conv_fig2}
 \end{figure}
 
@@ -486,11 +476,11 @@ However, it turned out that in deep convective situations this mixing formulatio
 and the upper-level mass flux was overestimated.
  Therefore, this mixing procedure was only retained for shallow convection. For deep convection
 we simply use vertically constant entrainment/detrainment rates with 
- $\epsilon^u=\delta^u=.5 \Delta M_t$.
+ $\epsilon^u=\delta^u=0.5 \Delta M_t$.
 
 
 
-\subsubsection {Updraft flow summary}
+\subsubsection{Updraft flow summary}
 
 The updraft computations are an important
 part of the convection scheme as here we build up a characteristic
@@ -549,7 +539,7 @@ It originates at the level of free sink (LFS),
 defined by the level of minimum environmental saturated $\theta_e$
 between the LCL and the ETL.
 The initial values of the downdraft mass flux, $\theta_e$ and moisture at
-the LFS can be estimates as follows
+the LFS can be estimated as follows
 \beq
 M^d(LFS)= - (1-{\rm Pr_{eff}}) M^u(LCL)
 \eeq
@@ -600,7 +590,7 @@ $\theta_{e}^d(\rm{LFS}) >\overline{\theta}_{es}(\overline{T})$.
 
 \noindent
 Note that $M^d$ is negative but $\epsilon^d$ and $\delta^d$ are positive.
-All downdraft detrainment is assumed to occur over the 60 hPa
+All downdraft detrainment is assumed to occur over the 60~hPa
 deep layer DDL-DBL (Fig. \ref{conv_fig1}).
 For the closure adjustment procedure we will need the values of
 $h_{il}^d$. As $\delta^d$ is zero everywhere apart from the
@@ -625,16 +615,16 @@ convective available potential energy (CAPE) in a grid element is removed
 within an adjustment period $\tau$. For deep convection $\tau$ is set
 to the advective time period
 $\tau=\sqrt{A}/\vert\vec v\vert$, with $\vec v$ the mean
-horizontal wind vector between the LCL and the 500 hPa level, and is limited by
- .5 h $< \tau <$ 1 h. The upper limit roughly corresponds to one life cycle
+horizontal wind vector between the LCL and the 500-hPa level, and is limited by
+ 0.5~h $< \tau <$ 1~h. The upper limit roughly corresponds to one life cycle
  of a convective cloud.
-For shallow convection an adjustment time $\tau$ of 3 h is used.
+For shallow convection an adjustment time $\tau$ of 3~h is used.
 With the aid of the above presented cloud model we have already
 computed the initial guess updraft and downdraft mass fluxes
 and the corresponding
 entrainment/detrainment rates. Therefore, we are now able to compute
-the final convectively adjusted environmental values
-(see also the main mass flux equations (\ref{eq10}))
+the final convectively-adjusted environmental values
+(see also the main mass flux equations (\ref{eqc10}))
 using a time integration over $\tau$ together with an iterative procedure
 
 \begin{eqnarray}
@@ -670,7 +660,7 @@ of the thermodynamic variables keep unchanged.
 
 Now, computing the new environmental values of $\theta$ and $r_v$ from
 $\overline{h}_{il}$ and $\overline{r}_w$
-using (\ref{eqh})-(\ref{eqr}),
+using (\ref{conv-eqh})-(\ref{conv-eqr}),
 we can compute $\overline{\theta}_e$ and a new value of
 CAPE  by using undilute parcel ascent
 
@@ -750,7 +740,7 @@ The limitations of a convective plume model to represent properties of a cloud e
 are discussed in Warner (1970), Raymond and Blyth (1986), and Lin and Arakawa (1997). 
 To limit these drawbacks, we also developed an ensemble version of the code, where
 the deep part can be called several times using different entrainment/detrainment rates
-(=different cloud radius), and different temperature/moisture perturbations for Triggering.
+(=different cloud radius), and different temperature/moisture perturbations for triggering.
 The resulting convective tendency is then the sum of the shallow part and the deep
 convective part (which is an average of the convective tendencies and mass fluxes  of 
 its individual ensemble members).
@@ -767,8 +757,8 @@ be between 0.5 and 1 hour, however.
 In addition to these implicit sensitivities to horizontal resolution, certain
 physical processes have been neglected in the current parameterization.
 For example, convective transport of momentum is not yet included, but could be
-easily done using the schemes equation for  passive tracers together with a pressure
-perturbation term ( Kershaw and Gregory 1997) 
+easily done using the scheme equations for passive tracers together with a pressure
+perturbation term (Kershaw and Gregory 1997) 
 Also, we do not explicitly account for mesoscale transports
 that might give a substantial contribution to the mass flux at upper levels
 (Donner 1993; Betts 1997; Alexander and Cotton 1998),
@@ -919,7 +909,7 @@ given as
 
 \noindent
 with $z_b$ the height difference between the LCL and the model surface level
-normalized by a cloud base height of 3280 m. Both ${\rm Pr_{Sef}}$
+normalized by a cloud base height of 3280~m. Both ${\rm Pr_{Sef}}$
 and ${\rm Pr_{Zef}}$ are limited to values between 0.4 and 0.92.
 Finally, the actual precipitation efficiency is given by
 ${\rm Pr_{eff}}=0.5({\rm Pr_{Sef}}+{\rm Pr_{Zef}})$.
@@ -932,56 +922,56 @@ ${\rm Pr_{eff}}=0.5({\rm Pr_{Sef}}+{\rm Pr_{Zef}})$.
 
 \noindent
 \por
-Alexander, G. D., and Cotton,~W.~R., 1998:
+Alexander, G. D., and W.~R. Cotton, 1998:
 The use of cloud resolving simulations of mesoscale convective
 systems to build a mesoscale parameterization scheme.
-{\it J. Atmos. Sci.,} {\bf 55,} 2137-2161.
+{\it J. Atmos. Sci.}, {\bf 55}, 2137-2161.
 
 \por
 Arakawa, A., and W. H. Schubert, 1974: Interaction of a cumulus
 cloud ensemble with the large-scale environment: Part I.
-{\it J. Atmos. Sci.,} {\bf 31,} 674-701.
+{\it J. Atmos. Sci.}, {\bf 31}, 674-701.
 
 \por
 Anthes, R. A., 1977: A cumulus parameterization scheme utilizing
-a one-dimensional cloud model. {\it Mon. Wea. Rev.,} {\bf 105,} 270-286.
+a one-dimensional cloud model. {\it Mon. Wea. Rev.}, {\bf 105}, 270-286.
 
 \por
-Bechtold, P.,  E. Bazile, P. Mascart and E. Richard, 2001:
-A Mass flux convection scheme for regional and global models:
-{\it Quart. J. Roy. Meteor. Soc.,} {\bf 127,} 869-886.
+Bechtold, P., E. Bazile, P. Mascart and E. Richard, 2001:
+A Mass flux convection scheme for regional and global models.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 127}, 869-886.
 
 \por
 Bechtold, P., J. L. Redelsperger, I. Beau, M. Blackburn, S. Brinkop,
 J. Y. Grandpeix, A. Grant, D. Gregory, F. Guichard, C. Hoff
 and E. Ioannidou, 2000: A GCSS model
 intercomparison for a tropical squall line observed during TOGA-COARE.
-Part II: Intercomparison of SCMs with CRM.
-{\it Quart. J. Roy. Meteor. Soc.}, to appear.
+II: Intercomparison of single-column models and a cloud-resolving model.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 126}, 865-888.
 
 \por
 Betts, A. K., and M. J. Miller, 1986: A new convective adjustment scheme.
 Part II: Single column tests using GATE wave, BOMEX, ATEX, and arctic air-mass
-data sets. {\it Quart. J. Roy. Meteor. Soc.,} {\bf 112,} 693-709.
+data sets. {\it Quart. J. Roy. Meteor. Soc.}, {\bf 112}, 693-709.
 
 \por
 ----------, 1997:
 `The parameterization of deep convection'.
 In {\it "The physics and parameterization of moist atmospheric convection"}
-(Ed. R. K. Smith), {\it NATO ASI Series,} {\bf 505,} 255-279.
+(Ed. R. K. Smith), {\it NATO ASI Series}, {\bf 505}, 255-279.
 
 \por
 Bolton, D., 1980: The computation of equivalent potential temperature.
-{\it Mon. Wea. Rev.,} {\bf 108,} 1046-1053.
+{\it Mon. Wea. Rev.}, {\bf 108}, 1046-1053.
 
 \por
 Bougeault, P., 1985: A simple parameterization of the large-scale
-effects of cumulus convection. {\it Mon. Wea. Rev.,} {\bf 113}, 2108-2121.
+effects of cumulus convection. {\it Mon. Wea. Rev.}, {\bf 113}, 2108-2121.
 
 \por
 Bretherton, C. S., and P. K. Smolarkiewicz, 1989: Gravity waves,
 compensating subsidence and detrainment around cumulus clouds.
-{\it J. Atmos. Sci.,} {\bf 46,} 740-759.
+{\it J. Atmos. Sci.}, {\bf 46}, 740-759.
 
 %\por
 %Carpenter, R. L. Jr., K. K. Droegemeier, and A. M. Blyth, 1998:
@@ -1001,17 +991,17 @@ depression. {\it J. Atmos. Sci.,} {\bf 21,} 68-75.
 
 \por
 Davies-Jones, R. P., 1983: An accurate theoretical approximation for
-adiabatic condensation temperature. {\it Mon. Wea. Rev.,}
-{\bf 111,} 1119-1121.
+adiabatic condensation temperature. {\it Mon. Wea. Rev.},
+{\bf 111}, 1119-1121.
 
 \por
 Donner, L. J., 1993: A cumulus parameterization including mass fluxes,
 vertical momentum dynamics, and mesoscale effects.
-{\it J. Atmos. Sci.,} {\bf 50,} 889-906.
+{\it J. Atmos. Sci.}, {\bf 50}, 889-906.
 
 \por
 -----------, C. J. Seman, and R. S. Hemler, 1999: Three dimensional cloud-system
-modeling of GATE convection. {\it J. Atmos. Sci.,} {\bf 56,} 1885-1912.
+modeling of GATE convection. {\it J. Atmos. Sci.}, {\bf 56}, 1885-1912.
 
 \por
 Dufour L., and J. van Mieghem, 1975: Thermodynamique de
@@ -1019,13 +1009,13 @@ l'atmosph\`ere. Institut Royal M\'et\'eorologique de Belgique, 278 pp.
 
 \por
 Emanuel, K. A., 1991: A scheme for representing cumulus convection in
-large-scale models. {\it J. Atmos. Sci.,} {\bf 48,} 2313-2335.
+large-scale models. {\it J. Atmos. Sci.}, {\bf 48}, 2313-2335.
 
 \por
 ----------, 1997:
 The problem of convective moistening.
 In {\it "The physics and parameterization of moist atmospheric convection"}
-(Ed. R. K. Smith), {\it NATO ASI Series,} {\bf 505,} 447-462.
+(Ed. R. K. Smith), {\it NATO ASI Series}, {\bf 505}, 447-462.
 %
 %\por
 %Feltz, W. F., William L. Smith, Robert O. Knuteson, Henry E. Revercomb,
@@ -1037,16 +1027,15 @@ In {\it "The physics and parameterization of moist atmospheric convection"}
 \por
 Fritsch, J. M., and C. F. Chappell, 1980: Numerical prediction of
 convectively driven mesoscale pressure systems. Part I:
-Convective parameterization: {\it J. Atmos. Sci.,} {\bf 37,} 1722-1733.
+Convective parameterization. {\it J. Atmos. Sci.}, {\bf 37}, 1722-1733.
 
 \por
-Fritsch, J. M., Houze,~R.~A., Adler,~R., Bluestein,~H., Bosart,~L.,
-Brown,~J., Carr,~F., Davies,~C., Johnson,~R.~H, Junker,~N., Kuo,~Y.-H.,
-Rutledge,~S., Smith,~J., Toth,~Z., Wilson~J.~W., Zipser,~E. and Zrnic,~ D.,
-1998:
+Fritsch, J. M., R. A. Houze, R. Adler, H. Bluestein, L. Bosart,
+J. Brown, F. Carr, C. Davies, R. H. Johnson, N. Junker, Y.-H. Kuo,
+S. Rutledge, J. Smith, Z. Toth, J. W. Wilson, E. Zipser, and D. Zrnic, 1998:
 Quantitative precipitation forecasting: Report of the eighth prospectus
 development team, U. S. weather research program.
-{\it Bull. Am. Meteorol. Soc.} {\bf 79,} 285-299.
+{\it Bull. Am. Meteorol. Soc.}, {\bf 79}, 285-299.
 
 
 %\por
@@ -1056,39 +1045,38 @@ development team, U. S. weather research program.
 
 \por
 Gregory, D., and M. J. Miller, 1989: A numerical study of the parameterization
-of deep tropical convection. {\it Quart. J. Roy. Meteor. Soc.,}
-{\bf 115,} 1209-1241.
+of deep tropical convection. {\it Quart. J. Roy. Meteor. Soc.},
+{\bf 115}, 1209-1241.
 
 \por
-Gregory, D.  and  Rowntree,~P.~R.,
-1990:
+Gregory, D., and P. R. Rowntree, 1990:
 A mass-flux convection scheme with
 representation of cloud ensemble characteristics and stability
-dependent closure. {\it Mon. Wea. Rev.,} {\bf 118,} 1483-1506.
+dependent closure. {\it Mon. Wea. Rev.}, {\bf 118}, 1483-1506.
 
 \por
 Grell, G. A., 1993: Prognostic evaluation of assumptions used by
-cumulus parameterizations. {\it Mon. Wea. Rev.,} {\bf 121,} 764-787.
+cumulus parameterizations. {\it Mon. Wea. Rev.}, {\bf 121}, 764-787.
 
 \por
 Hu, Q., 1997: A cumulus parameterization based on a cloud model of
-intermittently rising thermals. {\it J. Atmos. Sci.,} {\bf 54,} 2292-2307.
+intermittently rising thermals. {\it J. Atmos. Sci.}, {\bf 54}, 2292-2307.
 
 \por
 Kain, J. S., and J. M. Fritsch, 1990: A one-dimensional
 entraining/detraining plume model and its application in
-convective parameterizations. {\it J. Atmos. Sci.,}
-{\bf 47,} 2784-2802.
+convective parameterizations. {\it J. Atmos. Sci.},
+{\bf 47}, 2784-2802.
 
 \por
 -----------, and -----------, 1993: Convective parameterization for mesoscale
 models: The Kain-Fritsch scheme.
-{\it Meteor. Monographs}, {\bf 46,} 165-170.
+{\it Meteor. Monographs}, {\bf 46}, 165-170.
 
 \por
 Kershaw, R., and D. Gregory, 1997: Parameterization of momentum
 transport by convection. Part I: Theory and cloud modelling results.
-{\it Quart. J. Roy. Meteor. Soc.,} {\bf 123,} 1133-1151.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 123}, 1133-1151.
 
 %\por
 %Krueger, S. K.,  D. Gregory, M. W. Moncrieff, J.-L. Redelsperger
@@ -1100,18 +1088,18 @@ transport by convection. Part I: Theory and cloud modelling results.
 \por
 Kuo, H. L., 1965: On formation and intensification of tropical cyclones
 through latent heat release by cumulus convection.
-{\it J. Atmos. Sci.,} {\bf 22,} 40-63.
+{\it J. Atmos. Sci.}, {\bf 22}, 40-63.
 
 \por
 ----------, and W. H. Raymond, 1980: A quasi-one-dimensional
 cumulus cloud model and parameterization of cumulus heating
-and mixing effects. {\it Mon. Wea. Rev.,} {\bf 108,} 991-1009.
+and mixing effects. {\it Mon. Wea. Rev.}, {\bf 108}, 991-1009.
 
 \por
 Kuo, Y.-H., J. F. Bresch, M.-D. Cheng, J. Kain, D. B. Parsons,
 W.-K. Tao and D.-L. Zhang, 1997: Summary of a mini workshop on cumulus
 parameterization for mesoscale models.
-{\it Bull. Am. Meteorol. Soc.,} {\bf 78,} 475-490.
+{\it Bull. Am. Meteorol. Soc.}, {\bf 78}, 475-490.
 
 %\por
 %Lafore, J. P., J. Stein, N. Asencio, P. Bougeault,
@@ -1130,55 +1118,53 @@ parameterization for mesoscale models.
 \por
 Lin, C., and A. Arakawa, 1997: The macroscopic entrainment process of simulated
 cumulus ensemble. Part II: Testing the entraining-plume model
-{\it J. Atmos. Sci.,} {\bf 54,} 1027-1043.
+{\it J. Atmos. Sci.}, {\bf 54}, 1027-1043.
 
 \por
-Liang, Q., G.S. Young, and W.M. Frank, 1998:  A convective wake parameterization
-scheme for use in general circulation models.  {\it Mon. Wea. Rev.,} {\bf 126,}
+Liang, Q., G. S. Young, and W. M. Frank, 1998:  A convective wake parameterization
+scheme for use in general circulation models. {\it Mon. Wea. Rev.}, {\bf 126},
 456-469.
 
 \por
 Mallet, I., J.-P. Cammas, P. Mascart and P. Bechtold, 1999:
 Effects of cloud diabatic heating on a FASTEX cyclone (IOP17) early
-development. {\it Quart. J. Roy. Meteor. Soc.}, {\bf 125,} 3415-3438.
+development. {\it Quart. J. Roy. Meteor. Soc.}, {\bf 125}, 3415-3438.
 
 \por Manabe, S., and R. Strickler, 1964: Thermal equilibrium
 of the atmopshere with a convective adjustment.
-{\it J. Atmos. Sci.,} {\bf 21,} 361-385.
+{\it J. Atmos. Sci.}, {\bf 21}, 361-385.
 
 \por
-Mapes, B. E.,
-1997:
+Mapes, B. E., 1997:
  Equilibrium versus activation control of large-scale
 variations of tropical deep convection.
 In {\it "The physics and parameterization of moist atmospheric convection"}
-(Ed. R. K. Smith), {\it NATO ASI Series,} {\bf 505,} 321-358.
+(Ed. R. K. Smith), {\it NATO ASI Series}, {\bf 505}, 321-358.
 
 \por
-Moncrieff,~M.~W., Gregory,~D., Krueger,~S.~K., Redelsperger,~J.~L. and
- Tao,~W.~K.,
- 1997:
+Moncrieff,~M.~W., D. Gregory, S. K. Krueger, J. L. Redelsperger, and
+ W. K. Tao, 1997:
  GEWEX Cloud System Study (GCSS) working group 4:
- Precipitating convective cloud systems. {\it Bull. Am. Meteorol. Soc.,}
- {\bf 78,} 831-845.
+ Precipitating convective cloud systems. {\it Bull. Am. Meteorol. Soc.},
+ {\bf 78}, 831-845.
 
 \por
 Ogura, Y., and H.-R. Cho, 1973: Diagnostic determination of cumulus
-populations from large-scale variables. {\it J. Atmos. Sci.,}
-{\bf 30,} 1276-1286.
+populations from large-scale variables. {\it J. Atmos. Sci.},
+{\bf 30}, 1276-1286.
 
 \por
 Ooyama, K., 1971: A theory on parameterization of cumulus convection.
-{\it J. Meteor. Soc. Japan}, {\bf 49,} 744-756.
+{\it J. Meteor. Soc. Japan}, {\bf 49}, 744-756.
 
 \por
 Raymond, D. J., 1995: Regulation of moist convection over the
-West Pacific warm pool. {\it J. Atmos. Sci.,}, {\bf 52,} 3945-3959.
+West Pacific warm pool. {\it J. Atmos. Sci.}, {\bf 52}, 3945-3959.
 
 \por
-Raymond, D. J., and A. M. Blyth, 1986: A stochastic mixing model for
+----------, and A. M. Blyth, 1986: A stochastic mixing model for
 nonprecipitating clouds.
-{\it J. Atmos. Sci.,} {\bf 43,} 2708-2718.
+{\it J. Atmos. Sci.}, {\bf 43}, 2708-2718.
 
 %\por
 %Redelsperger, J. L., P. R. A; Brown, F. Guichard, C. Hoff, M. Kawasima,
@@ -1191,7 +1177,7 @@ nonprecipitating clouds.
 \por
 Sun, W.-H., and P. A. Haines, 1996: Semi-prognostic tests of a new cumulus
 parameterization scheme for mesoscale modeling.
-{\it Tellus,} {\bf 48A,} 272-289.
+{\it Tellus}, {\bf 48A}, 272-289.
 
 %\por
 %S\'en\'esi, S., Bougeault, P., Ch\`eze, J.-L., Cosentino, P. and
@@ -1213,17 +1199,15 @@ parameterization scheme for mesoscale modeling.
 \por
 Simpson, J., 1983: Cumulus clouds: interactions between laboratory
 experiments and observations as foundations for models.
-{\it Mesoscale Meteorology,} D. K. Lilly and T. Gal-Chen, Eds., Reidel,
+{\it Mesoscale Meteorology}, D. K. Lilly and T. Gal-Chen, Eds., Reidel,
 399-412.
 
 \por
-Slingo, J.~M., Blackburn,~M., Betts,~A.~K., Brugge,~R.,
-Hodges,~K.~D., Hoskins,~B.~J.,
-Miller,~M.~J., Steenman-Clark,~L. and Thuburn,~J.,
-1994:
+Slingo, J.~M., M. Blackburn, A. K. Betts, R. Brugge, K. D. Hodges,
+B. J. Hoskins, M. J. Miller, L. Steenman-Clark, and J. Thuburn, 1994:
 Mean climate and
 transience in the tropics of the UGAMP GCM: Sensitivity to convective
-parameterization. {\it Q. J. R. Meteorol. Soc.,} {\bf 120,} 881-922.
+parameterization. {\it Q. J. R. Meteorol. Soc.}, {\bf 120}, 881-922.
 
 %\por
 %Stein, J., E. Richard, J. P. Lafore, J. P. Pinty, N. Ascensio and
@@ -1232,21 +1216,21 @@ parameterization. {\it Q. J. R. Meteorol. Soc.,} {\bf 120,} 881-922.
 
 \por
 Tao, W.-K., J. Simpson, and M. McCumber, 1989: An ice-water
-saturation adjustment. {\it Mon. Wea. Rev.,} {\bf 117,} 231-235.
+saturation adjustment. {\it Mon. Wea. Rev.}, {\bf 117}, 231-235.
 
 \por
 Tiedtke, M., 1989: A comprehensive mass flux scheme for cumulus
 parameterization in large-scale models.
-{\it Mon. Wea. Rev.,} {\bf 117,} 1779-1800.
+{\it Mon. Wea. Rev.}, {\bf 117}, 1779-1800.
 
 \por
 Wang, J., and D. A. Randall, 1996: A cumulus parameterization based on
 the generalized convective available potential energy.
-{\it J. Atmos. Sci.,} {\bf 53,} 716-727.
+{\it J. Atmos. Sci.}, {\bf 53}, 716-727.
 
 \por
 Warner, J., 1970: On steady-state one-dimensional models of
-cumulus convection. {\it J. Atmos. Sci.,}, {\bf 27,} 1035-1040.
+cumulus convection. {\it J. Atmos. Sci.}, {\bf 27}, 1035-1040.
 
 %\por
 %Warner, T. T., and H.-M. Hsu, 1999: Nested model simulation of moist convection:
@@ -1254,20 +1238,23 @@ cumulus convection. {\it J. Atmos. Sci.,}, {\bf 27,} 1035-1040.
 %convection through lateral boundary effects.  {\it Mon. Wea. Rev.} to appear
 
 \por
-Xie, S., K-M. Xu, R. T. Cederwall, P. Bechtold, and many others, 2002:
-Intercomparison and Evaluation of cumulus parameterizations under summertime midlatitude
-continental conditions. {\it Q. J. R. Meteorol. Soc.,} in press.
+Xie, S.-C., K.-M. Xu, R. T. Cederwall, P. Bechtold, A. D. Del Genio, S. A. Klein,
+D. G. Cripe, S. J. Ghan, D. Gregory, S. F. Iacobellis, S. K. Krueger, U. Lohmann,
+J. C . Petch, D. A. Randall, L. D. Rotstayn, R. C. J. Somerville, Y. C. Sud, 
+K. von Salzen, G. K. Walker, A. Wolf, J. J. Yio, G. J. Zhang and M. Zhang, 2002:
+Intercomparison and evaluation of cumulus parameterizations under summertime midlatitude
+continental conditions. {\it Q. J. R. Meteorol. Soc.}, {\bf 128}, 1095-1135.
 
 \por
 Yanai, M., S. K. Esbensen, and J.-H. Chu, 1973: Determination of
 bulk properties of tropical cloud clusters from large-scale heat and moisture
-budgets. {\it J. Atmos. Sci.,} {\bf 30,} 611-627.
+budgets. {\it J. Atmos. Sci.}, {\bf 30}, 611-627.
 
 \por
 Zhang, D.-L., and J. M. Fritsch, 1986: Numerical simulation of the
 meso-$\beta$ scale structure and evolution of the 1977 Johnstown flood.
-Part I: Model description and verification. {\it J. Atmos. Sci.,}
-{\bf 43,} 1913-1943.
+Part I: Model description and verification. {\it J. Atmos. Sci.},
+{\bf 43}, 1913-1943.
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

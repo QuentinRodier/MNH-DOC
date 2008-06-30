@@ -4,21 +4,21 @@
 % Original      : September 1, 1995, Ph. Bougeault and V. Ducrocq (LH system only)
 % Update        : March 1997, J. Ph. Lafore (side paper for Durran an MAE systems)
 % Last Update   : June 2001, P. Mascart (merging with J. Ph. Lafore corrections)
+% March 2008, J.-P. Chaboureau, editorial corrections
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Basic Equations}
 \minitoc
 
-\section{A Family of Anelastic Approximations }
+\section{A family of anelastic approximations}
 
 %A beneficial effect of the anelastic approximation is that it has no acoustic modes, and
 %the time discretization may be entirely explicit without introducing an overly restrictive
 %constraint on the time-step.
-As mentioned above in section
+As mentioned above in section~\ref{CHP1anel},
 % Provisoire avant d'integrer avec gros BOOK1
 %1.2
 % A utiliser ensuite
-~\ref{CHP1anel},
 the size of time step that produces a stable numerical solution for explicit
 finite-difference approximation to the Navier-Stokes equations is restricted by the rapid
 propagation of sound waves. This time step limitation may be overcome by replacing the full
@@ -30,28 +30,28 @@ anelastic approximation was proposed by Batchelor (1953)
 and later refined by Ogura and Phillips (1962) as an improvement over the Boussinesq
 approximation more suitable for studying convection within deep atmospheric layers. This
 original anelastic system conserved modified forms of both total energy and Ertel potential
-vorticity (Nance and Durran, 1994; Bannon, 1995). Unfortunately, this original anelastic
+vorticity (Nance and Durran 1994; Bannon 1995). Unfortunately, this original anelastic
 approximation only holds for an isentropic reference state, and is not really applicable to
 realistic meteorological
 investigation. Subsequently, this restriction was removed by Wihelmson and Ogura (1972) which
 replaced the constant reference--state potential temperature with a vertically varying
 reference--state potential temperature. This modified anelastic equation  set improves the
 representation of deep convection but sacrifices potential vorticity and energy conservations
-(Bannon, 1995). A major improvement was provided by the Lipps and Hemler (1982) equation set
-which allows an accurate representation of deep troposheric phenomena, and
+(Bannon 1995). A major improvement was provided by the Lipps and Hemler (1982) equation set
+which allows an accurate representation of deep tropospheric phenomena, and
 simultaneously conserves modified forms of Ertel potential vorticity and total energy for finite
-amplitude disturbances (Bannon, 1995). Finally, Durran (1989) has introduced the
-pseudo-imcompressible approximation  to obtain a better description of
+amplitude disturbances (Bannon 1995). Finally, Durran (1989) has introduced the
+pseudo-incompressible approximation  to obtain a better description of
 upper--level isothermal layers, while retaining a good conservation of appropriate forms of
-Ertel potential vorticty and total energy for finite amplitude displacements (Bannon, 1995).
+Ertel potential vorticity and total energy for finite amplitude displacements (Bannon 1995).
 
-The current formulation of Meso--NH model allows for the use of three of these analastic
+The current formulation of Meso--NH model allows for the use of three of these anelastic
 systems: the Lipps and Hemler (1982) system (LH hereafter), the traditional Wihelmson and
 Ogura (1972), a.k.a. the "Modified Anelastic Equations" (MAE hereafter ), and a simplified
 implementation of the pseudo-incompressible system of Durran (1989, DUR hereafter). The
 present chapter tries to describe these three implementations in an orderly way.
 
-\section{Preliminary Definitions}
+\section{Preliminary definitions}
 
 We will use the following notations:  \\
 
@@ -127,17 +127,17 @@ We use the "dry" potential temperature
 
 The virtual temperature is defined as
 \begin{equation}
-T_v= T . (1+r_v R_v/R_d)/(1+r_w),
+T_v= T \, (1+r_v R_v/R_d)/(1+r_w),
 \end{equation}
 and the virtual potential temperature as
 \begin{equation}
-\theta_v= \theta . (1+r_v R_v/R_d)/(1+r_w).
+\theta_v= \theta \, (1+r_v R_v/R_d)/(1+r_w).
 \end{equation}
 
-$\vec{U}$ is the air velocity, and whenever necessary, its cartesian
+$\vec{U}$ is the air velocity, and whenever necessary, its Cartesian
 components are called $u$, $v$, and $w$.
 
-\section{Reference State}
+\section{Reference state}
 
 All anelastic approximation systems rely on the hypothesis
 that the atmosphere will not depart very far from a "reference
@@ -193,7 +193,7 @@ Note that both the dry air and the water vapor must be considered to build the
 profile of the Exner function of the reference state, since each gas
 is subject to the partial pressure of the other one.
 
-\section{Equation of State}
+\section{Equation of state}
 
 A primary difference between the three anelastic systems used in Meso--NH is the form
 adopted for the equation of state.
@@ -202,7 +202,7 @@ the usual framework of the Boussinesq approximation by linearizing the equation 
 the contrary, the Durran system (DUR) keeps the full equation of state, without any
 linearization.
 
-\subsubsection{Modified--Anelastic and Lipps--Hemler Systems}
+\subsubsection{Modified--anelastic and Lipps--Hemler systems}
 
 For the MAE and LH cases, the equation of state $p=\rho R_d T_v$ is replaced by
 the linearized form:
@@ -216,7 +216,7 @@ the linearized form:
 where $\rho '= \rho - \rho_{ref}, \Pi '=\Pi - \Pi_{ref}$, and
 $\theta_v '= \theta_v - \theta_{v\,ref}$.
 
-\subsubsection{Durran System}
+\subsubsection{Durran system}
 
 In the DUR case, contrary to most anelastic systems, the equation of state
 \begin{equation}
@@ -224,7 +224,7 @@ p=\rho R_d T_v
 \end{equation}
 is not linearized, and thus is used without any approximation.
 
-\section{Anelastic Constraint}
+\section{Anelastic constraint}
 
 For all three anelastic system used in Meso--NH, the continuity equation is may be
 written as the approximated form:
@@ -259,8 +259,8 @@ where $\rho_{d\,eff}$ is a convenient compact notation for:
 %
 
 
-Stricly speaking, the Durran (1989) form of the anelastic constraint (equation \ref{DUconti}) 
-only holds in the adiabatic limit, and the r.h.s of (\ref{DUconti}) should be written 
+Strictly speaking, the Durran (1989) form of the anelastic constraint (equation \ref{DUconti}) 
+only holds in the adiabatic limit, and the rhs of (\ref{DUconti}) should be written 
 $\dfrac{\cal H}{C_{pd}\Pi_{ref}}$ in the general case where $\cal H$ is the heating rate per 
 unit volume. However, Durran (1989, p. 1454) argues that this generalized form reduces to 
 (\ref{DUconti}) in the usual case where the anelastic assumption itself holds.\\
@@ -277,7 +277,7 @@ the wind field, called the {\em anelastic constraint}. This constraint is enforc
 solving an elliptic equation for some pressure deviation function, that
 results from the combination of the continuity and momentum equations (see below).
 
-\section{Conservation of Momentum}
+\section{Conservation of momentum}
 
 The system is written in a referential frame linked to the earth, with
 a rotation velocity $\vec{\Omega}$, and includes a yet un--specified momentum
@@ -326,12 +326,12 @@ takes different forms in the three systems:
 }
 %
 
-A distinctive property of the Lipp and Hemler (1982) system is that the reference state virtual
+A distinctive property of the Lipps and Hemler (1982) system is that the reference state virtual
 potential temperature is pulled inside the pressure gradient term (\ref{LhgradP}), whereas
 this factor appears outside of the gradient for both the MAE and Durran (1989) systems
-(\ref{MAEgradP} and \ref{DUgradP}). For the MAE system also note that the virtual potential
+((\ref{MAEgradP}) and (\ref{DUgradP})). For the MAE system also note that the virtual potential
 temperature of the reference state is used, whereas the Durran (1989) system directly
-retains the un--approximated virtual potential temperature in (\ref{DUgradP}). \\
+retains the un--approximated virtual potential temperature in (\ref{DUgradP}).\\
 
 It is also worth noticing that
 the form adopted for the Durran (1989) system is identical to the momentum equation in the
@@ -394,7 +394,7 @@ whereby the momentum conservation equation may be rewritten:
 }
 %
 
-\section{Hydrostatic Equation}
+\section{Hydrostatic equation}
 
 When an hydrostatic approximation of the vertical velocity
 equation is required, for instance  within initialization routines or to compute
@@ -412,7 +412,7 @@ is written without any approximation, the hydrostatic relation is exact and read
 
 With both the MAE and Lipp--Hemler systems, the usual form of the hydrostatic
 relation $dp=-\rho g dz$ should not be used to establish diagnostic quantities
-related to this model. For the Lipps--Hemler (1982) sytem, by consistency with
+related to this model. For the Lipps--Hemler (1982) system, by consistency with
 (\ref{EqMomentum}--\ref{LhgradP}), one should use instead:
 
 \begin{equation}
@@ -429,7 +429,7 @@ temperature:
 \dfrac{\theta_v-\theta_{v\,ref}} {\theta_{v\,ref}}.
 \end{equation}
 
-\section{Thermodynamic Equation}
+\section{Thermodynamic equation}
 For the time being, the prognostic energy variable is the dry potential
 temperature $\theta$. In order to account for the effects of moisture, its
 equation takes the following original form
@@ -444,7 +444,7 @@ equation takes the following original form
  L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right].
 \end{eqnarray}
 
-The terms on the right hand side represent respectively the moist correction
+The terms on the right-hand side represent respectively the moist correction
 in absence of any phase change (derived from the conservation of total
 energy, with some approximations), the effects of phase changes, and the other
 diabatic effects (radiation and diffusion). The use of the reference state
@@ -453,7 +453,7 @@ effective decoupling of the pressure problem from the thermodynamical
 problem, leading to a great simplification of the resolution, while
 retaining an excellent accuracy.
 
-\section{Conservation of Moisture}
+\section{Conservation of moisture}
 
 For any of the water substances $r_{\star}$, the conservation equation
 is written:
@@ -468,7 +468,7 @@ and diffusion. Note the flux form, and the use of $\rho_{d\,eff}$
 (not $\rho_{ref}$),
 insuring the existence of integral conservation properties.
 
-\section{Conservation of Passive Scalars}
+\section{Conservation of passive scalars}
 
 Similarly, the model can carry an arbitrary number of passive scalars,
 following the equation:
@@ -481,7 +481,7 @@ following the equation:
 where ${\cal S}_{\star}$ stands for the effects of  diabatic and chemical
 processes.
 
-\section{Conservation of Total Mass}
+\section{Conservation of total mass}
 
 The total mass inside the model domain is the sum of the mass of dry air
 and the mass of water (other substances are neglected for the time
@@ -523,10 +523,10 @@ the total mass of water in the model may be different from
 that in the forcing fields, since the representation
 of physical processes is different.
 
-\section{Pressure Equation}
+\section{Pressure equation}
 
 For all three anelastic system implemented in Meso-NH, combining the anelastic constraint
-\ref{anelcons}) and the momentum equations (\ref{LhMom}--\ref{DuMom}), some appropriate
+(\ref{anelcons}) and the momentum equations (\ref{LhMom}--\ref{DuMom}), some appropriate
 "pressure function" can be retrieved by solving an elliptic problem:
 
 %
@@ -563,9 +563,9 @@ For all three anelastic system implemented in Meso-NH, combining the anelastic c
 }
 %
 
-the details of the procedure, however, are system--depended.\\
+the details of the procedure, however, are system--dependent.\\
 
-\subsubsection{Lipps--Hemler System}
+\subsubsection{Lipps--Hemler system}
 
 With the Lipps--Hemler (1982) system, it is convenient to define the pressure
 function in (\ref{LhPres}), as:
@@ -578,7 +578,7 @@ and to solve directly (\ref{LhPres}) for $\Phi$, which can be interpreted as
 a geopotential perturbation.\\
 
 As the boundary condition for the elliptic equation (\ref{LhPres}) are
-Neuman ones (see below and Chapter 7) the solution $\Phi$, hence the pressure, is determined
+Neuman ones (see below and Chapter 4) the solution $\Phi$, hence the pressure, is determined
 only to an arbitrary constant. This is sufficient for the dynamical problem;
 however, for thermodynamic computations, it is often necessary to use the
 absolute value of the pressure.
@@ -625,7 +625,7 @@ P= P_{00} \left(\Pi_{ref} + \dfrac{\Phi_{fg} + \Phi_0}{C_{pd}
 \theta_{v\,ref} }\right)^{C_{pd}/R_d}
 \end{equation}
 
-\subsubsection{Modified Anelastic System}
+\subsubsection{Modified anelastic system}
 
 With the MAE system, solving the elliptic equation (\ref{MAEPres}) directly provides
 the Exner function deviation $\Pi '$ from the reference state, instead of the above
@@ -676,7 +676,7 @@ absolute pressure
 P= P_{00} \left(\Pi_{ref} + \Pi '_{fg} + \Pi_0 \right)^{C_{pd}/R_d}
 \end{equation}
 
-\subsubsection{Durran System}
+\subsubsection{Durran system}
 
 Finally, with the Durran (1989) system, solving the elliptic equation (\ref{DuPres})
 directly provides the Exner function deviation $\Pi '$ from the reference state.
@@ -725,9 +725,9 @@ The resulting constant is used to retrieve the absolute pressure:
 P= P_{00} \left( \Pi_{ref} + {\Pi '}_{fg} + \Pi_0 \right)^{C_{pd}/R_d}
 \end{equation}
 
-\section{Boundary Conditions}
+\section{Boundary conditions}
 
-{\bf Top Boundary}
+{\bf Top boundary}
 \\
 \\
 The model is assumed to be limited by a rigid horizontal lid, exerting a
@@ -779,7 +779,7 @@ layer may be activated, where the model prognostic variables are relaxed
 towards the large-scale values.
 \\
 \\
-{\bf Bottom Boundary}
+{\bf Bottom boundary}
 \\
 \\
 In the adiabatic formulation of the model, the lower boundary condition is
@@ -829,7 +829,7 @@ In the physical package of the model, the turbulent fluxes of heat, moisture,
 and momentum are computed in the usual way.
 \\
 \\
-{\bf Lateral Boundary}
+{\bf Lateral boundary}
 \\
 \\
 This is a more complicated problem. We allow for several types of conditions:
@@ -843,9 +843,9 @@ from larger scale
 \item In some cases, a mixture of the previous conditions can be used
 \end{itemize}
 
-This will be discussed in detail in Chapter 5.
+This will be discussed in detail in Chapter \ref{LateralBoundCond}.
 
-\section{Energy and Potential Vorticity Conservation}
+\section{Energy and potential vorticity conservation}
 
 A thorough discussion of the conservation properties for all three anelastic systems
 implemented in Meso-NH is given in Bannon (1995). Only a summary of the main conclusions
@@ -857,15 +857,15 @@ property is existing, it will be given in a flux form, assuring that the volume 
 relevant quantity is conserved for adiabatic inviscid flows in a closed domain for which the
 normal component of the velocity field vanishes on the boundaries.
 
-\subsubsection{Modified Anelastic System}
+\subsubsection{Modified anelastic system}
 
 When the potential temperature of the reference state varies with height, neither a closed form
 of the energy, nor a consistent statement of potential vorticity conservation are possible.
 The case of the constant reference state potential temperature corresponds to the original
-anelastic  equations  (Ogura and Phillips, 1962), which conserve both an energy form and
-an Ertel potential vorticity form (see Bannon 1995, and Durran, 1989, p 1459).
+anelastic  equations  (Ogura and Phillips 1962), which conserve both an energy form and
+an Ertel potential vorticity form (see Bannon 1995, and Durran 1989, p 1459).
 
-\subsubsection{Lipps--Hemler System}
+\subsubsection{Lipps--Hemler system}
 
 This system conserves both a form of energy, and an Ertel--like potential vorticity.
 Bannon (1995, p 2305) writes the total energy equation in flux form  as:
@@ -904,7 +904,7 @@ vorticity, $\dot{\Theta}$ the diabatic warming rate:
 \dot{\Theta} = \dfrac{\theta\; \cal H}{\rho_{d\,ref} C_{pd} T}
 \end{equation}
 
-and the appropriate form of the potential vorticity is (Bannon, 1995, p 2306):
+and the appropriate form of the potential vorticity is (Bannon 1995, p 2306):
 
 \begin{equation}
 {PV}_{LH} = \dfrac{\vec{\omega_a} \cdot \vec{\nabla} \theta}{\rho_{d\,ref}}.
@@ -912,7 +912,7 @@ and the appropriate form of the potential vorticity is (Bannon, 1995, p 2306):
 
 Note that the reference state density has to be used, not the true density.
 
-\subsubsection{Durran System}
+\subsubsection{Durran system}
 
 The pseudo--incompressible system of Durran (1989) also exhibits conservation properties
 for both a total energy and an Ertel--like potential vorticity. \\
@@ -949,7 +949,7 @@ The pseudo--incompressible version of Ertel's conservation theorem is:
 \end{equation}
 
 where ${PV}_{D}$ is the appropriate form of the potential vorticity
-(Bannon, 1995, p 2308):
+(Bannon 1995, p 2308):
 
 \begin{equation}
 {PV}_{D} = \dfrac{\vec{\omega_a} \cdot \vec{\nabla} \theta}{\rho^{\star}}.
@@ -960,35 +960,42 @@ state one.
 
 
 \section{References}
-
-\por
-Bannon P. R., 1995: Potential vorticity conservation, hydrostatic adjustment, and the
-anelastic approximation, J. Atmos. Sci., {\bf 52}, 2302--2312
-\por
-Batchelor G. K., 1953: The condition for dynamical similarity of motions of frictionless
-perfect-gas atmosphere, Quart. J. Roy. Meteor. Soc., {\bf 79}, 224--235.
-\por
-Durran D. R., 1989: Improving the anelastic approximation, J. Atmos. Sci., {\bf 46}, 1453--1461.
-\por
-Lafore J.P., J. Stein, N. Asencio, P. Bougeault, V. Ducrocq, J. Duron, C. Fischer, P. Héreil,
-P. Mascart, V. Masson, J. P. Pinty, J. L. Redelsperger, E. Richard, J. Vil\'a-Guerau de
-Arellano, 1998: The Meso-NH atmospheric simulation system. Part I: adiabatic formulation and
-control simulations, Ann. Geophysicae, {\bf 16}, 90--109.
-\por
-Lipps F., and R. S. Hemler, 1982: A scale analysis of deep moist convection and some related
-numerical calculations, J. Atmos. Sci., {\bf 39}, 2192--2210.
-\por
-Lipps F., 1990: On the anelastic approximation for deep convection, J. Atmos. Sci, {\bf 47},
-1794--1798.
-\por
-Nance L. B., D. R. Durran, 1994: A comparison of the accuracy of three anelastic systems and
-the pseudo--incompressible system, J. Atmos. Sci., {\bf 51}, 3549--3565.
-\por
-Ogura Y., and N. A. Phillips, 1962: Scale analysis of deep and shallow convection in the
-atmosphere. J. Atmos. Sci., {\bf 19}, 173--179.
-\por
-Wilhelmson, R., and Y. Ogura,1972: The pressure perturbation and the numerical modelling of a
-cloud, J. Atmos. Sci., {\bf 29}, 1295--1307.
+\decrefname
+Bannon, P. R., 1995:
+Potential vorticity conservation, hydrostatic adjustment,
+and the anelastic approximation.
+{\it J. Atmos. Sci.}, {\bf 52}, 2302--2312
+\decrefname
+Batchelor, G. K., 1953:
+The condition for dynamical similarity of motions of frictionless
+perfect-gas atmosphere.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 79}, 224--235.
+\decrefname
+Durran, D. R., 1989:
+Improving the anelastic approximation.
+ {\it J. Atmos. Sci.}, {\bf 46}, 1453--1461.
+\decrefname
+Lipps, F., and R. S. Hemler, 1982:
+A scale analysis of deep moist convection
+and some related numerical calculations.
+{\it J. Atmos. Sci.}, {\bf 39}, 2192--2210.
+\decrefname
+Lipps, F., 1990:
+On the anelastic approximation for deep convection.
+{\it J. Atmos. Sci}., {\bf 47}, 1794--1798.
+\decrefname
+Nance, L. B., and D. R. Durran, 1994:
+A comparison of the accuracy of three anelastic systems and
+the pseudo--incompressible system.
+{\it J. Atmos. Sci.}, {\bf 51}, 3549--3565.
+\decrefname
+Ogura, Y., and N. A. Phillips, 1962:
+Scale analysis of deep and shallow convection in the atmosphere.
+{\it J. Atmos. Sci.}, {\bf 19}, 173--179.
+\decrefname
+Wilhelmson, R., and Y. Ogura, 1972:
+The pressure perturbation and the numerical modelling of a cloud,
+{\it J. Atmos. Sci.}, {\bf 29}, 1295--1307.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  END OF CONTRIBUTION: "Basic Equations"

@@ -5,7 +5,7 @@
 
 \section{Introduction}
 
-The MESO-NH model intends to emulate the capacities of various
+The Meso-NH model intends to emulate the capacities of various
 models, such as mesoscale meteorological models, cloud resolving models (CRM),
 and even Large Eddy Simulation (LES) models. One of the main differences
 between these models is the treatment of turbulence.
@@ -21,7 +21,7 @@ The current turbulence scheme of Meso-NH is therefore a first step towards a
 unified approach. It takes its roots in the two schemes which were used in
 the Meso-NH group, namely the quasi 1D turbulence scheme of
 Bougeault and Lacarr\`ere (1989) (BL89 in the following), which was used in
-Peridot and Salsa, and the 3D scheme of Redelsperger et Sommeria (1981),
+Peridot and Salsa models, and the 3D scheme of Redelsperger et Sommeria (1981),
 (RS81 in the following), which was used in the CNRM cloud model.
 
 
@@ -34,7 +34,12 @@ the isotropic part reverts to a prognostic equation for the turbulence
 kinetic energy (TKE). In this derivation, the Coriolis effects, and the Earth
 curvature are neglected, as well as the third order moments in the
 anisotropic equations. A detailed derivation of the scheme and a discussion
-of present limitations is given by Cuxart (1995).
+of present limitations is given by Cuxart (1997).
+
+Note that a parameterization  of third order moments of heat fluxes
+for the dry convective boundary layer was recently implemented into Meso-NH.
+The reader is referred to Tomas and Masson (2006).
+
 
 The scheme offers a choice of three closure methods (currently only two
 are implemented). These may be selected by the parameter HTURBLEN (see sections
@@ -46,9 +51,9 @@ In "3DIM" mode, the full computations are performed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Turbulent fluxes in a cartesian frame}
+\section{Turbulent fluxes in a Cartesian frame}
 
-We will first present the formulation of the scheme in a cartesian frame
+We will first present the formulation of the scheme in a Cartesian frame
 of reference $(x,y,z)$.
 The above mentioned treatment of the anisotropic part of the second-order
 moment equations leads to the following diagnostic equations:
@@ -93,7 +98,8 @@ and $E_{moist}=0.61\overline{\theta}$:
 \overline{u_i'\theta_v'}= E_{\theta} \overline{u_i'\theta'} + E_{moist}
 \overline{u_i'r_v'}
 \end{equation}
-These factors have different expressions in presence of clouds (see Chapter 13).
+These factors have different expressions in presence of clouds
+(see Chapter on the subgrid condensation schemes).
 
 
 The numerical coefficients appearing in the above equations arise from the
@@ -196,24 +202,24 @@ The source terms appearing in (\ref{eqtke}) are respectively the advection of
 TKE, the shear production, the buoyancy production, the diffusion, and the
 dissipation.
 
-The additionnal numerical constants take the values (RS81)
+The additional numerical constants take the values (RS81)
 \begin{eqnarray}
 C_{2m}&=& 0.2, \\
 C_{\epsilon}&=& 0.7.
 \end{eqnarray}
 
 
-\section{Closure by Mixing Length}
+\section{Closure by mixing length}
 
 There are currently two choices of mixing length formulations.
 
 \subsection{The grid-size}
 
 The grid size of the model is commonly used as the characteristic length scale
-of the subgrid eddies.
+of the sub-grid eddies.
 This is justified when the grid size falls into the inertial subrange of the
 turbulent flow.
-In meso-NH, the formulation must take into account the possible anisotropy of
+In Meso-NH, the formulation must take into account the possible anisotropy of
 the grid. For the standard 3D version of the model,
 \begin{equation}
 L= (d_{xx}.d_{yy}.d_{zz})^{1/3}.
@@ -250,10 +256,11 @@ before being stopped by buoyancy effects. These distances are defined by
 \int_{z-l_{down}}^z {g \over \theta_{v\,ref}} (\theta(z')-\theta(z))dz' &= &
 -\: e(z), \\
 l_{down}&\le & z, \nonumber  \\
-L&=& (l_{up}.l_{down})^{1 \over 2}.
+L&=& \left[ \frac{(l_{up})^{-2/3} + (l_{down})^{-2/3}}{2} \right]^{-3/2}
 \end{eqnarray}
 %PM 27-06-2001 corrections signes pour e(z) des deux integrales ci-dessus
-Where $e(z)$ is the turbulent kinetic energy at level $z$.
+%JPC 27-06-2007 correction for the calculation of L
+where $e(z)$ is the turbulent kinetic energy at level $z$.
 This method allows the length scale at any level to be influenced
 not only by the stability at this level, but by the effect of remote stable
 zones, or the presence of the ground.
@@ -294,7 +301,7 @@ The integration gives
 L&=& \sqrt{\frac{2 e(z)}{\alpha \beta}}
 \ea
 
-\subparagraph{First order developpment}
+\subparagraph{First order development}
 In a first order approach, the length (the proportion of
 the layer that the particle can travel) is estimated as
 \ba
@@ -309,7 +316,7 @@ L=\frac {e}{\beta \Delta \theta}
 \noindent
 which do not fit the analytical expression.
 
-\subparagraph{Second order developpment}
+\subparagraph{Second order development}
 For a second order approach, the following relation is taken
 \be
 \theta(z')= \theta(z_n) + \frac{\partial \theta}{\partial z} (z'-z_n)
@@ -347,13 +354,13 @@ c&=& - (e(z)-E_p(z,z_n)) = -e(z)
 \ea
 \noindent
 so, $ L= + \frac{\sqrt{-4ac}}{2a}$, with a $+$ sign since $a>0$ and $c<0$,
-and the expresion for L is
+and the expression for L is
 \be
 L=\sqrt{ \frac{2e} {\beta \left[ \frac {\theta(z_{n+1})-\theta(z_n)}{z_{n+1}-z_n} \right]}}
 \ee
 which fits the analytical expression.
 
-\subsection{Qualitative Behaviour of the 1D dry system with BL length}
+\subsection{Qualitative behavior of the 1D dry system with BL length}
 \paragraph{Critical Richardson number}
 Let us write the 1D TKE evolution equation introducing into it the expressions
 for the fluxes, and neglecting the turbulent transport for this particular case:
@@ -370,7 +377,7 @@ for the fluxes, and neglecting the turbulent transport for this particular case:
 \ee
 
 \noindent
-where the term $(\,\,\,\,)^{-1}$ is the developped expression for $\phi_3$ in
+where the term $(\,\,\,\,)^{-1}$ is the developed expression for $\phi_3$ in
 1D dry mode. Introducing the value for BL in stable layers
 ($ L= \sqrt{\frac{2 e(z)}{\alpha \beta}}$) and defining the buoyancy as
 $B=\beta \alpha$,
@@ -383,7 +390,7 @@ $B=\beta \alpha$,
 \ee
 %PM 02/07/2001 Fin diverses retouches Pascal Marquet\noindent
 
-The critical Richarson number is the one that nullyfies the previous equation,
+The critical Richardson number is the one that nullifies the previous equation,
 \be
 Ri_c= \frac{B}{(\frac {\partial U}{\partial z})^2}=
 \frac  {\frac {4 \sqrt{2}}{15 C_m} }
@@ -395,9 +402,29 @@ and entering the values of the constants (RS81), $C_m=C_s=4, C_1=0.139,
 C_{\epsilon}=0.7$, the critical Richardson of the 1D proposed scheme is
 {\bf $Ri_c= 0.139$}.
 
+\subsection{Mixing length in clouds}
+From the masdev46 version a namelist {\tt NAM\_TURB\_CLOUD} allows us to differentiate the mixing length inside and outside a cloud, for the chosen model {\tt NMODEL\_CLOUD}.
+Indeed, in a convective atmosphere, the cloud interface (but also inside the cloud)  undergoes a small scale instabilities of a few meters which enhances the mixing (Squire 1958; Klaassen and Clark 1985; Emanuel 1994). The clear sky mixing length cannot be sufficient to take into account this turbulence enhancement when the physical gradients are not resolved.
+The proposed simple solution consists in chosen a specific cloud mixing length ({\tt CTURBLEN\_CLOUD}) which can be increased in the 3D turbulence scheme following an instability criterion. At each time step and in each horizontal direction, if a grid point satisfies all the following conditions:
+\begin{itemize}
+\item itself or its adjacent points are cloudy ($r_c+r_i>0.001$~g/kg);
+\item G, the horizontal gradient of the non precipitating total water
+($r_v+ r_c+r_i$) is strong enough ($|G|\leq 0.1$~g/kg/km);
+\item G amplifies itself with time by advection, that is to say the
+frontogenetic type term $Q=dG/dt$ is of the same sign as $G$.
+\end{itemize}
+The mixing length at this point which appears in the diffusion coefficient $K=L\sqrt{e}$ of the horizontal fluxes is multiplied by the coefficient $\alpha$, a linear function of $Q$ (averaged in both horizontal directions) between two limits to be prescribed in the namelist ($Q_{\rm min}$  and $Q_{\rm max}$), with a maximum $\alpha_{\rm max}$ also to choose (Fig.~\ref{coef_ampl_incloud}).
+This local enhancement of the mixing length in clouds has been tested at resolutions of 2-3~km in a thunderstorm with extreme vertical velocities. With the following values, taken by default in the namelist, the vertical velocities and fluxes are reasonable compared to the high resolution simulation (400~m): $\alpha_{\rm max}=5$, $Q_{\rm min}=0.001$~g/kg/km/s,  $Q_{\rm max}=0.01$~g/kg/km/s.
+
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=10cm]{\EPSDIR/coef_ampl_incloud.eps}}
+\caption{Coefficient $\alpha$ of in-cloud mixing length enhancement as function of the instability criterion $Q$.}
+\label{coef_ampl_incloud}
+\end{figure}
+
 \section{Closure by dissipation equation}
 
-This is an alternative way to close the system (Hanjalic and Launder,1972),
+This is an alternative way to close the system (Hanjalic and Launder 1972),
 obtaining a value for L from an additional prognostic equation. The most
 popular method is the so-called $k-\epsilon$ approach, in the
 engineering vocabulary, where $k$ stands for the TKE and $\epsilon$ for
@@ -422,7 +449,7 @@ T(\epsilon)&=&-\frac{\partial}{\partial x_j}
 However, in the presence of stratification Duynkerke (1988) showed that
 it is necessary to use
 \begin{equation}
-P(\epsilon)=S+max(0,B)+max(0,T(e))
+P(\epsilon)=S+\max(0,B)+\max(0,T(e))
 \end{equation}
 where S, B and T stand for the shear production, buoyancy production and
 turbulent transport in the TKE evolution equation.\\
@@ -437,11 +464,187 @@ Kolmogorov relation
 Although it has been coded, this formulation is not yet giving satisfactory
 results, and is not currently available.
 
+
+%\chapter{Inclusion of a dissipative heating term in M\'esoNH}
+
+%{\em by J.-P. Pinty}
+
+\section{Conservation of the energy in Meso-NH}
+
+The examination of the energy conservation in a model of atmosphere is a very
+difficult task. In numerical models, this question is even untractable. However,
+a recent study of Blister and Emanuel (1998) pointed out that a thermodynamic
+energy arising from dissipative heating is always neglected in mesoscale
+models. Indeed this should not be the case when simulating hurricanes or very turbulent 
+flows as omitting this term may lead to an appreciable underestimation of the intensity of 
+tropical cyclones.
+
+It is well known that the frictional dissipation of kinetic energy occurs at 
+molecular scales where it is ultimately converted into thermal energy or heat.
+As numerical models perform a time integration of the "mean" (grid-averaged)
+momentum equations, an additional equation is used to parameterize the sub-grid 
+scale motions and their up-scaling fluxes. 
+
+The momentum conservation equation is rewritten here for convenience:
+\begin{eqnarray}
+\label{NewEqMomentum}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} {U_i})
++\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} {U_i} \cdot {U_j} )
+%+\rho_{d\,eff} C_{pd} \theta_{v}\overbar{ \nabla} \Pi '
++ \rho_{d\,eff} {\cal F}_{\Pi}
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\theta_v-\theta_{v\,ref}}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} {U_j} = & \nonumber\\
++ \nu \dfrac{\partial^2}{\partial x_j^2} (\rho_{d\,eff} {U_i}) 
++ \rho_{d\,eff} {\cal F} , \qquad &
+\end{eqnarray}
+
+\noindent where $\rho_{d\,eff} \vec{{\cal F}_{\Pi}}$ is the pressure gradient force, which
+takes different forms in the three anelastic systems:
+
+%
+\parbox{12cm}{
+\begin{displaymath}
+\rho_{d\,eff} \vec{{\cal F}_{\Pi}} =  \left\{
+\begin{array}{l@{\quad}cc}
+\rho_{d\,eff}  \vec{ \nabla}(C_{pd} \theta_{v\,ref} \Pi '),
+                                        & \quad &\mbox{(Lipps-Hemler)}\\
+\rho_{d\,eff} C_{pd} \theta_{v\,ref} \vec{ \nabla} \Pi ',
+                                                & \quad &\mbox{(Mod. Anelastic  Eq.)} \\
+\rho_{d\,eff} C_{pd} \theta_{v} \vec{ \nabla} \Pi '. & \quad  &\mbox{(Durran)}
+\end{array}
+\right.
+\end{displaymath}
+}
+\hfill
+\parbox{1cm}{
+\begin{eqnarray}
+\ \label{LhgradP} \\ \label{MAEgradP}   \\ \label{DUgradP}
+\end{eqnarray}
+}
+%
+
+Expansion of the mean and turbulent parts ($U_i=\overline{U_i}+u'_i$) and
+applying Reynolds averaging rules on the momentum equation leads to
+\begin{eqnarray}
+\label{NewMeanEqMomentum}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} \overline{U_i})
++\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{U_i} \cdot \overline{U_j} )
++ \rho_{d\,eff} \overline{\cal F}_{\Pi}
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\overline{\theta_v}-\theta_{v\,ref}}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} \overline{U_j} = & \nonumber\\
++ \nu \dfrac{\partial^2}{\partial x_j^2} (\rho_{d\,eff} \overline{U_i}) -\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{u'_i u'_j})               
++ \rho_{d\,eff} \overline{\cal F} , \qquad &
+\end{eqnarray}
+
+\noindent where $\rho_{d\,eff} \overline{u'_i u'_j}$ is the turbulent mean 
+flux. The conservation equation of the turbulent part is obtained by 
+subtracting equation (\ref{NewMeanEqMomentum}) to (\ref{NewEqMomentum})
+\begin{eqnarray}
+\label{NewTurbEqMomentum}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} {u'_i})
++\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} {u'_i} \cdot \overline{U_j} )
++ \rho_{d\,eff} ({\cal F}_{\Pi})'
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\theta'_v}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} {u'_j} = 
+ & \nonumber\\
+- \dfrac{\partial}{\partial x_j} (\rho_{d\,eff} u'_i u'_j) 
+- \dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{U_i} \cdot {u'_j} )
+\qquad  & \nonumber\\
++ \nu \dfrac{\partial^2}{\partial x_j^2} (\rho_{d\,eff} {u'_i}) 
++ \dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{u'_i u'_j}) 
++ \rho_{d\,eff} ({\cal F})' , \qquad &
+\end{eqnarray}
+
+Multiplying equation (\ref{NewMeanEqMomentum}) by $\overline{U_i}$ leads to the
+mean kinetic energy equation with 
+$K=\rho_{d\,eff} (\overline{U_i} \cdot \overline{U_i}/2)$
+and using the anelastic continuity equation 
+$\partial/\partial x_i (\rho_{d\,eff} \overline{U_i})=0$ of the mean flow
+\begin{eqnarray}
+\label{NewMeanEqKenergy}
+\dfrac{\partial}{\partial t} K
++\dfrac{\partial}{\partial x_j} (K \cdot \overline{U_j} )
++ \Big[\rho_{d\,eff} \overline{\cal F}_{\Pi}
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\overline{\theta_v}-\theta_{v\,ref}}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} \overline{U_j} \Big] \cdot \overline{U_i} = & \nonumber\\
++\Big[\nu \dfrac{\partial^2}{\partial x_j^2} (\rho_{d\,eff} \overline{U_i}) -\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{u'_i u'_j})               
++ \rho_{d\,eff} \overline{\cal F} \Big] \cdot \overline{U_i} , \qquad &
+\end{eqnarray}
+\noindent while multiplying equation (\ref{NewTurbEqMomentum}) by $u'_i$ and 
+averaging after rearrangement leads to the turbulent kinetic energy equation 
+with $TKE=\rho_{d\,eff} (\overline{u'_iu'_i}/2)$ (the anelastic continuity 
+equation 
+$\partial/\partial x_i (\rho_{d\,eff} {u'_i})=0$ of the turbulent flow is 
+used)
+\begin{eqnarray}
+\label{NewTurbEqTKE}
+\dfrac{\partial}{\partial t} TKE
++\dfrac{\partial}{\partial x_j} (TKE \cdot \overline{U_j} )
++ \rho_{d\,eff} \overline{({\cal F}_{\Pi})'u'_i}
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\overline{\theta'_v u'_i}}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} \overline{u'_i u'_j} = & \nonumber\\
+- \overline{u'_i\dfrac{\partial}{\partial x_j} (\rho_{d\,eff} u'_i u'_j)} 
+- \overline{u'_i \dfrac{\partial}{\partial x_j} (\rho_{d\,eff} \overline{U_i} \cdot {u'_j} )}
++ \nu \overline{u'_i \dfrac{\partial^2}{\partial x_j^2} (\rho_{d\,eff} {u'_i})} 
++ \rho_{d\,eff} \overline{({\cal F})' u'_i} , \qquad &
+\end{eqnarray}
+\noindent which is equivalent to:
+\begin{eqnarray}
+\label{NewNewTurbEqTKE}
+\dfrac{\partial}{\partial t} TKE
++\dfrac{\partial}{\partial x_j} (TKE \cdot \overline{U_j} )
++ \rho_{d\,eff} \overline{({\cal F}_{\Pi})'u'_i}
++ \rho_{d\,eff}  \delta_{i3} g \dfrac{\overline{\theta'_v u'_i}}{\theta_{v\,ref}}
++ \rho_{d\,eff} f \epsilon_{ij3} \overline{u'_i u'_j} = & \nonumber\\
+- \dfrac{\partial}{\partial x_j} \overline{TKE' u'_j}
+- (\rho_{d\,eff} \overline{u'_i u'_j}) \dfrac{\partial}{\partial x_j} \overline{U_i} 
+\qquad  & \nonumber\\
++ \dfrac{\nu}{\rho_{d\,eff}} \Big[ \dfrac{\partial}{\partial x_j} \rho_{d\,eff} \Big[ \dfrac{\partial}{\partial x_j} TKE\Big] \Big]
+- \dfrac{\nu}{\rho_{d\,eff}} \Big[ \overline{\dfrac{\partial}{\partial x_j} \Big( \rho_{d\,eff} u'_i\Big)} \Big]^2
++ \rho_{d\,eff} \overline{({\cal F})' u'_i} , \qquad &
+\end{eqnarray}
+\noindent where the flux-like notation $\overline{TKE' u'_j}$ stands for 
+$\rho_{d\,eff} \overline{(u'_iu'_i/2) u'_j}$. In the rhs of equation 
+(\ref{NewNewTurbEqTKE}), the $TKE$-diffusion term, proportional to the molecular
+viscosity $\nu$, is split in two terms. The "Laplacian" term is a redistribution
+term which is often neglected. The second term is much larger and is always 
+negative (minus a squared quantity). This term corresponds to the viscous 
+dissipation rate $\varepsilon$ 
+\begin{equation}
+\label{DissipationTerm}
+\varepsilon_{TKE} = \dfrac{\nu}{\rho_{d\,eff}} \Big[ \overline{\dfrac{\partial}{\partial x_j} \Big( \rho_{d\,eff} u'_i\Big)} \Big]^2,
+\end{equation}
+Adding equations (\ref{NewMeanEqKenergy}) and (\ref{NewNewTurbEqTKE}) gives the
+evolution of the total kinetic energy equation ($K + TKE$) which explicitly 
+contains the momentum
+dissipation term $\varepsilon$. By virtue of the total energy conservation, a
+counterpart dissipative energy must be added to the thermodynamic equation. 
+This can be simply done by the introduction of a dissipative heating term of
+the form
+\begin{eqnarray}
+\label{NewThequa}
+\dfrac{\partial}{\partial t}(\rho_{d\,eff} \theta)  + \vec{ \nabla} \cdot
+(\rho_{d\,eff} \theta \;\vec{U})
+= 
+%% \rho_{d\,eff} \left[ {R_d+r_vR_v\over R_d}{C_{pd} \over C_{ph}}-1 \right]
+%% {\theta \over \Pi_{ref}} w {\partial \Pi_{ref} \over \partial z}
+%% \nonumber \\
+%% + {\rho_{d\,eff}\over \Pi_{ref} C_{ph}} \left[
+%%  L_m {D(r_i+r_s+r_g+r_h)\over Dt} - L_v {Dr_v\over Dt} + {\cal H}  \right].
+\cdots + \dfrac{\rho_{d\,eff} \varepsilon_{e}}{\Pi_{ref} C_{ph}}.
+\end{eqnarray}
+The turbulence scheme in Meso-NH is based on a turbulent kinetic
+equation of $e$ defined as $e=TKE/\rho_{d\,eff}$. Most of the second order 
+terms in equation (\ref{NewNewTurbEqTKE}) including 
+$\varepsilon_{TKE}= \varepsilon_{e}\times \rho_{d\,eff}$ are parameterized 
+according to Cuxart et al. (2000).
+
 \section{Terrain-following coordinate system}
 
-In Meso-NH, the coordinate system is not cartesian, in order to account
-for steep terrain, and the sphericity of the earth. As explained in chapters
-3 and 4, we use a $(\overline{x},\overline{y},\overline{z})$ coordinate
+In Meso-NH, the coordinate system is not Cartesian, in order to account
+for steep terrain, and the sphericity of the earth. As explained in Part I,
+Chapters 3 and 4 on coordinate systems and discretization, respectively,
+we use a $(\overline{x},\overline{y},\overline{z})$ coordinate
 system, and the contravariant components of the velocity. By inserting these
 various elements in the basic equations, the form of the turbulent terms
 is readily obtained. For instance, the turbulent terms in the equation
@@ -464,8 +667,8 @@ In the following, we will assume that these sphericity terms have negligible
 contributions on the turbulence, and therefore ignore them.
 
 On the other hand, we should stress that the $(u,v,w)$ used in the equations
-are still the cartesian components of the velocity.
-So, the terms that the turbulence scheme will supply to meso-NH are
+are still the Cartesian components of the velocity.
+So, the terms that the turbulence scheme will supply to Meso-NH are
 \begin{eqnarray}
 \frac{\partial }{\partial t}(\tilde{\rho}u)&=
 \cdots&-\left[\frac{\partial}{\partial \overline{x}}(\tilde{\rho}
@@ -504,16 +707,16 @@ the chain rule (see below).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Spatial Discretization}
+\section{Spatial discretization}
 The location of the different variables on the computation grid is shown in
-Fig. \ref{maille}. All the variables shown share the same index values i,j,k.
+Fig.~\ref{maille}. All the variables shown share the same index values i,j,k.
 In the following, we will use the Schuman discretization operators, as defined
-in Section 4.3.
+in Part I, Chapter 4 on discretization (section 4.3).
 
-\begin{figure}[hbp]
-\psfig{figure=\EPSDIR/maille.eps}
-\caption{Location of variables on the grid for turbulence computation
- \label{maille}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/maille.eps}}
+\caption{Location of variables on the grid for turbulence computation.}
+\label{maille}
 \end{figure}
 
 The discretized form of the turbulence terms in the main equations reads
@@ -574,12 +777,12 @@ to allow for longer time steps when the model is used in meso-scale mode.
 \\
 
 In (\ref{discturb}), we still use the expression of the
-turbulent fluxes in the cartesian frame. Those must be expressed as a function
-of the gradients of the mean variables in the cartesian frame. To ease this
-formulation, we have developed 15 different "cartesian gradient operators",
+turbulent fluxes in the Cartesian frame. Those must be expressed as a function
+of the gradients of the mean variables in the Cartesian frame. To ease this
+formulation, we have developed 15 different "Cartesian gradient operators",
 depending of the direction in which the gradient is taken, and the precise
 locations on the grid where the  information is available. The generic notation
-for these operators is $GX_i\_A\_B$: $X_i$ refers to the (cartesian) direction
+for these operators is $GX_i\_A\_B$: $X_i$ refers to the (Cartesian) direction
 where the gradient is taken, $A$ to the variable location, and $B$ to the
 location where the gradients must be known. The detailed expression of these
 operators is the following.
@@ -697,7 +900,7 @@ For gradients localized at point VW:
 
 \smallskip
 Making use of these operators, the discretized form of the turbulent
-fluxes in the cartesian frame reads as follows:
+fluxes in the Cartesian frame reads as follows:
 \begin{eqnarray}
 \overline{u_i'\,u_j'}&=&\frac{2}{3}\delta_{ij}\,\overline{e}^{x_i,x_j}
  -\frac{4}{15} \frac{\overline{L}^{x_i,x_j}}{C_m} \overline{e^
@@ -756,7 +959,7 @@ ADV(e) +\tilde{\rho} P^t
 \end{equation}
 The advections term $ADV(e)$ is not treated in the turbulence scheme, but
 in the routine taking care of the general advection of scalar quantities
-(see chapter 4).  $P^t$ contains all the source terms, some of which are
+(see Part I, Chapter 4 on discretization).  $P^t$ contains all the source terms, some of which are
 expressed at $t-1$, and others at $t$. This reads
 \begin{eqnarray}
 P^t&=&
@@ -774,7 +977,7 @@ P^t&=&
 -C_{\epsilon}\frac{e^{3/2}}{L}.
 \label{discect}
 \end{eqnarray}
-Using the cartesian gradient operators and leaving the advection term aside,
+Using the Cartesian gradient operators and leaving the advection term aside,
 this become therefore
 \begin{eqnarray}
 \delta_t \left [ \overline{(\tilde{\rho} e)}^t \right ]&=&
@@ -802,33 +1005,37 @@ This uses the turbulent fluxes of TKE, expressed at $u_i$ points as
 
 \section{Boundary conditions}
 
-\subsection{Lateral Boundary Conditions}
+\subsection{Lateral boundary conditions}
 
 An important point for lateral boundary conditions is to realize that
 the computation of the source term for any prognostic variable at (i, j)
 will involve only quantities of the same nature at (i-1, i+1, j-1, j+1), as
-shown on Fig.\ref{secord}. As a consequence, a clean treatment of lateral
+shown in Fig.~\ref{secord}. As a consequence, a clean treatment of lateral
 boundary conditions is obtained with only one extra grid point on each side.
 Referring
-to the terminology of Chapter 5, HEXT=1 is sufficient for the turbulence
+to the terminology of Chapter 5 (in Part I), 
+HEXT=1 is sufficient for the turbulence
 scheme. The two basic options for lateral boundary conditions are therefore
 supported.
 
-\begin{figure}[hbp]
-\centerline{\psfig{figure=\EPSDIR/secord.eps}}
-\caption{Discretization of second order terms \label{secord}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/secord.eps}}
+\caption{Discretization of second order terms.}
+\label{secord}
 \end{figure}
 
-\begin{figure}[hbp]
-\centerline{\psfig{figure=\EPSDIR/CLBC.eps}}
-\caption{Cyclic lateral boundary conditions \label{clbc}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/CLBC.eps}}
+\caption{Cyclic lateral boundary conditions.}
+\label{clbc}
 \end{figure}
+
 
 \subsubsection{Periodic LBC}
 
 In this case, the computation of all source terms in the turbulence routines
 is performed from I=1 to IMAX, and from J=1 to JMAX. It uses values of the
-mean variables at I=0 and IMAX+1, J=0 and JMAX+1 (see Fig.\ref{clbc}).
+mean variables at I=0 and IMAX+1, J=0 and JMAX+1 (Fig.~\ref{clbc}).
 These values are supplied
 by the routine BOUNDARY, as part of the general treatment of lateral
 boundaries. Note that the additional prognostic variables (the turbulence
@@ -839,16 +1046,18 @@ made periodic by BOUNDARY.
 
 In this case, the computation of the turbulent source terms is performed from
 I=1 to IMAX for scalars and non-normal velocity components, and from I=2 to
-IMAX for the normal velocity component. This is illustrated in Fig.\ref{olbc}.
+IMAX for the normal velocity component. This is illustrated in Fig.~\ref{olbc}.
 Indeed, there is no need to write an equation for the quantity $u$ at I=1,
 since this value is to be prescribed by the open LBC scheme.
 
-\begin{figure}[hbtp]
-\centerline{\psfig{figure=\EPSDIR/OLBC.eps}}
-\caption{Open lateral boundary conditions \label{olbc}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/OLBC.eps}}
+\caption{Open lateral boundary conditions.}
+\label{olbc}
 \end{figure}
 
-\subsection{Upper Boundary Condition}
+
+\subsection{Upper boundary condition}
 
 In the Gal-Chen Sommerville coordinate system,
 the domain is terminated by a horizontal plane
@@ -860,28 +1069,29 @@ Whenever vertical gradients of mean variables are needed at this height, they
 are computed by extrapolation of gradients immediately below. This procedure
 is assumed to have a negligible impact on the overall model results.
 
-\subsection{Surface Boundary Conditions}
+\subsection{Surface boundary conditions}
 
 The physical forcing of turbulence at the surface is a major concern.
 We assume that the main information is contained in the value of the
 turbulent fluxes of heat, moisture and momentum, supplied by the
-soil-vegetation atmosphere transfer scheme (see Chapter 14). Depending
+soil-vegetation atmosphere transfer scheme (see Part II, Chapter 6). Depending
 on various options, these fluxes may be specified, or computed by bulk
 formulae.
 
 One difficulty is to deal correctly with the terrain slope effect, in
 presence of steep orography. We assume that the soil vegetation atmosphere
 transfer scheme returns fluxes normal to the terrain. We then have to
-project these fluxes on to the cartesian coordinates (see fig. \ref{flxsup}).
+project these fluxes on to the Cartesian coordinates (Fig.~\ref{flxsup}).
 
-\begin{figure}[h]
-\centerline{\psfig{figure=\EPSDIR/flxsup.eps}}
-\caption{The cartesian decomposition of the surface flux \label{flxsup}}
+\begin{figure}[!ht]
+\centerline{\includegraphics[]{\EPSDIR/flxsup.eps}}
+\caption{The Cartesian decomposition of the surface flux.}
+\label{flxsup}
 \end{figure}
 
 
 If the flux ($\vec{\Phi}$) is normal to the surface, we can write it as
-$\vec{\Phi}=\Phi_n \vec{n}$. The projections over the cartesian coordinates
+$\vec{\Phi}=\Phi_n \vec{n}$. The projections over the Cartesian coordinates
 are
 \begin{eqnarray}
 \vec{\Phi} \vec{i}&=&\Phi_n \vec{n} \cdot \vec{i}, \nonumber \\
@@ -889,7 +1099,7 @@ are
 \vec{\Phi} \vec{k}&=&\Phi_n \vec{n} \cdot \vec{k}.
 \end{eqnarray}
 
-Refering to notations of chapter 3, the contravariant vector basis normal
+Referring to notations of Part I, Chapter 3, the contravariant vector basis normal
 to the surface is $\vec{e^3}=\|e^3\| \vec{n}$ (contravariant). Then,
 \begin{equation}
 e^3=-\frac{d_{zx}}{d_{xx}d_{zz}} \vec{i}
@@ -900,7 +1110,7 @@ and
 \|e^3\|=
 \frac{1}{d_{zz}}{(1+(\frac{d_{zx}}{d_{xx}})^2+(\frac{d_{zy}}{d_{yy}})^2)}^{1/2}.
 \end{equation}
-To get the cartesian components, we just compute the scalar products
+To get the Cartesian components, we just compute the scalar products
 \begin{equation}
 \vec{n} \cdot \vec{i} = \frac {\vec{e^3}}{\|e^3\|} \cdot \vec{i} =
 \frac{1}{\|e^3\|}(-\frac{d_{zx}}{d_{xx}d_{zz}}),
@@ -946,8 +1156,8 @@ by the user, adjusting the parameter XIMPL. XIMPL=1 will result in the
 fully implicit scheme, XIMPL=0.5 is the semi-implicit scheme, and XIMPL=0.
 reverts to the fully explicit scheme.
 
-We will now formulate the matrix inversion problem associated with this Crank-
-Nicholson scheme. $s$ stands for any prognostic variable, and we use
+We will now formulate the matrix inversion problem associated with this
+Crank-Nicholson scheme. $s$ stands for any prognostic variable, and we use
 the notations $\alpha=$XIMPL and $\beta=$1-XIMPL.
 For short, we use the notation $K$ for the vertical
 exchange coefficient (for instance, $K= {2 \over 3} {L \over C_s}
@@ -1005,8 +1215,8 @@ Y(k)&=&2 \Delta t S^t(k)+ s^{t-1}(k-1)(-\beta  \frac{A(k)}{\tilde{\rho}(k)})
 +s^{t-1}(k+1)(-\beta \frac{C(k)}{\tilde{\rho}(k)}).
 \end{eqnarray}
 
-This matrix problem is solved by a specialized routine called TRIDIAG (see
-Book 2 for description).
+This matrix problem is solved by a specialized routine called TRIDIAG.
+%(see Book 2 for description).
 
 In practice, the source term $S^t$ contains only the surface fluxes. It is
 therefore a "split" treatment. After solving for $s^{t+1}$, the equivalent
@@ -1014,3 +1224,52 @@ tendency ${\partial s \over \partial t}$ is recomputed, and added to the
 other sources of the variable $s$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{References}
+\decrefname
+Bister, M., and K. A. Emanuel, 1998:
+Dissipative heating and hurricane  intensity.
+{\it Meteor. Atmos. Phys.}, {\bf 65}, 233-240.
+\decrefname
+Bougeault, P., and P. Lacarr\`ere, 1989:
+Parameterization of orography-induced turbulence in a meso-beta scale model.
+{\it Mon. Wea. Rev.}, {\bf 117}, 1872-1890.
+\decrefname
+Cuxart, J., 1997:
+Planetary Boundary Layer Simulation: From LES to General Circulation Models,
+Ph.D. thesis, European thesis - Barcelone.
+\decrefname
+Cuxart, J., P. Bougeault, and J.-L. Redelsperger, 2000:
+A turbulence scheme allowing for mesoscale and large-eddy simulations.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 126}, 1-30.
+\decrefname
+Duynkerke, P.G., 1988:
+Application of the E-$\epsilon$ turbulence closure model to the neutral
+and stable atmospheric boundary layer.
+{\it  J. Atmos. Sci.}, {\bf 45}, 865-880.
+\decrefname
+Emanuel K. A. 1994, Atmospheric convection, Chp8: Theory of mixing in cumulus cloud, p215
+\decrefname
+Hanjalic, K., and B. E. Launder, 1972:
+A Reynolds stress model of turbulence and its application to thin shear flows.
+{\it J. Fluid Mech.}, {\bf 52}, 609-638.
+\decrefname
+Klaassen, G. P., and T. L. Clark, 1985:
+Dynamics of the cloud~environment interface and entrainment in small cumuli:
+Two-dimensional simulations in the absence of ambient shear.
+{\it  J. Atmos. Sci.}, {\bf 42}, 2621-2642.
+\decrefname
+Redelsperger, J.-L, and G. Sommeria, 1981:
+M\'ethode de repr\'esentation de la turbulence d'\'echelle inf\'erieure
+\`a la maille pour un mod\`ele tri-dimensionnel de convection nuageuse.
+{\it  Boundary-Layer Meteor.}, {\bf 21(4)}, 509-530.
+\decrefname
+Squire, P., 1958:
+The spatial variation of liquid water and droplet concentration in cumuli.
+{\it Tellus}, {\bf 10}, 372-380
+\decrefname
+Squire, P., 1958: Penetrative downdraughts in cumuli.
+{\it Tellus}, {\bf 10}, 381-389
+\decrefname
+Tomas, S., and V. Masson, 2006: A parameterization of
+third-order moments for the dry convective boundary layer. 
+{\it Bound.-Layer. Meteor.}, {\bf 120}, 437-454.
