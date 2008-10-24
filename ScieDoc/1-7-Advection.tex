@@ -22,6 +22,42 @@
 \chapter{Advection Schemes}
 \minitoc
 
+
+\section{Introduction}
+
+This chapter describes the advection schemes available in Meso-NH.
+ They are of two kinds, those for momentum and those for scalar variables. 
+The two available advection schemes for momentum are flux-form conservative 
+schemes centered in time. The three available advection schemes for scalar 
+variables are positive definite schemes.  The first one, namely the 
+flux-corrected transport scheme (FCT), is a centered scheme (spatially 
+and temporally) in which the advective fluxes are corrected (if necessary)
+by a limiter factor to insure positiveness.
+The second one, namely the Multidimensional Positive Definite Advection 
+Transport  Algorithm (MPDATA), is based on the upstream scheme. 
+An iterative method  based on the anti diffusive velocities is applied 
+to correct the excessive  numerical diffusion of such scheme. 
+FCT and MPDATA are second-order accurate on space and time.
+The third one, the so-called piecewise parabolic method 
+(PPM), is a finite-volume method.
+
+The FCT, MPDATA, and PPM schemes are recommended to be used to simulate
+the advective transport of quantities such as microphysical variables
+and atmospheric chemistry variables. Both schemes can be applied to describe
+the advection of the following quantities: temperature, water substances,
+turbulent kinetic energy, and scalars (chemical species). 
+In Meso-NH the three schemes can be simultaneously apply to
+different variables. However, in order to gain consistency, the above 
+mentioned variables have been classified in two groups: meteorological 
+variables (temperature, water substances, turbulent kinetic energy) and
+scalar variables.
+
+Two 2D-horizontal tests have been carried out to evaluate the FCT and MPDATA
+schemes. A scalar with a cone distribution was advected in a rotating 
+constant velocity field (Test 1) and in a deformational velocity field 
+(Test 2). The evaluation of the tests includes the
+performance of the advection schemes as well as the computational costs.
+
 \section{Advection schemes for momentum}
 
 Two flux-form conservative schemes are available in the model. Both of them are centered in time but they differ by their truncature order, 2$^{\rm nd}$ for the CEN2ND scheme and 4$^{\rm th}$ for the CEN4TH scheme.
@@ -69,38 +105,9 @@ $\overline{\overline{\alpha}}^{x}(i,j,k)=7(\alpha(i+1,j,k)+\alpha(i,j,k))/12-(\a
 
 The CEN4TH scheme is restricted to $\mathcal{C}\leq0.73$ ($\mathcal{C}$ is the Courant number of the flow) which is less than $\mathcal{C}\leq1.0$ obtained in the CEN2ND case, in each direction. However, the CEN4TH scheme has better damping properties and less phase or wave speed errors than CEN2ND. So it should be preferred.
 
-\section{Positive advection schemes for scalar variables}
+\section{Flux-Corrected Transport (FCT)}
 
-\subsection{Introduction}
-
-Two positive definite schemes are presented in this section. The first one, namely the
-flux-corrected transport scheme (FCT), is a centered scheme (spatially and
-temporally) in which
-the advective fluxes are corrected (if necessary) by a limiter factor to insure positiveness.
-The second one, namely Multidimensional Positive Definite Advection Transport Algorithm
-(MPDATA), is based on the upstream scheme. An iterative method based on the anti diffusive
-velocities is applied to correct the excessive numerical diffusion of such scheme.
-FCT and MPDATA are second-order accurate on space and time. Note that a third advection scheme, the so-called piecewise parabolic method (PPM), is implemented in Meso-NH, but it is not described yet.
-
-Both schemes are recommended to be used to simulate the advective transport of
-quantities such as
-microphysical variables
-and atmospheric chemistry variables. Both schemes can be applied to describe
-the advection of the following quantities: temperature, water substances,
-turbulent kinetic energy, dissipation of turbulent kinetic energy and scalars
-(chemical species). At Meso-NH the two schemes can be simultaneously apply to
-different variables. However, in order to gain consistency, the above mentioned variables
-have been classified in two groups: meteorological variables (temperature, water substances,
-turbulent kinetic energy, dissipation of turbulent kinetic energy) and scalar variables.
-
-Two 2D-horizontal tests have been carried out to evaluate these schemes. A scalar with
-a cone distribution was advected in a rotating constant velocity field (Test 1) and
-in a deformational velocity field (Test 2). The evaluation of the tests includes the
-performance of the advection schemes as well as the computational costs.
-
-\subsection{Flux-corrected transport}
-
-\subsubsection{Description}
+\subsection{Description}
 
 The advective part of the governing equation of a scalar quantity $\psi$
 (temperature, water substances, TKE, dissipation of TKE and scalar (chemical species))
@@ -192,7 +199,7 @@ min(1,\beta^{OUT}_{I})[\,F_{I}]^{-}
 
 \noindent where $[\,.\,]^{+}\,\equiv\, max(0,.)$ and $[\,.\,]^{-}\,\equiv\,min(0,.)$.
 
-\subsubsection{Discretization}
+\subsection{Discretization}
 
 For the centered advection scheme (ADVECSCALAR routine in Meso-NH) the advective
 flux are discretized according to
@@ -262,7 +269,7 @@ form is
 -\,\delta_{x}F_1\,-\,\delta_{y}F_2\,-\,\delta_{z}F_3.
 \end{equation}
 
-\subsubsection{Boundary conditions}
+\subsection{Boundary conditions}
 
 The following boundary conditions are prescribed for the limiter factor $\beta^{OUT}$
 
@@ -278,7 +285,7 @@ The following boundary conditions are prescribed for the limiter factor $\beta^{
 \beta^{OUT}_{b-1}=1.
 \end{equation}
 
-\subsection{Multidimensional Positive Definite Advection Transport Algorithm (MPDATA)}
+\section{Multidimensional Positive Definite Advection Transport Algorithm (MPDATA)}
 
 The MPDATA can be summarized as follows.
 First, the advection of a quantity is solved by means of an upstream scheme
@@ -311,7 +318,7 @@ presented in the last two papers above mentioned. However, the MPDATA scheme
 has been adapted to the following Meso-NH requirements: leap-frog time stepping and
 code optimization.
 
-\subsubsection{MPDATA description}
+\subsection{Description}
 
 The advection equation of a quantity $\psi$ written on the computational
 grid, takes the following form:
@@ -405,7 +412,7 @@ of correction ($l=2,...,$ $ L$) variable by variable, in order to save memory.
 
 \end{itemize}
 
-\subsubsection{Discretization}
+\subsection{Discretization}
 
 \begin{itemize}
 
@@ -497,7 +504,7 @@ in the following way
 
 \end{itemize}
 
-\subsubsection{Boundary conditions}
+\subsection{Boundary conditions}
 
 \begin{itemize}
 \item{\em {First iteration ($l=1$)}}
@@ -547,7 +554,7 @@ point by the dummy value -999.
 
 \end{itemize}
 
-\subsection{Evaluation of FCT and MPDATA advection schemes}
+\section{Evaluation of FCT and MPDATA advection schemes}
 
 Two 2D-horizontal tests were carried out to validate FCT and MPDATA. Test 1 is the
 advection of a cone in a rotating field with constant velocity. A full description
@@ -597,31 +604,502 @@ numerical diffusion can be corrected but at expense of an increase of the comput
 
 \end{itemize}
 
+
+
+\section{The PPM advection scheme}
+
+\subsection{Introduction}
+
+  The PPM advection scheme is based on the \textbf{P}iecewise
+  \textbf{P}arabolic \textbf{M}ethod, a numerical technique developed in
+  astrophysics for modeling fluid flows (Colella et al.\ 1984, Carpenter
+  et al.\ 1990). The PPM differs substantially from conventional
+  grid-point methods like the second and fourth order centered advection
+  schemes already implemented in the MesoNH. It is a finite-volume
+  method in which some assumption is made about the structure of the
+  approximate solution between the grid points.  In the PPM case,
+  piecewise continuous parabolas are fitted in each grid-cell. This
+  design enables the scheme to handle sharp gradients and
+  discontinuities very accurately. Although the constructed piecewise
+  continuous functions would allow for the explicit calculation of
+  derivatives, in practice the advective forcing is computed from the
+  fluxes at the grid-cell edges. Various flux limiters can be used to
+  ensure the scheme is monotonic. Monotonic schemes do not amplify
+  extrema in the initial values and are, thus, also positive
+  definite. Application of the PPM schemes to 3D problems requires
+  density-corrected directional splitting and essentially
+  forward-in-time (FIT) time-marching, so variables advected by the PPM
+  schemes follow a modified path through the main Meso-NH loop.
+
+  Three different versions of the PPM advection scheme have been
+  implemented in MesoNH: the unrestricted PPM\_00, the monotonic
+  version, PPM\_01, based on the original scheme (Colella at al.\ 1984)
+  with monotonicity constraints modified by Lin and Rood (1996). The
+  third version, PPM\_02, is another monotonic scheme with a flux
+  limiter developed by Skamarock (2006). The PPM\_02 permits extension
+  to stable semi-Lagrangian integrations using Courant numbers larger
+  than one. The PPM schemes are intended for advection of meteorological
+  variables (e.g.\ temperature, water species, TKE) and passive
+  scalars. All three versions have excellent mass-conservation properties
+  and were found to be an order of magnitude more accurate than the
+  existing FCT or centered 4\ts{th} order (CEN4TH) schemes in idealized
+  2D tests. However, the numerical diffusion associated with the
+  monotonicity preserving methods in PPM\_01 and PPM\_02 can damp
+  smooth, well resolved extrema. Therefore the use of numerical diffusion
+  applied to scalar fields should be prohibited when using the PPM schemes.
+  Also, the flux limiters and the
+  specific time marching require considerable computational effort
+  making the monotonic PPM schemes significantly more expensive than,
+  e.g., FCT. Nevertheless, the PPM schemes in combination with the
+  CEN4TH advection of momentum overall produce significantly more
+  accurate solutions and the advection is still relatively small
+  fraction of the total computational time.
+
+  \subsection{Description}
+
+  The advective part of the scalar conservation equation can be written
+  as:  
+  \begin{equation}
+    \label{advection}
+    \frac{\pl}{\pl t}(\rho \phi) =
+    - \frac{\pl}{\pl x}(\rho U \phi)
+    - \frac{\pl}{\pl y}(\rho V \phi)
+    - \frac{\pl}{\pl z}(\rho W \phi)    
+  \end{equation}
+  where $U$, $V$ and $W$ are Cartesian wind components. To solve this
+  equation on a discrete grid using the PPM finite-volume method, an
+  approximate solution for the scalar field $\phi$ is constructed
+  between the grid points. The grid-point value $\phi_{i}$ of a scalar
+  variable at a mass grid point $i$ represents the average of the
+  function $\phi(x)$ over the grid-cell, or the interval $x_{i-1/2} \le
+  x \le x_{i+1/2}$, where the $x_{i-1/2}$ and $x_{1+1/2}$ are the
+  neighboring momentum grid points. In the PPM case, the function
+  $\phi(x)$ is a parabola which is constructed uniquely for each
+  grid-cell using the cell mean ($\phi_{i}$) and values at the cell
+  edges ($\phi_{i-1/2}$ and $\phi_{i+1/2}$).  Once the parabolas are
+  known, we can calculate fluxes at the grid-cell edges, and the net
+  scalar transport in each cell is equal to the flux divergences.
+
+  A solution (in one dimension) to (\ref{advection}) can be calculated
+  from forward-in-time (FIT) discretization:
+  \begin{equation}
+    \label{1DFIT}
+    (\rho \phi)_{i}^{t+\Delta t} = (\rho \phi)_{i}^{t} -
+    \mathcal{F}_{x,i}(\phi^{t})    
+  \end{equation}
+  where the operator $\mathcal{F}_{x,i}$ denotes the discrete flux
+  divergence in the grid-cell $i$ and is expressed as:
+  \begin{equation}
+    \label{FIT}
+    \mathcal{F}_{x,i}(\phi^{t}) = \frac{\Delta t}{\Delta x_{i}} \left[
+      (\rho U)_{i+1/2} f(\phi^{t})_{i+1/2} - (\rho U)_{i-1/2}
+      f(\phi^{t})_{i-1/2} \right] 
+  \end{equation}
+  where $F_{i\pm1/2}=(\rho U)_{i\pm1/2} f(\phi^{t})_{i\pm1/2}$ are the
+  scalar fluxes at the grid-cell edges. These fluxes can be determined
+  by integrating over the parabolas in each cell. The parabola in the
+  grid-cell $i$ (dropping the superscript $t$) is constructed from the
+  cell average ($\phi_{i}$) and left and right edge values ($\phi_{L,i}$
+  and $\phi_{R,i}$) in the following way:
+  \begin{equation}
+    \label{par}
+    \phi_{i}(\xi) = \phi_{L,i} + \xi \left[ \Delta(\phi)_{i} +
+      \phi_{6,i} \left ( 1- \xi \right ) \right ], \quad \xi = \frac{x -
+      x_{i-1/2}}{\Delta x_{i}}
+  \end{equation}
+  where $0 \le \xi \le 1$ ($x_{i-1/2} \le x \le x_{i+1/2}$) is the
+  horizontal coordinate. The parameters of the parabola are:
+  \begin{eqnarray}
+    \Delta(\phi)_{i} & = & \phi_{R,i} - \phi_{L,i}\\
+    \phi_{6,i} & = & 6 \left[\phi_{i} - \frac{1}{2}\left (\phi_{R,i} +
+    \phi_{L,i} \right ) \right ].
+  \end{eqnarray}
+  The edge values are determined using the 4\ts{th} order differencing:
+  \begin{eqnarray}
+    \label{edgevalues1}
+    \phi_{L,i} &=& \phi_{i-1/2} = \frac{1}{2}\left ( \phi_{i} + \phi_{i-1}
+    \right ) - \frac{1}{6}\left ( \delta(\phi_{i}) - \delta(\phi_{i-1})
+    \right )\\
+    \label{edgevalues2}
+    \phi_{R,i} &=& \phi_{i+1/2} = \frac{1}{2}\left ( \phi_{i+1} + \phi_{i}
+    \right ) - \frac{1}{6}\left ( \delta(\phi_{i+1}) - \delta(\phi_{i})
+    \right )
+  \end{eqnarray}
+  where the operator $\delta(\,)$ is defined as:
+  \begin{equation}
+    \label{endpar}
+    \delta(\phi_{i}) = \frac{1}{2} \left( \phi_{i+1} - \phi_{i-1} \right).
+  \end{equation}  
+  And finally, the scalar fluxes at the edges of grid-cells
+  ($f(\phi)_{i\pm1/2}$) are calculated as the average value of the scalar
+  over the advective distance in each grid cell:  
+  \begin{equation}
+    f(\phi)_{i+1/2} = \frac{1}{\Delta t U_{i+1/2}}
+    \int_{x_{i+1/2}-\Delta tU_{i+1/2}}^{x_{i+1/2}} \phi_{i}(x) \dif x,
+    \quad \mathrm{for} \quad U_{i+1/2} > 0
+  \end{equation}
+  Substituting equations (\ref{par}) through (\ref{endpar}) we get:
+  \begin{equation}
+    \label{flux+}
+    f(\phi)_{i+1/2}^{+} = \phi_{R,i} -
+     \frac{1}{2} Cr_{i+1/2} \left[\Delta(\phi)_{i} - 
+     \left(1- \frac{2}{3} Cr_{i+1/2} \right) \phi_{6,i} \right]
+  \end{equation}
+  for $Cr_{i+1/2} \geq 0$,
+  \begin{equation}
+    \label{flux-}
+    f(\phi)_{i+1/2}^{-} = \phi_{L,i+1} -
+     \frac{1}{2} Cr_{i+1/2} \left[ \Delta(\phi)_{i+1} + 
+     \left(1 + \frac{2}{3} Cr_{i+1/2} \right) \phi_{6,i+1} \right]
+  \end{equation}
+  for $Cr_{i+1/2} < 0$. Here $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x$
+  is the Courant number. 
+
+  \subsubsection{The unrestricted scheme, PPM\_00}
+
+  The PPM advective fluxes $f_{i\pm1/2}$ can be expressed in a more
+  concise way for more efficient calculation. Combining the equations
+  (\ref{par}) through (\ref{endpar}) with the expressions for the fluxes
+  (\ref{flux+}) and (\ref{flux-}), we get:
+  \begin{eqnarray}
+    \label{sflux+}
+    f(\phi)_{i+1/2}^{+} &=& \phi_{i+1/2} - Cr_{i+1/2}(\phi_{1+1/2} -
+    \phi_{i}) \\ \nonumber
+    & & - Cr_{i+1/2}(1-Cr_{i+1/2})(\phi_{i-1/2} - 2\phi_{i} +
+    \phi_{i+1/2})    
+  \end{eqnarray}
+  for $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x \geq 0$,
+  \begin{eqnarray}
+    \label{sflux-}
+    f(\phi)_{i+1/2}^{-} &=& \phi_{i+1/2} + Cr_{i+1/2}(\phi_{1+1/2} -
+    \phi_{i+1}) \\ \nonumber
+    & & + Cr_{i+1/2}(1+Cr_{i+1/2})(\phi_{i+1/2} - 2\phi_{i+1} +
+     \phi_{i+3/2}) 
+  \end{eqnarray}
+  for $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x < 0$. The values at the
+  grid-cell edges (from equations (\ref{edgevalues1}) and
+  (\ref{edgevalues2})) can be expressed as:
+  \begin{equation}
+    \label{sedgevalues}
+    \phi_{i+1/2} = \left [7(\phi_{i+1} + \phi_{i}) - (\phi_{i+2} +
+     \phi_{i-1}) \right ]/12.
+  \end{equation}
+    
+  \subsubsection{The PPM\_01 monotonic scheme}  
+
+  When sharp gradients or discontinuities are present in the scalar
+  field, the piecewise continuous parabolas can have very steep
+  gradients and produce non-physical values -- overshoots
+  (e.g. concentrations higher than 100 \%) or undershoots (e.g. negative
+  concentrations) somewhere inside the grid-cell. In those cases the
+  calculated advective forcing (given by cell-edge fluxes (\ref{flux+})
+  and (\ref{flux-})) would likely result in non-physical values in the
+  scalar field after the advection step. To avoid the introduction of
+  new extrema (overshoots or undershoots) in the domain, monotonicity
+  constraints can be imposed on the advection scheme. In the PPM case,
+  this can be achieved in two ways: modifying the parabolas or limiting
+  the cell-edge fluxes.
+
+  In the original PPM scheme (Colella 1984) the monotonicity is ensured
+  by modifying the parameters of the parabolas. Lin and Rood (1996) have
+  proposed simplified monotonicity constraints that require fewer
+  floating point operations. The parabola parameters $\delta(\phi_{i})$,
+  $\Delta(\phi)_{i}$, $\phi_{6,i}$, $\phi_{L,i}$ and $\phi_{R,i}$ are
+  modified in the following way. The average slope $\delta(\phi_{i})$ in
+  the $i^{\mathrm{th}}$ grid-cell is replaced by the modified version
+  $\delta_{m}(\phi_{i})$:  
+  \begin{eqnarray}
+    \delta_{m}(\phi_{i}) &=& \mathrm{sign}(\delta(\phi_{i})) \times \\
+    \nonumber
+    & & \min \left [ |\delta(\phi_{i}) |, \,
+      2(\phi_{i}-\phi^{\mathrm{min}}_{i}), \, 2(\phi^{\mathrm{max}}_{i} -
+    \phi_{i}) \right ] \\    \nonumber
+    \phi^{\mathrm{min}}_{i}&=& \min (\phi_{i-1}, \phi_{i},
+    \phi_{i+1}) \\ \nonumber
+    \phi^{\mathrm{max}}_{i} &=& \max (\phi_{i-1}, \phi_{i}, \phi_{i+1})
+  \end{eqnarray}
+  The first-guess parabola coefficients ($\Delta(\phi)_{i}$,
+  $\phi_{6,i}$, $\phi_{L,i}$, $\phi_{R,i}$) are calculated using the
+  modified $\delta_{m}(\phi_{i})$. The parameters are then adjusted to
+  eliminate overshoots and undershoots through the following algorithm:
+  \begin{description}
+    \label{ppm01}
+    \item \texttt{IF} \hspace{5mm} $\delta_{m}(\phi_{i}) = 0$ \\       
+       $\hat{\phi}_{L,i} = \phi_{i}, \qquad \hat{\phi}_{R,i} = \phi_{i}, \qquad
+       \hat{\phi}_{6,i} = 0$
+    \item \texttt{ELSE IF} \hspace{5mm} $\phi_{6,i} \Delta(\phi)_{i} <
+      -(\Delta(\phi)_{i})^{2}$ \\
+       $\hat{\phi}_{6,i} = 3(\phi_{L,i} - \phi_{i}), \qquad \hat{\phi}_{R,i} =
+       \phi_{L,i} - \hat{\phi}_{6,i}, \qquad \hat{\phi}_{L,i} = \phi_{L,i}$
+    \item \texttt{ELSE IF} \hspace{5mm} $\phi_{6,i} \Delta(\phi)_{i} >
+      (\Delta(\phi)_{i})^{2}$ \\
+       $\hat{\phi}_{6,i} = 3(\phi_{R,i} - \phi_{i}), \qquad \hat{\phi}_{L,i} =
+       \phi_{R,i} - \hat{\phi}_{6,i}, \qquad \hat{\phi}_{R,i} =
+       \phi_{R,i}$
+    \item \texttt{END}
+  \end{description}
+  The parameters of the monotonized parabolas (labeled with
+  $\hat{\,}\,$) are used to calculate the advective fluxes defined in
+  equations (\ref{flux+}) and (\ref{flux-}).
+
+  \subsubsection{The PPM\_02 monotonic scheme}  
+
+  An alternative way of ensuring monotonicity is by correcting the
+  cell-edge fluxes as in the standard FCT approach. This limiter is
+  based on the work of Skamarock (2006) and Blossey and Durran
+  (2008). The flux at the cell-edge is composed of a
+  monotonicity-preserving upwind flux
+  \begin{equation}
+    F^{\mathrm{up}}_{i+1/2} = \left\{ \begin{array}{ll}
+    (\rho U)_{i+1/2} \phi^{t}_{i}, & \mathrm{for} \quad (\rho U)_{i+1/2}
+    \ge 0 \\
+    (\rho U)_{i+1/2} \phi^{t}_{i+1}, & \mathrm{otherwise} 
+    \end{array}\right.
+  \end{equation}
+  and a higher order correction such that
+  \begin{equation}
+    F^{m}_{i+1/2} = F^{\mathrm{up}}_{i+1/2} + r_{i+1/2}F^{\mathrm{cor}}_{i+1/2}
+  \end{equation}
+  where $0 \le r_{i+1/2} \le 1$ and $F^{\mathrm{cor}}_{i+1/2} =
+  F^{\mathrm{ppm}}_{i+1/2} - F^{\mathrm{up}}_{i+1/2}$ is the difference
+  between the PPM flux (calculated using the expressions \ref{sflux+} or
+  \ref{sflux-}) and the upstream flux. The resulting flux
+  $F^{m}_{i+1/2}$ will produce a monotonic solution in the advection step.
+
+  To evaluate $r_{i+1/2}$ we first calculate an approximate
+  ``transported and diffused'' solution using the upwind flux
+  \begin{equation}
+    (\rho \phi)^{td}_{i} = (\rho \phi)^{t}_{i} - \frac{\Delta t}{\Delta
+      x_{i}} \left (F^{up}_{i+1/2} - F^{up}_{i-1/2} \right )
+  \end{equation}
+  The sum of the correction fluxes directed out of the cell $i$ is
+  computed as $F^{\mathrm{out}}_{i} = \max(F^{\mathrm{cor}}_{i+1/2},\, 0) -
+  \min(F^{\mathrm{cor}}_{i-1/2},\, 0)$, and the sum of the fluxes
+  directed into the cell $i+1$ is calculated as $F^{\mathrm{in}}_{i+1} =
+  \max(F^{\mathrm{cor}}_{i+1/2},\, 0) - \min(F^{\mathrm{cor}}_{i+3/2},\,
+  0)$. Finally, let
+  \begin{equation}
+    \phi^{\max,\min}_{i} = \max, \min(\phi^{t}_{i-1}, \, \phi^{t}_{i},
+    \, \phi^{t}_{i+1}, \, \phi^{td}_{i-1}, \, \phi^{td}_{i},
+    \, \phi^{td}_{i+1})
+  \end{equation}
+  The re-normalization factor for monotonicity preservation is defined
+  as:
+  \begin{equation}
+    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[(\rho
+          \phi)_{i}^{td} - \hat{\rho}_{i}\phi_{i}^{\min} ]
+          \Delta x_{i}}{\Delta t F^{\mathrm{out}}_{i} + \varepsilon}, \,
+        \frac{[\hat{\rho}_{i+1} \phi^{\max}_{i+1} - (\rho
+          \phi)_{i+1}^{td}] \Delta x_{i+1}}{\Delta t
+          F^{\mathrm{in}}_{i+1} + \varepsilon} \right ) \right ]
+  \end{equation}
+  for $F^{\mathrm{cor}}_{i+1/2} \ge 0$,
+  \begin{equation}
+    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[\hat{\rho}_{i}
+          \phi^{\max}_{i} - (\rho \phi)_{i}^{td}] \Delta x_{i}}{\Delta t
+          F^{\mathrm{in}}_{i} + \varepsilon}, \, \frac{[(\rho
+          \phi)_{i+1}^{td} - \hat{\rho}_{i+1}\phi_{i+1}^{\min}
+          ] \Delta x_{i+1}}{\Delta t F^{\mathrm{out}}_{i+1} +
+          \varepsilon}  \right ) \right ]
+  \end{equation}
+  for $F^{\mathrm{cor}}_{i+1/2} < 0$. Here $\varepsilon$ is a small
+  parameter chosen to avoid division by zero, and $\hat{\rho}$ is the
+  density as updated in the current advection step. More details about
+  the density correction associated with directional splitting in 3D
+  applications will be discussed later. In the final step the cell
+  averages are updated to time $t+\Delta t$
+  \begin{equation}
+    (\rho \phi)^{t+\Delta t}_{i} = (\rho \phi)^{td}_{i} -
+    \frac{\Delta t}{\Delta x_{i}} \left
+      (r_{i+1/2}F^{\mathrm{cor}}_{i+1/2} -
+      r_{i-1/2}F^{\mathrm{cor}}_{i-1/2} \right ).
+  \end{equation}
+
+  The PPM\_{02} scheme described here is fully monotonic and can be
+  modified to use semi-Lagrangian approximation to the flux divergence
+  that extends the domain of dependence beyond the adjacent upstream
+  grid-cell and allows stable computation for Courant numbers greater
+  than unity. More details about the semi-Lagrangian extension can be
+  found in e.g. Skamarock (2006) and Blossey and Durran (2008). For
+  Eulerian integration with Courant number less than unity, the PPM\_01
+  is more computationally efficient.
+
+  \subsubsection{Time marching and extension to three dimensions}
+
+  To extend the 1D scalar advection scheme (\ref{1DFIT}) to multiple
+  dimensions, we follow the formulation of Easter (1993) where the mass
+  conservation $\pl\rho/\pl t + \nabla \cdot (\rho \bvec{V})=0$ is
+  simultaneously integrated with the discrete version of the scalar
+  transport (\ref{1DFIT}). This sort of density correction procedure is
+  necessary with the PPM schemes because the mass flux ($\rho U$) must
+  be saved and updated for scalar advection at each grid-cell
+  interface. The density correction is restricted to advection step at
+  and the model overall still uses the selected anelastic
+  approximation. The mass conservation is discretized within a 3D
+  formulation as:
+  \begin{equation}
+   \label{mass}
+    \rho^{t+\Delta t} = \rho^{t} - \mathcal{F}_{x}(I) -
+    \mathcal{F}_{y}(I) - \mathcal{F}_{z}(I),
+  \end{equation}
+  where the vector $I \equiv 1$ and $\mathcal{F}_{x,y,z}$ denotes the
+  discrete flux divergence in $x$, $y$ and $x$ direction, which is
+  calculated using the non-monotonic PPM\_00 scheme. The full 3D
+  algorithm for simultaneous transport of the scalar and mass
+  conservation is:
+  \begin{eqnarray}
+   \label{easter}
+   (\rho\phi)^{*} &=& (\rho \phi)^{t} - \mathcal{F}_{x}(\phi^{t}) \\
+   \nonumber
+   \rho^{*} &=& \rho^{t} - \mathcal{F}_{x}(I) \\ \nonumber
+   \phi^{*} &=& (\rho\phi)^{*} / \rho^{*} \\ \nonumber
+   (\rho\phi)^{**} &=& (\rho \phi)^{*} - \mathcal{F}_{y}(\phi^{*}) \\
+   \nonumber
+   \rho^{**} &=& \rho^{*} - \mathcal{F}_{y}(I) \\ \nonumber
+   \phi^{**} &=& (\rho\phi)^{**} / \rho^{**} \\ \nonumber
+   (\rho\phi)^{t+\Delta t} &=& (\rho \phi)^{**} -
+   \mathcal{F}_{z}(\phi^{**}) \\ \nonumber
+   \rho^{t+\Delta t} &=& \rho^{**} - \mathcal{F}_{z}(I) \\ \nonumber
+   \phi^{t+\Delta t} &=& (\rho\phi)^{t+\Delta t} / \rho^{t+\Delta t}.
+  \end{eqnarray}
+  Here the flux-divergence operators $\mathcal{F}_{x,y,z}$ can be
+  estimated using any of the described PPM schemes (PPM\_00, PPM\_01 or
+  PPM\_02), however the density corrections are always calculated using
+  the non-monotonic scheme. The PPM\_00 is the most computationally
+  efficient and accuracy of the correction is sufficient even for the
+  advection of scalars with the monotonic schemes. 
+
+  It can easily be seen that (\ref{easter}) collapses to (\ref{mass}) for
+  $\phi = I$ and it is consistent (if $\phi$ is constant at initial time
+  it remains constant). To achieve second-order accuracy of the
+  time-split scheme (\ref{easter}) a form of Strang splitting (Strang
+  1968) is used. It consists of alternating the order of flux divergence
+  operators between $x \rightarrow y \rightarrow z$ to $z \rightarrow y
+  \rightarrow x$ at each time step.
+
+  The PPM is finite-volume method and the cell-edge fluxes estimated at
+  the current model time $t$ can only be used to calculate the scalar
+  values at time $t+\Delta t$ and hence it intrinsically works with
+  forward-in-time time-marching. Since the advection of a scalar
+  variable is integrated from time $t$ to $t+\Delta t$, the wind-speed
+  components used for calculating the fluxes (e.g. in equation
+  (\ref{FIT})) should be given at time $t+\Delta t/2$ as an average
+  $U^{t+\Delta t/2} = 1/2(U^{t}+U^{t+\Delta t})$. Wind components at
+  time $t+\Delta t$ are not available when the scalar advection is
+  performed so linearly extrapolated values are used: $U^{t+\Delta t/2}
+  \approx 1/2(3U^{t} - U^{t-\Delta t})$.
+
+\subsection{Discretization}
+
+Before calling a PPM advection routine (\texttt{PPM\_MET} or
+\texttt{PPM\_SCALAR}), extrapolated wind components are calculated:
+\begin{eqnarray}
+ \tilde{U} &=& 1/2(3 U^{t} - U^{t-\Delta t})\\
+ \tilde{V} &=& 1/2(3 V^{t} - V^{t-\Delta t})\\
+ \tilde{W} &=& 1/2(3 W^{t} - W^{t-\Delta t})
+\end{eqnarray}
+The extrapolated wind components are used to calculate the contravariant
+winds ($\tilde{U}^{c}, \tilde{V}^{c}, \tilde{W}^{c}$) and respective
+Courant numbers: 
+\begin{equation}
+Cr_{x} = \tilde{U}^{c} \Delta t, \quad Cr_{y} = \tilde{V}^{c} \Delta t,
+\quad Cr_{z} = \tilde{W}^{c} \Delta t
+\end{equation}
+The Courant numbers are then used to calculate the density corrections
+for all three steps in 3D directional splitting described in
+(\ref{easter}). 
+
+The scalar variable values at the grid-cell edges are calculated as in
+equation (\ref{sedgevalues}). The scalar fluxes are determined from the
+equations (\ref{sflux+}) and (\ref{sflux-}), depending on the sign of the
+local Courant number:
+\begin{equation}
+f(\phi)_{x,i} = f(\phi)^{+}_{x,i} \left [ \frac{1}{2} +
+  \frac{1}{2}\mathrm{sign}(Cr_{x,i}) \right ] + 
+f(\phi)^{-}_{x,i} \left [ \frac{1}{2} -
+  \frac{1}{2}\mathrm{sign}(Cr_{x,i}) \right ] 
+\end{equation}
+and similarly for the $y$ and $z$ directions. Here the index $i$
+indicates a momentum grid point. The scalar fluxes $f(\phi)^{-}$ and
+$f(\phi)^{+}$ are calculated depending on which PPM scheme is used
+(PPM\_00, PPM\_01 or PPM\_02). The flux divergences are calculated using
+Schuman operators ($\delta_{x}, \delta_{y}, \delta_{z}$):
+\begin{eqnarray}
+\mathcal{F}_{x} &=& \delta_{x}\left [\ol{\trho}^{x} Cr_{x} f(\phi)_{x}
+\right] \\
+\mathcal{F}_{y} &=& \delta_{y}\left [\ol{\trho}^{y} Cr_{y} f(\phi)_{y}
+\right] \\
+\mathcal{F}_{z} &=& \delta_{z}\left [\ol{\trho}^{z} Cr_{z} f(\phi)_{z}
+\right]
+\end{eqnarray}
+At the end of an advection step, following the directional splitting
+described in (\ref{easter}), we get the updated scalar variable
+$\phi^{t+\Delta t}$. 
+As the set of the model is based for the moment on the leap-frog scheme except 
+for the PPM advection, the temporal discretization is given by :
+\begin{eqnarray}
+   (\rho\phi)^{t+\Delta t} &=& (\rho\phi)^{t-\Delta t} - \frac{1}{2} \left [\mathcal{F}_{x,y,z}(\phi^{t-\Delta t}) + \mathcal{F}_{x,y,z}(\phi^{t}) \right ]
+  \end{eqnarray}
+
+\noindent where $\mathcal{F}_{x,y,z}$ is the flux-divergence PPM operator and $\mathcal{F}_{x,y,z}(\phi^{t-\Delta t})$ is storaged from the previous time step.
+
+% The advective forcing that is passed back to the
+%model is calculated as:
+%\begin{equation}
+%\phi_{\mathrm{src}} = \trho (\phi^{t+\Delta t} - \phi^{t})/\Delta t
+%\end{equation}
+
 \section{References}
+\decrefname
+Blossey, P. N. and Durran, D. R., 2008: Selective Monotonicity
+   Preservation in Scalar Advection, 
+   {\it J. Comput. Phys.},  {\bf 227}, 5160–5183. 
+\decrefname
+Carpenter, Richard L., Droegemeier, Kelvin K.,
+   Woodward, Paul R.\ and Hane, Carl E., 1990: Application of the
+   Piecewise Parabolic Method (PPM) to Meteorological Modeling,
+  {\it Mon. Wea. Rev.},  {\bf 118}, 586--612.
+\decrefname
+Colella, Phillip and Woodward, Paul R., 1984: The
+   Piecewise Parabolic Method (PPM) for Gas-Dynamical Simulations,
+   {\it J. Comput. Phys.},  {\bf 54}, 174--201.
+\decrefname
+ Easter, R. C., 1993: Two Modified Versions of Bott's Positive-Definite
+   Numerical Advection Scheme, {\it Mon. Wea. Rev.},  {\bf 121}, 297-304.
+\decrefname
+Lin, S. and Rood, R. B., 1996: Multidimensional Flux-Form
+   Semi-Lagrangian Transport Schemes, 
+{\it Mon. Wea. Rev.},  {\bf 124}, 2046-2070.
 \decrefname
 Rood, R.B., 1987: Numerical advection algorithms and their role in
 atmospheric transport and chemistry models.
-{\it Reviews of Geophysics},  {\bf 25}, 71-100.
+{\it Rev. Geophys.},  {\bf 25}, 71-100.
+\decrefname
+Skamarock, W. C., 2006: Positive-Definite and Monotonic Limiters for
+Unrestricted-Time-Step Transport Schemes,
+{\it Mon. Wea. Rev.}, {\bf 134}, 2241--2250.
 \decrefname
 Smolarkiewicz, P. K., 1983: A simple positive definite advection scheme with
 small implicit diffusion.
 {\it Mon. Wea. Rev.},  {\bf 11}, 479-486.
 \decrefname
-Smolarkiewicz, P. K., 1984: A fully multidimensional positive definite advection
+Smolarkiewicz, P. K., 1984: 
+A fully multidimensional positive definite advection
 transport algorithm with implicit diffusion.
 {\it J. Comput. Phys.},  {\bf 54}, 325-362.
 \decrefname
-Smolarkiewicz, P. K. and Clark T. L., 1986: The multidimensional positive definite
-advection
+Smolarkiewicz, P. K. and Clark T. L., 1986: 
+The multidimensional positive definite advection
 transport algorithm: further developments and applications.
 {\it J. Comput. Phys.},  {\bf 67}, 396-438.
 \decrefname
 Smolarkiewicz, P. K. and Grabowski W.W., 1990: The multidimensional
-positive definite
-advection
-transport algorithm: nonoscillatory option.
+positive definite advection transport algorithm: nonoscillatory option.
 {\it J. Comput. Phys.},  {\bf 86}, 355-375.
 \decrefname
 Staniforth A., Cote J. and Pudykiewicz J., 1987: Comments on "Smolarkiewicz's
 deformational flow". {\it Mon. Wea. Rev.},  {\bf 115}, 894-900.
+\decrefname
+Strang, G., 1968: On the Construction and Composition of Difference Schemes, 
+{\it SIAM J. Numer. Anal.}, {\bf 5}, 506-517.
 %\end{document}
