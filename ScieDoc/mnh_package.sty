@@ -31,7 +31,7 @@
 
 %% Header and footer
 %\renewcommand\partmark[1]{\markboth{#1}{#1}}
-\newcommand{\mnhversion}{Meso-NH Masdev4.7 24 October 2008}
+\newcommand{\mnhversion}{Meso-NH Masdev4.8 19 January 2009}
 \newcommand{\partoto}{\title}
 \pagestyle{fancy} 
 \renewcommand{\footrulewidth}{0.4pt} 
@@ -89,14 +89,14 @@ not cited here, but have given their best to create this unique tool.\\
 \vspace{2cm}
 Since the 2002 edition, in addition to the contributors cited above, 
 thanks have to be extended to
-J.-P. Chaboureau, O. Geoffroy, O. Nuissier, C. Lac, T. Maric, P. Le Moigne, M. Leriche,
-F. Solmon, and M. Tomasini.\\
+D. Barbary, Y. Bouteloup, O. Caumont, J.-P. Chaboureau, O. Geoffroy, O. Nuissier,
+C. Lac, T. Mari\'c, P. Le Moigne, M. Leriche, J. Pergaud, F. Solmon, and M. Tomasini.\\
 
 {\em Jean-Pierre Chaboureau}
 
 \vspace{11cm}
 
-Copyright \copyright\quad 1995, 1999, 2000, 2001, 2002, 2008
+Copyright \copyright\quad 1995, 1999, 2000, 2001, 2002, 2008, 2009
 by M\'et\'eo France and C.N.R.S. \\
 All Rights Reserved. Printed in France.}
 \makeatother
@@ -144,6 +144,10 @@ All Rights Reserved. Printed in France.}
 \newcommand{\bvec}[1]{\mbox{\boldmath$#1$}} % boldface italic for vectors
 
 \newcommand{\ts}{\textsuperscript}
+
+% Radar simulator
+\DeclareMathAlphabet{\mathitbf}{T1}{\rmdefault}{bx}{it}
+\def\vec#1{\mathitbf{\boldsymbol{#1}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  MACROS POUR CONTRIBUTIONS DE JPP%%%%%%%%%%%%%%%%%

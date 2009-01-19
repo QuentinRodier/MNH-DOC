@@ -1149,32 +1149,6 @@ stratospherical background & 100  $\%$  & -   &  -   & -   & -    \\
 \end{table} 
 \bigskip
 
-The cloud-droplet single scattering albedo (SSA) is then computed following an extention of Chuang et al. (2002) parameterization for the computation of the SSA of cloud droplets containing black carbon (Sandu et al. 2005):
-$$\omega = 1- C_{abs}/C_{ext}$$
-
-where the absorption and extinction coefficients are given by:
-
-\begin{equation}
- C_{abs}=\frac{\pi}{6}d^3\frac{\delta[n_{eff}^3-(n_{eff}^2-1)^{3/2}]}{n_{eff} (1+0.8d \delta)}\nonumber
- \end{equation}
-\begin{equation}
-C_{ext}=\pi d^2 /2
- \end{equation}
-
-where $n_{eff},k_{eff}$ are the real and the imaginary parts of the cloud droplet effective indice of refraction, d is the cloud droplet diameter, $\lambda$ is the central wavelenght of the 6 SW bands.
-
-The SSA of a cloud droplet containing various types of inclusions may be calculated through this method if the effective medium approximation can be used to compute the cloud droplet's complex effective dielectric constant ($\epsilon_{eff}=m^2=(n_{eff}+i\cdot k_{eff})^2$). The Maxwell-Garnett mixing rule can be applied to determine $\epsilon_{eff}$ if any of the following set of assumptions are considered: 
-\begin{enumerate}
-\item the aerosols are externally mixed, all the particles being spherical and randomly distributed in the cloud droplet (Bohren and Hauffman 1983). 
-\item the particles included into a cloud droplet form an internal mixture. The resulting aerosol is considered spherical and has not a preferential location near the drop's surface (extrapolation of Chylek et al. (1996) results for BC inclusions).
-\end{enumerate}
-With these assumptions, for $n$ spherical inclusions embedded in a water cloud drop, $\epsilon_{eff}$ given by the Maxwell-Garnett theory is equal to:
-
-\begin{equation}
-\epsilon_{eff}=\frac{(1-f)\epsilon_w+\sum_{i=1}^n f_i \beta_i \epsilon_i}{1-f+\sum_{i=1}^n f_i \beta_i}
- \end{equation}
-
-where $\epsilon_w$ is the complex dielectric constant of water, $\epsilon_i$ and $f_i$ are the dielectric constant and the volumic fraction of the $i^{th}$ inclusion, $f=\sum_{i=1}^n f_i$. If all the inclusions are spherical $\beta_i=(3 \epsilon_w)/(\epsilon_i+2 \epsilon_w)$.
 
 %
 \subsubsection{Ice cloud case}
@@ -1290,6 +1264,8 @@ Cloud water optical properties depend on COPWSW:
 
 \item COPWSW ='FOUQ', refers to Fouquart (1987).
 
+ \item COPWSW ='MALA', refers to Malavelle (2007): Optical thickness of Savijarvi (1997), asymetry factor of Fouquart (1991) and single scaterring albedo of Slingo (1989). Good compromise for the C2R2 and KHKO scheme in regard on the size distribution hypothesis
+
 \end{itemize}
 
 Ice water optical properties depend on COPISW:
@@ -1312,6 +1288,9 @@ Cloud water optical properties depend on COPWLW:
 \item COPWLW='SMSH', refers to Smith and Shi (1992).
 
 \item COPWLW='SAVI', refers to Savijarvi and Raisanen (1997).
+
+\item COPWLW='MALA', refers to Malavelle (2008): parameterization of the optical thickness of the cloud droplets and rain drops adapted to the size distribution hypothesis used in the C2R2 and KHKO scheme.
+
 \end{itemize}
 
 Ice water optical properties depend on COPILW:

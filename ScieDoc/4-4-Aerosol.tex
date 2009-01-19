@@ -8,48 +8,55 @@ First, aerosols are treated independently from
 the gas phase chemistry with a prescribed chemical composition. This is the 
 case for dust or sea-salt aerosols. 
 These aerosols however can interact with the radiative code and/or the cloud 
-dynamics. Second, organic and inorganic aerosols can be fully coupled with the
+dynamics. Second, organic and inorganic aerosols (anthropogenic aerosols) can be fully coupled with the
 gas phase chemistry allowing subsequent interactions with gaseous 
 source precursors. 
 %%%%%%%%%%%%%%%%%%%%%%%
-\section{Dust aerosols}
-%\author{Alf Grini, CNRM/GMEI}
+\section{Dust aerosols and sea salt}
+%\author{Alf Grini, P. Tulet CNRM/GMEI}
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{General theory}
 
 Dust is mobilized from dry desert surfaces when the wind friction 
 speed reaches a threshold wind friction speed of approximately
-0.2 m/s. Dust is an important aerosol with annual global
- emissions ranging from 1000 to 3000 $Tg~yr^{-1}$ and average global
-load around 10-30 $Tg$ \citep{Zender2004}.
+0.2 m~s$^{-1}$. Dust is an important aerosol with annual global
+ emissions ranging from 1000 to 3000 Tg~yr$^{-1}$ and average global
+load around 10-30 Tg \citep{Zender2004}.
 
-Dust aerosols both scatter and absorb solar radiation, and it absorbs and
-re-emits terrestrial radiation. Since the dust is emitted to the atmosphere
+Dust aerosols both scatter and absorb solar radiation, and they absorb and
+re-emit terrestrial radiation. Since the dust is emitted to the atmosphere
 when there are large winds, dust emission often occur in the form of
 {\it dust storms} and optical depths near the source can be very large.
+
+Sea salt aerosols are produced as film and jet droplets when bubbles, entrained in the water by breaking waves, disrupt the sea surface \citep{Blanchard1983}, and at winds speeds exceeding about 9~m~s$^{-1}$, by direct disruption of the wave tops (spume droplets) \citep{Monahan1983}.
+Sea salt play a major role acting as a marine CCN and modifying the marine clouds properties.
+
 
 \subsection{Sources and transport}
 
 A detailed description of the dust emissions processes is provided in a 
 preceding chapter "Surface Processes Scheme".
 
-The dust is produced depending on the wind speed. 
+Sea salt and dust are produced depending on the wind speed. 
 The externalized surface
 of Meso-NH takes care of the mobilization, and sends moments of the size 
 distribution
-to the atmospheric model. The size distribution of dust is assumed to consist
-of lognormal modes, and these modes are described by their $0^{th}$, $3^{rd}$ 
+to the atmospheric model. The size distributions of sea salt and dust are assumed to consist
+of three lognormal modes each, and these modes are described by their $0^{th}$, $3^{rd}$ 
 and
-$6^{th}$ moment. The moments can be transformed to diagnostic variables of 
+$6^{th}$ moment. The moments can be transformed as diagnostic variables of 
 the size distribution ($\sigma$ (dispersion coefficient), $r$ (median radius) 
-and $N$ (number concentration) following \citet{Tulet2005})
-Dust is currently lost through sedimentation and rain out in convective clouds.
+and $N$ (number concentration) following \citet{Tulet2005}.
+The dust aerosols are parameterized following \citet{Grini2006}. For emission processes, dust is mobilized using the Dust Entrainment And Deposition model (DEAD) \cite[]{Zender2003} as a function of saltation and sandblasting as defined by \cite{Marticorena1995}.
+Sea salt emission is parameterized upon either the formulation of \citet{Vignati2001}
+(effective source function) or a lookup table defined by \citet{Schulz2004}.
+Dust and sea salt are currently lost through sedimentation and rain out in convective clouds.
 The sedimentation takes into account the size of the aerosol where large 
 particles have larger sedimentation velocity 
 (see Sedimentation - Dry deposition in next section).
-The convective rainout assumes that the 
-aerosols are completely soluble in rain water. 
-(Henry's law coefficient similar to $HNO_3$).
+The convective rainout is similar to gas chemistry and assumes that the 
+aerosols are soluble in rain water with a solubility factor equal to 0.3. 
+Explicit aqueous mass transfer of aerosol within clouds and rain droplets have been parameterized for dust, sea salt and anthropogenic aerosols (see section "Scavenging and aqueous mass transfer").
 
 \subsection{Radiation and optical properties}
 
@@ -57,9 +64,18 @@ The dust influences the radiation scheme of Meso-NH.
 Optical properties in the 
 short wave are calculated using the Mie code SHDOM \citep{Evans1998} 
 {\it http://nit.colorado.edu/~evans/shdom.html}
-They are calculated off line, assuming a refractive index of $1.48 -0.0014$ 
-for all wavelengths in the shortwave, similar to what was used by 
-\citet{Myhre2003}. The results of the Mie calculations are stored in a look up
+They are calculated off line, assuming a refractive index of:
+\begin{itemize}
+\item Ri[1]="(1.448,-0.00292)" for  wavelengths comprises between 0.185 $\mu$m and 0.25 $\mu$m
+\item Ri[2]="(1.448,-0.00292)" for  wavelengths comprises between 0.25 $\mu$m and 0.44 $\mu$m
+\item Ri[3]="(1.448,-0.00292)" for  wavelengths comprises between 0.44 $\mu$m and 0.69 $\mu$m
+\item Ri[4]="(1.44023,-0.00116)" for  wavelengths comprises between 0.69 $\mu$m and 1.19 $\mu$m
+\item Ri[5]="(1.41163,-0.00106)" for  wavelengths comprises between 1.19 $\mu$m and 2.38 $\mu$m
+\item Ri[6]="(1.41163,-0.00106)" for  wavelengths comprises between 2.38 $\mu$m and 4.0 $\mu$m
+\end{itemize}
+See \citet{Tulet2008} for more explanations.
+
+ The results of the Mie calculations are stored in a look up
 table as {\it asymetry factor $[no~unit]$}, 
 {\it single scattering albedo $[no~unit]$} and 
 {\it extinction coefficient $[m^2~g^{-1}]$}.
@@ -70,7 +86,7 @@ The long wave code is not modified for special treatment of dust.
 There is a default {\it Longwave absorption coefficient} defined in 
 {\it yoesw.f90} of the radiation code. The coefficient is used
 to calculated absorption of terrestrial radiation from optical depth at 
-550 ${nm}$. Although this treatment could be refined, the longwave effect of 
+550~nm. Although this treatment could be refined, the longwave effect of 
 dust is supposed to be smaller than the shortwave effect \citep{Myhre2003}. 
 
 %-----------------------------------------------------
@@ -89,15 +105,15 @@ solution:
 \frac{\partial n(r_p)}{\partial t} = f(n(r_p))
 \label{eqanal}
 \end{equation}
-where $n$ is the function of aerosol size distribution ($ particles / cm^3$) 
-and $r_p$ is the aerosol radius ($\mu m$).
+where $n$ is the function of aerosol size distribution (particles cm$^{-3}$) 
+and $r_p$ is the aerosol radius ($\mu$m).
 This equation can be integrated to obtain an equation system such as: 
 \begin{equation}
 \frac{\partial M_k}{\partial t} = f(M_k)
 \label{genmoment}
 \end{equation}
 where the $k^{th}$ moment is given by $M_k = \int_{0}^{\infty} r_{p}^{k} n(r_p) 
-dr_p \ (\mu m^k / cm^3) $.
+dr_p$ ($\mu$m$^k$ cm$^{-3}$).
 Using several assumptions (choice of the aerosol spectral distribution) the 
 equation (\ref{genmoment})
 can be closed giving $f(M_k)$ in terms of moments.
@@ -109,7 +125,7 @@ accumulation mode). Each mode is represented by a log-normal distribution as:
 \begin{equation}
  n(\ln D) = \frac{N}{\sqrt{2 \pi} \ln{\sigma_g}} \exp \left(- \frac{\ln^2 (\frac{D}{D_g})}{2 \ln^2(\sigma_g)}\right) \label{distribution}
 \end{equation}
-where $N$ is the particle number concentration (in $ particles /cm^3$), $D$ is the particle diameter ($\mu m$) and $D_g$
+where $N$ is the particle number concentration (in particles cm$^{-3}$), $D$ is the particle diameter ($\mu$m) and $D_g$
 , $\sigma_g$ are respectively the number median diameter and the geometric 
 standard deviation of the modal distribution.
 The $k^{th}$ moment of the mode i is defined as :
@@ -117,7 +133,7 @@ The $k^{th}$ moment of the mode i is defined as :
 M_{k,i} = \int_{0}^{\infty} r^k n_i(r) dr
 \label{defmomentint}
 \end{equation}
-After integration (variable change as $ x = \frac{\ln (r/D_g)}{\ln(\sigma)}$) we 
+After integration (variable change as $ x = \ln (r/D_g) / \ln(\sigma)$ ) we 
 obtain:
 
 \begin{equation}
@@ -212,7 +228,7 @@ due to the
 \end{eqnarray}
 with $\beta(r_{p1},r_{p2})$ representing the coagulation rate between particles 
 $r_{p1}$ and 
-$ r_{p2}$ in $cm^3.s^{-1}$.
+$ r_{p2}$ in cm$^3$ s$^{-1}$.
 
 For the particular case of $N=2$, different modes i and j  ($N > 2$ is an 
 extrapolation of results below),  we 
@@ -422,7 +438,7 @@ mode as:
 3} \Psi_p(r_p)n_i(r_p) dr_p
 \label{growth_gen}
 \end{equation}
-where $\Psi_p$ is the condensation law on particles ($\mu m^3.s^{-1}$). $\Psi_p$ 
+where $\Psi_p$ is the condensation law on particles ($\mu$m$^3$ s$^{-1}$). $\Psi_p$ 
 can be separated in a $\Psi_T$ and $\Psi$ respectively independent and dependant 
 on particle size.
 \begin{equation}
@@ -487,8 +503,8 @@ I_{k,i} = \frac{I^{fm}_{k,i} I^{nc}_{k,i}}{I^{fm}_{k,i} + I^{nc}_{k,i}}
 \end{equation}
 \citet{Pratsini1988} estimated that this kind of procedure to average 
 growth process is a very good approximation in the transitional regime.
-In our model, we assume thermodynamical equilibrium ($P_l = P_{surf,l}) $) in equation (28).
-We calculate $\delta \Psi_p$ as a diagnostic at the end of the timestep for use in equation (24).
+In our model, we assume thermodynamical equilibrium ($P_l = P_{surf,l}$) in (\ref{psit}).
+We calculate $\delta \Psi_p$ as a diagnostic at the end of the timestep for use in (\ref{growth_gen}).
 
 \subsubsection*{Nucleation}
 
@@ -504,9 +520,11 @@ nucleation \citep{Wilemski1984} and for taking into account the hydratation
 effect.
 The nucleation rate is parameterized as: 
 \begin{equation}
-J = \exp \left( 25.1289 N_{sulf} - 4890.8 \frac{N_{sulf}}{T} -\frac{1743.3}{T} 
--2.2479 \delta N_{sulf} RH + 7643.4 \frac{x_{al}}{T} - 1.9712 \frac{x_{al}}{RH} 
+\begin{split}
+J = \exp & \left( 25.1289 N_{sulf}  - 4890.8 \frac{N_{sulf}}{T} -\frac{1743.3}{T} \right.  \\ 
+& \left. -2.2479 \delta N_{sulf} RH + 7643.4 \frac{x_{al}}{T} - 1.9712 \frac{x_{al}}{RH} 
 \right)
+\end{split}
 \label{nucleation}
 \end{equation}
 
@@ -514,13 +532,13 @@ with
 $x_{al}=1.2233 - \frac{0.0154 RA}{RA+RH} + 0.0102 \ln(N_{av})-0.0415\ln(N_{wv}) 
 + 0.0016 T$ the molar fraction of $H_2SO_4$ in the critical nucleus (stable);\\
 $N_{av}$ and $N_{wv}$ respectively the concentration  of sulfuric acid vapor and water vapor in 
-$cm^{-3}$; \\
+cm$^{-3}$; \\
 $T$ the atmospheric temperature (K), RA and RH absolute and relative humidity. 
-$N_{sulf} = \ln\left(\frac{N_a}{exp(-14.5125+0.1335T-10.5462 RH+1958.4(RH/T))} 
+$N_{sulf} = \ln\left(N_a / exp(-14.5125+0.1335T-10.5462 RH+1958.4(RH/T)) 
 \right)$ 
 is the logarithm ratio between $N_a$ (ambient concentration of sulfur acid in 
-$cm^{-3}$) and $N_{a,c}$ the concentration sulfur acid need to reach a nucleation 
-rate of $J= 1 cm^{-3}.s^{-1}$; 
+cm$^{-3}$) and $N_{a,c}$ the concentration sulfur acid need to reach a nucleation 
+rate of $J= 1$ cm$^{-3}$ s$^{-1}$; 
 and $\delta = 1 + \frac{T - 273.15}{273.15}$.
 $N_{a,c}$ can be given by:
 \begin{equation}
@@ -566,9 +584,9 @@ by:\\
 ka = \sum_{k}\left(\frac{d_k}{2D_g} +  \frac{4}{\nu \lambda} \right)^{-1} A_k
 \label{ka}
 \end{equation}
-with $d_k$ the particle diameter ($m$), $D_g$ the reacting gas molecular 
-diffusivity ($m^2.s^{-1}$), $\mu$ 
-the mean molecular velocity ($m.s^{-1}$), $A_k$ the total surface area of mode 
+with $d_k$ the particle diameter (m), $D_g$ the reacting gas molecular 
+diffusivity (m$^2$ s$^{-1}$), $\mu$ 
+the mean molecular velocity (m s$^{-1}$), $A_k$ the total surface area of mode 
 $k$ and $\lambda$ the uptake coefficient of reactive species.
 
 \subsubsection*{Organic condensation}
@@ -697,9 +715,43 @@ M_{6,i} = \frac{M_{3,i}^4}{R_{g,i}^6 M_{0,i}^3}
 To decrease $\sigma$ and $R_g$, a solution is to consider alternatively
 both treatment of $M_{6,i}$ for each time step.
 
-%\end{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Scavenging and aqueous mass transfer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Washout and cloud aerosol collection are calculated in the MesoNH based upon first order principals.  In- and below-cloud impaction scavenging by cloud droplets and raindrops uses a kinetic approach to calculate the aerosol mass transfer as:
+\begin{equation}
+\frac{dM_p}{dt}= - \Lambda_M M_p
+\label{eq:scav}
+\end{equation}  
+where 
+$dMp/dt$ represents the aerosol dry mass transfer in the acquous phase, $M_p$ the aerosol dry mass and $\Lambda_M$ the path normalized scavenging coefficient (in s$^{-1}$).
+Upon \citet{Pruppacher2000} the normalized scavenging coefficient for Brownian motion between dry aerosol and cloud droplets is determined by the semi-empirical formulation as:
+\begin{equation}
+\Lambda_M M_p  = \frac{1.35 LWC D_p}{r^2_{cloud}}
+\label{eq:cloud}
+\end{equation}  
+where $LWC$ is the Liquid Water Content in g cm$^{-3}$, $D_p$ is the diffusivity of the particle in m$^2$ s$^{-1}$ and $r_{cloud}$ the
+cloud droplet radius in m.
+Whereas the normalized scavenging coefficient between dry aerosol and rain droplets can be calculated as \citet{Seinfeld1997}:
 
-%\end{document}
+\begin{equation}
+\Lambda_M M_p  = \frac{3}{2} \frac{E}{r_{rain}} \, F_{rain}
+\label{eq:rain}
+\end{equation} 
+where $E$ is the collection efficiency fully described in \citep{Seinfeld1997,Tost2006}, $r_{rain}$ the radius of the rain droplets (in mm) and $F_{rain}$ the effective precipitation flux in kg m$^{-2}$ s$^{-1}$.
+
+Within this scheme, efficiencies for three types of collections are calculated.  Small particles are collected efficiently through Brownian diffusion, but the collection efficiency decreases with increasing particle size.  Inertial impaction is important for large particles, with collection efficiencies approaching one for particles of diameter greater than 20 $\mu$m.  Washout is the least efficient for particles with diameters ranging from 0.2 to 2.0 $\mu$m, where interception in difficult due to particles following the streamlines of air around the falling droplet.  
+The in-cloud mass aerosol transfers into rain droplets by autoconversion and accretion processes have been introduced as described by \citet{Pinty1998}. The sedimentation of aerosol mass included in raindrops is solved using a time splitting technique with an upstream differencing scheme of the vertical flux as:
+
+\begin{equation}
+ P_{asr}  = \frac{m_{aero}}{m_{rain}\rho} \frac{d}{d z}(V_r \, \rho \, r_{rain})
+\label{eq:sedim}
+\end{equation} 
+
+where $P_{asr}$ is the raindrop aerosol mass sedimentation rate, $m_{aero}$ the aerosol mass included in raindrops (in kg kg$^{-1}$ of air), $m_{rain}$ the rain water (in  kg kg$^{-1}$ of air), $\rho$ the air density and $V_r$ the raindrop sedimentation velocity (in m s$^{-1}$).
+The re\-release of aerosols into the air due to rain evaporation is assumed to be proportional to the water evaporated \citep{Chin2000}.  However, this is likely to overestimate the release of aerosols due to evaporation as some evaporation of the rain results in smaller raindrops that still contain the aerosols.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{btSect}{4-4-Aerosol}

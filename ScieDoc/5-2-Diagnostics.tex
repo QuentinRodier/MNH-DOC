@@ -202,17 +202,22 @@ where $T_{vp}$ and $T_{ve}$ are the virtual temperature of the lifted parcel and
 
 
 
+\section{GPS zenith delay}
+The Zenith Total Delay (ZTD) is obtained by vertically integrating the refractivity $N$:
+\begin{eqnarray}
+ ZTD&=&10^{-6}\int^{\infty}_{z_r} k_{1}\frac{P}{T_v}dz+10^{-6}\int^{\infty}_{z_r}k_2^{'}\frac{e}{T}+k_3\frac{e}{T^2}dz \label{eq:ZTD} 
+\end{eqnarray}
+where $P$, $e$ are the total pressure and the partial pressure of water vapor, $T_v$ is the virtual temperature, $k_1$, $k_2$ and $k_3$ are the atmospheric refractivity constants. The set proposed by Bevis et al. (1994) is used here: $k_1 =77.60$ K hPa$^{-1}$, $k_2=69.4 $ K hPa$^{-1}$, $k_3=370100$ K$^{2}$ hPa$^{-1}$.
+
+The first term of (\ref{eq:ZTD}) is called the zenith hydrostatic delay (ZHD), the second and third terms together are called the zenith wet delay (ZWD), which is proportional to the Integrated Water Vapor (IWV). More details can be found in Brenot et al. (2006).
+%
 \section{Radar products}
 %
 \subsubsection{Introduction}
 %
 This section describes the computation of some standard radar products in 
 the Meso-NH code using a generic representation of the hydrometeor size
-distributions. This section is reproduced in Richard et al. (2003).
-It is implicitly assumed that the radar wavelength is large 
-enough so that radar waves propagate without attenuation and that the Rayleigh 
-scattering approximation ($\propto D^6$ cross-section efficiency) is valid. 
-Computations are made on the curvilinear "mass" grid system of the model.
+distributions. 
 
 The microphysical scheme assumes that each type of hydrometeor (rain, 
 snow/aggregate, graupel, and hail) with an assigned index $i\in[r,s,g,h]$,
@@ -270,8 +275,14 @@ anelatic system of equations. Using (\ref{eq1}), (\ref{eq6}) and
 \eeq
 %
 
-
+\subsection{Grid-point radar diagnostics}
 %
+This subsection is partly reproduced in Richard et al. (2003).
+It is implicitly assumed that the radar wavelength is large 
+enough so that radar waves propagate without attenuation and that the Rayleigh 
+scattering approximation ($\propto D^6$ cross-section efficiency) is valid. 
+Computations are made on the curvilinear "mass" grid system of the model.
+
 \subsubsection{Equivalent reflectivity factor: $Z_e$}
 %
 The total equivalent radar reflectivity factor $Z_e$ (dBZ), is calculated 
@@ -539,6 +550,169 @@ Note that with the equivalent $C$ value at $\lambda=10.71$~cm suggested by Gorgu
 % (to be completed by a radar polarimetric scientist)
 
 
+\subsection{Radar diagnostics on Plan Position Indicators (PPI)}
+An alternative simulator simulates Plan Position Indicators (PPI), which are cones usually projected on a horizontal plane obtained by scanning the atmosphere at constant elevation. This simulator is meant to allow for direct comparisons with conventional radar outputs\footnote{Note that it is not yet possible to simulate Range Height Indicator (RHI), which is obtained by scanning in the vertical at a constant azimuth.}. The main differences with the grid-point simulator are:
+\begin{itemize}
+\item possibility to choose among several scattering models,
+\item beam bending taken into account,
+\item possibility to take attenuation into account,
+\item antenna's radiation pattern (beam broadening) modeled,
+\item ouptut on Cartesian grids (compatible with the operational French radar products).
+\end{itemize}
+This subsection explains all these differences.  
+
+\subsubsection{Radar equation}
+Here, the assumptions made for the grid-point simulator are relaxed. So we have to use the radar equation to express radar observations, and equivalent radar reflectivity factor in particular.
+The radar equation relates the power $P_t$ (in W) emitted by the radar to the received one ($P_r$, in W). It can be written without much loss of generality as (see, e.g., Doviak and Zrni\'c 1993): %\citep[see, e.g.,][p.~73]{dov93}
+\begin{equation}
+\overline{P_r}(\vec r_0)=\frac{P_tg^2\lambda^2}{(4\pi)^3}\int_0^\infty\!\!\!\int_0^{2\pi}\!\!\!\int_0^\pi\frac{\eta(\vec r) l(\vec r)^2}{r^4}f^4(\vartheta',\phi')|W(r_0-r)|^2r^2\sin\vartheta'd rd\vartheta'd\phi'\,,\label{eqrad}
+\end{equation}
+where
+\begin{itemize}
+\item $\vec r_0$ (in m) is the vector that links the radar emitting antenna to the centre of the resolution volume, 
+\item $g$ is the gain in emission of the antenna, which normally includes attenuation by radome and waveguide, 
+\item $\lambda$ (in m) is the wavelength of the emitted signal, 
+\item $\vec r$ (in m), with spherical coordinates $(r,\vartheta,\phi)$ (see Fig.~\ref{coord-spher}), is the vector that links the antenna to the current point, 
+\item $f^2$ is the angular weighting function,
+\item $W$ is the radial weighting function, 
+\item $\eta$ (in $\rm m^{-1}$) is the \emph{radar reflectivity}, which is defined by
+\begin{equation}
+\eta(\vec r)\equiv\frac1{\delta\cal V}\sum_{i\in\delta\cal V}\sigma_i=\sum_{j\in\rm type}\int_0^\infty\sigma_j(D)N_j(D,\vec r)d D\,,\label{eta}
+\end{equation}
+where $\sigma_i$ (in $\rm m^2$) is the \emph{backscattering cross-section} of the $i$\textsuperscript{th} scatterer located in the infinitesimal volume $\delta\cal V$ (in $\rm m^3$), $\sigma_j(D)$ (in $\rm m^2$) is the backscattering section of particles of diameter $D$ (in m) with respect to their types $j$ (precipitating water, graupel, snow, primary ice\footnote{Hail is not yet included in the current version. Note, however, that the effect of primary ice is taken into account.}), and $N_j$ (in $\rm m^{-4}$) is the hydrometeor size distribution. % In the following, we omit to mention the sum over the different hydrometeor classes and we write in a simple way
+% \begin{equation}
+% \eta=\int_0^\infty\sigma(D)N(D)d D\,.
+% \end{equation}
+\item $l$ is the total attenuation:
+\begin{equation}
+l({\vec r})=\exp\left(-\int_0^r\sum_{j\in\rm type}\int_0^\infty {C_e}_j(D)N_j(D,{\vec r})d Dd r\right)\,,\label{l}
+\end{equation}
+where ${C_e}_j$ is the \emph{extinction cross-section} of the $j$\textsuperscript{th} scatterer.
+\end{itemize}
+
+ \begin{figure}
+ \centering
+\includegraphics*[bb=121 315 479 543]{\EPSDIR/schema-geometrie}
+ \caption{Spherical coordinates used to locate the target.}\label{coord-spher}
+ \end{figure}
+
+When 
+\begin{enumerate}
+\item the resolution volume is small enough so that hydrometeor properties are uniform inside this volume,
+\item the Rayleigh approximation is valid (wavelength much smaller than particle sizes),
+\item scatterers are only made of liquid water,
+\item attenuation is negligible,
+\item the receiver's bandwidth is infinite,
+\item the antenna's directivity function is  Gaussian,
+\end{enumerate}
+then (\ref{eqrad}) can be written as
+\begin{equation}
+P_r(\vec r_0)=C\frac{z(\vec r_0)}{r_0^2}\,,\label{eqradzC}
+\end{equation}
+where
+\begin{equation}
+z\equiv\int_0^\infty D^6N_r(D)d D\,,\label{eqray}
+\end{equation}
+is the \emph{radar reflectivity factor} and
+\begin{equation}
+C\equiv\frac{\pi^3 P_tg^2c\tau(\Delta\vartheta)^2|K_w|^2}{1024\lambda^2\ln2}
+\end{equation}
+is the \emph{radar constant}, where $c$ is the celerity of light in vacuum ($\rm m~s^{-1}$), $\tau$ is the pulse duration (s), $\Delta\vartheta$ is the beam width to the $-3\rm~dB$ level for one-way transmission ($\rm rad$), $|K_w|^2$ is the \emph{dielectric factor} for water (about $0.93$ for usual wavelengths). Under these assumptions, note that (\ref{eqray}) and (\ref{Zer}) are strictly identical (except that the units differ).
+
+When the previous assumptions are not met, the radar measures \emph{equivalent reflectivity factors} which can be simulated by:
+\begin{equation}
+\bar z_e(\vec r_0)\equiv\frac{r_0^2P_r(\vec r_0)}C=\frac{16r_0^2\lambda^4\ln2}{\pi^6c\tau(\Delta\vartheta)^2|K_w|^2}\int_0^{2\pi}\!\!\!\int_0^\pi\!\!\!\int_0^\infty\frac{\eta(\vec r)l(\vec r)^2}{r^2}f^4(\vartheta',\phi')|W(r_0-r)|^2\sin\vartheta'd rd\vartheta'd\phi'\,.
+\end{equation}
+
+
+% Equivalent reflectivity factors are usually expressed in $\rm mm^6~m^{-3}$; in this case,
+% \begin{equation}
+% \bar z_e[{\rm mm^6~m^{-3}}]=10^{18}\bar z_e\,.
+% \end{equation}
+% Since the equivalent reflectivity factor takes values within several orders of magnitude, it is commonly expressed in dB$Z$:
+% \begin{equation}
+% \bar Z_e\equiv10\log\left(\frac{\bar z_e[\rm mm^6~m^{-3}]}{1~\rm mm^6~m^{-3}}\right)\,.
+% \end{equation}
+Since the equivalent reflectivity factor takes values within several orders of magnitude, it is commonly expressed in dB$Z$:
+\begin{equation}
+\bar Z_e\equiv10\log\left(10^{18}\bar z_e\right)\,.
+\end{equation}
+
+At present, the radar simulator does not take into account the finite bandwidth effect. So the expression used to compute reflectivities reads:
+\begin{equation}
+\bar z_e(\vec r_0)=\frac{8\lambda^4\ln2}{\pi^6(\Delta\vartheta)^2|K_w|^2}\int_0^{2\pi}\!\!\!\int_0^\pi\eta(\vec r)l(\vec r)^2f^4(\vartheta',\phi')\sin\vartheta'd\vartheta'd\phi'\,.\label{zefctradiale}
+\end{equation}
+The article by Caumont et al. (2006) summarizes this paragraph and provides an example of use of the reflectivity simulator on a case study.
+
+With the same formalism as for reflectivity, Doppler velocity is expressed as follows:
+\begin{equation}\label{vdopppi}
+v_r(\vec r_0)=\frac{\displaystyle\int_0^{2\pi}\!\!\!\int_0^\pi\overline{\eta v_r}(\vec r)l(\vec r)^2f^4(\vartheta',\phi')\sin\vartheta'd\vartheta'd\phi'}{\displaystyle\int_0^{2\pi}\!\!\!\int_0^\pi\eta(\vec r)l(\vec r)^2f^4(\vartheta',\phi')\sin\vartheta'd\vartheta'd\phi'}\,,
+\end{equation}
+with
+\begin{align}
+\overline{\eta v_r}(\vec{r})&\equiv\sum_{j\in\rm type}\int_0^\infty\!\!\!\sigma_j(D,\vec{r})\left(u_r(\vec{r})-\sin\vartheta v_{T_j}(D,\vec{r})\right)N_j(D,\vec{r})d D\,,\\
+&=\eta(\vec r)u_r(\vec{r})-\sin\vartheta\sum_{j\in\rm type}\int_0^\infty\!\!\!\sigma_j(D,\vec{r})v_{T_j}(D,\vec{r})N_j(D,\vec{r})d D\,,
+\end{align}
+where $u_r(\vec{r})$ is the projection onto the beam direction of the wind vector (in m~s$^{-1}$), and $v_{T_j}(D,\vec{r})$ is the fall speed of particles of diameter $D$ (in m) for the precipitating hydrometeor type $j$ (in m~s$^{-1}$).
+More details about the simulation of Doppler velocities are provided by Caumont and Ducrocq (2008). %\cite{cau08}.
+
+A similar, yet more general expression than in the grid-point simulator (cf. (\ref{Z_{DR}})), is used to compute differential reflectivity (in dB) (see Seliga and Bringi 1976): %\citep[see][]{sel76}:
+\begin{equation}
+Z_{DR}\equiv10\log\frac{z_{HH}}{z_{VV}}
+\end{equation}
+where $z_{HH}$ and $z_{VV}$ are equivalent reflectivity factors (in $\rm mm^6~m^{-3}$) at horizontal and vertical polarization, respectively.
+
+Specific differential phase is computed from (\ref{DefKDP}) with a factor of $10^{3}$ to express it in $^\circ\rm~km^{-1}$.
+
+Note that, as in the grid-point simulator, only raindrops contribute to $Z_{\it DR}$ and $K_{\it DP}$. Raindrops are considered as spheroids (when the scattering model allows for it; see below), the axis ratios of which are defined by (\ref{PB70}) or (\ref{ABL99}), as in the grid-point simulator.
+
+\subsubsection{Numerical implementations}
+\paragraph{Integrals over $D$.}
+(\ref{eta}), (\ref{l}), (\ref{zefctradiale}), and (\ref{vdopppi}) contain improper integrals that cannot be directly computed. The angular double quadratures in (\ref{zefctradiale}) and (\ref{vdopppi}) are evaluated by following the method of Probert-Jones (1962), i.e., considering the antenna's radiation pattern as a Gaussian function, which means that only the main lobe is taken into account. Two similar techniques are implemented: Gauss-Hermite's and Gauss-Legendre's. In the following, $\eta(\vec r)l^2(\vec{r})$ or $\overline{\eta v_r}(\vec r)l(\vec r)^2$ are denoted as $F(\vec r)$.
+
+\paragraph{Gauss-Hermite quadrature.} The first technique consists in approaching the bidimensional integral by two independent integrals over $]-\infty;\infty[$:
+\begin{equation}
+I=\int_0^{2\pi}\!\!\!\int_0^\pi f^4(\vartheta',\phi')F(\vec r)\sin\vartheta'd\vartheta'd\phi'=\int_{-\infty}^\infty\!\int_{-\infty}^\infty e^{-8\ln2\frac{\vartheta'^2}{\Delta\vartheta^2}}e^{-8\ln2\frac{\phi'^2}{\Delta\vartheta^2}}F(\vec r)d\vartheta'd\phi'\,.
+\end{equation}
+Then, the so-called Gauss-Hermite quadrature is used to evaluate the two improper integrals:
+\begin{align}
+I&\underset{\binom xy=\frac{\sqrt{8\ln2}}{\Delta\vartheta}\binom{\vartheta'}{\phi'}}=\frac{(\Delta\vartheta)^2}{8\ln2}\int_{-\infty}^\infty e^{-x^2}\!\int_{-\infty}^\infty e^{-y^2}F\left(r,\vartheta_0+\frac{x\Delta\vartheta}{\sqrt{8\ln2}},\phi_0+\frac{y\Delta\vartheta}{\sqrt{8\ln2}}\right)d yd x\,,\\
+&\simeq\frac{(\Delta\vartheta)^2}{8\ln2}\sum_{i=0}^{n_H-1}\sum_{j=0}^{n_V-1}v_iw_jF\left(r,\vartheta_0+\frac{x_i\Delta\vartheta}{\sqrt{8\ln2}},\phi_0+\frac{y_j\Delta\vartheta}{\sqrt{8\ln2}}\right)\,,
+\end{align}
+where $x_i$ and $y_i$ are abscissas for the quadrature, $v_i$ and $w_i$ are the corresponding weights, and $n_H$ and $n_V$ are the corresponding numbers of abscissas. 
+
+
+\paragraph{Gauss-Legendre quadrature.} The second technique consists in approaching the bidimensional integral by two independent integrals over $]-\Delta\vartheta/2;\Delta\vartheta/2[$:
+\begin{align}
+I&\simeq\int_{-\Delta\vartheta/2}^{\Delta\vartheta/2}\int_{-\Delta\vartheta/2}^{\Delta\vartheta/2}e^{-8\ln2\frac{\vartheta'^2}{\Delta\vartheta^2}}e^{-8\ln2\frac{\phi'^2}{\Delta\vartheta^2}}F(\vec r)d\vartheta'd\phi'\,,\\
+&\underset{\binom xy=\frac{\Delta\theta}2\binom{\vartheta'}{\phi'}}\simeq\frac{(\Delta\theta)^2}4\int_{-1}^1 e^{-2\ln2x^2}\int_{-1}^1 e^{-2\ln2y^2}F\left(r,\theta_0+\frac{x\Delta\theta}2,\phi_0+\frac{y\Delta\theta}2\right)d yd x\,,\\
+&\simeq\frac{(\Delta\theta)^2}4\sum_{i=0}^{n_H-1}\sum_{j=0}^{n_V-1}v_iw_j e^{-2\ln2x_i^2}e^{-2\ln2y_j^2}F\left(r,\vartheta_0+\frac{x_i\Delta\vartheta}2,\phi_0+\frac{y_j\Delta\vartheta}2\right)\,,
+\end{align}
+where $x_i$, $y_i$, $v_i$, $w_i$, $n_H$, and $n_V$ have similar roles as in the Gauss-Hermite quadrature, but correspond here to the Gauss-Legendre one.\\
+
+
+The Gauss-Hermite quadrature is well-suited for low numbers of points (typically $\le3$), whereas the Gauss-Legendre quadrature is better suited for high number of points: above 3 points, the Gauss-Hermite quadrature evaluates the function in the integral for angles that are unrealistically far away from the direction of propagation, while under 3 points, the Gauss-Legendre quadrature does not provide consistent values, i.e., for $n_H=n_V=1$:
+\begin{equation}
+\frac{(\Delta\theta)^2}4v_0w_0 e^{-2\ln2x_0^2}e^{-2\ln2y_0^2}F\left(r_0,\theta_0,\phi_0\right)=(\Delta\theta)^2F\left(\vec r_0\right)\,
+\end{equation}
+which is different from $\frac{\pi(\Delta\theta)^2}{8\ln2}F\left(\vec r_0\right)\simeq0.567(\Delta\theta)^2F\left(\vec r_0\right)$ as would give a simple evaluation at the centre of the volume of resolution.\\
+
+
+Similarly, the improper integral involving scatterer diameters is computed by using a Gauss-Laguerre quadrature. Further details concerning these quadrature techniques can be found in Press et al. (1992). 
+
+
+\paragraph{Scattering methods.}
+Four methods are available: Rayleigh (for spheres), Mie, T-matrix and Rayleigh for spheroids. The last two methods are only used for raindrops, which are modeled as spheroids; hydrometeors containing ice are supposed to behave as isotropic scatterers as they fall or tumble (i.e., they are modeled as spheres).
+The approximations of Rayleigh for spheres and for spheroids yield analytic results. Thus, for instance, in the Rayleigh theory, cross sections for raindrops are
+\begin{align}
+\sigma_{\rm HH}&=\frac{\pi^5|K_w^2|}{\lambda^4}D^6\,,\\
+C_e&=\frac{\pi^2}\lambda\Im K_wD^3+\frac{\pi^4}{15\lambda^3}\Im\left(K_w^2\frac{m^4+27m^2+38}{2m^2+3}\right)D^5+\frac{2\pi^5}{3\lambda^4}\Re(K_w^2)D^6\,.
+\end{align}
+Analytic derivations of Rayleigh for spheroids cross sections can be found in Kerker (1969, chap.~10), van de Hulst (1981), Doviak and Zrni\'c (1993), or Bringi and Chandrasekar (2001), for instance.
+Mie computations rely on the code described by Bohren and Huffman (1983). We use the code described by Mishchenko and Travis (1998), and Mishchenko et al. (2002) for T-matrix computations.
+
+For pure water particles, the dielectric function is taken from Liebe et al. (1991), while the model of Hufford et al. (1991) is taken for pure ice.  Here we make the following assumptions: for particles made of ice and air only (snow, primary ice, and graupel above the melting level), we consider the diameter of a sphere made of ice only that would have the same mass (e.g., Smith 1984). For water-coated graupel, which are made of ice, water, and air, we consider the diameter of an equivalent-mass sphere made of 14~\% of water and 86~\% of ice as spheroidal inclusions (following Rasmussen 1984). The corresponding dielectric function is then computed following Bohren and Battan (1982).
+
 \section{Satellite diagnostics}
 A comparison between model outputs and satellite observations provides an assessment of how well the model can reproduce the meteorological situation.
  The model-to-satellite approach compares directly the satellite brightness temperatures (BTs) to the BTs computed from the predicted model fields 
@@ -606,10 +780,31 @@ Baran, A. J. and P. N. Francis, 2004:
       airborne radiance measurements.
       {\it Q. J. Roy. Meteor. Soc.}, {\bf 130}, 763-778.
 \decrefname
+Bevis, M., S. Businger, S. Chiswell, T. Herring, R. A. Anthes, C. Rocken, and R. H. Ware, 1994:
+      GPS meteorology: Mapping zenith wet delays onto precipitable water.
+      {\it J. Appl. Meteorol}, {\bf 33}, 379-386.
+\decrefname
+Bohren, C.~F., and L.~J. Battan, 1982: Radar backscattering of microwaves by
+  spongy ice spheres. {\em J. Atmos. Sci.}, {\bf 39}, 2623--2628.
+\decrefname
+Bohren, C.~F., and D.~R. Huffman, 1983: {\em Absorption and Scattering of Light by
+  Small Particles}. John Wiley \& Sons, 530~p.
+\decrefname
 Bolton, D., 1980: The computation of equivalent potential temperature.
       {\it Mon. Wea. Rev.}, 
       {\bf 108},
       1046-1053.
+\decrefname
+Brenot, H., V. Ducrocq, A. Walpersdorf, C. Champollion, and O. Caumont, 2006:
+GPS zenith delay sensitivity evaluated from high-resolution numerical weather prediction
+simulations of the 8-9th September 2002 flash flood over southeastern France.
+      {\it J. Geophys. Res.},
+      {\bf 111},
+      doi:10.1029/2004JD005726
+\decrefname
+Bringi, V.~N., and V.~Chandrasekar, 2001: {\em Polarimetric {Doppler} weather
+  radar\string: {Principles} and applications}. Cambridge University Press,
+  636~p.
 \decrefname
 Caniaux, G., J.-L. Redelsperger, and J.-P. Lafore, 1994:
       A numerical study of the stratiform region of a fast-moving squall line.
@@ -617,6 +812,17 @@ Caniaux, G., J.-L. Redelsperger, and J.-P. Lafore, 1994:
       {\it J. Atmos. Sci.},
       {\bf 51},
       2046-2074.
+\decrefname
+Caumont, O., and V.~Ducrocq, 2008: What should be considered when simulating
+  {Doppler} velocities measured by ground-based weather radars\string? {\em J.
+  Appl. Meteor. Climatol.}, {\bf 47}, 2256--2262. doi:10.1175/2008JAMC1894.1
+\decrefname
+Caumont, O., V. Ducrocq, G. Delrieu, M. Gosset, J.-P. Pinty, J. Parent du Ch\^atelet, 
+      H. Andrieu, Y. Lema\^itre, and G. Scialom, 2006:
+      A radar simulator for high-resolution nonhydrostatic models.
+      {\it J. Atmos. Ocean. Tech.},
+      {\bf 23},
+      1049-1067. doi:10.1175/JTECH1905.1
 \decrefname
 Chaboureau, J.-P., J.-P. Cammas, P. Mascart, J.-P. Pinty, C. Claud, R. Roca, 
 and J.-J. Morcrette, 2000: Evaluation of a cloud life-cycle simulated by
@@ -646,6 +852,13 @@ Chuang, C., and K. V. Beard, 1990:
       {\it J. Atmos. Sci.},
       {\bf 47},
       1374-1389.
+\decrefname
+Doviak, R. J., and D. S. Zrni\'c, 1993:
+      \textit{Doppler Radar and Weather Observations.}
+      2nd Ed.
+      Academic Press,
+      Cambridge University Press,
+      562 pp.
 \decrefname
 Hill, R. J., S. F. Clifford, R. S. Lawrence, 1980:
       Refractive index and absorption fluctuations in the infrared 
@@ -691,6 +904,10 @@ Hu, Y.~X. and K. Stamnes, 1993:
    An accurate parameterization of the radiative properties of water clouds
    suitable for use in climate models. {\it J. Climate}, {\bf 6}, 728-742.
 \decrefname
+Hufford, G.~A., 1991: A model for the complex permittivity of ice at
+  frequencies below 1~{THz}. {\em Int. J. Infrar. Millim. Waves}, {\bf 12},
+  677--682.
+\decrefname
 Jameson, A. R., 1983:
       Microphysical interpretation of multi-parameter radar measurements in
       rain. Part I: Interpretation of polarization measurements and estimation
@@ -707,6 +924,13 @@ Jameson, A. R., 1985:
       {\bf 42},
       607-614.
 \decrefname
+Kerker, M., 1969: {\em The Scattering of Light and other Electromagnetic
+  Radiation}. Academic Press, Inc., New York, New York, 666~p.
+\decrefname
+Liebe, H.~J., G.~A. Hufford, and T.~Manabe, 1991: A model for the complex
+  permittivity of water at frequencies below 1~{THz}. {\em Int. J. Infrar.
+  Millim. Waves}, {\bf 12}, 659--674.
+\decrefname
 Masson, V., J.-L. Champeaux, C.~Chauvin, C.~Meriguet, and R.~Lacaze, 2003:
   A global database of land surface parameters at 1 km resolution for use in
   meteorological and climate models. {\it J. Climate}, {\bf 16}, 1261-1282.
@@ -718,6 +942,14 @@ McClatchey, R. A., R. W. Fenn, J. E. A. Selby, F. E. Volz, and J. S.
 McFarquhar, G.~M., S.~Iacobellis, and R.~C.~J. Somerville, 2003: 
   SCM simulations of tropical ice clouds using observationnaly based
   parameterizations of microphysics. {\it J. Climate}, {\bf 16}, 1643-1664.
+\decrefname
+Mishchenko, M.~I., and L.~D. Travis, 1998: Capabilities and limitations of a
+  current {\sc fortran} implementation of the {T}-matrix method for randomly
+  oriented, rotationally symmetric scatterers. {\em J. Quant. Spectrosc.
+  Radiat. Transfer}, {\bf 60}, 309--324.
+\decrefname
+Mishchenko, M.~I., L.~D. Travis, and A.~A. Lacis, 2002: {\em Scattering, Absorption, and
+  Emission of Light by Small Particles}. Cambridge University Press, 445~p.
 \decrefname
 Morcrette, J.-J., 1991: Evaluation of model-generated cloudiness: 
 Satellite-observed and model-generated diurnal variability of
@@ -731,6 +963,9 @@ Press, W. H., S. A. Teukolsky, W. T. Vetterling, and B. P. Flannery, 1992:
       2nd Ed.
       Cambridge University Press,
       963 pp.
+\decrefname
+Probert-Jones, J.~R., 1962: The radar equation in meteorology. {\em Quart. J.
+  Roy. Meteor. Soc.}, {\bf 88}, 485--495.
 \decrefname
 Pruppacher, H. R., and K. V. Beard, 1970: 
       A wind tunnel investigation of the internal circulation and shape of 
@@ -746,10 +981,6 @@ Richard, E., S. Cosma, P. Tabary, J.-P. Pinty, and M. Hagen, 2003:
       {\bf 129},
       543-563.
 \decrefname
-Saunders, R., M. Matricardi, P. Brunel, S. English, P. Bauer, U. O'Keeffe, P.
-Francis and P. Rayer, 2005: RTTOV-8 science and validation report. NWP SAF
-Report, 41 pages, Tech. rep.
-\decrefname
 Rasmussen, R. M., Levizzani, V., and H. R. Pruppacher, 1984:
       A wind tunnel and theoretical study on the melting behavior of 
       atmospheric ice particles. III: Experiment and theory for spherical 
@@ -757,6 +988,23 @@ Rasmussen, R. M., Levizzani, V., and H. R. Pruppacher, 1984:
       {\it J. Atmos. Sci.},
       {\bf 41},
       381-388.
+\decrefname
+Sachidananda, M., and D.~S. Zrni\'c, 1986: Differential propagation phase shift
+  and rainfall estimation. {\em Radio Sci.}, {\bf 21}, 235--247.
+\decrefname
+Saunders, R., M. Matricardi, P. Brunel, S. English, P. Bauer, U. O'Keeffe, P.
+Francis and P. Rayer, 2005: RTTOV-8 science and validation report. NWP SAF
+Report, 41 pages, Tech. rep.
+\decrefname
+Seliga, T.~A., and V.~N. Bringi, 1976: Potential use of radar differential
+  reflectivity measurements at orthogonal polarizations for measuring
+  precipitation. {\em J. Appl. Meteor.}, {\bf 15}, 69--76.
+\decrefname
+Smith, P.~L., 1984: Equivalent radar reflectivity factors for snow and ice
+  particles. {\em J. Climate Appl. Meteor.}, {\bf 23}, 1258--1260.
+\decrefname
+van~de Hulst, H.~C., 1981: {\em Light Scattering by Small Particles}. Dover,
+  New York, 470~p.
 \decrefname
 Walko, R. L., W. R. Cotton, M. P. Meyers, and J. Y. Harrington, 1995:
       New RAMS cloud microphysics parameterization. Part I: The single-moment
