@@ -2,7 +2,7 @@
 % CONTRIBUTION TO THE MESONH BOOK1: "Bogusing for cyclones"
 % Author: Olivier Nuissier, david Barbary
 % Original : March 27, 2008
-% Modification : August 18, 2008
+% Modification : February 16, 2009
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Bogusing for Cyclones}
@@ -193,7 +193,7 @@ Climatological studies (Gray 1968, 1972) on tropical depressions can highlight a
 \end{array}
 \right .
 \end{equation}
-To include this convergence, the radial wind is calculated following the relation $V_{R}(r,z)=V_{T}(r,z) \times \tan \alpha_{friction}(z)$ where $V_{T}(r,z)$ is obtained by (\ref{VT(r,z)}). We can notice that radial wind is positive for an inflow and is no axisymmetric field because of the Coriolis parameter in $V_{T}(r,z)$. The user can choose the values of the friction angle but thought the climatological values are preferable, the default value being nil. For every point (i, j, k), the bogusing wind is:
+To include this convergence, the radial wind is calculated following the relation $V_{R}(r,z)=V_{T}(r,z) \times \tan \alpha_{friction}(z)$ where $V_{T}(r,z)$ is obtained by (\ref{VT(r,z)}) and $r \geq RMW$. We can notice that radial wind is nil for $r<RMW$, positive for an inflow and is no axisymmetric field because of the Coriolis parameter in $V_{T}(r,z)$. The user can choose the values of the friction angle but thought the climatological values are preferable, the default value being nil. For every point (i, j, k), the bogusing wind is:
 \begin{equation}
 \left \lbrace
 \begin{array}{c c c}
