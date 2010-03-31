@@ -1032,16 +1032,20 @@ Schuman operators ($\delta_{x}, \delta_{y}, \delta_{z}$):
 \mathcal{F}_{z} &=& \delta_{z}\left [\ol{\trho}^{z} Cr_{z} f(\phi)_{z}
 \right]
 \end{eqnarray}
-At the end of an advection step, following the directional splitting
-described in (\ref{easter}), we get the updated scalar variable
-$\phi^{t+\Delta t}$. 
-As the set of the model is based for the moment on the leap-frog scheme except 
-for the PPM advection, the temporal discretization is given by :
-\begin{eqnarray}
-   (\rho\phi)^{t+\Delta t} &=& (\rho\phi)^{t-\Delta t} - \frac{1}{2} \left [\mathcal{F}_{x,y,z}(\phi^{t-\Delta t}) + \mathcal{F}_{x,y,z}(\phi^{t}) \right ]
-  \end{eqnarray}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Christine Lac 25 mars 2010
+% Avec la correction en masdev482 du schema FIT pour PPM, le paragraphe ci-dessous est a supprimer
+% At the end of an advection step, following the directional splitting
+% described in (\ref{easter}), we get the updated scalar variable
+% $\phi^{t+\Delta t}$. 
+% As the set of the model is based for the moment on the leap-frog scheme except 
+% for the PPM advection, the temporal discretization is given by :
+% \begin{eqnarray}
+%    (\rho\phi)^{t+\Delta t} &=& (\rho\phi)^{t-\Delta t} - \frac{1}{2} \left [\mathcal{F}_{x,y,z}(\phi^{t-\Delta t}) + \mathcal{F}_{x,y,z}(\phi^{t}) \right ]
+%   \end{eqnarray}
 
-\noindent where $\mathcal{F}_{x,y,z}$ is the flux-divergence PPM operator and $\mathcal{F}_{x,y,z}(\phi^{t-\Delta t})$ is storaged from the previous time step.
+% \noindent where $\mathcal{F}_{x,y,z}$ is the flux-divergence PPM operator and $\mathcal{F}_{x,y,z}(\phi^{t-\Delta t})$ is storaged from the previous time step.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % The advective forcing that is passed back to the
 %model is calculated as:
