@@ -1,6 +1,7 @@
 \chapter{Clouds and chemistry}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % author: Celine Mari, CNRS/LA (20/03/08)
+% Adding chemistry in resolved clouds :  Maud Leriche (01/07/2011)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \minitoc
 %
@@ -15,14 +16,13 @@ rain water and its deposition onto the ground. Clouds can also affect
 gas-phase chemistry by attenuating solar radiation below the cloud base,
 which has a significant impact on the photolysis reactions. 
 The model currently incorporates parameterizations for sub-grid convective 
-clouds (precipitating and non-precipitating). Parameterization for grid-scale 
-resolved clouds is not yet available. 
+clouds (precipitating and non-precipitating) and for grid-scale 
+resolved clouds. 
 %-------------------------------------
 \section{Model description}
 %-------------------------------------
 The cloud scheme can be divided into two main components: the 
-{\bf sub-grid} cloud
-model and the {\bf resolved} cloud model. 
+{\bf sub-grid} cloud model and the {\bf resolved} cloud model. 
 For large horizontal grid resolutions, the grid size will be larger than the 
 size of a typical convective cloud, requiring a parameterization for these
 sub-grid clouds. The sub-grid cloud scheme simulates convective 
@@ -31,7 +31,8 @@ The second component of the cloud model considers clouds which occupy the
 entire grid cell and have been "resolved" by the model. The rate of change in 
 pollutant concentrations ($s_i$) due to cloud processes is given by:
 $$
-\frac{\partial C_i}{\partial t} = \frac{\partial C_i}{\partial t}_{subcld} + \frac{\partial C_i}{\partial t}_{rescld}
+\frac{\partial C_i}{\partial t} = \frac{\partial C_i}{\partial t}_{subcld} 
++ \frac{\partial C_i}{\partial t}_{rescld}
 $$
 %-------------------------------------
 \section{Subgrid convective cloud scheme}
@@ -257,11 +258,99 @@ realistic than uniform distributions as discussed in
 %-------------------------------------
 \section{Resolved Cloud Scheme}
 %-------------------------------------
- \subsection{Aqueous chemistry extensions}
-To be implemented
- \subsection{Wet scavenging}
-To be implemented
+%-------------------------------------
+ \subsection{Cloud chemistry module}
+%-------------------------------------
+The cloud chemistry module allows solving both gaseous and aqueous phases chemistry 
+as well as mass transfer reactions between gas and liquid phases and microphysical 
+transfers of chemical species \citep{Leriche2013}. In nested mode, to avoid time computing, 
+the cloud chemistry module can be available in the innest domain, the one at high resolution, 
+while the coupling models (father models) treat the gas phase chemistry only. This possibility 
+is obviously available in one--way nesting mode. The concentrations of chemical species $i$ 
+in gas phase and in aqueous phase (cloud water and rainwater) are solution of 
+the set of differential equations:
+
+\begin{equation}
+\frac{\partial C_{g}^{i}}{\partial t}_{rescld}=\frac{\partial C_{g}^{i}}{\partial t}_{chem}+\frac{\partial C_{g}^{i}}{\partial t}_{emis}+\frac{\partial C_{g}^{i}}{\partial t}_{dep\_sec}+\frac{\partial C_{g}^{i}}{\partial t}_{mic}
+\end{equation}
+\begin{equation}
+\frac{\partial C_{w}^{i}}{\partial t}_{rescld}=\frac{\partial C_{w}^{i}}{\partial t}_{chem}+\frac{\partial C_{w}^{i}}{\partial t}_{mic}
+\end{equation}
+
+The equation for gas phase is the same than without cloud except for the last term, which represents the release of soluble gases from the aqueous phase when evaporation occurs or when freezing or riming occurs. 
+In equation for liquid phase, $w$ stands for either cloud water or rainwater. The term $mic$ represents the sources and sinks due to cloud microphysical processes. These terms depend on the cloud microphysics scheme used.
+
+%-------------------------------------
+ \subsection{Chemical kinetic scheme}
+%-------------------------------------
+The evolution of the chemical concentrations (in mol per volume of air ) in the gas phase and in liquid phases denoted by the term $chem$ above of a chemical species $i$ are given by the generic set of differential equations:
+
+\begin{equation}
+  \frac{\partial C_{g}^{i}}{\partial t}_{chem}=P_{g}^{i}-D_{g}^{i}C_{g}^{i}-k_{tw}^{i}\left (   L_{w}C_{g}^{i}-\frac{C_{w}^{i}}{H_{eff}^{i}RT} \right )
+  \label{toto1}
+\end{equation}
+\begin{equation}
+  \frac{\partial C_{w}^{i}}{\partial t}_{chem}=P_{w}^{i}-D_{w}^{i}C_{w}^{i}+k_{tw}^{i}\left ( L_{w}C_{g}^{i}-\frac{C_{w}^{i}}{H_{eff}^{i}RT} \right )
+  \label{toto2}
+\end{equation}
+
+Subcripts $g$ and $w$ are, respectively, for the gas phase and for liquid phases with $w$ stands either for the cloud droplets or for the raindrops. Terms $P$ and $D$ are the production terms in mol per volume of air s$^{-1}$ and the destruction terms in s$^{-1}$. $L$ is the liquid water volume ratio (volume of the drops by volume of air) computed from the liquid water mixing ratio using air and water density. $H_{eff}$ is the effective Henry's law constant in mol atm$^{-1}$. $T$ is the temperature in K and $R$ = 0.08206 atm mol$^{-1}$ K$^{-1}$ is the universal gas constant. The rate constant of transfer between the gas phase and the aqueous phase $k_{tw}$ in s$^{-1}$ is the inverse of the characteristic times for gaseous diffusion and for the interfacial mass transport according to \citet{Schwartz1986}:
+
+\begin{equation}
+k_{tw}^{i}=\left ( \frac{a_{w}^{2}}{3D_{g}^{i}}+\frac{4a_{w}}{3\overline{v}^{i}\alpha^{i}} \right )^{-1}
+\end{equation}
+
+the parameter $a_{w}$ is the cloud droplet or raindrop radius in m, $D_{gas}$ is the gaseous diffusion coefficient , $\overline{v}$ is the mean quadratic speed in m s$^{-1}$ of the soluble species and $\alpha$ is the accommodation coefficient of the soluble species. The value of the drop radius for cloud droplets and raindrops comes from the microphysical scheme. 
+In equations (\ref{toto1} and \ref{toto2}), the two first terms at the right hand side are the chemical production and destruction terms and the last term is the reversible uptake of soluble gases inside cloud droplets or raindrops. The complete set of reactions of the cloud chemistry module is described in \citet{Leriche2013}. This chemical mechanism called ReLACS-AQ has been developped based upon the gas phase mechanism ReLACS \citep{Crassier2000} and includes 25 additional chemical species in liquid phases (cloud water and rainwater) for 30 photo-chemical reactions and 20 reactions of exchange between gas and aqueous phase. Thus, 91 prognostics chemical species are considered in the cloud chemistry scheme. The aqueous phase reactivity describes the reactivity of $HO_{x}$, of formadehyde and formic acid and of sulfur and nitrogen leading to the formation of sulfuric and nitric acid. All kinectic and thermodynamic data used are given in \citet{Leriche2013}.
+
+%-------------------------------------
+\subsection{Microphysical transfer terms}
+%-------------------------------------
+Once dissolved or produced in the drops, the aqueous chemical species is redistributed between the cloud droplets and the raindrops by the cloud microphysical processes. Three processes are implied in the microphysical transfer of aqueous chemical species in cloud: autoconversion, accretion and sedimentation, which lead ultimately to the wet deposition of the soluble species by rain. These microphysical transfer terms are computed following:
+\begin{equation}
+\frac{\partial C_{c}^{i}}{\partial t}_{AUTO}=-\frac{\partial C_{r}^{i}}{\partial t}_{AUTO}=-C_{c}^{i}\frac{1}{r_{c}}\frac{\partial r_{c}}{\partial t}_{AUTO}
+\end{equation}
+\begin{equation}
+\frac{\partial C_{c}^{i}}{\partial t}_{ACCR}=-\frac{\partial C_{r}^{i}}{\partial t}_{ACCR}=-C_{c}^{i}\frac{1}{r_{c}}\frac{\partial r_{c}}{\partial t}_{ACCR}
+\end{equation}
+\begin{equation}
+\frac{\partial C_{r}^{i}}{\partial t}_{SEDI}=-C_{r}^{i}\frac{1}{r_{r}}\frac{\partial r_{r}}{\partial t}_{SEDI}=-C_{r}^{i}\frac{1}{r_{r}}\frac{\partial }{\partial z}F_{SEDI}\left ( r_{r} \right )
+\end{equation}
+$r_{c}$ and $r_{r}$ are the mass mixing ratios of the cloud droplets and of the raindrops, respectively. Subscripts AUTO, ACCR and SEDI are respectively for autoconversion process, accretion process and the sedimentation of the raindrops. $F_{SEDI}$ is the sedimentation flux of the rain mixing ratio. The sedimentation flux and the tendencies of cloud droplets mixing ratio for autoconversion and accretion processes depend on the cloud microphysical scheme. 
+
+%-------------------------------------
+\subsection{pH diagnostic equation}
+%-------------------------------------
+As the solubility of some important gaseous pollutants depends on the pH of the drops, and the chemical reactivity in the aqueous phase as well, it is crucial to predict the evolution of pH in cloud droplets and in raindrops. The pH is the solution of the electroneutrality equation which expresses the exact balance between the cations and the anions in an aqueous solution. By using a simplified form of the electroneutrality equation, the pH equation leads to a high order polynomial equation of the concentration of the protons $\rm{pH} = log_{10}(H^{+})$. The physical root is found using the Laguerre method. In contrast with other technique \citep{Barth2007}, the pH is computed exactly and updated before each substep of the Rosenbrock algorithm to ensure numerical accuracy and stability of the aqueous phase reactions. Most of the coefficients of the pH polynomial equation are complex expressions containing reaction transfer rates. These expressions are automatically simplified using a formal calculus algorithm and not by hands to avoid errors.
+
+
+%-------------------------------------
+\subsection{Extension to the ice phase}
+%-------------------------------------
+In mixed phase clouds, additional processes for chemical species concentrations evolution appear including direct gas uptake by ice crystals, partitioning during freezing or riming of liquid hydrometeors and surface and bulk reactions in/on ice hydrometeors. Several studies have shown \citep{Yin2002,Long2010} that the main process to be considered in the evolution of chemical species concentrations in mixed phase clouds is the retention of soluble gases when liquid hydrometeors freeze/rime. In particular, while the direct uptake inside growning ice crystals by vapor deposition is almost always negligeble, this process is not implemented. The freezing and the riming of liquid drops transfer aqueous phase chemical species from liquid hydrometeors (cloud dropplets and raindrops) to precipitating iced hydrometeors i.e. snow, graupel and hail in Meso--NH. In order to limit the number of prognostic variables, the concentrations of chemical species in snow, graupel and hail have been treated globally as:
+\begin{equation}
+C_{ice}^{i}=C_{snow}^{i}+C_{grau}^{i}+C_{hail}^{i}
+\end{equation}
+The additional microphysical transfer terms due to the retention of soluble gases during freezing/riming are computed following:
+
+\begin{equation}
+\frac{\partial C_{g}^{i}}{\partial t}_{FZ}=\left ( 1-RET \right )C_{w}^{i}\frac{1}{r_{w}}\frac{\partial r_{w}}{\partial t}_{FZ}
+\end{equation}
+\begin{equation}
+\frac{\partial C_{w}^{i}}{\partial t}_{FZ}=-C_{w}^{i}\frac{1}{r_{w}}\frac{\partial r_{w}}{\partial t}_{FZ}
+\end{equation}
+\begin{equation}
+\frac{\partial C_{ice}^{i}}{\partial t}_{FZ}=RETC_{w}^{i}\frac{1}{r_{w}}\frac{\partial r_{ice}}{\partial t}_{FZ}=RETC_{w}^{i}\frac{1}{r_{w}}\left ( \frac{\partial r_{snow}}{\partial t}_{FZ}+\frac{\partial r_{grau}}{\partial t}_{FZ}+\frac{\partial r_{hail}}{\partial t}_{FZ} \right )
+\end{equation}
+\begin{equation}
+\frac{\partial C_{ice}^{i}}{\partial t}_{SEDI}=-C_{ice}^{i}\frac{1}{r_{ice}}\frac{\partial r_{ice}}{\partial t}_{SEDI}=-C_{ice}^{i}\left ( \frac{1}{r_{snow}}\frac{\partial r_{snow}}{\partial t}_{SEDI}+\frac{1}{r_{grau}}\frac{\partial r_{grau}}{\partial t}_{SEDI}+\frac{1}{r_{hail}}\frac{\partial r_{hail}}{\partial t}_{SEDI} \right )
+\end{equation}
+
+$FZ$ refers to freezing and riming processes. $RET$ is the retention coefficient. A zero value for $RET$ means that the soluble gas is completely released to the gas phase and is not retained in the ice phase at all. A value of 1 means that the soluble gas is completely retains in the ice phase. The last term $SEDI$ refers to the sedimentation of graupel, snow and hail, which contributes to wet deposition.
+
+%-------------------------------------
  \subsection{Lightning produced NOx at cloud scale}
+%-------------------------------------
 To be implemented
 %\end{document}
 
@@ -271,3 +360,4 @@ To be implemented
 \btPrintCited
 \end{btSect}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+

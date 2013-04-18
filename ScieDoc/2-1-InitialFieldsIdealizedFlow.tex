@@ -78,6 +78,10 @@ dry potential temperature and relative humidity.\end{itemize}
 and vapor mixing ratio at ground level, \item  $nu$ levels with  altitude, zonal wind
 component, meridian wind component, \item  $nm$ levels with  altitude,
 dry potential temperature and vapor mixing ratio.\end{itemize}
+\item'PUVTHU'  :  \begin{itemize} \item altitude, pressure, temperature
+and relative humidity at ground level, \item  $nu$ levels with pressure, zonal wind
+component, meridian wind component, \item  $nm$ levels with pressure, temperature
+ and relative humidity.\end{itemize}
 \end{itemize}
 
 {\bf More idealized format} (Option: 'CSTN')
@@ -97,7 +101,7 @@ from the $N_{v}$ data by
 \left( Z(k)-Z(k-1) \right) \right\}
 \end{equation}
 for $k=2,n$. The situation concerning input data is then the same as for
-the 'ZUVTHVHU' case in the 'RSOU' option, and subsequent treatment is similar.
+the 'ZUVTHVHU' case in the 'RSOU' option, and subsequent treatment is similar.\\
 
 {\bf Specifying a jet structure}
 
@@ -137,12 +141,51 @@ All these options lead to the prescription of the wind components along vertical
 planes (I,K) for V(x,z) and (J,K) for U(y,z) and subsequent treatments
 to balance the wind and the mass fields are the same.
 
-\section{Vertical profile on the model grid}
 
-For all the above options, the program will first convert the vertical profile
+\section{Add an orography}
+
+An orography following simple form can be specified:
+
+It may be sine shaped:
+$$
+z_{s}(i,j) = h_{max} \left\{  \sin \left( \dfrac{\pi i}{IU-1}\right)^{2}
+\right\}^{exp_{x}}\left\{  \sin \left( \dfrac{\pi j}{JU-1}\right)^{2}
+\right\}^{exp_{y}}
+$$
+
+or bell-shaped :
+$$
+z_{s}(i,j) = h_{max} / \left\{ 1 + \left(\dfrac{x(i) - x_{s}}{a_{x}}\right)^{2}
++ \left(\dfrac{y(j) - y_{s}}{a_{y}}\right)^{2}
+\right\}^{1.5}
+$$
+$IU$ and $JU$ are the total number of points along x and y directions (i.e.
+including the external points). $h_{max}$, $exp_{x}$, $exp_{y}$, $a_{x}$,
+$a_{y}$,$x_{s}$ and $y_{s}$ are the  degrees of freedom. $h_{max}$ is the maximum
+height, $a_{x}$ and
+$a_{y}$ represent widths along x and y directions, $x_{s}$ and $y_{s}$  are
+the center positions of the mountain.
+
+
+
+\section{Wind and mass fields on the model grid}
+
+To take into account the difference between the orography of the vertical profile
+ and the orography of the MESONH grid, the variables are subject to a "shifting" process 
+as in PREP\_REAL\_CASE program.
+
+The different grid used in MESONH in PREP\_REAL\_CASE program are described at section \ref{prealgrid}.
+In PREP\_IDEAL\_CASE program, the mixed grid is the Gal-Chen-Sommerville grid with
+the same $\widehat{z}$ levels as the Meso-NH grid and the orography of the input atmospheric profile. 
+The other grids are defined as in PREP\_REAL\_CASE program.\\
+
+{\bf Vertical profile on the mixed grid}
+
+For the CSTN case, the program will first convert the vertical profile
  in a common format, featuring only the surface altitude, pressure, virtual
 temperature and vapor mixing ratio, together with the altitudes of the
 data points, and the corresponding values of $\theta_v, r_v$, and wind
+components. For the RSOU case, the program will convert in $\theta_l, r_t$, and wind
 components.
 
 The correspondance between pressure and altitude is achieved, when necessary,
@@ -198,93 +241,149 @@ $$
 The iteration continues until convergence is achieved.
 
 Once the variables are known on data points, they are linearly
-interpolated to the vertical grid of the model without orography.
+interpolated to the mixed grid. In the RSOU case, $\theta_l$ and $r_t$
+are then convert in $\theta_v$ and $r_v$ with an adjustement procedure.
 Here $\theta_v$ and $r_v$ are located on the mass points of the grid,
-but the wind components are located on $w$ points for more accurate
-estimate of the thermal wind balance. They will be called hereafter
+but the wind components are located on $w$ points. They will be called hereafter
 $U$ and $V$.  The
 next sections explain how the 3D fields are produced, starting from this
-single profile.
+single profile.\\
 
-\section{Wind and mass fields in the absence of orography}
+{\bf Wind and mass fields on the mixed grid}
 
 The vertical profile obtained above is supposed to be valid at the point
 $ILOC,JLOC$ of the horizontal model grid, and we want to reconstitute the
 whole 3D fields.  As a first step in this computation, the program computes
-the wind and mass fields on a 3D grid ignoring the orography (this grid is
-exactly the model grid if there is no orography at all).
+the mass fields on a mixed 3D grid to be the same as the vertical profile in all 
+the points of the horizontal grid. 
 
 The wind is first projected on to model axes. At this stage,
-the desired jet structure is introduced.
+the desired jet structure is introduced to compute the 3D field.\\
 
-The virtual potential temperature on the model grid without
-orography is then derived using the thermal wind balance, assuming the above
-mentionned
-$U$ and $V$ components of the wind can be taken as the geostrophic wind.
+{\bf Wind and mass fields on the model grid}
 
-The continuous equation of the thermal wind balance is:
+Then the shifting process is compute as in PREP\_REAL\_CASE program.
+
+%The virtual potential temperature on the model grid without
+%orography is then derived using the thermal wind balance, assuming the above
+%mentionned
+%$U$ and $V$ components of the wind can be taken as the geostrophic wind.
+%
+%The continuous equation of the thermal wind balance is:
+%\begin{equation}
+%\dfrac{\partial \vec{V_{g}}}{\partial z} =
+%\dfrac{\vec{k}}{f} \wedge \dfrac{1}{\theta_{v\,ref}} g \vec{\nabla}_{z}
+%\theta_{v}
+%\end{equation}
+%where
+%\begin{equation}
+%\dfrac{\partial \Phi}{\partial z} = g \dfrac{ \theta_v - \theta_{v\,ref} }
+%{\theta_{v\,ref} }
+%\end{equation}
+%has been used. It follows
+%\begin{eqnarray}
+%\dfrac{\partial \theta_{v} }{\partial \overline{x}} & = &
+%d_{xx} \dfrac{f}{g}  \theta_{v\,ref}
+%\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial v_{g} }{\partial \widehat{z}}
+%\\
+%\dfrac{\partial \theta_{v} }{\partial \overline{y}} &  = & - d_{yy}
+%\dfrac{f}{g} \theta_{v\,ref}
+%\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial u_{g} }{\partial \widehat{z}}
+%\end{eqnarray}
+%
+%This is discretized as
+%\begin{eqnarray}
+%\left( \delta _{x} \theta_{v}\right)_{(i,j,k)} & = & d_{xx}
+% \dfrac{\overline{f}^x}{g}
+%\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} V}^x  \\
+%\left( \delta _{y} \theta_{v}\right)_{(i,j,k)} & = & - d_{yy}
+% \dfrac{\overline{f}^y}{g}
+%\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} U }^y
+%\end{eqnarray}
+%where $U$ and $V$ are used as geostrophic wind components.
+%
+%If the Coriolis parameter is equal to zero, $\theta_{v}$ is defined everywhere
+%as $\theta_{v}(k)$ at point $(ILOC,JLOC)$.
+%
+%Note that at this stage $\theta_{v\,ref}$ is unknown, and an iterative
+%procedure must be used to enforce an exact
+% thermal wind balance. For the first iteration, we initialize
+%$\theta_{v\,ref}$ by the value of $\theta_{v}$ at the point
+%$(ILOC,JLOC)$. At the following steps,
+%the virtual potential temperature for the anelastic reference state
+%is defined as the horizontal average of $\theta_{v}$:
+%
+%$$
+%\theta_{v\,ref}(k) = \sum _{i,j} \theta_{v}(i,j,k)
+%$$
+%
+%When the iteration is converged,
+%the remaining properties of the reference state can be computed.
+%The Exner function for the
+%reference state may then be obtained by integration of the hydrostatic relation
+%from $z=0$ ($\Pi_{ref} (k=KB) =1$):
+%
+%$$
+%d \Pi_{ref}(k) = - \dfrac{g}{C_{pd} \theta_{v\,ref}(k)}  dz
+%$$
+%and the computation of the reference state characteristics is finalized
+%by the density of dry air:
+%$$
+%\rho_{d\,ref}(k) = \dfrac{P_{00} (\Pi)^{C_{pd}/R_d - 1} }{R_{d}
+%\theta_{v\,ref}(k) \left(1+r_{v}(k) \right) }
+%$$
+\section{Reference state}
+
+The reference state is computed on the reference grid, as the horizontal
+average of the actual state.
+
+First, $\theta_{v\,ref}$ and $r_{v\,ref}$ are computed as a mean value at
+constant altitude of the $\theta_v$ and $r_v$ field, after interpolation
+to the reference grid.
+
+$\Pi_{ref}^{top}$ is computed as the horizontal average of $\Pi^{top}(x,y)$.
+Then, the hydrostatic relation for the reference state
+is integrated from top to bottom to compute $\Pi_{ref}$.
 \begin{equation}
-\dfrac{\partial \vec{V_{g}}}{\partial z} =
-\dfrac{\vec{k}}{f} \wedge \dfrac{1}{\theta_{v\,ref}} g \vec{\nabla}_{z}
-\theta_{v}
+d\Pi_{ref}=-\frac{g}{C_{pd}\theta_{v\,ref}}dz
 \end{equation}
-where
+Finally, the density of dry air for the reference state is retrieved
 \begin{equation}
-\dfrac{\partial \Phi}{\partial z} = g \dfrac{ \theta_v - \theta_{v\,ref} }
-{\theta_{v\,ref} }
+\rho_{d\,ref}=\frac{P_{00}(\Pi_{ref})^{R_d/C_{pd}-1}}
+{R_d \theta_{v\,ref}(1+r_{v\,ref})}
 \end{equation}
-has been used. It follows
+
+\section{Enforcement of the anelastic constraint}
+
+Obviously, wind field obtained at this stage does not fulfil the anelastic constraint
+%(\ref{anelcons})
+(Eq. 2.14 in Part I: Dynamics)
+and the free-slip boundary conditions. Therefore, a
+last adjustement is necessary so that this wind field can be used as initial
+field for the Meso-NH model. Thus, a perturbation deduced from a potential $Pot$
+gradient is added to the wind component $\vec{U}_0$ so that the resulting
+ wind field $\vec{U}$ satisfies the anelastic constraint.
+
+Let us write this constraint:
+
 \begin{eqnarray}
-\dfrac{\partial \theta_{v} }{\partial \overline{x}} & = &
-d_{xx} \dfrac{f}{g}  \theta_{v\,ref}
-\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial v_{g} }{\partial \widehat{z}}
-\\
-\dfrac{\partial \theta_{v} }{\partial \overline{y}} &  = & - d_{yy}
-\dfrac{f}{g} \theta_{v\,ref}
-\dfrac{1}{\widehat{d}_{zz}} \dfrac{\partial u_{g} }{\partial \widehat{z}}
+\vec{U} = \vec{U} _0 - \vec {\nabla } Pot  \nonumber \\
+\vec { \nabla } . \left( \rho _{dref}  \vec{U}  \right) = 0 \nonumber
 \end{eqnarray}
 
-This is discretized as
+From these 2 equations, we deduce an equation for the $Pot$ field given by:
+
 \begin{eqnarray}
-\left( \delta _{x} \theta_{v}\right)_{(i,j,k)} & = & d_{xx}
- \dfrac{\overline{f}^x}{g}
-\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} V}^x  \\
-\left( \delta _{y} \theta_{v}\right)_{(i,j,k)} & = & - d_{yy}
- \dfrac{\overline{f}^y}{g}
-\theta_{v\,ref}(k) \dfrac{1}{d_{zz}} \overline{\delta_{z} U }^y
+\vec { \nabla } .  \left( \rho _{dref} \vec {\nabla } Pot \right) = \vec { \nabla } .
+ \left( \rho _{dref}  \vec{U} _0 \right) \label{eq:potential}
 \end{eqnarray}
-where $U$ and $V$ are used as geostrophic wind components.
 
-If the Coriolis parameter is equal to zero, $\theta_{v}$ is defined everywhere
-as $\theta_{v}(k)$ at point $(ILOC,JLOC)$.
+This equation is equivalent to the pressure equation solved in the temporal loop
+of the model to determine the pressure function. Therefore, the same iterative
+solver is used to solve the equation (\ref{eq:potential}) and the gradient of this
+potential is added to find the final field $\vec{U}$ satifying  the anelastic constraint.
 
-Note that at this stage $\theta_{v\,ref}$ is unknown, and an iterative
-procedure must be used to enforce an exact
- thermal wind balance. For the first iteration, we initialize
-$\theta_{v\,ref}$ by the value of $\theta_{v}$ at the point
-$(ILOC,JLOC)$. At the following steps,
-the virtual potential temperature for the anelastic reference state
-is defined as the horizontal average of $\theta_{v}$:
 
-$$
-\theta_{v\,ref}(k) = \sum _{i,j} \theta_{v}(i,j,k)
-$$
-
-When the iteration is converged,
-the remaining properties of the reference state can be computed.
-The Exner function for the
-reference state may then be obtained by integration of the hydrostatic relation
-from $z=0$ ($\Pi_{ref} (k=KB) =1$):
-
-$$
-d \Pi_{ref}(k) = - \dfrac{g}{C_{pd} \theta_{v\,ref}(k)}  dz
-$$
-and the computation of the reference state characteristics is finalized
-by the density of dry air:
-$$
-\rho_{d\,ref}(k) = \dfrac{P_{00} (\Pi)^{C_{pd}/R_d - 1} }{R_{d}
-\theta_{v\,ref}(k) \left(1+r_{v}(k) \right) }
-$$
 \section{Add a perturbation}
 
 In order to start a non-trivial experiment, it is often useful to add
@@ -300,7 +399,7 @@ add a perturbation to the $\theta $ field (convective bubble)
                        \left( { \hat{z} - \hat{z}_0    \over  Rad_z } \right) ^2
                 \right)       }  \nonumber \\
 &&\theta ' =  Ampli \cos ^2  \left( {\pi \over 2} Dist  \right)  \ \ \
-for \ Dist < 1  \nonumber \\
+\mbox{for} \ Dist < 1  \nonumber \\
 &&\theta ' = 0  \ \ \  \ \ \  \ \ \  \mbox{elsewhere}  \nonumber
 \end{eqnarray}
 
@@ -324,78 +423,6 @@ This guarantees that the perturbation does not change the  divergence of the
 previously obtained fields.
 \end{itemize}
 
-
-
-\section{Wind and mass fields with orography}
-
-An orography following simple form can be specified:
-
-It may be sine shaped:
-$$
-z_{s}(i,j) = h_{max} \left\{  \sin \left( \dfrac{\pi i}{IU-1}\right)^{2}
-\right\}^{exp_{x}}\left\{  \sin \left( \dfrac{\pi j}{JU-1}\right)^{2}
-\right\}^{exp_{y}}
-$$
-
-or bell-shaped :
-$$
-z_{s}(i,j) = h_{max} / \left\{ 1 + \left(\dfrac{x(i) - x_{s}}{a_{x}}\right)^{2}
-+ \left(\dfrac{y(j) - y_{s}}{a_{y}}\right)^{2}
-\right\}^{1.5}
-$$
-$IU$ and $JU$ are the total number of points along x and y directions (i.e.
-including the external points). $h_{max}$, $exp_{x}$, $exp_{y}$, $a_{x}$,
-$a_{y}$,$x_{s}$ and $y_{s}$ are the  degrees of freedom. $h_{max}$ is the maximum
-height, $a_{x}$ and
-$a_{y}$ represent widths along x and y directions, $x_{s}$ and $y_{s}$  are
-the center
-positions of the mountain.
-
-In that case, an additional step is performed
-to compute the 3D field on the model grid following the terrain.
-The previous fields of $\theta_v$, $r_v$, $u$, and $v$
-are linearly interpolated to the new grid. We also set the vertical component
-$w$ equal to zero.
-Then, $\theta$ is recovered by:
-\begin{equation}
-\theta = \theta_{v}\dfrac{(1+r_{v})}{(1 + \dfrac{R_{v}}{R_{d}}r_{v})}
-\end{equation}
-Finally, the  3D anelastic reference state (
-{\it i.e.} on the grid with orography) is determined
- by vertical interpolation for  $\theta_{v\,ref}$ and
-$\rho_{d\,ref}$ and by integration of the hydrostatic relation for
-$\Pi_{ref}$
-defined on the model grid without orography.
-
-\section{Enforcement of the anelastic constraint}
-
-Obviously, wind field obtained at this stage does not fulfil the anelastic constraint
-%(\ref{anelcons})
-(Eq. 2.14 in Part I: Dynamics)
-and the free-slip boundary conditions. Therefore, a
-last adjustement is necessary so that this wind field can be used as initial
-field for the MESONH model. Thus, a perturbation deduced from a potential $Pot$
-gradient  is added to the wind component $\vec{U}_0$ so that the resulting
- wind field $\vec{U}$ satisfies the anelastic constraint.
-
-Let us write this constraint:
-
-\begin{eqnarray}
-\vec{U} = \vec{U} _0 - \vec {\nabla } Pot  \nonumber \\
-\vec { \nabla } . \left( \rho _{dref}  \vec{U}  \right) = 0 \nonumber
-\end{eqnarray}
-
-From these 2 equations, we deduce an equation for the $Pot$ field given by:
-
-\begin{eqnarray}
-\vec { \nabla } .  \left( \rho _{dref} \vec {\nabla } Pot \right) = \vec { \nabla } .
- \left( \rho _{dref}  \vec{U} _0 \right) \label{eq:potential}
-\end{eqnarray}
-
-This equation is equivalent to the pressure equation solved in the temporal loop
-of the model to determine the pressure function. Therefore, the same iterative
-solver is used to solve the equation (\ref{eq:potential}) and the gradient of this
-potential is added to find the final field $\vec{U}$ satifying  the anelastic constraint.
 
 
 \section{Analytical 3D fields}

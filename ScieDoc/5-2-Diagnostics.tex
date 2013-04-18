@@ -199,10 +199,103 @@ In a conditionally unstable atmosphere, the potentially unstable parcels will be
 \mbox{CAPE}=\int_{LFC}^{LNB} \, R_d ( T_{vp} - T_{ve}) \, dz
 \end{equation}
 where $T_{vp}$ and $T_{ve}$ are the virtual temperature of the lifted parcel and of the environment, respectively. Conversely, DCAPE and DCIN are the positive and negative parts of buoyant energy in the downdrafts, respectively.
+%
+\section{Conditional sampling}
+%
+A new Large-Eddy Simulation (LES) diagnostic is proposed based on different idealised tracers. This conditional sampling is based on the combination of passive tracers and thermodynamic variables in order to characterize organized structures in cloud-free and cloudy boundary layers. For a complete documentation, please refer to Couvreux et al. (2010). %\cite{cou10} 
+A maximum of three tracers can be activated.
+
+The first scalar is emitted with a constant flux at the surface. The second one is emitted in the layer just below cloud base ($z_b$-150m -- $z_b$-50m) if ever clouds exist; the third one is emitted in the layer just above cloud top ($z_t$+50m -- $z_t$+150m) if ever clouds exist; $z_b$ and $z_t$ being respectively cloud base and cloud top.  All scalars undergo a radioactive decay with a time constant $\tau$ that can be adjusted by the user (the default value is 15 min):
+
+\begin{equation}
+\frac{\partial C}{\partial t}=- \frac{C}{\tau}
+\end{equation}
+The conditional sampling selects all the grid points that follows the conditions:
+\begin{equation}
+x \in CS \;\mbox{if}\; C^{'}(x,y,z) > m \times \max(\sigma_{C}(z),\sigma_{min}(z)) \;\mbox{and}\; w^{'}>0
+\end{equation}
+$m$ is a scaling factor that can be adjusted by the user (the default value is 1),
+$\sigma_{C}(z)$ is the standard deviation of $C$ at the altitude $z$ and
+$\sigma_{min}$ is a minimum threshold defined as:
+\begin{equation}
+\sigma_{min}(z)=0.05 \times \frac{1}{z} \int_0^z \sigma_{C}(k) dk
+\end{equation}
+It corresponds to 5\% of the average standard deviation at lower levels and ensures that no point is selected in a non-turbulent environment.
+In case of cumulus-topped thermals, this definition is applied up to $z=z_b+(z_t-z_b)/4$. Above that level, a cloud condition ($q_l>0$, with $q_l$ being the liquid water content) is added in order to select only cloudy grid points and no air detrained from the cloud.
+This is done independently at each vertical level.
+
+This sampling is able to characterize thermals from the surface to the top of the dry or cloudy boundary layers. It therefore characterizes the bottom-up transport. 
+
+This diagnostic is activated using the namelist NAM\_COND\_SAMP with the following keys:  LCONDSAMP a flag to activate the sampling, NCONDSAMP the number of used conditional sampling, XRADIO the period of radioactive decay, and XSCAL the scaling factor.
+%
+\section{Kinetic energy spectra}
+%
+Observational studies (Nastrom and Gage 1985, Lindborg 1999) have shown that the kinetic energy (KE) spectra follow a k$^{-3}$ dependence in the large scales 
+(where k is the wavenumber) dominated by rotational modes and a transition to a shallower k$^{-5/3}$ dependence in the mesoscale and smaller scales, dominated by divergent modes. 
+
+
+Spectral analysis is a powerful tool to assess how the KE is distributed in atmospheric models according to spatial scales and their capacity to reproduce 
+observational spectra (Koshyk et al. 1999). In particular, Skamarock (2004) used spectral analysis to define the effective resolution of the WRF model, i.e. the scale from which the model departs from the theoretical slope, also given by a simulation with 
+a finer grid spacing. Indeed, a part of small-scale energy is damped as it is affected by implicit and
+explicit diffusion, the tail of spectra showing a rapid decrease of KE. 
+
+
+An algorithm of spectra computation has been coded for Meso-NH (Ricard et al. 2013), based on Denis et al. (2002) study, which used a discrete cosine transform (DCT) 
+(Ahmed 1974) to convert grid-point fields into spectral ones. 
+Indeed, spectra computation from a discrete cosine transform is particularly well adapted for limited-area models
+to overcome the problem of non-periodic domain. 
+Unlike spectra computation based on FFT, the meteorological fields do not need any trend removal for ensuring periodicity (Errico et al. 1985). 
+Morever, Denis et al. (2002) have shown that there is no aliasing in the large scale.  
+
+We have also introduced an additional option to the original algorithm to assign each element of the variance array to two wavenumbers instead of one. 
+Indeed, each element is located into a band delimited by two ellipses corresponding to two wavenumbers (k and k+1), 
+the contribution to these two wavenumbers is distributed proportionally as a function of the distance to the two ellipses (see more details below). 
+Moreover, an additional smoothing using a Bezier approximation can also applied when plotting the spectra. 
+
+It is worth noting that the same tool can be used to compute spectra for other models or observational data. 
+
+
+\subsection*{Contribution of each element of the variance array to two wavenumbers}
+
+Using the same formulation as Denis et al. (2002), the total variance can be expressed from spectral coefficients as: 
+\begin{eqnarray*}
+ \sigma^{2}=\sum_{m=0 }^{N_{i}-1}\sum_{n=0}^{N_{j}-1} \sigma^{2}(m,n), 
+\end{eqnarray*}
+with $(m,n)\neq(0,0)$, $N_{i}$ and $N_{j}$ the number of points for the two dimensions of the domain. 
+
+Analyzing data on rectangular domains conducts to use an elliptical truncation for constructing the power spectra. The normalisation of the $m$ and $n$ wavenumber axes by $N_{i}$ and $N_{j}$ leading to an elliptic shape. Thus, the normalized 2D wavenumber $\alpha(m,n)$ is defined as:
+
+\begin{eqnarray*}
+\alpha(m,n) = \sqrt{\frac{m^2}{N_{i}^2}+ \frac{n^2}{N_{j}^2}}
+\end{eqnarray*}
+An element in the variance array $\sigma^2(m,n)$ is located into a wavelength band between
+ %the limiting values of $\alpha'(k)$ and $\alpha'(k+1)$ if $\alpha'(k)\leqslant \alpha(m,n)<\alpha'(k+1)$,
+
+with $\alpha'(k)=\frac{k}{min(N_{i},N_{j})}$, k varying from 1 to min($N_{i}-1$,$N_{j}-1$).
+
+Instead of adding the contribution $\sigma^2(m,n)$ only to wavenumber k as in Denis et al. (2002), an alternative way is to distribute this contribution between the two wavenumbers k and k+1 as follows:
+
+\begin{itemize}
+ \item the contribution to $\sigma^2(\alpha'(k))$ is: $a_{m,n} * \sigma^2(m,n)$
+ \item the contribution to $\sigma^2(\alpha'(k+1))$ is: $b_{m,n} * \sigma^2(m,n)$
+\end{itemize}
 
 
 
+with 
+\begin{eqnarray*}
+\left\lbrace
+\begin{array}{c c}
+a_{m,n}=\frac{\alpha(m,n)-\alpha'(k)}{\alpha'(k+1)-\alpha'(k)} & \\
+b_{m,n}=\frac{\alpha'(k+1)-\alpha(m,n)}{\alpha'(k+1)-\alpha'(k)} & \\
+\end{array} 
+\right.
+\end{eqnarray*}
+
+$a_{m,n}$ and $b_{m,n}$ representing weighting factors as a function of the distance to the limits $\alpha'(k)$ and $\alpha'(k+1)$.
+%
 \section{GPS zenith delay}
+%
 The Zenith Total Delay (ZTD) is obtained by vertically integrating the refractivity $N$:
 \begin{eqnarray}
  ZTD&=&10^{-6}\int^{\infty}_{z_r} k_{1}\frac{P}{T_v}dz+10^{-6}\int^{\infty}_{z_r}k_2^{'}\frac{e}{T}+k_3\frac{e}{T^2}dz \label{eq:ZTD} 
@@ -210,6 +303,42 @@ The Zenith Total Delay (ZTD) is obtained by vertically integrating the refractiv
 where $P$, $e$ are the total pressure and the partial pressure of water vapor, $T_v$ is the virtual temperature, $k_1$, $k_2$ and $k_3$ are the atmospheric refractivity constants. The set proposed by Bevis et al. (1994) is used here: $k_1 =77.60$ K hPa$^{-1}$, $k_2=69.4 $ K hPa$^{-1}$, $k_3=370100$ K$^{2}$ hPa$^{-1}$.
 
 The first term of (\ref{eq:ZTD}) is called the zenith hydrostatic delay (ZHD), the second and third terms together are called the zenith wet delay (ZWD), which is proportional to the Integrated Water Vapor (IWV). More details can be found in Brenot et al. (2006).
+%
+\section{Lidar products}
+%
+This section is taken from Chaboureau et al. (2011). The lidar attenuated backscattered (ATB) signal corrected for geometric effects and calibration constant (expressed in m$^{-1}$ sr$^{-1}$) at the altitude $z$ and the wavelength $\lambda$ is
+\begin{eqnarray}
+ATB_{\lambda}(z) = 
+ & \left[ \beta_{mol,\lambda}(z) + \beta_{par,\lambda}(z) \right] \\
+ & \times \exp \left\{ -2 \int_0^z 
+   \left[\alpha_{mol,\lambda}(z) + \eta \alpha_{par,\lambda}(z) dz
+   \right] \right\}  \nonumber
+\end{eqnarray} where $\alpha$ is the extinction coefficient (m$^{-1}$) and $\beta$ the backscatter coefficient (m$^{-1}$ sr$^{-1}$), both caused by air molecules (${mol}$) and by aerosols and cloud particles (${par}$). Multiple scattering by cloud particles is crudely taken into account with $\eta=0.5$ (Platt 1973).
+
+Following Collis and Russell (1976), the lidar backscatter and extinction coefficients for molecules, $\beta_{mol,\lambda}$ and $\alpha_{mol,\lambda}$ respectively, are 
+\begin{equation}
+\beta_{mol,\lambda}=5.45 \times 10^{-32} \times \frac{p}{k_B T} 
+\times \left( \frac{\lambda}{0.55} \right)^{-4.09}
+\end{equation}
+\begin{equation}
+\alpha_{mol,\lambda}= \frac{8 \pi}{3} \beta_{mol,\lambda}
+\end{equation}
+where $T$ is temperature (K), $p$ is pressure (hPa),  $k_B$ is the Boltzmann constant ($1.38 \times 10^{-23}$ J K$^{-1}$), and wavelength $\lambda$ is given in $\mu$m.
+
+The optical properties of cloud particles and aerosols were integrated over their size distribution while extinction $Q_{ext,\lambda}$ and backscatter $Q_{back,\lambda}$ efficiencies were computed using the Mie code of Bohren and Huffman (1985) for spheres. Thus, particles were assumed to be spherical, although particle non-sphericity can be an important factor affecting the extinction to backscatter lidar ratio when the coarse mode prevails (Dubovik et al. 2006). Refraction indices of pure water and ice were used for cloud liquid and ice crystals respectively. In consistency with the numerical experiments, the refractive index of mineral dust was taken from Tulet et al. (2008), i.e., $1.448-2.92 \times 10^{-3}i$ at 532 nm, $1.44023 - 1.16 \times 10^{-3}i$ at 730 and 820 nm, and $1.41163 - 1.06 \times 10^{-3}i$ at 1064 nm.
+
+For the 2-moment schemes, the integration over the size distribution of the particles $n_{par}(D,z)$ was performed using an accurate quadrature formula (here Gauss-Hermite for lognormal size distributions of dust) with
+\begin{equation} \label{alphapar}
+\alpha_{par,\lambda}(z)=
+\int_0^\infty\frac{\pi}{4}D^2 Q_{ext,\lambda}(D) n_{par}(D,z)dD
+\end{equation}
+\begin{equation} \label{betapar}
+\beta_{par,\lambda}(z)=
+\int_0^\infty\frac{\pi}{4}D^2 Q_{back,\lambda}(D) n_{par}(D,z)dD
+\end{equation}
+(The Gauss-Laguerre formula is used for $\gamma$-size distributions employed in the 2-moment microphysical schemes available in Meso-NH.) For the single-moment microphysical schemes, such as the one used here, $\alpha_{par,\lambda}$ and $\beta_{par,\lambda}$ were computed taking an effective radius representative of the distribution, in consistency with those employed for cloud and ice in the radiative scheme.
+
+In each model column, the particle backscatter coefficient $\beta_{par,\lambda}$ and the extinction coefficient $\alpha_{par,\lambda}$ are both cloud particle and aerosol coefficients. They are computed from equations (\ref{alphapar}) and (\ref{betapar}) using the model mixing ratios (and concentrations when available) of cloud particle and aerosol while the lidar backscatter and extinction coefficients for molecules are calculated using the model profiles of air density.
 %
 \section{Radar products}
 %
@@ -592,7 +721,7 @@ where ${C_e}_j$ is the \emph{extinction cross-section} of the $j$\textsuperscrip
 
  \begin{figure}
  \centering
-\includegraphics*[bb=121 315 479 543]{\EPSDIR/schema-geometrie}
+ \includegraphics*[bb=121 315 479 543]{\EPSDIR/schema-geometrie}
  \caption{Spherical coordinates used to locate the target.}\label{coord-spher}
  \end{figure}
 
@@ -763,7 +892,12 @@ surface properties obtained using the FASTEM code. Elsewhere (over land
 and sea-ice) surface emissivity is fixed with typical value of bare soil.
 
 
+
+
 \section{References}
+\decrefname
+Ahmed, N. N., and K. R. Rao, 1974: Discrete cosine transform. {\em IEEE Trans.
+  Comput.}, {\bf C-23}, 90--93.
 \decrefname
 Andsager K., K. V. Beard, and N. F. Laird, 1999: 
       Laboratory measurements of axis ratios for large raindrops.
@@ -840,6 +974,15 @@ Chaboureau, J.-P. and J.-P. Pinty, 2006:
       Validation of a cirrus parameterization with Meteosat Second Generation.
       {\it Geophys. Res. Let.}, {\bf 33}, L03815, doi:10.1029/2005GL024725.
 \decrefname
+Chaboureau, J.-P., E. Richard, J.-P. Pinty, C. Flamant, P. Di Girolamo, C. Kiemle, A. Behrendt,
+      H. Chepfer, M. Chiriaco, and V. Wulfmeyer, 2011:
+      Long-range transport of Saharan dust and its radiative impact on precipitation forecast
+      over western Europe: a case study during the Convective and Orographically induced
+      Precipitation Study (COPS).
+      {\it Quart. J. Roy. Meteor. Soc.}, 
+      {\bf 137},
+      236-251.
+\decrefname
 Chevallier, F., P. Bauer, G. Kelly, C. Jakob, and T. McNally, 2001:
       Model clouds over oceans as seen from space:
       comparison with HIRS/2 and MSU radiances
@@ -853,6 +996,20 @@ Chuang, C., and K. V. Beard, 1990:
       {\bf 47},
       1374-1389.
 \decrefname
+Collis, R. T., and P. B. Russell, 1976: \textit{Laser monitoring of the atmosphere}.
+  Springer-Verlag
+\decrefname
+Couvreux, F., F. Hourdin, and C. Rio, 2010:
+      Resolved versus parametrized boundary-layer plumes. Part I: A parametrization-oriented
+      conditional sampling in Large-Eddy Simulations
+      {\it Bound.-Layer Meteor.},
+      {\bf 134},
+      441-458.
+\decrefname
+Denis B., J. C\^{o}t\'{e}, and R. Laprise, 2002: Spectral decomposition of
+  two-dimensional atmospheric fields on limited-area domains using the discrete
+  cosine transform (DCT). {\em Mon. Wea. Rev.}, {\bf 130}, 1812--1829.
+\decrefname
 Doviak, R. J., and D. S. Zrni\'c, 1993:
       \textit{Doppler Radar and Weather Observations.}
       2nd Ed.
@@ -860,12 +1017,22 @@ Doviak, R. J., and D. S. Zrni\'c, 1993:
       Cambridge University Press,
       562 pp.
 \decrefname
+Dubovik, O., A. Sinyuk, T. Lapyonok, B. N. Holben, M. Mishchenko, P. Yang, T. F. Eck,
+      H. Volten, O. Mu\~noz, B. Veihelmann, W. J. van~der Zande, J.-F. Leon, M. Sorokin,
+      and I. Slutsker, 2006: Application of spheroid models to account for aerosol
+      particle nonsphericity in remote sensing of desert dust.
+      {\it J. Geophys. Res.}, {\bf 111}, D11208, doi:10.1029/2005JD006619.
+\decrefname
 Hill, R. J., S. F. Clifford, R. S. Lawrence, 1980:
       Refractive index and absorption fluctuations in the infrared 
       caused by temperature, humidity, and pressure-fluctuations.
       {\it J. Opt. Soc. Am.}, 
       {\bf 70},
       1192-1205.  
+\decrefname
+Koshyk J. N., K. Hamilton, and J. D. Mahlman, 1999: Simulation of k$^{-5/3}$ mesoscale
+  spectral regime in the GFDL SKYHI general circulation model. {\em Geophys.
+  Res. Lett.}, {\bf 26}, 843--846.
 \decrefname
 Kunkel, B. A., 1984: Parameterization of droplet terminal velocity and
 extinction coefficient in fog models.
@@ -931,6 +1098,10 @@ Liebe, H.~J., G.~A. Hufford, and T.~Manabe, 1991: A model for the complex
   permittivity of water at frequencies below 1~{THz}. {\em Int. J. Infrar.
   Millim. Waves}, {\bf 12}, 659--674.
 \decrefname
+Lindborg, E., 1999: Can the atmospheric kinetic energy spectrum be explained
+  by two-dimensional turbulence ? {\em J. Fluid. Mech.}, {\bf 388},
+  259--288.
+\decrefname
 Masson, V., J.-L. Champeaux, C.~Chauvin, C.~Meriguet, and R.~Lacaze, 2003:
   A global database of land surface parameters at 1 km resolution for use in
   meteorological and climate models. {\it J. Climate}, {\bf 16}, 1261-1282.
@@ -958,6 +1129,15 @@ brightness temperature.
       {\bf 119},
       1205-1224.
 \decrefname
+Nastrom, G. D., and K. S., Gage, 1985: A climatology of atmospheric wavenumber
+  spectra of wind and temperature observed by commercial aircraft. {\em J.
+  Atmos. Sci.}, {\bf 42}, 950--960.
+\decrefname
+Platt, C. M. R., 1973: Lidar and radiometric observations of cirrus clouds.
+      {\it J. Atmos. Sci.}, 
+      {\bf 30},
+      1191-1204.
+\decrefname
 Press, W. H., S. A. Teukolsky, W. T. Vetterling, and B. P. Flannery, 1992:
       {\it Numerical Recipes in FORTRAN: The Art of Scientific Computing.}
       2nd Ed.
@@ -973,6 +1153,10 @@ Pruppacher, H. R., and K. V. Beard, 1970:
       {\it Quart. J. Roy. Meteor. Soc.},
       {\bf 96},
       247-256.
+\decrefname
+Ricard, D., C. Lac, S. Riette, R. Legrand, and A. Mary, 2013: 
+Kinetic energy spectra characteristics of two convection-permitting limited-area models AROME and Meso-NH.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf p. in press}.
 \decrefname
 Richard, E., S. Cosma, P. Tabary, J.-P. Pinty, and M. Hagen, 2003:
       High-resolution numerical simulations of the convective system observed
@@ -1000,8 +1184,15 @@ Seliga, T.~A., and V.~N. Bringi, 1976: Potential use of radar differential
   reflectivity measurements at orthogonal polarizations for measuring
   precipitation. {\em J. Appl. Meteor.}, {\bf 15}, 69--76.
 \decrefname
+Skamarock, W. C., 2004: Evaluating NWP models using kinetic energy spectra.
+  {\em Mon. Wea. Rev.}, {\bf 132}, 3019--3032.
+\decrefname
 Smith, P.~L., 1984: Equivalent radar reflectivity factors for snow and ice
   particles. {\em J. Climate Appl. Meteor.}, {\bf 23}, 1258--1260.
+\decrefname
+Tulet, P., M. Mallet, V. Pont, J. Pelon and A. Boone, 2008: The 7-13 March 2006 dust
+  storm over West Africa: Generation, transport, and vertical stratification.
+  {\it J. Geophys. Res.}, {\bf 113}, D00C08, doi:10.1029/2008JD009871
 \decrefname
 van~de Hulst, H.~C., 1981: {\em Light Scattering by Small Particles}. Dover,
   New York, 470~p.

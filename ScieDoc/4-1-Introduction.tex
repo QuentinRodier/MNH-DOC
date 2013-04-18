@@ -104,19 +104,23 @@ A brief overview of the current state of MNHC is given here:
       temperature, pressure, humidity, etc.
 \item The following chemical solvers are presently available:
       SIS, LinSSA, Cranck-Nicholson, EXQSSA (QSSA with extrapolation),
-      SVODE (Gear-type). Stiff solvers from the NAG library can be easily
-      added, but are not activated for portability reasons (NAG is
-      not available on all platforms).
-\item The reaction scheme 
-      that is presently implemented treats 73 chemical
-      species and 237 photo-chemical reactions 
-      (RACM, \citet{Stockwell1997})
-      and represents the state of the art in 3-D atmospheric chemistry
-      modeling  (see Annex~\ref{RACM}).
+      SVODE (Gear-type) and Rosenbrock family solvers (recommended with cloud chemistry).
+      Stiff solvers from the NAG library can be easily added, but are not activated
+      for portability reasons (NAG is not available on all platforms).
+\item Several reaction schemes are presently implemented. The scheme implemented
+      by default \citep[ReLACS-AQ,][see Annex~\ref{ReLACSAQ}]{Crassier2000,Leriche2011}
+      treats 41 chemical species in gas phase for 131 photo-chemical reactions.
+      For gas phase, this scheme is a reduced version of RACM \citep{Stockwell1997}
+      and represents the state of the art in 3-D atmospheric chemistry modeling.
+      In addition, for resolved clouds and if aqueous chemistry is activated, the scheme
+      includes 25 additional chemical species in liquid phases (cloud water and rainwater)
+      for 30 photo-chemical reactions and 20 reactions of exchange
+      between gas and aqueous phase. 
+      Thus, 91 prognostic chemical species are considered in the cloud chemistry scheme
+      completed by 24 more in iced precipitating hydrometeors
+      if ice phase chemistry is activated.
 \item The implemented reaction scheme may be easily replaced by a
-      completely different one (see for example a reduced scheme described
-      in \citet{Crassier2000}).
-      Starting from a file defining the reaction mechanism
+      completely different one. Starting from a file defining the reaction mechanism
       using a simple syntax, the corresponding Fortran90 subroutines
       are automatically generated. New reactions may thus be added easily.
 \item The following points are treated in a basic way,
@@ -345,7 +349,7 @@ have shown that on average 4 matrix inversions are necessary in order
 to complete this task. Thus, the method is about 4 times more expensive
 than SIS and LinSSA, but therefore more precise.
 
-\paragraph*{QSSA (Quasi-Steady-State approximation:} \citet{Hesstvedt1978}
+\paragraph*{QSSA (Quasi-Steady-State approximation):} \citet{Hesstvedt1978}
 \par\noindent
 The differential equation for chemistry can be rewritten as
 \begin{equation}
@@ -376,6 +380,38 @@ time step), or assuming a steady-state between production and loss
   y_i^{(n+1)} = P_i^n / L_i^n +(y_i^n- P_i^n / L_i^n) \exp(-L_i^n\Delta t)
   \qquad \mbox{otherwise.}
 \end{equation}
+
+\paragraph*{Rosenbrock family solvers:} \citet{Sandu2006}
+\par\noindent
+Rosenbrock solvers are based on multistage implicit methods with an
+adaptative sub timestep to achieve a high order accuracy. These methods
+are also called linearly implicit Runge-Kutta methods \citep{Durran2010}.
+The Rosenbrock methods are conservative and well adapted to solve
+stiff systems in cloud chemistry with slow and fast reaction rates in
+the gas and aqueous phases \citep{Djouad2002}.
+The s-stage method is given by:
+\begin{equation}
+  y_{n+1}= y_{n}+\sum_{i=1}^{s}b_{i}k_{i}
+\end{equation}
+where for i=1,...,s:
+\begin{equation}
+  k_{i}=hf\left ( t_{n}+\alpha _{i}h,y_{n}+\sum_{j=1}^{i-1}\alpha _{ij}k_{j} \right )+hJ\sum_{j=1}^{i}\gamma _{ij}k_{j}+\gamma _{i}h^{2}\frac{\partial f}{\partial t}\left ( t_{n},y_{n} \right )
+\end{equation}
+with:
+\begin{equation}
+  \alpha _{i}=\sum_{j=1}^{i-1}\alpha _{ij},  \gamma _{i}=\sum_{j=1}^{i}\gamma _{ij}
+\end{equation}
+
+$J=\partial f/\partial y$ is the jacobian matrix of the chemical system $f$.
+The set of coefficients $b_{i}$, $\alpha_{ij}$ and $\gamma_{ij}$ are
+deduced from the $s$ order accuracy condition requirements.
+Each stage of the method needs to solve a system of linear equations
+with unknowns $k_{i}$ by inverting the matrix $I-h \gamma J$. This is
+done with an efficient LU-decompostion method that exploits the sparsity
+of $J$ (only the non-zero coefficients are stored). The implementation
+of the family of Rosenbrock algorithm with $s \in {2, 3, 4}$ in Meso-NH,
+is vectorized such that several independent chemical systems (one per
+grid point) are solved simultaneously.
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -522,10 +558,10 @@ in order to test new reaction schemes, parameters for the solvers and
 chemical initial conditions prior to their use in a multi-dimensional
 version of Meso-NH.
 %
-\section*{The Regional Atmospheric Chemistry Mechanism RACM}
-\label{RACM}
+\section*{The Regional Lumped Atmospheric Chemical Scheme - AQ}
+\label{ReLACSAQ}
 %
-% file RACM.tex created by chf2tex , date: Wed Sep 22 09:30:16 METDST 1999
+% file ReLACS-mix-reac.tex created by chf2tex , date: jeu. juil.  7 17:16:04 CEST 2011
 %
 {\small
 \newlength{\chfwidth}
@@ -539,7 +575,7 @@ $K_{004}$ & $HONO$ & $OH+NO$ \\
 $K_{005}$ & $HNO_{3}$ & $OH+NO_{2}$ \\
 $K_{006}$ & $HNO_{4}$ & $0.65*HO_{2}+0.65*NO_{2}+0.35*OH+0.35*NO_{3}$ \\
 \end{tabular}
-
+ 
 \begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
 $K_{007}$ & $NO_{3}$ & $NO+O_{2}$ \\
 $K_{008}$ & $NO_{3}$ & $NO_{2}+O({}^3P)$ \\
@@ -548,347 +584,398 @@ $K_{010}$ & $HCHO$ & $H_{2}+CO$ \\
 $K_{011}$ & $HCHO$ & $HO_{2}+HO_{2}+CO$ \\
 $K_{012}$ & $ALD$ & $MO_{2}+HO_{2}+CO$ \\
 \end{tabular}
-
+ 
 \begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
 $K_{013}$ & $OP_{1}$ & $HCHO+HO_{2}+OH$ \\
-$K_{014}$ & $OP_{2}$ & $ALD+HO_{2}+OH$ \\
-$K_{015}$ & $PAA$ & $MO_{2}+OH$ \\
-$K_{016}$ & $KET$ & $ACO_{3}+ETHP$ \\
-$K_{017}$ & $GLY$ & $0.13*HCHO+1.87*CO+0.87*H_{2}$ \\
-$K_{018}$ & $GLY$ & $0.45*HCHO+1.55*CO+0.80*HO_{2}+0.15*H_{2}$ \\
+$K_{014}$ & $OP_{2}$ & $0.96205*ALD+0.96205*HO_{2}+0.03795*MO_{2}+OH$ \\
+$K_{015}$ & $KET$ & $1.00000*CARBOP+1.00000*ALKAP$ \\
+$K_{016}$ & $CARBO$ & $0.06517*HCHO+0.69622*CARBOP+0.75830*HO_{2}+0.91924*CO+0.20842*H_{2}$ \\
+$K_{017}$ & $ONIT$ & $0.20*ALD+0.80*KET+HO_{2}+NO_{2}$ \\
+$K_{018}$ & $O({}^3P)+O_{2}$ & $O_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{019}$ & $O({}^3P)+O_{3}$ & $2.0*O_{2}$ \\
+$K_{020}$ & $O({}^1D)+N_{2}$ & $O({}^3P)+N_{2}$ \\
+$K_{021}$ & $O({}^1D)+O_{2}$ & $O({}^3P)+O_{2}$ \\
+$K_{022}$ & $O({}^1D)+H_{2}O$ & $OH+OH$ \\
+$K_{023}$ & $O_{3}+OH$ & $HO_{2}+O_{2}$ \\
+$K_{024}$ & $O_{3}+HO_{2}$ & $OH+2.0*O_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{025}$ & $OH+HO_{2}$ & $H_{2}O+O_{2}$ \\
+$K_{026}$ & $H_{2}O_{2}+OH$ & $HO_{2}+H_{2}O$ \\
+$K_{027}$ & $HO_{2}+HO_{2}$ & $H_{2}O_{2}+O_{2}$ \\
+$K_{028}$ & $HO_{2}+HO_{2}+H_{2}O$ & $H_{2}O_{2}+H_{2}O+O_{2}$ \\
+$K_{029}$ & $O({}^3P)+NO$ & $NO_{2}$ \\
+$K_{030}$ & $O({}^3P)+NO_{2}$ & $NO+O_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{031}$ & $O({}^3P)+NO_{2}$ & $NO_{3}$ \\
+$K_{032}$ & $OH+NO$ & $HONO$ \\
+$K_{033}$ & $OH+NO_{2}$ & $HNO_{3}$ \\
+$K_{034}$ & $OH+NO_{3}$ & $NO_{2}+HO_{2}$ \\
+$K_{035}$ & $HO_{2}+NO$ & $NO_{2}+OH$ \\
+$K_{036}$ & $HO_{2}+NO_{2}$ & $HNO_{4}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{037}$ & $HNO_{4}$ & $HO_{2}+NO_{2}$ \\
+$K_{038}$ & $HO_{2}+NO_{3}$ & $0.3*HNO_{3}+0.7*NO_{2}+0.7*OH$ \\
+$K_{039}$ & $OH+HONO$ & $H_{2}O+NO_{2}$ \\
+$K_{040}$ & $OH+HNO_{3}$ & $NO_{3}+H_{2}O$ \\
+$K_{041}$ & $OH+HNO_{4}$ & $NO_{2}+H_{2}O+O_{2}$ \\
+$K_{042}$ & $O_{3}+NO$ & $NO_{2}+O_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{043}$ & $O_{3}+NO_{2}$ & $NO_{3}+O_{2}$ \\
+$K_{044}$ & $NO+NO+O_{2}$ & $NO_{2}+NO_{2}$ \\
+$K_{045}$ & $NO_{3}+NO$ & $NO_{2}+NO_{2}$ \\
+$K_{046}$ & $NO_{3}+NO_{2}$ & $NO+NO_{2}+O_{2}$ \\
+$K_{047}$ & $NO_{3}+NO_{2}$ & $N_{2}O_{5}$ \\
+$K_{048}$ & $N_{2}O_{5}$ & $NO_{2}+NO_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{049}$ & $NO_{3}+NO_{3}$ & $NO_{2}+NO_{2}+O_{2}$ \\
+$K_{050}$ & $NH_{3}+OH$ &  \\
+$K_{051}$ & $OH+H_{2}$ & $H_{2}O+HO_{2}$ \\
+$K_{052}$ & $OH+SO_{2}$ & $SULF+HO_{2}$ \\
+$K_{053}$ & $CO+OH$ & $HO_{2}+CO_{2}$ \\
+$K_{054}$ & $BIO+O({}^3P)$ & $0.91868*ALKE+0.05*HCHO+0.02*OH+0.01*CO+0.13255*CARBO+0.28*HO_{2}+0.15*XO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{055}$ & $CARBO+O({}^3P)$ & $ALD$ \\
+$K_{056}$ & $CH_{4}+OH$ & $MO_{2}+H_{2}O$ \\
+$K_{057}$ & $ETH+OH$ & $ALKAP$ \\
+$K_{058}$ & $ALKA+OH$ & $0.87811*ALKAP+0.12793*HO_{2}+0.08173*ALD+0.03498*KET+0.00835*CARBO+0.00140*HCHO+0.00878*ORA_{1}+0.00878*CO+0.00878*OH+H_{2}O$ \\
+$K_{059}$ & $ALKE+OH$ & $1.02529*ALKEP+0.00000*BIOP$ \\
+$K_{060}$ & $BIO+OH$ & $1.00000*BIOP$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{061}$ & $ARO+OH$ & $0.93968*ADD+0.10318*XO_{2}+0.10318*HO_{2}+0.00276*PHO$ \\
+$K_{062}$ & $HCHO+OH$ & $HO_{2}+CO+H_{2}O$ \\
+$K_{063}$ & $ALD+OH$ & $1.00000*CARBOP+H_{2}O$ \\
+$K_{064}$ & $KET+OH$ & $1.00000*CARBOP+H_{2}O$ \\
+$K_{065}$ & $CARBO+OH$ & $0.51419*CARBOP+0.16919*CARBO+1.01732*CO+0.51208*HO_{2}+0.00000*HCHO+0.06253*ALD+0.00853*KET+0.10162*XO_{2}+0.75196*H_{2}O$ \\
+$K_{066}$ & $ORA_{1}+OH$ & $HO_{2}+CO_{2}+H_{2}O$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{067}$ & $ORA_{2}+OH$ &  \\
+$K_{068}$ & $OP_{1}+OH$ & $0.65*MO_{2}+0.35*HCHO+0.35*OH$ \\
+$K_{069}$ & $OP_{2}+OH$ & $0.40341*ALKAP+0.05413*CARBOP+0.07335*ALD+0.37591*KET+0.09333*XO_{2}+0.02915*HO_{2}+0.02915*HCHO+0.44925*OH$ \\
+$K_{070}$ & $PAN+OH$ & $0.57839*HCHO+0.21863*CARBO+0.71893*NO_{3}+0.28107*PAN+0.28107*HO_{2}+0.29733*H_{2}O+XO_{2}$ \\
+$K_{071}$ & $ONIT+OH$ & $1.00000*ALKAP+NO_{2}+H_{2}O$ \\
+$K_{072}$ & $HCHO+NO_{3}$ & $HO_{2}+HNO_{3}+CO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{073}$ & $ALD+NO_{3}$ & $1.00000*CARBOP+HNO_{3}$ \\
+$K_{074}$ & $CARBO+NO_{3}$ & $0.91567*HNO_{3}+0.38881*CARBOP+0.10530*CARBO+0.05265*ALD+0.00632*KET+0.10530*NO_{2}+0.10530*XO_{2}+0.63217*HO_{2}+1.33723*CO+0.00000*OLN$ \\
+$K_{075}$ & $ARO+NO_{3}$ & $HNO_{3}+PHO$ \\
+$K_{076}$ & $ALKE+NO_{3}$ & $0.00000*CARBO+0.93768*OLN$ \\
+$K_{077}$ & $BIO+NO_{3}$ & $0.91741*CARBO+1.00000*OLN$ \\
+$K_{078}$ & $PAN+NO_{3}$ & $0.60*ONIT+0.60*NO_{3}+0.40000*PAN+0.40*HCHO+0.40*NO_{2}+XO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{079}$ & $ALKE+O_{3}$ & $0.48290*HCHO+0.51468*ALD+0.07377*KET+0.00000*CARBO+0.35120*CO+0.15343*ORA_{1}+0.08143*ORA_{2}+0.23451*HO_{2}+0.39435*OH+0.05705*CARBOP+0.03196*ETH+0.00000*ALKE+0.04300*CH_{4}+0.13966*MO_{2}+0.09815*ALKAP+0.01833*H_{2}O_{2}+0.00000*XO_{2}+0.05409*H_{2}+0.00000*O({}^3P)$ \\
+$K_{080}$ & $BIO+O_{3}$ & $0.90000*HCHO+0.00000*ALD+0.00000*KET+0.39754*CARBO+0.36000*CO+0.37388*ALKE+0.00000*ALKAP+0.17000*CARBOP+0.03000*MO_{2}+0.15000*ORA_{1}+0.00000*ORA_{2}+0.28000*OH+0.30000*HO_{2}+0.00100*H_{2}O_{2}+0.05000*H_{2}+0.13000*XO_{2}+0.09000*O({}^3P)$ \\
+$K_{081}$ & $CARBO+O_{3}$ & $0.00000*HCHO+1.07583*CARBO+0.15692*ALD+0.10788*ORA_{1}+0.20595*ORA_{2}+0.27460*CARBOP+0.10149*OP_{2}+0.64728*CO+0.28441*HO_{2}+0.20595*OH+0.00000*H_{2}$ \\
+$K_{082}$ & $PAN+O_{3}$ & $0.70*HCHO+0.30000*PAN+0.70*NO_{2}+0.13*CO+0.04*H_{2}+0.11*ORA_{1}+0.08*HO_{2}+0.036*OH+0.70000*CARBOP$ \\
+$K_{083}$ & $PHO+NO_{2}$ & $0.10670*ARO+ONIT$ \\
+$K_{084}$ & $PHO+HO_{2}$ & $1.06698*ARO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{085}$ & $ADD+NO_{2}$ & $ARO+HONO$ \\
+$K_{086}$ & $ADD+O_{2}$ & $0.98*AROP+0.02*ARO+0.02*HO_{2}$ \\
+$K_{087}$ & $ADD+O_{3}$ & $ARO+OH$ \\
+$K_{088}$ & $CARBOP+NO_{2}$ & $1.00000*PAN$ \\
+$K_{089}$ & $PAN$ & $1.00000*CARBOP+NO_{2}$ \\
+$K_{090}$ & $MO_{2}+NO$ & $HCHO+HO_{2}+NO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{091}$ & $ALKAP+NO$ & $0.33144*ALD+0.03002*HCHO+0.54531*KET+0.03407*CARBO+0.74265*HO_{2}+0.09016*MO_{2}+0.08187*ALKAP+0.13007*XO_{2}+0.08459*ONIT+0.91541*NO_{2}$ \\
+$K_{092}$ & $ALKEP+NO$ & $1.39870*HCHO+0.42125*ALD+0.05220*KET+HO_{2}+NO_{2}$ \\
+$K_{093}$ & $BIOP+NO$ & $0.45463*CARBO+0.60600*HCHO+0.00000*ALD+0.00000*KET+0.37815*ALKE+0.84700*HO_{2}+0.84700*NO_{2}+0.15300*ONIT$ \\
+$K_{094}$ & $AROP+NO$ & $0.95115*NO_{2}+0.95115*HO_{2}+2.06993*CARBO+0.04885*ONIT$ \\
+$K_{095}$ & $CARBOP+NO$ & $0.78134*MO_{2}+0.09532*CARBOP+0.05848*HCHO+0.07368*ALD+0.08670*CARBO+0.12334*HO_{2}+0.02563*XO_{2}+NO_{2}$ \\
+$K_{096}$ & $OLN+NO$ & $0.18401*ONIT+1.81599*NO_{2}+0.18401*HO_{2}+0.23419*HCHO+1.01182*ALD+0.37862*KET$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{097}$ & $MO_{2}+HO_{2}$ & $OP_{1}$ \\
+$K_{098}$ & $ALKAP+HO_{2}$ & $1.00524*OP_{2}$ \\
+$K_{099}$ & $ALKEP+HO_{2}$ & $1.00524*OP_{2}$ \\
+$K_{0100}$ & $BIOP+HO_{2}$ & $1.00524*OP_{2}$ \\
+$K_{0101}$ & $AROP+HO_{2}$ & $1.00524*OP_{2}$ \\
+$K_{0102}$ & $CARBOP+HO_{2}$ & $0.80904*OP_{2}+0.17307*ORA_{2}+0.17307*O_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{103}$ & $OLN+HO_{2}$ & $ONIT$ \\
+$K_{104}$ & $MO_{2}+MO_{2}$ & $1.33*HCHO+0.66*HO_{2}$ \\
+$K_{105}$ & $ALKAP+MO_{2}$ & $0.80556*HCHO+0.98383*HO_{2}+0.56070*ALD+0.09673*KET+0.01390*MO_{2}+0.07976*CARBO+0.13370*XO_{2}+0.00385*ALKAP$ \\
+$K_{106}$ & $ALKEP+MO_{2}$ & $1.42894*HCHO+0.46413*ALD+0.03814*KET+HO_{2}$ \\
+$K_{107}$ & $BIOP+MO_{2}$ & $0.56064*CARBO+0.48074*ALKE+1.00000*HO_{2}+1.09000*HCHO+0.00000*ALD+0.00000*KET$ \\
+$K_{108}$ & $AROP+MO_{2}$ & $HCHO+1.02767*HO_{2}+1.99461*CARBO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{109}$ & $CARBOP+MO_{2}$ & $0.95723*HCHO+0.82998*HO_{2}+0.56031*MO_{2}+0.13684*ORA_{2}+0.05954*CARBOP+0.15387*CARBO+0.08295*ALD+0.02212*XO_{2}$ \\
+$K_{110}$ & $OLN+MO_{2}$ & $0.88625*HCHO+0.67560*HO_{2}+0.67560*ONIT+0.41524*ALD+0.09667*KET+0.32440*NO_{2}$ \\
+$K_{111}$ & $ALKAP+CARBOP$ & $0.71461*ALD+0.48079*HO_{2}+0.51480*MO_{2}+0.49810*ORA_{2}+0.18819*KET+0.07600*HCHO+0.00828*ALKAP+0.11306*XO_{2}+0.06954*CARBO$ \\
+$K_{112}$ & $ALKEP+CARBOP$ & $0.68192*HCHO+0.68374*ALD+0.50078*HO_{2}+0.50078*MO_{2}+0.49922*ORA_{2}+0.06579*KET$ \\
+$K_{113}$ & $BIOP+CARBOP$ & $0.78591*CARBO+0.24463*ALKE+0.50600*HO_{2}+0.49400*ORA_{2}+0.34000*HCHO+0.50600*MO_{2}+0.00000*ALD+0.00000*KET$ \\
+$K_{114}$ & $AROP+CARBOP$ & $MO_{2}+HO_{2}+1.99455*CARBO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{115}$ & $CARBOP+CARBOP$ & $1.66702*MO_{2}+0.05821*CARBOP+0.03432*HCHO+0.10777*CARBO+0.06969*ALD+0.02190*KET+0.07566*HO_{2}+0.01593*XO_{2}+0.09955*ORA_{2}$ \\
+$K_{116}$ & $OLN+CARBOP$ & $0.66562*ONIT+0.51037*MO_{2}+0.48963*ORA_{2}+0.17599*HO_{2}+0.13414*HCHO+0.42122*ALD+0.10822*KET+0.00000*NO_{2}$ \\
+$K_{117}$ & $OLN+OLN$ & $2.00*ONIT+HO_{2}$ \\
+$K_{118}$ & $OLN+OLN$ & $0.00000*HCHO+0.00000*ALD+0.00000*KET+0.00000*HO_{2}+0.00000*NO_{2}+0.00000*ONIT$ \\
+$K_{119}$ & $MO_{2}+NO_{3}$ & $HCHO+HO_{2}+NO_{2}$ \\
+$K_{120}$ & $ALKAP+NO_{3}$ & $0.33743*ALD+0.81290*HO_{2}+0.03142*HCHO+0.62978*KET+0.03531*CARBO+0.09731*MO_{2}+0.08994*ALKAP+0.16271*XO_{2}+NO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{121}$ & $ALKEP+NO_{3}$ & $1.40909*HCHO+0.43039*ALD+0.02051*KET+HO_{2}+NO_{2}$ \\
+$K_{122}$ & $BIOP+NO_{3}$ & $0.61160*CARBO+0.42729*ALKE+0.68600*HCHO+0.00000*ALD+0.00000*KET+HO_{2}+NO_{2}$ \\
+$K_{123}$ & $AROP+NO_{3}$ & $2.81904*CARBO+HO_{2}+NO_{2}$ \\
+$K_{124}$ & $CARBOP+NO_{3}$ & $0.91910*MO_{2}+0.03175*CARBOP+0.03175*HCHO+0.03455*CARBO+0.02936*ALD+0.04915*HO_{2}+0.01021*XO_{2}+NO_{2}$ \\
+$K_{125}$ & $OLN+NO_{3}$ & $0.25928*ONIT+1.74072*NO_{2}+0.25928*HO_{2}+0.20740*HCHO+0.91850*ALD+0.34740*KET$ \\
+$K_{126}$ & $XO_{2}+HO_{2}$ & $1.00524*OP_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$K_{127}$ & $XO_{2}+MO_{2}$ & $HCHO+HO_{2}$ \\
+$K_{128}$ & $XO_{2}+CARBOP$ & $MO_{2}$ \\
+$K_{129}$ & $XO_{2}+XO_{2}$ &  \\
+$K_{130}$ & $XO_{2}+NO$ & $NO_{2}$ \\
+$K_{131}$ & $XO_{2}+NO_{3}$ & $NO_{2}$ \\
+$KTC_{1}$ & $O_{3}$ & $WC\_O_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{2}$ & $H_{2}O_{2}$ & $WC\_H_{2}O_{2}$ \\
+$KTC_{3}$ & $NO$ & $WC\_NO$ \\
+$KTC_{4}$ & $NO_{2}$ & $WC\_NO_{2}$ \\
+$KTC_{5}$ & $NO_{3}$ & $WC\_NO_{3}$ \\
+$KTC_{6}$ & $N_{2}O_{5}$ & $WC\_N_{2}O_{5}$ \\
+$KTC_{7}$ & $HONO$ & $WC\_HONO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{8}$ & $HNO_{3}$ & $WC\_HNO_{3}$ \\
+$KTC_{9}$ & $HNO_{4}$ & $WC\_HNO_{4}$ \\
+$KTC_{10}$ & $NH_{3}$ & $WC\_NH_{3}$ \\
+$KTC_{11}$ & $OH$ & $WC\_OH$ \\
+$KTC_{12}$ & $HO_{2}$ & $WC\_HO_{2}$ \\
+$KTC_{13}$ & $CO_{2}$ & $WC\_CO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{14}$ & $SO_{2}$ & $WC\_SO_{2}$ \\
+$KTC_{15}$ & $SULF$ & $WC\_SULF$ \\
+$KTC_{16}$ & $HCHO$ & $WC\_HCHO$ \\
+$KTC_{17}$ & $ORA_{1}$ & $WC\_ORA_{1}$ \\
+$KTC_{18}$ & $ORA_{2}$ & $WC\_ORA_{2}$ \\
+$KTC_{19}$ & $MO_{2}$ & $WC\_MO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{20}$ & $OP_{1}$ & $WC\_OP_{1}$ \\
+$KTC_{21}$ & $WC\_O_{3}$ & $O_{3}$ \\
+$KTC_{22}$ & $WC\_H_{2}O_{2}$ & $H_{2}O_{2}$ \\
+$KTC_{23}$ & $WC\_NO$ & $NO$ \\
+$KTC_{24}$ & $WC\_NO_{2}$ & $NO_{2}$ \\
+$KTC_{25}$ & $WC\_NO_{3}$ & $NO_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{26}$ & $WC\_N_{2}O_{5}$ & $N_{2}O_{5}$ \\
+$KTC_{27}$ & $WC\_HONO$ & $HONO$ \\
+$KTC_{28}$ & $WC\_HNO_{3}$ & $HNO_{3}$ \\
+$KTC_{29}$ & $WC\_HNO_{4}$ & $HNO_{4}$ \\
+$KTC_{30}$ & $WC\_NH_{3}$ & $NH_{3}$ \\
+$KTC_{31}$ & $WC\_OH$ & $OH$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{32}$ & $WC\_HO_{2}$ & $HO_{2}$ \\
+$KTC_{33}$ & $WC\_CO_{2}$ & $CO_{2}$ \\
+$KTC_{34}$ & $WC\_SO_{2}$ & $SO_{2}$ \\
+$KTC_{35}$ & $WC\_SULF$ & $SULF$ \\
+$KTC_{36}$ & $WC\_HCHO$ & $HCHO$ \\
+$KTC_{37}$ & $WC\_ORA_{1}$ & $ORA_{1}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTC_{38}$ & $WC\_ORA_{2}$ & $ORA_{2}$ \\
+$KTC_{39}$ & $WC\_MO_{2}$ & $MO_{2}$ \\
+$KTC_{40}$ & $WC\_OP_{1}$ & $OP_{1}$ \\
+$KTR_{1}$ & $O_{3}$ & $WR\_O_{3}$ \\
+$KTR_{2}$ & $H_{2}O_{2}$ & $WR\_H_{2}O_{2}$ \\
+$KTR_{3}$ & $NO$ & $WR\_NO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{4}$ & $NO_{2}$ & $WR\_NO_{2}$ \\
+$KTR_{5}$ & $NO_{3}$ & $WR\_NO_{3}$ \\
+$KTR_{6}$ & $N_{2}O_{5}$ & $WR\_N_{2}O_{5}$ \\
+$KTR_{7}$ & $HONO$ & $WR\_HONO$ \\
+$KTR_{8}$ & $HNO_{3}$ & $WR\_HNO_{3}$ \\
+$KTR_{9}$ & $HNO_{4}$ & $WR\_HNO_{4}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{10}$ & $NH_{3}$ & $WR\_NH_{3}$ \\
+$KTR_{11}$ & $OH$ & $WR\_OH$ \\
+$KTR_{12}$ & $HO_{2}$ & $WR\_HO_{2}$ \\
+$KTR_{13}$ & $CO_{2}$ & $WR\_CO_{2}$ \\
+$KTR_{14}$ & $SO_{2}$ & $WR\_SO_{2}$ \\
+$KTR_{15}$ & $SULF$ & $WR\_SULF$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{16}$ & $HCHO$ & $WR\_HCHO$ \\
+$KTR_{17}$ & $ORA_{1}$ & $WR\_ORA_{1}$ \\
+$KTR_{18}$ & $ORA_{2}$ & $WR\_ORA_{2}$ \\
+$KTR_{19}$ & $MO_{2}$ & $WR\_MO_{2}$ \\
+$KTR_{20}$ & $OP_{1}$ & $WR\_OP_{1}$ \\
+$KTR_{21}$ & $WR\_O_{3}$ & $O_{3}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{22}$ & $WR\_H_{2}O_{2}$ & $H_{2}O_{2}$ \\
+$KTR_{23}$ & $WR\_NO$ & $NO$ \\
+$KTR_{24}$ & $WR\_NO_{2}$ & $NO_{2}$ \\
+$KTR_{25}$ & $WR\_NO_{3}$ & $NO_{3}$ \\
+$KTR_{26}$ & $WR\_N_{2}O_{5}$ & $N_{2}O_{5}$ \\
+$KTR_{27}$ & $WR\_HONO$ & $HONO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{28}$ & $WR\_HNO_{3}$ & $HNO_{3}$ \\
+$KTR_{29}$ & $WR\_HNO_{4}$ & $HNO_{4}$ \\
+$KTR_{30}$ & $WR\_NH_{3}$ & $NH_{3}$ \\
+$KTR_{31}$ & $WR\_OH$ & $OH$ \\
+$KTR_{32}$ & $WR\_HO_{2}$ & $HO_{2}$ \\
+$KTR_{33}$ & $WR\_CO_{2}$ & $CO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{34}$ & $WR\_SO_{2}$ & $SO_{2}$ \\
+$KTR_{35}$ & $WR\_SULF$ & $SULF$ \\
+$KTR_{36}$ & $WR\_HCHO$ & $HCHO$ \\
+$KTR_{37}$ & $WR\_ORA_{1}$ & $ORA_{1}$ \\
+$KTR_{38}$ & $WR\_ORA_{2}$ & $ORA_{2}$ \\
+$KTR_{39}$ & $WR\_MO_{2}$ & $MO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KTR_{40}$ & $WR\_OP_{1}$ & $OP_{1}$ \\
+$KC_{1}$ & $WC\_H_{2}O_{2}$ & $WC\_OH+WC\_OH$ \\
+$KC_{2}$ & $WC\_OH+WC\_OH$ & $WC\_H_{2}O_{2}$ \\
+$KC_{3}$ & $WC\_OH+WC\_HO_{2}$ &  \\
+$KC_{4}$ & $WC\_H_{2}O_{2}+WC\_OH$ & $WC\_HO_{2}$ \\
+$KC_{5}$ & $WC\_HO_{2}+WC\_HO_{2}$ & $WC\_H_{2}O_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KC_{6}$ & $WC\_O_{3}+WC\_HO_{2}$ & $WC\_OH$ \\
+$KC_{7}$ & $WC\_OH+WC\_SO_{2}$ & $WC\_ASO_{3}$ \\
+$KC_{8}$ & $WC\_HONO+WC\_OH$ & $WC\_NO_{2}$ \\
+$KC_{9}$ & $WC\_NO_{2}+WC\_HO_{2}$ & $WC\_HNO_{4}$ \\
+$KC_{10}$ & $WC\_HNO_{4}$ & $WC\_HO_{2}+WC\_NO_{2}$ \\
+$KC_{11}$ & $WC\_HNO_{4}$ & $WC\_HONO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KC_{12}$ & $WC\_HNO_{4}+WC\_SO_{2}$ & $WC\_SULF+WC\_HNO_{3}$ \\
+$KC_{13}$ & $WC\_HNO_{3}$ & $WC\_NO_{2}+WC\_OH$ \\
+$KC_{14}$ & $WC\_N_{2}O_{5}$ & $WC\_HNO_{3}+WC\_HNO_{3}$ \\
+$KC_{15}$ & $WC\_NO_{3}+WC\_SULF$ & $WC\_HNO_{3}+WC\_ASO_{4}$ \\
+$KC_{16}$ & $WC\_NO_{3}+WC\_SO_{2}$ & $WC\_HNO_{3}+WC\_ASO_{3}$ \\
+$KC_{17}$ & $WC\_MO_{2}+WC\_MO_{2}$ & $2.00*WC\_HCHO+2.00*WC\_HO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KC_{18}$ & $WC\_MO_{2}+WC\_SO_{2}$ & $WC\_OP_{1}+WC\_ASO_{3}$ \\
+$KC_{19}$ & $WC\_HCHO+WC\_OH$ & $WC\_ORA_{1}+WC\_HO_{2}$ \\
+$KC_{20}$ & $WC\_ORA_{1}+WC\_OH$ & $WC\_CO_{2}+WC\_HO_{2}$ \\
+$KC_{21}$ & $WC\_SO_{2}+WC\_HCHO$ & $WC\_AHMS$ \\
+$KC_{22}$ & $WC\_AHMS$ & $WC\_SO_{2}+WC\_HCHO$ \\
+$KC_{23}$ & $WC\_AHMS+WC\_OH$ & $WC\_HO_{2}+WC\_ORA_{1}+WC\_SO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KC_{24}$ & $WC\_ASO_{3}+W\_O_{2}$ & $WC\_ASO_{5}$ \\
+$KC_{25}$ & $WC\_ASO_{5}+WC\_HO_{2}$ & $WC\_AHSO_{5}$ \\
+$KC_{26}$ & $WC\_ASO_{5}+WC\_ASO_{5}$ & $WC\_ASO_{4}+WC\_ASO_{4}$ \\
+$KC_{27}$ & $WC\_AHSO_{5}+WC\_SO_{2}$ & $2.00*WC\_SULF$ \\
+$KC_{28}$ & $WC\_ASO_{4}$ & $WC\_SULF+WC\_OH$ \\
+$KC_{29}$ & $WC\_SO_{2}+WC\_O_{3}$ & $WC\_SULF$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KC_{30}$ & $WC\_SO_{2}+WC\_H_{2}O_{2}$ & $WC\_SULF$ \\
+$KR_{1}$ & $WR\_H_{2}O_{2}$ & $WR\_OH+WR\_OH$ \\
+$KR_{2}$ & $WR\_OH+WR\_OH$ & $WR\_H_{2}O_{2}$ \\
+$KR_{3}$ & $WR\_OH+WR\_HO_{2}$ &  \\
+$KR_{4}$ & $WR\_H_{2}O_{2}+WR\_OH$ & $WR\_HO_{2}$ \\
+$KR_{5}$ & $WR\_HO_{2}+WR\_HO_{2}$ & $WR\_H_{2}O_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KR_{6}$ & $WR\_O_{3}+WR\_HO_{2}$ & $WR\_OH$ \\
+$KR_{7}$ & $WR\_OH+WR\_SO_{2}$ & $WR\_ASO_{3}$ \\
+$KR_{8}$ & $WR\_HONO+WR\_OH$ & $WR\_NO_{2}$ \\
+$KR_{9}$ & $WR\_NO_{2}+WR\_HO_{2}$ & $WR\_HNO_{4}$ \\
+$KR_{10}$ & $WR\_HNO_{4}$ & $WR\_HO_{2}+WR\_NO_{2}$ \\
+$KR_{11}$ & $WR\_HNO_{4}$ & $WR\_HONO$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KR_{12}$ & $WR\_HNO_{4}+WR\_SO_{2}$ & $WR\_SULF+WR\_HNO_{3}$ \\
+$KR_{13}$ & $WR\_HNO_{3}$ & $WR\_NO_{2}+WR\_OH$ \\
+$KR_{14}$ & $WR\_N_{2}O_{5}$ & $WR\_HNO_{3}+WR\_HNO_{3}$ \\
+$KR_{15}$ & $WR\_NO_{3}+WR\_SULF$ & $WR\_HNO_{3}+WR\_ASO_{4}$ \\
+$KR_{16}$ & $WR\_NO_{3}+WR\_SO_{2}$ & $WR\_HNO_{3}+WR\_ASO_{3}$ \\
+$KR_{17}$ & $WR\_MO_{2}+WR\_MO_{2}$ & $2.00*WR\_HCHO+2.00*WR\_HO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KR_{18}$ & $WR\_MO_{2}+WR\_SO_{2}$ & $WR\_OP_{1}+WR\_ASO_{3}$ \\
+$KR_{19}$ & $WR\_HCHO+WR\_OH$ & $WR\_ORA_{1}+WR\_HO_{2}$ \\
+$KR_{20}$ & $WR\_ORA_{1}+WR\_OH$ & $WR\_CO_{2}+WR\_HO_{2}$ \\
+$KR_{21}$ & $WR\_SO_{2}+WR\_HCHO$ & $WR\_AHMS$ \\
+$KR_{22}$ & $WR\_AHMS$ & $WR\_SO_{2}+WR\_HCHO$ \\
+$KR_{23}$ & $WR\_AHMS+WR\_OH$ & $WR\_HO_{2}+WR\_ORA_{1}+WR\_SO_{2}$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KR_{24}$ & $WR\_ASO_{3}+W\_O_{2}$ & $WR\_ASO_{5}$ \\
+$KR_{25}$ & $WR\_ASO_{5}+WR\_HO_{2}$ & $WR\_AHSO_{5}$ \\
+$KR_{26}$ & $WR\_ASO_{5}+WR\_ASO_{5}$ & $WR\_ASO_{4}+WR\_ASO_{4}$ \\
+$KR_{27}$ & $WR\_AHSO_{5}+WR\_SO_{2}$ & $2.00*WR\_SULF$ \\
+$KR_{28}$ & $WR\_ASO_{4}$ & $WR\_SULF+WR\_OH$ \\
+$KR_{29}$ & $WR\_SO_{2}+WR\_O_{3}$ & $WR\_SULF$ \\
+\end{tabular}
+ 
+\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
+$KR_{30}$ & $WR\_SO_{2}+WR\_H_{2}O_{2}$ & $WR\_SULF$ \\
 \end{tabular}
 
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{019}$ & $MGLY$ & $ACO_{3}+HO_{2}+CO$ \\
-$K_{020}$ & $DCB$ & $TCO_{3}+HO_{2}$ \\
-$K_{021}$ & $ONIT$ & $0.20*ALD+0.80*KET+HO_{2}+NO_{2}$ \\
-$K_{022}$ & $MACR$ & $HCHO+ACO_{3}+CO+HO_{2}$ \\
-$K_{023}$ & $HKET$ & $ACO_{3}+HCHO+HO_{2}$ \\
-$K_{024}$ & $O({}^3P)+O_{2}$ & $O_{3}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{025}$ & $O({}^3P)+O_{3}$ & $2.0*O_{2}$ \\
-$K_{026}$ & $O({}^1D)+N_{2}$ & $O({}^3P)+N_{2}$ \\
-$K_{027}$ & $O({}^1D)+O_{2}$ & $O({}^3P)+O_{2}$ \\
-$K_{028}$ & $O({}^1D)+H_{2}O$ & $OH+OH$ \\
-$K_{029}$ & $O_{3}+OH$ & $HO_{2}+O_{2}$ \\
-$K_{030}$ & $O_{3}+HO_{2}$ & $OH+2.0*O_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{031}$ & $OH+HO_{2}$ & $H_{2}O+O_{2}$ \\
-$K_{032}$ & $H_{2}O_{2}+OH$ & $HO_{2}+H_{2}O$ \\
-$K_{033}$ & $HO_{2}+HO_{2}$ & $H_{2}O_{2}+O_{2}$ \\
-$K_{034}$ & $HO_{2}+HO_{2}+H_{2}O$ & $H_{2}O_{2}+H_{2}O+O_{2}$ \\
-$K_{035}$ & $O({}^3P)+NO$ & $NO_{2}$ \\
-$K_{036}$ & $O({}^3P)+NO_{2}$ & $NO+O_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{037}$ & $O({}^3P)+NO_{2}$ & $NO_{3}$ \\
-$K_{038}$ & $OH+NO$ & $HONO$ \\
-$K_{039}$ & $OH+NO_{2}$ & $HNO_{3}$ \\
-$K_{040}$ & $OH+NO_{3}$ & $NO_{2}+HO_{2}$ \\
-$K_{041}$ & $HO_{2}+NO$ & $NO_{2}+OH$ \\
-$K_{042}$ & $HO_{2}+NO_{2}$ & $HNO_{4}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{043}$ & $HNO_{4}$ & $HO_{2}+NO_{2}$ \\
-$K_{044}$ & $HO_{2}+NO_{3}$ & $0.3*HNO_{3}+0.7*NO_{2}+0.7*OH$ \\
-$K_{045}$ & $OH+HONO$ & $H_{2}O+NO_{2}$ \\
-$K_{046}$ & $OH+HNO_{3}$ & $NO_{3}+H_{2}O$ \\
-$K_{047}$ & $OH+HNO_{4}$ & $NO_{2}+H_{2}O+O_{2}$ \\
-$K_{048}$ & $O_{3}+NO$ & $NO_{2}+O_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{049}$ & $O_{3}+NO_{2}$ & $NO_{3}+O_{2}$ \\
-$K_{050}$ & $NO+NO+O_{2}$ & $NO_{2}+NO_{2}$ \\
-$K_{051}$ & $NO_{3}+NO$ & $NO_{2}+NO_{2}$ \\
-$K_{052}$ & $NO_{3}+NO_{2}$ & $NO+NO_{2}+O_{2}$ \\
-$K_{053}$ & $NO_{3}+NO_{2}$ & $N_{2}O_{5}$ \\
-$K_{054}$ & $N_{2}O_{5}$ & $NO_{2}+NO_{3}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{055}$ & $NO_{3}+NO_{3}$ & $NO_{2}+NO_{2}+O_{2}$ \\
-$K_{056}$ & $OH+H_{2}$ & $H_{2}O+HO_{2}$ \\
-$K_{057}$ & $OH+SO_{2}$ & $SULF+HO_{2}$ \\
-$K_{058}$ & $CO+OH$ & $HO_{2}+CO_{2}$ \\
-$K_{059}$ & $ISO+O({}^3P)$ & $0.86*OLT+0.05*HCHO+0.02*OH+0.01*CO+0.13*DCB+0.28*HO_{2}+0.15*XO_{2}$ \\
-$K_{060}$ & $MACR+O({}^3P)$ & $ALD$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{061}$ & $CH_{4}+OH$ & $MO_{2}+H_{2}O$ \\
-$K_{062}$ & $ETH+OH$ & $ETHP+H_{2}O$ \\
-$K_{063}$ & $HC_{3}+OH$ & $0.583*HC_{3}P+0.381*HO_{2}+0.335*ALD+0.036*ORA_{1}+0.036*CO+0.036*GLY+0.036*OH+0.010*HCHO+H_{2}O$ \\
-$K_{064}$ & $HC_{5}+OH$ & $0.750*HC_{5}P+0.250*KET+0.250*HO_{2}+H_{2}O$ \\
-$K_{065}$ & $HC_{8}+OH$ & $0.951*HC_{8}P+0.025*ALD+0.024*HKET+0.049*HO_{2}+H_{2}O$ \\
-$K_{066}$ & $ETE+OH$ & $ETEP$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{067}$ & $OLT+OH$ & $OLTP$ \\
-$K_{068}$ & $OLI+OH$ & $OLIP$ \\
-$K_{069}$ & $DIEN+OH$ & $ISOP$ \\
-$K_{070}$ & $ISO+OH$ & $ISOP$ \\
-$K_{071}$ & $API+OH$ & $APIP$ \\
-$K_{072}$ & $LIM+OH$ & $LIMP$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{073}$ & $TOL+OH$ & $0.90*ADDT+0.10*XO_{2}+0.10*HO_{2}$ \\
-$K_{074}$ & $XYL+OH$ & $0.90*ADDX+0.10*XO_{2}+0.10*HO_{2}$ \\
-$K_{075}$ & $CSL+OH$ & $0.85*ADDC+0.10*PHO+0.05*HO_{2}+0.05*XO_{2}$ \\
-$K_{076}$ & $HCHO+OH$ & $HO_{2}+CO+H_{2}O$ \\
-$K_{077}$ & $ALD+OH$ & $ACO_{3}+H_{2}O$ \\
-$K_{078}$ & $KET+OH$ & $KETP+H_{2}O$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{079}$ & $HKET+OH$ & $HO_{2}+MGLY+H_{2}O$ \\
-$K_{080}$ & $GLY+OH$ & $HO_{2}+2.0*CO+H_{2}O$ \\
-$K_{081}$ & $MGLY+OH$ & $ACO_{3}+CO+H_{2}O$ \\
-$K_{082}$ & $MACR+OH$ & $0.51*TCO_{3}+0.41*HKET+0.08*MGLY+0.41*CO+0.08*HCHO+0.49*HO_{2}+0.49*XO_{2}$ \\
-$K_{083}$ & $OH+DCB$ & $0.50*TCO_{3}+0.50*HO_{2}+0.50*XO_{2}+0.35*UDD+0.15*GLY+0.15*MGLY$ \\
-$K_{084}$ & $OH+UDD$ & $0.88*ALD+0.12*KET+HO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{085}$ & $OP_{1}+OH$ & $0.65*MO_{2}+0.35*HCHO+0.35*OH$ \\
-$K_{086}$ & $OP_{2}+OH$ & $0.44*HC_{3}P+0.08*ALD+0.49*OH+0.07*XO_{2}+0.41*KET$ \\
-$K_{087}$ & $PAA+OH$ & $0.65*ACO_{3}+0.35*HO_{2}+0.35*HCHO+0.35*XO_{2}$ \\
-$K_{088}$ & $PAN+OH$ & $HCHO+NO_{3}+XO_{2}+H_{2}O$ \\
-$K_{089}$ & $TPAN+OH$ & $0.60*HKET+0.60*NO_{3}+0.40*PAN+0.40*HCHO+0.40*HO_{2}+XO_{2}$ \\
-$K_{090}$ & $ONIT+OH$ & $HC_{3}P+NO_{2}+H_{2}O$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{091}$ & $HCHO+NO_{3}$ & $HO_{2}+HNO_{3}+CO$ \\
-$K_{092}$ & $ALD+NO_{3}$ & $ACO_{3}+HNO_{3}$ \\
-$K_{093}$ & $GLY+NO_{3}$ & $HNO_{3}+HO_{2}+2.0*CO$ \\
-$K_{094}$ & $MGLY+NO_{3}$ & $HNO_{3}+ACO_{3}+CO$ \\
-$K_{095}$ & $MACR+NO_{3}$ & $0.20*TCO_{3}+0.20*HNO_{3}+0.80*OLNN+0.80*CO$ \\
-$K_{096}$ & $DCB+NO_{3}$ & $0.50*TCO_{3}+0.50*HO_{2}+0.50*XO_{2}+0.25*GLY+0.25*ALD+0.50*NO_{2}+0.03*KET+0.25*MGLY+0.50*HNO_{3}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{097}$ & $CSL+NO_{3}$ & $HNO_{3}+PHO$ \\
-$K_{098}$ & $ETE+NO_{3}$ & $0.80*OLNN+0.20*OLND$ \\
-$K_{099}$ & $OLT+NO_{3}$ & $0.43*OLNN+0.57*OLND$ \\
-$K_{100}$ & $OLI+NO_{3}$ & $0.11*OLNN+0.89*OLND$ \\
-$K_{101}$ & $DIEN+NO_{3}$ & $0.90*OLNN+0.10*OLND+0.90*MACR$ \\
-$K_{102}$ & $ISO+NO_{3}$ & $0.90*OLNN+0.10*OLND+0.90*MACR$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{103}$ & $API+NO_{3}$ & $0.10*OLNN+0.90*OLND$ \\
-$K_{104}$ & $LIM+NO_{3}$ & $0.13*OLNN+0.87*OLND$ \\
-$K_{105}$ & $TPAN+NO_{3}$ & $0.60*ONIT+0.60*NO_{3}+0.40*PAN+0.40*HCHO+0.40*NO_{2}+XO_{2}$ \\
-$K_{106}$ & $ETE+O_{3}$ & $HCHO+0.43*CO+0.37*ORA_{1}+0.26*HO_{2}+0.13*H_{2}+0.12*OH$ \\
-$K_{107}$ & $OLT+O_{3}$ & $0.64*HCHO+0.44*ALD+0.37*CO+0.14*ORA_{1}+0.10*ORA_{2}+0.25*HO_{2}+0.40*OH+0.03*KET+0.03*KETP+0.06*CH_{4}+0.05*H_{2}+0.03*ETH+0.006*H_{2}O_{2}+0.19*MO_{2}+0.10*ETHP$ \\
-$K_{108}$ & $OLI+O_{3}$ & $0.02*HCHO+0.99*ALD+0.16*KET+0.30*CO+0.011*H_{2}O_{2}+0.14*ORA_{2}+0.07*CH_{4}+0.22*HO_{2}+0.63*OH+0.23*MO_{2}+0.12*KETP+0.06*ETH+0.18*ETHP$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{109}$ & $DIEN+O_{3}$ & $0.90*HCHO+0.39*MACR+0.36*CO+0.15*ORA_{1}+0.09*O({}^3P)+0.30*HO_{2}+0.35*OLT+0.28*OH+0.05*H_{2}+0.15*ACO_{3}+0.03*MO_{2}+0.02*KETP+0.13*XO_{2}+0.001*H_{2}O_{2}$ \\
-$K_{110}$ & $ISO+O_{3}$ & $0.90*HCHO+0.39*MACR+0.36*CO+0.15*ORA_{1}+0.09*O({}^3P)+0.30*HO_{2}+0.35*OLT+0.28*OH+0.05*H_{2}+0.15*ACO_{3}+0.03*MO_{2}+0.02*KETP+0.13*XO_{2}+0.001*H_{2}O_{2}$ \\
-$K_{111}$ & $API+O_{3}$ & $0.65*ALD+0.53*KET+0.14*CO+0.20*ETHP+0.42*KETP+0.85*OH+0.10*HO_{2}+0.02*H_{2}O_{2}$ \\
-$K_{112}$ & $LIM+O_{3}$ & $0.04*HCHO+0.46*OLT+0.14*CO+0.16*ETHP+0.42*KETP+0.85*OH+0.10*HO_{2}+0.02*H_{2}O_{2}+0.79*MACR+0.01*ORA_{1}+0.07*ORA_{2}$ \\
-$K_{113}$ & $MACR+O_{3}$ & $0.40*HCHO+0.60*MGLY+0.13*ORA_{2}+0.54*CO+0.08*H_{2}+0.22*ORA_{1}+0.29*HO_{2}+0.07*OH+0.13*OP_{2}+0.13*ACO_{3}$ \\
-$K_{114}$ & $DCB+O_{3}$ & $0.21*OH+0.29*HO_{2}+0.66*CO+0.50*GLY+0.62*MGLY+0.28*ACO_{3}+0.16*ALD+0.11*PAA+0.11*ORA_{1}+0.21*ORA_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{115}$ & $TPAN+O_{3}$ & $0.70*HCHO+0.30*PAN+0.70*NO_{2}+0.13*CO+0.04*H_{2}+0.11*ORA_{1}+0.08*HO_{2}+0.036*OH+0.70*ACO_{3}$ \\
-$K_{116}$ & $PHO+NO_{2}$ & $0.10*CSL+ONIT$ \\
-$K_{117}$ & $PHO+HO_{2}$ & $CSL$ \\
-$K_{118}$ & $ADDT+NO_{2}$ & $CSL+HONO$ \\
-$K_{119}$ & $ADDT+O_{2}$ & $0.98*TOLP+0.02*CSL+0.02*HO_{2}$ \\
-$K_{120}$ & $ADDT+O_{3}$ & $CSL+OH$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{121}$ & $ADDX+NO_{2}$ & $CSL+HONO$ \\
-$K_{122}$ & $ADDX+O_{2}$ & $0.98*XYLP+0.02*CSL+0.02*HO_{2}$ \\
-$K_{123}$ & $ADDX+O_{3}$ & $CSL+OH$ \\
-$K_{124}$ & $ADDC+NO_{2}$ & $CSL+HONO$ \\
-$K_{125}$ & $ADDC+O_{2}$ & $0.98*CSLP+0.02*CSL+0.02*HO_{2}$ \\
-$K_{126}$ & $ADDC+O_{3}$ & $CSL+OH$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{127}$ & $ACO_{3}+NO_{2}$ & $PAN$ \\
-$K_{128}$ & $PAN$ & $ACO_{3}+NO_{2}$ \\
-$K_{129}$ & $TCO_{3}+NO_{2}$ & $TPAN$ \\
-$K_{130}$ & $TPAN$ & $TCO_{3}+NO_{2}$ \\
-$K_{131}$ & $MO_{2}+NO$ & $HCHO+HO_{2}+NO_{2}$ \\
-$K_{132}$ & $ETHP+NO$ & $ALD+HO_{2}+NO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{133}$ & $HC_{3}P+NO$ & $0.047*HCHO+0.233*ALD+0.623*KET+0.063*GLY+0.742*HO_{2}+0.150*MO_{2}+0.048*ETHP+0.048*XO_{2}+0.059*ONIT+0.941*NO_{2}$ \\
-$K_{134}$ & $HC_{5}P+NO$ & $0.021*HCHO+0.211*ALD+0.722*KET+0.599*HO_{2}+0.031*MO_{2}+0.245*ETHP+0.334*XO_{2}+0.124*ONIT+0.876*NO_{2}$ \\
-$K_{135}$ & $HC_{8}P+NO$ & $0.150*ALD+0.642*KET+0.133*ETHP+0.261*ONIT+0.739*NO_{2}+0.606*HO_{2}+0.416*XO_{2}$ \\
-$K_{136}$ & $ETEP+NO$ & $1.6*HCHO+HO_{2}+NO_{2}+0.2*ALD$ \\
-$K_{137}$ & $OLTP+NO$ & $0.94*ALD+HCHO+HO_{2}+NO_{2}+0.06*KET$ \\
-$K_{138}$ & $OLIP+NO$ & $HO_{2}+1.71*ALD+0.29*KET+NO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{139}$ & $ISOP+NO$ & $0.446*MACR+0.354*OLT+0.847*HO_{2}+0.847*NO_{2}+0.153*ONIT+0.606*HCHO$ \\
-$K_{140}$ & $APIP+NO$ & $0.80*HO_{2}+0.80*ALD+0.80*NO_{2}+0.80*KET+0.20*ONIT$ \\
-$K_{141}$ & $LIMP+NO$ & $0.65*HO_{2}+0.40*MACR+0.25*OLI+0.25*HCHO+0.65*NO_{2}+0.35*ONIT$ \\
-$K_{142}$ & $TOLP+NO$ & $0.95*NO_{2}+0.95*HO_{2}+1.20*GLY+0.50*DCB+0.05*ONIT+0.65*MGLY$ \\
-$K_{143}$ & $XYLP+NO$ & $0.95*NO_{2}+0.95*HO_{2}+0.35*GLY+0.95*DCB+0.05*ONIT+0.60*MGLY$ \\
-$K_{144}$ & $CSLP+NO$ & $GLY+MGLY+NO_{2}+HO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{145}$ & $ACO_{3}+NO$ & $MO_{2}+NO_{2}$ \\
-$K_{146}$ & $TCO_{3}+NO$ & $NO_{2}+ACO_{3}+HCHO$ \\
-$K_{147}$ & $KETP+NO$ & $0.54*MGLY+0.46*ALD+0.23*ACO_{3}+0.77*HO_{2}+0.16*XO_{2}+NO_{2}$ \\
-$K_{148}$ & $OLNN+NO$ & $ONIT+NO_{2}+HO_{2}$ \\
-$K_{149}$ & $OLND+NO$ & $0.287*HCHO+1.24*ALD+0.464*KET+2.00*NO_{2}$ \\
-$K_{150}$ & $MO_{2}+HO_{2}$ & $OP_{1}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{151}$ & $ETHP+HO_{2}$ & $OP_{2}$ \\
-$K_{152}$ & $HC_{3}P+HO_{2}$ & $OP_{2}$ \\
-$K_{153}$ & $HC_{5}P+HO_{2}$ & $OP_{2}$ \\
-$K_{154}$ & $HC_{8}P+HO_{2}$ & $OP_{2}$ \\
-$K_{155}$ & $ETEP+HO_{2}$ & $OP_{2}$ \\
-$K_{156}$ & $OLTP+HO_{2}$ & $OP_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{157}$ & $OLIP+HO_{2}$ & $OP_{2}$ \\
-$K_{158}$ & $ISOP+HO_{2}$ & $OP_{2}$ \\
-$K_{159}$ & $APIP+HO_{2}$ & $OP_{2}$ \\
-$K_{160}$ & $LIMP+HO_{2}$ & $OP_{2}$ \\
-$K_{161}$ & $TOLP+HO_{2}$ & $OP_{2}$ \\
-$K_{162}$ & $XYLP+HO_{2}$ & $OP_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{163}$ & $CSLP+HO_{2}$ & $OP_{2}$ \\
-$K_{164}$ & $ACO_{3}+HO_{2}$ & $PAA$ \\
-$K_{165}$ & $ACO_{3}+HO_{2}$ & $ORA_{2}+O_{3}$ \\
-$K_{166}$ & $TCO_{3}+HO_{2}$ & $OP_{2}$ \\
-$K_{167}$ & $TCO_{3}+HO_{2}$ & $ORA_{2}+O_{3}$ \\
-$K_{168}$ & $KETP+HO_{2}$ & $OP_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{169}$ & $OLNN+HO_{2}$ & $ONIT$ \\
-$K_{170}$ & $OLND+HO_{2}$ & $ONIT$ \\
-$K_{171}$ & $MO_{2}+MO_{2}$ & $1.33*HCHO+0.66*HO_{2}$ \\
-$K_{172}$ & $ETHP+MO_{2}$ & $0.75*HCHO+HO_{2}+0.75*ALD$ \\
-$K_{173}$ & $HC_{3}P+MO_{2}$ & $0.810*HCHO+0.992*HO_{2}+0.580*ALD+0.018*KET+0.007*MO_{2}+0.005*MGLY+0.085*XO_{2}+0.119*GLY$ \\
-$K_{174}$ & $HC_{5}P+MO_{2}$ & $0.829*HCHO+0.946*HO_{2}+0.523*ALD+0.240*KET+0.014*ETHP+0.245*XO_{2}+0.049*MO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{175}$ & $HC_{8}P+MO_{2}$ & $0.753*HCHO+0.993*HO_{2}+0.411*ALD+0.419*KET+0.322*XO_{2}+0.013*ETHP$ \\
-$K_{176}$ & $ETEP+MO_{2}$ & $1.55*HCHO+HO_{2}+0.35*ALD$ \\
-$K_{177}$ & $OLTP+MO_{2}$ & $1.25*HCHO+HO_{2}+0.669*ALD+0.081*KET$ \\
-$K_{178}$ & $OLIP+MO_{2}$ & $0.755*HCHO+HO_{2}+0.932*ALD+0.313*KET$ \\
-$K_{179}$ & $ISOP+MO_{2}$ & $0.550*MACR+0.370*OLT+HO_{2}+0.080*OLI+1.09*HCHO$ \\
-$K_{180}$ & $APIP+MO_{2}$ & $2.00*HO_{2}+ALD+HCHO+KET$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{181}$ & $LIMP+MO_{2}$ & $2.00*HO_{2}+0.60*MACR+0.40*OLI+1.40*HCHO$ \\
-$K_{182}$ & $TOLP+MO_{2}$ & $HCHO+HO_{2}+0.65*GLY+DCB+0.35*MGLY$ \\
-$K_{183}$ & $XYLP+MO_{2}$ & $HCHO+HO_{2}+0.37*GLY+DCB+0.63*MGLY$ \\
-$K_{184}$ & $CSLP+MO_{2}$ & $GLY+MGLY+2.00*HO_{2}+HCHO$ \\
-$K_{185}$ & $ACO_{3}+MO_{2}$ & $HCHO+HO_{2}+MO_{2}$ \\
-$K_{186}$ & $ACO_{3}+MO_{2}$ & $HCHO+ORA_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{187}$ & $TCO_{3}+MO_{2}$ & $ACO_{3}+2.00*HCHO+HO_{2}$ \\
-$K_{188}$ & $TCO_{3}+MO_{2}$ & $HCHO+ORA_{2}$ \\
-$K_{189}$ & $KETP+MO_{2}$ & $0.40*MGLY+0.30*ALD+0.30*HKET+0.88*HO_{2}+0.08*XO_{2}+0.12*ACO_{3}+0.75*HCHO$ \\
-$K_{190}$ & $OLNN+MO_{2}$ & $0.75*HCHO+HO_{2}+ONIT$ \\
-$K_{191}$ & $OLND+MO_{2}$ & $0.960*HCHO+0.500*HO_{2}+0.640*ALD+0.149*KET+0.500*NO_{2}+0.500*ONIT$ \\
-$K_{192}$ & $ETHP+ACO_{3}$ & $ALD+0.500*HO_{2}+0.5*MO_{2}+0.5*ORA_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{193}$ & $HC_{3}P+ACO_{3}$ & $0.724*ALD+0.127*KET+0.488*HO_{2}+0.508*MO_{2}+0.499*ORA_{2}+0.091*HCHO+0.006*ETHP+0.071*XO_{2}+0.004*MGLY+0.100*GLY$ \\
-$K_{194}$ & $HC_{5}P+ACO_{3}$ & $0.677*ALD+0.330*KET+0.438*HO_{2}+0.554*MO_{2}+0.495*ORA_{2}+0.076*HCHO+0.018*ETHP+0.237*XO_{2}$ \\
-$K_{195}$ & $HC_{8}P+ACO_{3}$ & $0.497*ALD+0.581*KET+0.489*HO_{2}+0.507*MO_{2}+0.495*ORA_{2}+0.015*ETHP+0.318*XO_{2}$ \\
-$K_{196}$ & $ETEP+ACO_{3}$ & $0.8*HCHO+0.6*ALD+0.5*HO_{2}+0.5*MO_{2}+0.5*ORA_{2}$ \\
-$K_{197}$ & $OLTP+ACO_{3}$ & $0.859*ALD+0.501*HCHO+0.501*HO_{2}+0.501*MO_{2}+0.499*ORA_{2}+0.141*KET$ \\
-$K_{198}$ & $OLIP+ACO_{3}$ & $0.941*ALD+0.510*HO_{2}+0.510*MO_{2}+0.569*KET+0.490*ORA_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{199}$ & $ISOP+ACO_{3}$ & $0.771*MACR+0.229*OLT+0.506*HO_{2}+0.494*ORA_{2}+0.340*HCHO+0.506*MO_{2}$ \\
-$K_{200}$ & $APIP+ACO_{3}$ & $HO_{2}+ALD+MO_{2}+KET$ \\
-$K_{201}$ & $LIMP+ACO_{3}$ & $HO_{2}+0.60*MACR+0.40*OLI+0.40*HCHO+MO_{2}$ \\
-$K_{202}$ & $TOLP+ACO_{3}$ & $MO_{2}+HO_{2}+DCB+0.65*GLY+0.35*MGLY$ \\
-$K_{203}$ & $XYLP+ACO_{3}$ & $MO_{2}+HO_{2}+DCB+0.37*GLY+0.63*MGLY$ \\
-$K_{204}$ & $CSLP+ACO_{3}$ & $GLY+MGLY+HO_{2}+MO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{205}$ & $ACO_{3}+ACO_{3}$ & $2.0*MO_{2}$ \\
-$K_{206}$ & $TCO_{3}+ACO_{3}$ & $MO_{2}+ACO_{3}+HCHO$ \\
-$K_{207}$ & $KETP+ACO_{3}$ & $0.54*MGLY+0.35*ALD+0.11*KET+0.12*ACO_{3}+0.38*HO_{2}+0.08*XO_{2}+0.50*MO_{2}+0.50*ORA_{2}$ \\
-$K_{208}$ & $OLNN+ACO_{3}$ & $ONIT+0.50*MO_{2}+0.50*ORA_{2}+0.50*HO_{2}$ \\
-$K_{209}$ & $OLND+ACO_{3}$ & $0.207*HCHO+0.650*ALD+0.167*KET+0.516*MO_{2}+0.484*ORA_{2}+0.484*ONIT+0.516*NO_{2}$ \\
-$K_{210}$ & $OLNN+OLNN$ & $2.00*ONIT+HO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{211}$ & $OLNN+OLND$ & $0.202*HCHO+0.640*ALD+0.149*KET+0.500*HO_{2}+0.500*NO_{2}+1.50*ONIT$ \\
-$K_{212}$ & $OLND+OLND$ & $0.504*HCHO+1.21*ALD+0.285*KET+ONIT+NO_{2}$ \\
-$K_{213}$ & $MO_{2}+NO_{3}$ & $HCHO+HO_{2}+NO_{2}$ \\
-$K_{214}$ & $ETHP+NO_{3}$ & $ALD+HO_{2}+NO_{2}$ \\
-$K_{215}$ & $HC_{3}P+NO_{3}$ & $0.048*HCHO+0.243*ALD+0.670*KET+0.063*GLY+0.792*HO_{2}+0.155*MO_{2}+0.053*ETHP+0.051*XO_{2}+NO_{2}$ \\
-$K_{216}$ & $HC_{5}P+NO_{3}$ & $0.021*HCHO+0.239*ALD+0.828*KET+0.699*HO_{2}+0.040*MO_{2}+0.262*ETHP+0.391*XO_{2}+NO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{217}$ & $HC_{8}P+NO_{3}$ & $0.187*ALD+0.880*KET+0.155*ETHP+NO_{2}+0.845*HO_{2}+0.587*XO_{2}$ \\
-$K_{218}$ & $ETEP+NO_{3}$ & $1.6*HCHO+HO_{2}+NO_{2}+0.2*ALD$ \\
-$K_{219}$ & $OLTP+NO_{3}$ & $0.94*ALD+HCHO+HO_{2}+NO_{2}+0.06*KET$ \\
-$K_{220}$ & $OLIP+NO_{3}$ & $HO_{2}+1.71*ALD+0.29*KET+NO_{2}$ \\
-$K_{221}$ & $ISOP+NO_{3}$ & $0.600*MACR+0.400*OLT+HO_{2}+NO_{2}+0.686*HCHO$ \\
-$K_{222}$ & $APIP+NO_{3}$ & $HO_{2}+ALD+NO_{2}+KET$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{223}$ & $LIMP+NO_{3}$ & $HO_{2}+0.60*MACR+0.40*OLI+0.40*HCHO+NO_{2}$ \\
-$K_{224}$ & $TOLP+NO_{3}$ & $NO_{2}+HO_{2}+0.50*DCB+1.30*GLY+0.70*MGLY$ \\
-$K_{225}$ & $XYLP+NO_{3}$ & $NO_{2}+HO_{2}+DCB+0.74*GLY+1.26*MGLY$ \\
-$K_{226}$ & $CSLP+NO_{3}$ & $GLY+MGLY+NO_{2}+HO_{2}$ \\
-$K_{227}$ & $ACO_{3}+NO_{3}$ & $MO_{2}+NO_{2}$ \\
-$K_{228}$ & $TCO_{3}+NO_{3}$ & $NO_{2}+ACO_{3}+HCHO$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{229}$ & $KETP+NO_{3}$ & $0.54*MGLY+0.46*ALD+0.23*ACO_{3}+0.77*HO_{2}+0.16*XO_{2}+NO_{2}$ \\
-$K_{230}$ & $OLNN+NO_{3}$ & $ONIT+NO_{2}+HO_{2}$ \\
-$K_{231}$ & $OLND+NO_{3}$ & $0.280*HCHO+1.24*ALD+0.469*KET+2.00*NO_{2}$ \\
-$K_{232}$ & $XO_{2}+HO_{2}$ & $OP_{2}$ \\
-$K_{233}$ & $XO_{2}+MO_{2}$ & $HCHO+HO_{2}$ \\
-$K_{234}$ & $XO_{2}+ACO_{3}$ & $MO_{2}$ \\
-\end{tabular}
-
-\begin{tabular}{l@{\,:\,}p{0.2\chfwidth}@{$\quad\longrightarrow\quad$}p{0.6\chfwidth}}
-$K_{235}$ & $XO_{2}+XO_{2}$ &  \\
-$K_{236}$ & $XO_{2}+NO$ & $NO_{2}$ \\
-$K_{237}$ & $XO_{2}+NO_{3}$ & $NO_{2}$
-\end{tabular}
-}
-%
 %\end{appendix}
 %
 %\end{document}
@@ -898,3 +985,4 @@ $K_{237}$ & $XO_{2}+NO_{3}$ & $NO_{2}$
 \btPrintCited
 \end{btSect}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+

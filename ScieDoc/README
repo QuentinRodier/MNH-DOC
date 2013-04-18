@@ -34,7 +34,11 @@ cvs delete (-f) filename
 cvs add filename
 
 # Validate the modification (Update/Delete/Add)
-cvs commit -m "JPC 30/06/2008" filename
+cvs commit -m "JPC 18/04/2013" filename
+
+# create a branch and switch workdir to the new branch
+cvs tag -b MNH49-DOC-branch
+cvs update -r MNH49-DOC-branch
 
 # create a tag
 cvs tag ScieDocm47a

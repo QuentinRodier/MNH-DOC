@@ -1189,8 +1189,9 @@ most recent version, 0.185-0.25-0.44-0.69-1.19-2.38-4.00 $\mu$m). In  Meso-NH, o
 The LW surface emissivity directly corresponds to the value calculated in Meso-NH. 
 
 \subsection{Aerosols}
+\subsubsection{Climatological aerosols}
 
-Aerosol effects on SW and LW radiations are now taken into account provided that CAER is set to a value different of 'NONE'. Presently, six classes of aerosols are considered in the radiation scheme: The continental class including organic and sulfate-type aerosols, the sea class (i.e. sea-salt aerosols), the urban class (mainly  black-carbon type aerosols), the desert class (soil dust type aerosols), the volcanic class and a stratospheric background class. Each one of these class are characterized by specific optical properties (optical depth, single scattering albedo, asymmetry factor, ...). The optical depth is directly linked to the effective concentration of aerosol and therefore must be spatially and temporally specified. Presently the spatial and temporal distributions of optical thickness are defined in the model initialisation step (subroutine INI\_RADIATIONS).  
+Aerosol effects on SW and LW radiations are taken into account provided that CAER is set to a value different of 'NONE'. Presently, six classes of aerosols are considered in the radiation scheme: The continental class including organic and sulfate-type aerosols, the sea class (i.e. sea-salt aerosols), the urban class (mainly  black-carbon type aerosols), the desert class (soil dust type aerosols), the volcanic class and a stratospheric background class. Each one of these class are characterized by specific optical properties (optical depth, single scattering albedo, asymmetry factor, ...). The optical depth is directly linked to the effective concentration of aerosol and therefore must be spatially and temporally specified. Presently the spatial and temporal distributions of optical thickness are defined in the model initialisation step (subroutine INI\_RADIATIONS).  
 
 \begin{itemize}
 
@@ -1202,6 +1203,7 @@ Aerosol effects on SW and LW radiations are now taken into account provided that
 
 \item The 'SURF' option provides an alternative method compared to climatical distributions. In this case the total optical thickness is directly linked to the nature and the percent of ground covers in the grid cell (sea, desert, urban, continental). This option allows to better represent localized sources like urban area at fine resolution. The considered vertical distribution are the same than in TANR and TEGE cases. Note that the user can easily modify the maximum total optical thickness associated to the aerosol classes in the INI\_RADIATIONS routine.
 
+
 \end{itemize}
 
 
@@ -1210,6 +1212,19 @@ Remark: The stratospheric background represents a horizontally homogenous field 
 The optical depth associated to the volcanic class are forced to an "epsilon" value in INI\_RADIATIONS step but, this can be modified easily if necessary. A historical climatology for volcanic aerosol is also available in the routines called by the TEGE option. This option is not activated.
 
 It is always possible to define the aerosol fields from user's own data base at the INI\_RADIATIONS step.
+
+\subsubsection{Prognostic aerosols}
+
+When using prognostic aerosols, radiative properties of aerosols can be taken into account with either ? or ?.
+
+This method aims to compute the optical properties online as a function of a given complex refractive index deduced from the aerosol chemical composition and the size parameters corresponding to the particles.
+The optical properties computed by the module according to the Mie theory (Mie, 1908), and then are inputs for the radiative model are: the extinction coefficient ($\beta_{\nu,a}^{ext}(p)$), the single scattering albedo ($\omega_a$), and the asymmetry parameter for the aerosol population ($g_a$, obtained by integrating the asymmetry parameter over the radius). They depend on the outputs of the aerosol module ORILAM which computes for each considered aerosol mode the chemical composition as well as the size distribution parameter.
+
+In order to define a refractive index corresponding to an aerosol particle composed of different chemical components, the Maxwell-Garnett equation (Maxwell-Garnett, 1904) as defined in Tombette et al. (2008) allows us to link the chemical composition of the aerosol to a refractive index and then to take the particle size  distribution into account. This approach considers the aerosol as being made up of an inclusion and an extrusion. The inclusion is composed of the primary and solid parts of the aerosol, whereas the extrusion is composed of the secondary and liquid parts of the aerosol.
+
+An analytical solution was used, employing a look-up table of aerosol optical properties and a mathematical analytical function approximating the Mie computation. In order to minimize the number of stored terms, the construction of the look-up tables was adjusted. The aerosol optical properties depending on four parameters (real and imaginary part of the refractive index, the median radius and the standard deviation for the lognormal law describing the considered mode), the look-up tables have four degrees of freedom.
+
+Considering the median radius as a stored input parameter would be consistent for no more than a hundred cases as pointed out by Grini et al. (2006). To avoid this constraint, the computation and storage of the fifth degree dual-polynomial coefficients that best fitted the optical parameters evolving according to the median radius was taken. In this way, the input terms of the look-up tables are the complex refractive index and the geometric standard deviation. More details can be found on Aouizerats et al. (2010).
 
 \subsection{Radiatively active compounds}
 
@@ -1387,6 +1402,11 @@ Due to its relatively high cost, the radiation code can be unreasonably expensiv
 
 \section{References}
 \decrefname
+Aouizerats, B., O. Thouron, P. Tulet, M. Mallet, L. Gomes, and J. S. Henzing, 2010:
+Development of an online radiative module for the computation of aerosol optical properties in 3-D atmospheric models: validation during the EUCAARI campaign.
+{\it  Geosci. Model Dev.}, {\bf 3}, 553-564.
+
+\decrefname
 Bohren, C.~F., and D.R.Hauffman, 1993: Absorption and Scattering of Light by
   Small Particles, Wiley, New York.
 
@@ -1527,7 +1547,10 @@ Gregory, D., J.-J. Morcrette, C. Jakob, and A. C. M. Beljaars, and T. Stockdale,
 integrated forecasting system.
 {\it  Quart. J. Roy. Meteor. Soc.},
 {\bf 126A}, 1685-1710.
-
+\decrefname
+Grini, A., Tulet, P., and Gomes, L., 2006.
+Dusty weather forecast using the MesoNH atmospheric model.
+{\it  J. Geophys. Res.}, {\bf 111,} D19205, doi:10.1029/2005JD007007.
 \decrefname
 Giorgetta, M. A. and Morcrette, J.-J., 1995:
 Voigt line approximation in the ECMWF radiation scheme. 
@@ -1570,7 +1593,12 @@ parameterization of effective radius of droplets in warm
 stratocumulus. 
 {\it J. Atmos. Sci.},
 {\bf 51}, 1823-1842
-
+\decrefname
+Maxwell-Garnett, J., 1904. Colours in metal glasses and in metallic films.
+{\it Philos. T. Roy. Soc. A}, {\bf 203}, 385-420.
+\decrefname
+Mie, G., 1908. Beitr\"age zur Optik tr\"uber Medien, speziell kolloidaler Metall\"osungen.
+{\it Ann. Phys.-Leipzig}, {\bf 330}, 377-445.
 \decrefname
 Mlawer, E. J., S. J. Taubman, P. D. Brown, M. J. Iacono, and S. A. Clough, 1997:
 Radiative transfer for inhomogeneous atmospheres: RRTM, a validated correlated-k model for the longwave. 
@@ -1707,13 +1735,16 @@ optical thickness: Estimates from model results.
 {\it J. Geophys. Res.},
 {\bf 102},
 23,895-23,915.
-
 \decrefname
 Tiedtke, M., 1996: An Extension of Cloud-Radiation Parameterization in the ECMWF Model: The Representation of Subgrid-Scale Variations of Optical Depth.
       {\it Mon. Wea. Rev.},
 {\bf 124},
 745-750.
-
+\decrefname
+Tombette, M., Chazette, P., Sportisse, B., and Roustan, Y., 2008.
+Simulation of aerosol optical properties over Europe with a 3-D sizeresolved
+aerosol model: comparisons with AERONET data.
+{\it Atmos. Chem. Phys.}, {\bf 8}, 7115-7132.
 \decrefname
 Washington, W.M., and D.L. Williamson, 1977:
       A description of the NCAR GCMs.
