@@ -1,54 +1,27 @@
-####README
 #######################
-# For Authors
-
-# Download (read only)
-cvs co -r ScieDocm47a -d ScieDoc DOCS/ScieDoc
-
-# Download with update (r is for release)
-cvs update/co -r MNH47-DOC-branch
-
+# For everybody
+#######################
 # Download
-http://mesonh2.aero.obs-mip.fr/cgi-bin/mesonh_interne/viewcvs.cgi/DOCS/ScieDoc/?only_with_tag=ScieDocm47a
-
-Style American Meteorology Society
+git clone git@mesonh.aero.obs-mip.fr:/gitrepos/MNH-DOC.git 
 
 #######################
-#  For Editor
+# For contributors
+#######################
+git status
+git branch
+git tag
 
-# First upload
-cvs import -m"import ScieDoc M47beta" -b 1.1.12 DOCS MNH47-DOC-branch ScieDocm47beta 
+# Change branch
+git branch -v -a
+git checkout -b MNH-53-branch origin/MNH-53-branch
+git checkout  MNH-53-branch
 
-# Verify the list of modified files
-cvs -q -n update
+# Change source
+git diff
+git add 3-6-MixedMicrophysics.tex
+git commit -m 'Jean-Pierre 14/10/2016: updating version name'
 
-cvs status
-
-# Update a file
-cvs up filename
-
-# Delete a file
-cvs delete (-f) filename
-
-# Add a file
-cvs add filename
-
-# Validate the modification (Update/Delete/Add)
-cvs commit -m "JPC 18/04/2013" filename
-
-# create a branch and switch workdir to the new branch
-cvs tag -b MNH49-DOC-branch
-cvs update -r MNH49-DOC-branch
-
-# create a tag
-cvs tag ScieDocm47a
-
-# List of modified files (cvs co -m" " is needed)
-cvs -n up 2>/dev/null | grep '^M' 
-
-# List of removed files (cvs delete; cvs co are needed)
-# remark: U means update from CVS repository needed
-cvs -n up 2>/dev/null | grep '^U'
-
-# List of new files (cvs add is needed)
-cvs -n up 2>/dev/null | grep '^?'
+# Upload changes
+git tag V4.10.0
+git push
+git push --tag
