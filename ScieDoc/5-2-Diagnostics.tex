@@ -348,8 +348,8 @@ This section describes the computation of some standard radar products in
 the Meso-NH code using a generic representation of the hydrometeor size
 distributions. 
 
-The microphysical scheme assumes that each type of hydrometeor (rain, 
-snow/aggregate, graupel, and hail) with an assigned index $i\in[r,s,g,h]$,
+The microphysical scheme assumes that each type of hydrometeor (rain, pristine ice,
+snow/aggregate, graupel, and hail) with an assigned index $i\in[r,i,s,g,h]$,
 follows a generalized gamma distribution, given below in the normalized form:
 %
 \beq\label{GAMMA}
@@ -377,7 +377,8 @@ G_i(p) = \frac{\displaystyle{\Gamma(\nu_i+p/\alpha_i)}}{\displaystyle{\Gamma(\nu
 \eeq
 %
 
-The one-moment microphysical scheme of Meso-NH assumes that $N_i$ is a power 
+With the notable exception of pristine ice (for which concentration is diagnosed),
+the one-moment microphysical scheme of Meso-NH assumes that $N_i$ is a power 
 function of $\lambda_i$ (Caniaux et al. 1994):
 %
 \beq\label{eq1}
@@ -419,7 +420,7 @@ as a sum of radar reflectivities produced by each hydrometeor type which is
 illuminated by the radar wave (Ferrier 1993): 
 %
 \beq\label{sum}
-Z_e=10\; \log_{10}\big[Z_{er}+Z_{es}+Z_{eg}+Z_{eh} \big].
+Z_e=10\; \log_{10}\big[Z_{er}+Z_{ei}+Z_{es}+Z_{eg}+Z_{eh} \big].
 \eeq
 %
 
@@ -457,13 +458,13 @@ m_i(D)=a_iD^{b_i}=\dfrac{\pi}{6} \rho_w D_e^{3}=m_r(D_e)
 %
 where $\rho_w$ stands for liquid-water density, so inserting (\ref{Deff})
 into (\ref{Zes}) with
-$n_s(D)\ dD=n_s(D_e)\ dD_e=n_s\{ D_e(D) \}\ |\partial{D_e}/\partial{D}|\ dD$
+$n_s(D)\ dD=n_s(D_e)\ dD_e$
 and performing the integration of (\ref{Zes}) yields
 %
 \beq\label{Zesfin}
-Z_{es}=0.224 \times 10^{18} \Big(\dfrac{b_s}{3}\Big)
-\Big(\dfrac{6}{\pi} \dfrac{a_s}{\rho_w}\Big)^{\frac{7}{3}} C_s G_s
-\Big(\dfrac{7b_s}{3}-1\Big) \lambda_s^{X_s-{\frac{7b_s}{3}}+1}.
+Z_{es}=0.224 \times 10^{18}
+\Big(\dfrac{6}{\pi} \dfrac{a_s}{\rho_w}\Big)^2 C_s G_s
+( 2b_s ) \lambda_s^{X_s-2b_s}.
 \eeq
 %
 \noindent The snow category is composed of large ice crystals and of dry 
@@ -473,6 +474,13 @@ graupels when much supercooled water is collected. Furthermore, the snowflakes
 are progressively converted into graupel-like hydrometeors when they go through 
 the melting level. So it is assumed that the snow/aggregate category is 
 exclusively composed of dry ice without unfrozen liquid water.  
+
+A similar assumption is made for pristine ice. As the concentration of ice $N_i$ is diagnosed (therefore $ \lambda_i = [ ( \rho_{dref} \, r_i ) / ( a_i  N_i G_i( b_i ) )  ]^{-1/b_i}$), the equivalent radar reflectivity factor of the pristine ice, $Z_{ei}$ is given by:
+\beq\label{Zeifin}
+Z_{ei}=0.224 \times 10^{18}
+\Big(\dfrac{6}{\pi} \dfrac{a_i}{\rho_w}\Big)^2 N_i G_i
+( 2b_i ) \lambda_i^{-2b_i}.
+\eeq
 
 The equivalent radar reflectivity factor of the graupel, $Z_{eg}$ is given by
 
@@ -497,14 +505,12 @@ Integration of (\ref{Zeg}) leads to
 Z_{eg}=
   \begin{cases}
 0.333 \times 10^{18}
-\Big(\dfrac{b_g}{3}\Big)
-\Big(\dfrac{6}{\pi} \dfrac{a_g}{\rho_w}\Big)^{\frac{7}{3}}
-C_g G_g\Big(\dfrac{7b_g}{3}-1\Big) \lambda_g^{X_g-{\frac{7b_g}{3}}+1}
+\Big(\dfrac{6}{\pi} \dfrac{a_g}{\rho_w}\Big)^{2}
+C_g G_g (2b_g) \lambda_g^{X_g-2b_g}
 & \text{for $T<273.16$ K}, \\
 \hspace{0.55in} 10^{18}   
-\Big(\dfrac{b_g}{3}\Big)
-\Big(\dfrac{6}{\pi} \dfrac{a_g}{\rho_w}\Big)^{\frac{7}{3}} C_g G_g
-\Big(\dfrac{7b_g}{3}-1\Big) \lambda_g^{X_g-{\frac{7b_g}{3}}+1}
+\Big(\dfrac{6}{\pi} \dfrac{a_g}{\rho_w}\Big)^{2} C_g G_g
+(2b_g) \lambda_g^{X_g-2 b_g}
 & \text{for $T>273.16$ K}.
   \end{cases}
 \eeq
@@ -513,9 +519,9 @@ C_g G_g\Big(\dfrac{7b_g}{3}-1\Big) \lambda_g^{X_g-{\frac{7b_g}{3}}+1}
 The equivalent reflectivity of hail $Z_{eh}$ is simply given by:
 %
 \beq\label{Zehfin}
-Z_{eh}=10^{18}  \Big(\dfrac{b_h}{3}\Big)
-\Big(\dfrac{6}{\pi} \dfrac{a_h}{\rho_w}\Big)^{\frac{7}{3}} C_h G_h
-\Big(\dfrac{7b_h}{3}-1\Big) \lambda_h^{X_h-{\frac{7b_h}{3}}+1}
+Z_{eh}=10^{18}
+\Big(\dfrac{6}{\pi} \dfrac{a_h}{\rho_w}\Big)^2 C_h G_h
+( 2b_h ) \lambda_h^{X_h-2 b_h}
 \eeq
 %
 \noindent because it is assumed that the hailstones are fully coated by a
@@ -719,11 +725,11 @@ l({\vec r})=\exp\left(-\int_0^r\sum_{j\in\rm type}\int_0^\infty {C_e}_j(D)N_j(D,
 where ${C_e}_j$ is the \emph{extinction cross-section} of the $j$\textsuperscript{th} scatterer.
 \end{itemize}
 
- \begin{figure}
- \centering
- \includegraphics*[bb=121 315 479 543]{\EPSDIR/schema-geometrie}
- \caption{Spherical coordinates used to locate the target.}\label{coord-spher}
- \end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics*[bb=121 315 479 543]{\EPSDIR/schema-geometrie}
+% \caption{Spherical coordinates used to locate the target.}\label{coord-spher}
+% \end{figure}
 
 When 
 \begin{enumerate}
@@ -831,16 +837,39 @@ Similarly, the improper integral involving scatterer diameters is computed by us
 
 
 \paragraph{Scattering methods.}
-Four methods are available: Rayleigh (for spheres), Mie, T-matrix and Rayleigh for spheroids. The last two methods are only used for raindrops, which are modeled as spheroids; hydrometeors containing ice are supposed to behave as isotropic scatterers as they fall or tumble (i.e., they are modeled as spheres).
+Four methods are available: Rayleigh (for spheres), Mie, Rayleigh for spheroids and T-Matrix.
+
+\begin{description}
+\item {Rayleigh, Mie or Rayleigh for spheroids scattering methods}
+  
+The three first methods have been implemented and are described by Caumont et al (2006). 
+When using Rayleigh, Mie or Rayleigh for spheroids methods,
+hydrometeors containing ice are supposed to behave as isotropic scatterers as they fall or tumble (i.e., they are modeled as spheres).
 The approximations of Rayleigh for spheres and for spheroids yield analytic results. Thus, for instance, in the Rayleigh theory, cross sections for raindrops are
 \begin{align}
 \sigma_{\rm HH}&=\frac{\pi^5|K_w^2|}{\lambda^4}D^6\,,\\
 C_e&=\frac{\pi^2}\lambda\Im K_wD^3+\frac{\pi^4}{15\lambda^3}\Im\left(K_w^2\frac{m^4+27m^2+38}{2m^2+3}\right)D^5+\frac{2\pi^5}{3\lambda^4}\Re(K_w^2)D^6\,.
 \end{align}
 Analytic derivations of Rayleigh for spheroids cross sections can be found in Kerker (1969, chap.~10), van de Hulst (1981), Doviak and Zrni\'c (1993), or Bringi and Chandrasekar (2001), for instance.
-Mie computations rely on the code described by Bohren and Huffman (1983). We use the code described by Mishchenko and Travis (1998), and Mishchenko et al. (2002) for T-matrix computations.
+Mie computations rely on the code described by Bohren and Huffman (1983). 
 
 For pure water particles, the dielectric function is taken from Liebe et al. (1991), while the model of Hufford et al. (1991) is taken for pure ice.  Here we make the following assumptions: for particles made of ice and air only (snow, primary ice, and graupel above the melting level), we consider the diameter of a sphere made of ice only that would have the same mass (e.g., Smith 1984). For water-coated graupel, which are made of ice, water, and air, we consider the diameter of an equivalent-mass sphere made of 14~\% of water and 86~\% of ice as spheroidal inclusions (following Rasmussen 1984). The corresponding dielectric function is then computed following Bohren and Battan (1982).
+
+\item{T-matrix scattering method}
+
+When using T-matrix scattering method, implemented and described by Augros et al (2016), not only raindrops but also snow and graupel particles are considered as spheroids. 
+The T-matrix code has been adapted from Mishchenko and Travis (1998), and Mishchenko et al. (2002). T-matrix lookup tables
+containing the scattering coefficients were computed in advance
+for each hydrometeor type and each radar wavelength (S, C and
+X band). These coefficients were estimated for a set of diameters,
+temperatures, elevation angles and liquid water fractions for
+melting graupel. Polarimetric variables are calculated from the scattering coefficients following the equations given in the Appendix of Augros et al (2016).
+
+When selecting T-matrix scattering method, a more continuous melting process is simulated for graupel particles. 
+In a similar way to Jung et al (2008), the water
+fraction inside graupel particles is estimated as a function of the hydrometeor contents of graupel and rain $M_g$ and $M_r$.
+More details of this parameterization are explained by Augros et al (2016). 
+\end{description}
 
 \section{Satellite diagnostics}
 A comparison between model outputs and satellite observations provides an assessment of how well the model can reproduce the meteorological situation.
@@ -904,6 +933,11 @@ Andsager K., K. V. Beard, and N. F. Laird, 1999:
       {\it J. Atmos. Sci.},
       {\bf 56},
       2673-2683.
+\decrefname
+Augros, C., V. Caumont, O. Ducrocq, N. Gaussiat, and P. P. Tabary, 2016:
+      Comparisons between S, C, and X band polarimetric radar observations
+      and convective-scale simulations of HyMeX first special observing period.
+      {\it Quart. J. Roy. Meteor. Soc.}, {\bf 142}, 347-362.
 \decrefname
 Bauer, P., 2001: Including a melting layer in microwave radiative transfer
        simulation for clouds. {\it Atmos. Res.}, {\bf 67}, 9-30.
@@ -1156,7 +1190,7 @@ Pruppacher, H. R., and K. V. Beard, 1970:
 \decrefname
 Ricard, D., C. Lac, S. Riette, R. Legrand, and A. Mary, 2013: 
 Kinetic energy spectra characteristics of two convection-permitting limited-area models AROME and Meso-NH.
-{\it Quart. J. Roy. Meteor. Soc.}, {\bf p. in press}.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 139}, 1327-1341.
 \decrefname
 Richard, E., S. Cosma, P. Tabary, J.-P. Pinty, and M. Hagen, 2003:
       High-resolution numerical simulations of the convective system observed
