@@ -1,0 +1,2018 @@
+\chapter{LES diagnostics} \label{s:LESdiag}
+
+\section{Notations}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+$\alpha'$ & subgrid fluctuation of $\alpha$ &  \\
+\hline
+$\overline{\alpha}$ & mean value of $\alpha$ in the grid: resolved quantity & 3D \\
+\hline
+$<\alpha>$ &  horizontal mean value of $\alpha$ & 1D\\
+\hline
+$\tilde{\alpha} = \overline{\alpha}-<\alpha>$ &  resolved fluctuation 
+to the mean profile & 3D\\
+\hline
+$<\alpha>_{up}$ &  horizontal mean value of $\alpha$ in updrafts;& 1D \\
+& only point with $\overline{w}$ greater than $<w>$ are considered &\\
+\hline
+$<\alpha>_{down}$ &  horizontal mean value of $\alpha$ in downdrafts;& 1D \\
+& only point with $\overline{w}$ smaller than $<w>$ are considered& \\
+\hline
+\end{tabular}
+\end{center}
+
+
+Examples:
+
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+$\alpha'\beta'$ & & subgrid flux or (co)variance  $\alpha'\beta'$ & 3D \\
+\hline
+$\overline{\alpha}$  & & mean value of $\alpha$ in each grid mesh & 3D \\
+\hline
+$\overline{\alpha'}$  & $= 0$ & mean value of the turbulent fluctuation in each grid mesh & 3D \\
+\hline
+$\overline{\alpha'\beta'}$ & & mean value in each grid mesh of subgrid flux or (co)variance & 3D\\
+\hline
+$\tilde{\alpha}\,\tilde{\beta}$ & & resolved flux or (co)variance in each grid mesh & 3D\\
+\hline
+$<\alpha>$ & &  horizontal mean value of $\alpha$ & 1D \\
+\hline
+$<\alpha'>$ & $=0$ &  horizontal mean value of a subgrid fluctuation & 1D\\
+\hline
+$<\overline{\alpha}>$ & $= <\alpha>$ &  horizontal mean value of a resolved field& 1D\\
+\hline
+$<\tilde{\alpha}>$ & $= 0$ &  horizontal mean value of a resolved fluctuation& 1D\\
+\hline
+$<\overline{\alpha'\beta'}>$ & & horizontal mean value of subgrid flux or (co)variance & 1D\\
+\hline
+$<\tilde{\alpha}\,\tilde{\beta}>$ & & horizontal mean value of resolved flux or (co)variance & 1D\\
+\hline
+\end{tabular}
+\end{center}
+
+
+\section{What is available}
+
+The computed fields have usually at least two
+dimensions: z and t, that is they are temporal evolutions
+of vertical profiles. They are always written in the 
+diachronic file. Each field have its own group name,
+say 'NAME'.
+
+When time averaging is asked for, the fields are temporally
+averaged (and so lose their temporal dimension) , and are written
+under the name 'A\_NAME'.
+
+When normalization is asked for, this one is made individually on
+each vertical profile, for all times. They are written under
+the name 'E\_NAME'.
+
+When both normalization and time averaging are asked for,
+normalization is made first, and then time averaging. The resulting
+vertical profiles are written under the name 'H\_NAME'.\\
+
+\section{LES averaged fields (LLES\_MEAN=TRUE)}
+
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &   if  & comments \\
+      & diachronic file & &  & \\
+\hline
+\hline
+$<u>$ & MEAN\_U & z,t,p & &\multirow{15}{5cm}{dimension 'p' is equal to the  number of masks when this dimension is not present, the computation is made only on the cartesian mask.}\\
+\cline{1-4}
+$<v>$ & MEAN\_V &z,t,p &   &  \\
+\cline{1-4}
+$<w>$  & MEAN\_W &z,t,p &   & \\
+\cline{1-4}
+$<p>$   & MEAN\_PRE &z,t,p &   & \\
+\cline{1-4}
+$<\rho>$   & MEAN\_RHO &z,t,p &   & \\
+\cline{1-4}
+$<\theta>$   & MEAN\_TH &z,t,p &   &\\
+\cline{1-4}
+$<\theta_l>$   & MEAN\_THL &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\theta_v>$   & MEAN\_THV &z,t,p &  $r_v$  &\\
+\cline{1-4}
+$<r_v>$   & MEAN\_RV &z,t,p &  $r_v$  &\\
+\cline{1-4}
+$<r_c>$   & MEAN\_RC &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<r_r>$   & MEAN\_RR &z,t,p &  $r_r$  &\\
+\cline{1-4}
+$<r_i>$   & MEAN\_RI &z,t,p &  $r_i$  &\\
+\cline{1-4}
+$<r_s>$   & MEAN\_RS &z,t,p &  $r_s$  &\\
+\cline{1-4}
+$<r_g>$   & MEAN\_RG &z,t,p &  $r_g$  &\\
+\cline{1-4}
+$<r_h>$   & MEAN\_RH &z,t,p &  $r_h$  &\\
+\cline{1-4}
+$<s_v>$   & MEAN\_SV &z,t,p,n &  $s_v$  &\\
+\hline
+$<\sqrt{\overline{u}^2+\overline{v}^2}>$   & MEAN\_WIND &z,t,p &   & different from $\sqrt{<\overline{u}>^2+<\overline{v}>^2}$ !\\
+\hline
+$<\overline{\rho} \;{\rm max}(\overline{w},<w>) >$  & MEAN\_MSFX &z,t,p &   & mean upward mass flux\\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\newpage
+\section{LES pdf (LLES\_PDF=TRUE)}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. & if    & comments \\
+      & diachronic file & &  & \\
+\hline
+\hline
+$PDF\_\theta$ & PDF\_TH & z,t,p,n & &\multirow{11}{5cm}{dimension 'p' is equal to the  number of masks when this dimension is not present, the computation is made only on the cartesian mask.} \\
+\cline{1-4}
+$PDF\_W$ & PDF\_W &z,t,p,n &   &  \\
+\cline{1-4}
+$PDF\_\theta_v$ & PDF\_THV &z,t,p,n &   & \\
+\cline{1-4}
+$PDF\_R_v$ & PDF\_RV &z,t,p,n &   &  \\
+\cline{1-4}
+$PDF\_R_c$ & PDF\_RC &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_R_t$ & PDF\_RT &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_\theta_l$ & PDF\_THL &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_R_r$ & PDF\_RR &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_R_i$ & PDF\_RI &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_R_s$ & PDF\_RS &z,t,p,n &   &\\
+\cline{1-4}
+$PDF\_R_g$ & PDF\_RG &z,t,p,n &   &\\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\section{LES averaged fields (LLES\_RESOLVED=TRUE)}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &if     & comments \\
+      & diac. file &           &  & \\
+\hline
+\hline
+$<\tilde{u}^2>$ & RES\_U2 & z,t,p & &\multirow{25}{5cm}{warning, contains both turbulent and gravity wave fields }\\
+\cline{1-4}
+$<\tilde{v}^2>$ & RES\_V2 &z,t,p &   & \\
+\cline{1-4}
+$<\tilde{w}^2>$ & RES\_W2 &z,t,p &   & \\
+\cline{1-4}
+$<\tilde{u}\;\tilde{v}>$ & RES\_UV &z,t,p &   &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{u}>$ & RES\_WU &z,t,p &   & \\
+\cline{1-4}
+$<\tilde{w}\;\tilde{v}>$ & RES\_WV &z,t,p &   &\\
+\cline{1-4}
+$<\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)>$ & RES\_KE &z,t,p &   &\\
+\cline{1-4}
+$<\tilde{p}^2>$ & RES\_P2 & z,t,p &  & \\
+\cline{1-4}
+$<\tilde{u}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_UPZ & z,t,p &  &\\
+\cline{1-4}
+$<\tilde{v}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_VPZ & z,t,p &  &\\
+\cline{1-4}
+$<\tilde{w}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_WPZ & z,t,p &  &\\
+\cline{1-4}
+$<\tilde{\theta}\;\tilde{\theta_v}>$ & RES\_THTV &z,t,p &  $r_v$  &\\
+\cline{1-4}
+$<\tilde{\theta_l}\;\tilde{\theta_v}>$ & RES\_TLTV &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\tilde{\theta}^2>$ & RES\_TH2 &z,t,p &   &\\
+\cline{1-4}
+$<\tilde{\theta_l}^2>$ & RES\_THL2 &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\tilde{u}\tilde{\theta}>$ & RES\_UTH &z,t,p &   & \\
+\cline{1-4}
+$<\tilde{v}\tilde{\theta}>$ & RES\_VTH &z,t,p &   &\\
+\cline{1-4}
+$<\tilde{w}\tilde{\theta}>$ & RES\_WTH &z,t,p &   &\\
+\cline{1-4}
+$<\tilde{u}\tilde{\theta_l}>$ & RES\_UTHL &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{\theta_l}>$ & RES\_VTHL &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{\theta_l}>$ & RES\_WTHL &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{u}\tilde{\theta_v}>$ & RES\_UTHV &z,t,p &  $r_v$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{\theta_v}>$ & RES\_VTHV &z,t,p &   $r_v$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{\theta_v}>$ & RES\_WTHV &z,t,p &   $r_v$ &\\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+$<\tilde{r_v}^2>$ & RES\_RV2 &z,t,p &   $r_v$ &\multirow{25}{5cm}{warning, contains both turbulent and gravity wave fields }\\
+\cline{1-4}
+$<\tilde{\theta}\tilde{r_v}>$ & RES\_THRV &z,t,p &   $r_v$ &\\
+\cline{1-4}
+$<\tilde{\theta_l}\tilde{r_v}>$ & RES\_TLRV &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{\theta_v}\tilde{r_v}>$ & RES\_TVRV &z,t,p &  $r_v$ &\\
+\cline{1-4}
+$<\tilde{u}\tilde{r_v}>$ & RES\_URV &z,t,p &  $r_v$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{r_v}>$ & RES\_VRV &z,t,p &   $r_v$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{r_v}>$ & RES\_WRV &z,t,p &   $r_v$ &\\
+\cline{1-4}
+$<\tilde{r_c}^2>$ & RES\_RC2 &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{\theta}\tilde{r_c}>$ & RES\_THRC &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{\theta_l}\tilde{r_c}>$ & RES\_TLRC &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{\theta_v}\tilde{r_c}>$ & RES\_TVRC &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{u}\tilde{r_c}>$ & RES\_URC &z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{r_c}>$ & RES\_VRC &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{r_c}>$ & RES\_WRC &z,t,p &   $r_c$ &\\
+\cline{1-4}
+$<\tilde{r_i}^2>$ & RES\_RI2 &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{\theta}\tilde{r_i}>$ & RES\_THRI &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{\theta_l}\tilde{r_i}>$ & RES\_TLRI &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{\theta_v}\tilde{r_i}>$ & RES\_TVRI &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{u}\tilde{r_i}>$ & RES\_URI &z,t,p &  $r_i$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{r_i}>$ & RES\_VRI &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{r_i}>$ & RES\_WRI &z,t,p &   $r_i$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{r_r}>$ & RES\_WRR &z,t,p &   $r_r$ &\\
+\cline{1-4}
+Precipitation flux  & INPRR3D  &z,t,p &   $r_r$ &\\
+\cline{1-4}
+Max Precipitation flux  & MAXINPRR3D  &z,t,p &   $r_r$ &\\
+\cline{1-4}
+Evaporation flux  & EVAP3D  &z,t,p &   $r_r$ &\\
+\cline{1-4}
+$<\tilde{s_v}^2>$ & RES\_SV2 &z,t,p,n &   $s_v$ &\\
+\cline{1-4}
+$<\tilde{\theta}\tilde{s_v}>$ & RES\_THSV &z,t,p,n &   $s_v$ &\\
+\cline{1-4}
+$<\tilde{\theta_l}\tilde{s_v}>$ & RES\_TLSV &z,t,p,n &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{\theta_v}\tilde{s_v}>$ & RES\_TVSV &z,t,p,n &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{u}\tilde{s_v}>$ & RES\_USV &z,t,p,n  & $s_v$  &\\
+\cline{1-4}
+$<\tilde{v}\tilde{s_v}>$ & RES\_VSV &z,t,p,n  &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{w}\tilde{s_v}>$ & RES\_WSV &z,t,p,n  &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{w}^3>$ & RES\_W3 &z,t,p   &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{\theta_l}^2>$ & RES\_WTL2 &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{\theta_l}>$ & RES\_W2TL &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{r_t}^2>$ & RES\_WRT2 &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{r_t}>$ & RES\_W2RT &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{\theta_l};\tilde{r_t}>$ & RES\_WTLRT &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{r_v}^2>$ & RES\_WRV2 &z,t,p &  $r_v$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{r_v}>$ & RES\_W2RV &z,t,p &  $r_v$ &\\
+\hline
+$<\tilde{w}\;\tilde{\theta_l}\tilde{r_v}>$ & RES\_WTLRV &z,t,p &  $r_v$ &{if $r_v$ and no $r_c$, replaced by $<\tilde{w}\;\tilde{\theta}\tilde{r_v}>$}\\
+\hline
+$<\tilde{w}\;\tilde{r_c}^2>$ & RES\_WRC2 &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{r_c}>$ & RES\_W2RC &z,t,p &  $r_c$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{\theta_l}\tilde{r_c}>$ & RES\_WTLRC &z,t,p &  $r_c$ & \\
+\cline{1-4}
+$<\tilde{w}\;\tilde{r_v}\tilde{r_c}>$ & RE\_WRVRC &z,t,p &  $r_c$ &\\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in & dim. &   if  & comments \\
+      & diac. file &           &  & \\
+\hline
+\hline
+$<\tilde{w}\;\tilde{r_i}^2>$ & RES\_WRI2 &z,t,p &  $r_i$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{r_i}>$ & RES\_W2RI &z,t,p &  $r_i$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{\theta_l}\tilde{r_i}>$ & RE\_WTLRI &z,t,p &  $r_i$ &\\
+\cline{1-4}
+$<\tilde{w}\;\tilde{r_v}\tilde{r_i}>$ & RE\_WRVRI &z,t,p &  $r_i$ & \\
+\cline{1-4}
+$<\tilde{w}\;\tilde{s_v}^2>$ & RES\_WSV2 &z,t,p,n &  $s_v$ &\\
+\cline{1-4}
+$<\tilde{w}^2\;\tilde{s_v}>$ & RES\_W2SV &z,t,p,n & $s_v$ &\\
+\cline{1-5}
+$<\tilde{w}\;\tilde{\theta_l}\tilde{s_v}>$ & RE\_WTLSV &z,t,p,n &  $s_v$ & if no $r_c$, replaced by \\
+&&&&$<\tilde{w}\;\tilde{\theta}\tilde{s_v}>$ \\
+\cline{1-5}
+$<\tilde{w}\;\tilde{r_v}\tilde{s_v}>$ & RE\_WRVSV &z,t,p,n  & $r_v$, $s_v$ & \\
+\cline{1-5}
+$<\tilde{\theta_l}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_TLPZ & z,t,p & & if no $r_c$, replaced by\\
+&&&& $<\tilde{\theta}\frac{\partial}{\partial z,t,p}\tilde{p}>$ \\
+\cline{1-5}
+$<\tilde{r_v}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_RVPZ & z,t,p & $r_v$  &\\
+\cline{1-4}
+$<\tilde{r_c}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_RCPZ & z,t,p &  $r_c$  &\\
+\cline{1-4}
+$<\tilde{r_i}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_RIPZ & z,t,p &  $r_i$  &\\
+\cline{1-4}
+$<\tilde{s_v}\frac{\partial}{\partial z}\tilde{p}>$ & RES\_SVPZ & z,t,p,n &  $s_v$  &\\
+\cline{1-4}
+$<\tilde{u}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES\_UKE & z,t,p &   &\\
+\cline{1-4}
+$<\tilde{v}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES\_VKE & z,t,p &   &\\
+\cline{1-4}
+$<\tilde{w}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES\_WKE & z,t,p &   &\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\section{LES averaged fields (LLES\_SUBGRID=TRUE)}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in & dim. &   if  & comments \\
+      & diac. file &           &  & \\
+\hline
+\hline
+$<\frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})>$ & SBG\_TKE &z,t,p &   & \\
+\hline
+$<\overline{u'^2}>$ & SBG\_U2 &z,t,p &   & \\
+\hline
+$<\overline{v'^2}>$ & SBG\_V2 &z,t,p &   & \\
+\hline
+$<\overline{w'^2}>$ & SBG\_W2 &z,t,p &   & \\
+\hline
+$<\overline{u'v'}>$ & SBG\_UV &z,t,p &   & \\
+\hline
+$<\overline{w'u'}>$ & SBG\_WU &z,t,p &   & \\
+\hline
+$<\overline{w'v'}>$ & SBG\_WV &z,t,p &   & \\
+\hline
+$<\overline{\theta_l'^2}>$ & SBG\_THL2 &z,t,p &   & if no $r_c$, replaced by $<\overline{\theta'^2}>$\\
+\hline
+$<\overline{u'\theta_l'}>$ & SBG\_UTHL &z,t,p &   & if no $r_c$, replaced by $<\overline{u'\theta'}>$ \\
+\hline
+$<\overline{v'\theta_l'}>$ & SBG\_VTHL &z,t,p &   & if no $r_c$, replaced by $<\overline{v'\theta'}>$ \\
+\hline
+$<\overline{w'\theta_l'}>$ & SBG\_WTHL &z,t,p &   & if no $r_c$, replaced by $<\overline{w'\theta'}>$ \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+$<\overline{w'\theta_v'}>$ & SBG\_WTHV &z,t,p & $r_v$  &  \\
+\hline
+$<\overline{r_t'^2}>$ & SBG\_RT2 &z,t,p & $r_v$  & $r_t$ is for total water \\
+\hline
+$<\overline{\theta_l'r_t'}>$ & SBG\_TLRT &z,t,p & $r_v$   & if no $r_c$, replaced by $<\overline{\theta'r_v'}>$ \\
+\hline
+$<\overline{u'r_t'}>$ & SBG\_URT &z,t,p & $r_v$  & $r_t$ is for total water\\
+\hline
+$<\overline{v'r_t'}>$ & SBG\_VRT &z,t,p & $r_v$  &$r_t$ is for total water \\
+\hline
+$<\overline{w'r_t'}>$ & SBG\_WRT &z,t,p & $r_v$  &$r_t$ is for total water \\
+\hline
+$<\overline{r_c'^2}>$ & SBG\_RC2 &z,t,p & $r_c$  & \\
+\hline
+$<\overline{u'r_c'}>$ & SBG\_URC &z,t,p & $r_c$  & \\
+\hline
+$<\overline{v'r_c'}>$ & SBG\_VRC &z,t,p & $r_c$  & \\
+\hline
+$<\overline{w'r_c'}>$ & SBG\_WRC &z,t,p & $r_c$  & \\
+\hline
+$<\overline{u's_v'}>$ & SBG\_USV &z,t,p,n & $s_v$  & \\
+\hline
+$<\overline{v's_v'}>$ & SBG\_VSV &z,t,p,n & $s_v$  & \\
+\hline
+$<\overline{w's_v'}>$ & SBG\_WSV &z,t,p,n & $s_v$  & \\
+\hline
+$<\overline{u'}\left[\frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})\right]>$ & SBG\_UTKE & z,t,p &   &\\
+\hline
+$<\overline{v'}\left[\frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})\right]>$ & SBG\_VTKE & z,t,p &   &\\
+\hline
+$<\overline{w'}\left[\frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})\right]>$ & SBG\_WTKE & z,t,p &   &\\
+\hline
+$<\overline{\theta_l'}_{Updraft}>$ & SBG\_THLUP &z,t,p &   & \\
+\hline
+$<\overline{r_t'}_{Updraft}>$ & SBG\_RTUP &z,t,p & $r_v$  & \\
+\hline
+$<\overline{r_v'}_{Updraft}>$ & SBG\_RVUP &z,t,p & $r_v$  & \\
+\hline
+$<\overline{r_c'}_{Updraft}>$ & SBG\_RCUP &z,t,p & $r_c$  & \\
+\hline
+$<\overline{r_i'}_{Updraft}>$ & SBG\_RIUP &z,t,p & $r_i$  & \\
+\hline
+$<\overline{\theta_l}_{Updraft Mass Flux}>$ & THLUP\_MF &z,t,p & $r_i$  & \\
+\hline
+$<\overline{r_t}_{Updraft Mass Flux}>$ & RTUP\_MF &z,t,p & $r_v$  & \\
+\hline
+$<\overline{r_v}_{Updraft Mass Flux}>$ & RVUP\_MF &z,t,p & $r_v$  & \\
+\hline
+$<\overline{r_c}_{Updraft Mass Flux}>$ & RCUP\_MF &z,t,p & $r_c$  & \\
+\hline
+$<\overline{r_i}_{Updraft Mass Flux}>$ & RIUP\_MF &z,t,p & $r_i$  & \\
+\hline
+$<\overline{W}_{Updraft Mass Flux}>$ & WUP\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{Mass Flux}_{Updraft Mass Flux}>$ & MAFLX\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{Detr}_{Updraft Mass Flux}>$ & DETR\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{Entr}_{Updraft Mass Flux}>$ & ENTR\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{Frac}_{Updraft Mass Flux}>$ & FRCUP\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{\theta_v}_{Updraft Mass Flux}>$ & THVUP\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{w'\theta'_l}_{Mass Flux}>$ & WTHL\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{w'r'_t}_{Mass Flux}>$ & WRT\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{w'\theta'_v}_{Mass Flux}>$ & WTHV\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{w'u'}_{Mass Flux}>$ & WU\_MF &z,t,p & $   $  & \\
+\hline
+$<\overline{w'v'}_{Mass Flux}>$ & WV\_MF &z,t,p & $   $  & \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+\section{LES averaged fields (LLES\_UPDRAFT=TRUE)}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.9cm}|p{4.1cm }||}
+\hline
+\hline
+%field & notation in the & dim. &     & comments \\
+%      & diac. file &           & if & \\
+%\hline
+%\hline
+$<f_{up}>$ & UP\_FRAC & z,t & & updraft fraction \\
+\hline
+$<w>_{up}$ & UP\_W & z,t & &\multirow{15}{4.1cm}{ from now, computations are made only on the cartesian mask}\\
+\cline{1-4}
+$<\theta>_{up}$& UP\_TH & z,t & & \\
+\cline{1-4}
+$<\theta_l>_{up}$& UP\_THL & z,t & $r_c$ & \\
+\cline{1-4}
+$<\theta_v>_{up}$& UP\_THV & z,t & $r_v$ & \\
+\cline{1-4}
+$<\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)>_{up}$ & UP\_KE & z,t & & \\
+\cline{1-4}
+$<\frac{1}{2}(\tilde{u'^2}+\tilde{v'^2}+\tilde{w'^2})>_{up}$ & UP\_TKE & z,t & & \\
+\cline{1-4}
+$<r_v>_{up}$ & UP\_RV & z,t & $r_v$ & \\
+\cline{1-4}
+$<r_c>_{up}$& UP\_RC & z,t & $r_c$ & \\
+\cline{1-4}
+$<r_r>_{up}$& UP\_RR & z,t & $r_r$ & \\
+\cline{1-4}
+$<r_i>_{up}$ & UP\_RI & z,t & $r_i$ & \\
+\cline{1-4}
+$<r_s>_{up}$& UP\_RS & z,t & $r_s$ & \\
+\cline{1-4}
+$<r_g>_{up}$ & UP\_RG & z,t & $r_g$ & \\
+\cline{1-4}
+$<r_h>_{up}$ & UP\_RH & z,t & $r_h$ & \\
+\cline{1-4}
+$<s_v>_{up}$ & UP\_SV & z,t,n & $s_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta}^2}>_{up}$ & UP\_TH2 & z,t &  & \\
+\cline{1-4}
+$<{\tilde{\theta_l}^2}>_{up}$& UP\_THL2 & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{\theta}\;\tilde{\theta_v}}>_{up}$ & UP\_THTV & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta_l}\;\tilde{\theta_v}}>_{up}$ & UP\_TLTV & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{\theta}}>_{up}$ & UP\_WTH & z,t & & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{\theta_l}}>_{up}$ & UP\_WTHL & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{\theta_v}}>_{up}$ & UP\_WTHV & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{r_v}}^2>_{up}$ & UP\_RV2 & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta}\;\tilde{r_v}}>_{up}$ & UP\_THRV & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta_l}\;\tilde{r_v}}>_{up}$ & UP\_TLRV & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{\theta_v}\;\tilde{r_v}}>_{up}$ & UP\_TVRV & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{r_v}}>_{up}$ & UP\_WRV & z,t & $r_v$ & \\
+\cline{1-4}
+$<{\tilde{r_c}}^2>_{up}$ & UP\_RC2 & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{\theta}\;\tilde{r_c}}>_{up}$ & UP\_THRC & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{\theta_l}\;\tilde{r_c}}>_{up}$ & UP\_TLRC & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{\theta_v}\;\tilde{r_c}}>_{up}$ & UP\_TVRC & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{r_c}}>_{up}$ & UP\_WRC & z,t & $r_c$ & \\
+\cline{1-4}
+$<{\tilde{r_i}}^2>_{up}$ & UP\_RI2 & z,t & $r_i$ & \\
+\cline{1-4}
+$<{\tilde{\theta}\;\tilde{r_i}}>_{up}$ & UP\_THRI & z,t & $r_i$ & \\
+\cline{1-4}
+$<{\tilde{\theta_l}\;\tilde{r_i}}>_{up}$ & UP\_TLRI & z,t & $r_i$ & \\
+\cline{1-4}
+$<{\tilde{\theta_v}\;\tilde{r_i}}>_{up}$ & UP\_TVRI & z,t & $r_i$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{r_i}}>_{up}$ & UP\_WRI & z,t & $r_i$ & \\
+\cline{1-4}
+$<{\tilde{s_v}}^2>_{up}$ & UP\_SV2 & z,t,n & $s_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta}\;\tilde{s_v}}>_{up}$ & UP\_THSV & z,t,n & & \\
+\cline{1-4}
+$<{\tilde{\theta_l}\;\tilde{s_v}}>_{up}$ & UP\_TLSV & z,t,n & $r_c$, $s_v$ & \\
+\cline{1-4}
+$<{\tilde{\theta_v}\;\tilde{s_v}}>_{up}$& UP\_TVSV & z,t,n & $r_v$, $s_v$ & \\
+\cline{1-4}
+$<{\tilde{w}\;\tilde{s_v}}>_{up}$ & UP\_WSV & z,t,n & $s_v$ & \\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\section{LES averaged fields (LLES\_DOWNDRAFT=TRUE)}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{1cm}|p{4cm }||}
+%\hline
+%\hline
+%field & notation in the & dim. &   if  & comments \\
+%      & diac. file &           &  & \\
+\hline
+\hline
+$<f_{dw}>$ & DW\_FRAC & z,t & & downdraft fraction \\
+\hline
+$<w>_{dw}$ & DW\_W & z,t & & \\
+\hline
+$<\theta>_{dw}$& DW\_TH & z,t & & \\
+\hline
+$<\theta_l>_{dw}$& DW\_THL & z,t & $r_c$ & \\
+\hline
+$<\theta_v>_{dw}$& DW\_THV & z,t & $r_v$ & \\
+\hline
+$<\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)>_{dw}$ & DW\_KE & z,t & & \\
+\hline
+$<\frac{1}{2}(\tilde{u'^2}+\tilde{v'^2}+\tilde{w'^2})>_{dw}$ & DW\_TKE & z,t & & \\
+\hline
+$<r_v>_{dw}$ & DW\_RV & z,t & $r_v$ & \\
+\hline
+$<r_c>_{dw}$& DW\_RC & z,t & $r_c$ & \\
+\hline
+$<r_r>_{dw}$& DW\_RR & z,t & $r_r$ & \\
+\hline
+$<r_i>_{dw}$ & DW\_RI & z,t & $r_i$ & \\
+\hline
+$<r_s>_{dw}$& DW\_RS & z,t & $r_s$ & \\
+\hline
+$<r_g>_{dw}$ & DW\_RG & z,t & $r_g$ & \\
+\hline
+$<r_h>_{dw}$ & DW\_RH & z,t & $r_h$ & \\
+\hline
+$<s_v>_{dw}$ & DW\_SV & z,t,n & $s_v$ & \\
+\hline
+$<{\tilde{\theta}^2}>_{dw}$ & DW\_TH2 & z,t &  & \\
+\hline
+$<{\tilde{\theta_l}^2}>_{dw}$& DW\_THL2 & z,t & $r_c$ & \\
+\hline
+$<{\tilde{\theta}\;\tilde{\theta_v}}>_{dw}$ & DW\_THTV & z,t & $r_v$ & \\
+\hline
+$<{\tilde{\theta_l}\;\tilde{\theta_v}}>_{dw}$ & DW\_TLTV & z,t & $r_c$ & \\
+\hline
+$<{\tilde{w}\;\tilde{\theta}}>_{dw}$ & DW\_WTH & z,t & & \\
+\hline
+$<{\tilde{w}\;\tilde{\theta_l}}>_{dw}$ & DW\_WTHL & z,t & $r_c$ & \\
+\hline
+$<{\tilde{w}\;\tilde{\theta_v}}>_{dw}$ & DW\_WTHV & z,t & $r_v$ & \\
+\hline
+$<{\tilde{r_v}}^2>_{dw}$ & DW\_RV2 & z,t & $r_v$ & \\
+\hline
+$<{\tilde{\theta}\;\tilde{r_v}}>_{dw}$ & DW\_THRV & z,t & $r_v$ & \\
+\hline
+$<{\tilde{\theta_l}\;\tilde{r_v}}>_{dw}$ & DW\_TLRV & z,t & $r_c$ & \\
+\hline
+$<{\tilde{\theta_v}\;\tilde{r_v}}>_{dw}$ & DW\_TVRV & z,t & $r_v$ & \\
+\hline
+$<{\tilde{w}\;\tilde{r_v}}>_{dw}$ & DW\_WRV & z,t & $r_v$ & \\
+\hline
+$<{\tilde{r_c}}^2>_{dw}$ & DW\_RC2 & z,t & $r_c$ & \\
+\hline
+$<{\tilde{\theta}\;\tilde{r_c}}>_{dw}$ & DW\_THRC & z,t & $r_c$ & \\
+\hline
+$<{\tilde{\theta_l}\;\tilde{r_c}}>_{dw}$ & DW\_TLRC & z,t & $r_c$ & \\
+\hline
+$<{\tilde{\theta_v}\;\tilde{r_c}}>_{dw}$ & DW\_TVRC & z,t & $r_c$ & \\
+\hline
+$<{\tilde{w}\;\tilde{r_c}}>_{dw}$ & DW\_WRC & z,t & $r_c$ & \\
+\hline
+$<{\tilde{r_i}}^2>_{dw}$ & DW\_RI2 & z,t & $r_i$ & \\
+\hline
+$<{\tilde{\theta}\;\tilde{r_i}}>_{dw}$ & DW\_THRI & z,t & $r_i$ & \\
+\hline
+$<{\tilde{\theta_l}\;\tilde{r_i}}>_{dw}$ & DW\_TLRI & z,t & $r_i$ & \\
+\hline
+$<{\tilde{\theta_v}\;\tilde{r_i}}>_{dw}$ & DW\_TVRI & z,t & $r_i$ & \\
+\hline
+$<{\tilde{w}\;\tilde{r_i}}>_{dw}$ & DW\_WRI & z,t & $r_i$ & \\
+\hline
+$<{\tilde{s_v}}^2>_{dw}$ & DW\_SV2 & z,t,n & $s_v$ & \\
+\hline
+$<{\tilde{\theta}\;\tilde{s_v}}>_{dw}$ & DW\_THSV & z,t,n & & \\
+\hline
+$<{\tilde{\theta_l}\;\tilde{s_v}}>_{dw}$ & DW\_TLSV & z,t,n & $r_c$, $s_v$ & \\
+\hline
+$<{\tilde{\theta_v}\;\tilde{s_v}}>_{dw}$& DW\_TVSV & z,t,n & $r_v$, $s_v$ & \\
+\hline
+$<{\tilde{w}\;\tilde{s_v}}>_{dw}$ & DW\_WSV & z,t,n & $s_v$ & \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\newpage
+\section{LES averaged surface fields}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in & dimen- & if    & comments \\
+      & diac. file &  sion         &  & \\
+\hline
+\hline
+$<\overline{w'\theta'}_{surf}>$ & Q0 & t & & surface sensible flux \\
+\hline
+$<\overline{w'r_v'}_{surf}>$ & E0 & t & $r_v$  & surface latent flux  \\
+\hline
+$<\overline{w's_v'}_{surf}>$ & E0 & t,n & $s_v$  & surface scalar flux  \\
+\hline
+$u_*=\left\{<\overline{u'w'}_{surf}>^2+<\overline{v'w'}_{surf}>^2\right\}^\frac{1}{4}$ & U* & t &   & friction velocity  \\
+\hline
+$w_*=\left\{<\frac{g}{\theta}><\overline{w'\theta_v'}_{surf}><h>\right\}^\frac{1}{3}$ & W* & t &   & convective velocity \\
+& & & & if positive surface  \\
+& & & & buoyancy flux  \\
+\hline
+$<h>$ & BL\_H & t &  & boundary layer height  \\
+\hline
+$<L_{MO}>$ & L\_MO & t &  & Monin-Obukhov length  \\
+\hline
+$\int{TKE}dz$ & INT\_TKE & t &  & vertical integrated TKE  \\
+\hline
+ & ZCB & t &  & cloud base height  \\
+\hline
+$CF$ & ZCFTOT & t & $r_c$ & total cloud cover   \\
+\hline
+$\int{\rho (r_c+r_r)}$ & LWP & t & $r_c$ & Cloud water path  \\
+\hline
+$VAR_LWP$ & LWPVAR & t & $r_c$ & LWP variance  \\
+\hline
+$\int{\rho r_r}$ & RWP & t & $r_r$ & Rain water path  \\
+\hline
+$INPRR$ & INST\_PREC & t & $r_r$ & Inst. precip. rate  \\
+\hline
+ & RAIN\_PREC & t & $r_r$ & INPRR over rainy grids  \\
+\hline
+$ACPRR$ & ACCU\_PREC & t & $r_r$ & Accum. precip. rate  \\
+\hline
+$H_CFmax$ & ZMAXCF & t & $r_c$ & Height of cloud fraction maximum  \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\section{Other LES averaged fields}
+
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in & dimen- & if    & comments \\
+      & diac. file &  sion         &  & \\
+\hline
+\hline
+$sw_{up}$ & SWU & z,t,p & & SW upward radiative flux  \\
+\hline
+$sw_{down}$ & SWD & z,t,p & & SW downward radiative flux  \\
+\hline
+$lw_{up}$ & LWU & z,t,p & & LW upward radiative flux  \\
+\hline
+$lw_{down}$ & LWD & z,t,p & & LW downward radiative flux  \\
+\hline
+$dthrad_{sw}$ & DTHRADSW & z,t,p & & SW radiative temperature tendency  \\
+\hline
+$dthrad_{lw}$ & DTHRADLW & z,t,p & & LW radiative temperature tendency  \\
+\hline
+Mean Effective Radius & RADEFF & z,t,p & & Mean effective radius  \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\newpage
+\section{LES 2 points correlations}
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &  if  & comments\\
+& diac. file &           &  & \\
+\hline
+\hline
+$<\tilde{u}(x,y)\;\tilde{u}(x+l_x,y)>$ & CI\_UU & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{u}(x,y)\;\tilde{u}(x,y+l_y)>$ & CJ\_UU & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{v}(x,y)\;\tilde{v}(x+l_x,y)>$ & CI\_VV & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{v}(x,y)\;\tilde{v}(x,y+l_y)>$ & CJ\_VV & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{w}(x+l_x,y)>$ & CI\_WW & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{w}(x,y+l_y)>$ & CJ\_WW & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{u}(x,y)\;\tilde{v}(x+l_x,y)>$ & CI\_UV & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{u}(x,y)\;\tilde{v}(x,y+l_y)>$ & CJ\_UV & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{u}(x+l_x,y)>$ & CI\_WU & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{u}(x,y+l_y)>$ & CJ\_WV & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{\theta}(x+l_x,y)>$ & CI\_THTH & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{\theta}(x,y+l_y)>$ & CJ\_THTH & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{\theta_l}(x+l_x,y)>$ & CI\_TLTL & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{\theta_l}(x,y+l_y)>$ & CJ\_TLTL & $l_y$,2,z,t &  $r_c$& \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{\theta}(x+l_x,y)>$ & CI\_WTH & $l_x$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{\theta}(x,y+l_y)>$ & CJ\_WTH & $l_y$,2,z,t & & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{\theta_l}(x+l_x,y)>$ & CI\_WTHL & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{\theta_l}(x,y+l_y)>$ & CJ\_WTHL & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{r_v}(x,y)\;\tilde{r_v}(x+l_x,y)>$ & CI\_RVRV & $l_x$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{r_v}(x,y)\;\tilde{r_v}(x,y+l_y)>$ & CJ\_RVRV & $l_y$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_v}(x+l_x,y)>$ & CI\_THRV & $l_x$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_v}(x,y+l_y)>$ & CJ\_THRV & $l_y$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_v}(x+l_x,y)>$ & CI\_TLRV & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_v}(x,y+l_y)>$ & CJ\_TLRV & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_v}(x+l_x,y)>$ & CI\_WRV & $l_x$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_v}(x,y+l_y)>$ & CJ\_WRV & $l_y$,2,z,t & $r_v$ & \\
+\hline
+$<\tilde{r_c}(x,y)\;\tilde{r_c}(x+l_x,y)>$ & CI\_RCRC & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{r_c}(x,y)\;\tilde{r_c}(x,y+l_y)>$ & CJ\_RCRC & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_c}(x+l_x,y)>$ & CI\_THRC & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_c}(x,y+l_y)>$ & CJ\_THRC & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_c}(x+l_x,y)>$ & CI\_TLRC & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_c}(x,y+l_y)>$ & CJ\_TLRC & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_c}(x+l_x,y)>$ & CI\_WRC & $l_x$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_c}(x,y+l_y)>$ & CJ\_WRC & $l_y$,2,z,t & $r_c$ & \\
+\hline
+$<\tilde{r_i}(x,y)\;\tilde{r_i}(x+l_x,y)>$ & CI\_RIRI & $l_x$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{r_i}(x,y)\;\tilde{r_i}(x,y+l_y)>$ & CJ\_RIRI & $l_y$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_i}(x+l_x,y)>$ & CI\_THRI & $l_x$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{\theta}(x,y)\;\tilde{r_i}(x,y+l_y)>$ & CJ\_THRI & $l_y$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_i}(x+l_x,y)>$ & CI\_TLRI & $l_x$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{\theta_l}(x,y)\;\tilde{r_i}(x,y+l_y)>$ & CJ\_TLRI & $l_y$,2,z,t & $r_i$ & \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &  if  & comments\\
+& diac. file &           &  & \\
+\hline
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_i}(x+l_x,y)>$ & CI\_WRI & $l_x$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{r_i}(x,y+l_y)>$ & CJ\_WRI & $l_y$,2,z,t & $r_i$ & \\
+\hline
+$<\tilde{s_v}(x,y)\;\tilde{s_v}(x+l_x,y)>$ & CI\_SVSV & $l_x$,2,z,t,n & $s_v$ & \\
+\hline
+$<\tilde{s_v}(x,y)\;\tilde{s_v}(x,y+l_y)>$ & CJ\_SVSV & $l_y$,2,z,t,n & $s_v$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{s_v}(x+l_x,y)>$ & CI\_WSV & $l_x$,2,z,t,n & $s_v$ & \\
+\hline
+$<\tilde{w}(x,y)\;\tilde{s_v}(x,y+l_y)>$ & CJ\_WSV & $l_y$,2,z,t,n & $s_v$ & \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\section{LES spectra}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &  if  & comments\\
+& diac. file &           &  & \\
+\hline
+\hline
+$\frac{1}{2\pi L}\int_L<\tilde{u}(x,y)\;\tilde{u}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_UU & $k_x$,2,z,t & &\multirow{30}{5cm}{ dimension 2 is for real and imaginary parts}\\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{u}(x,y)\;\tilde{u}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_UU & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{v}(x,y)\;\tilde{v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_VV & $k_x$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{v}(x,y)\;\tilde{v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_VV & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{w}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WW & $k_x$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{w}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WW & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{u}(x,y)\;\tilde{v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_UV & $k_x$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{u}(x,y)\;\tilde{v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_UV & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{u}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WU & $k_x$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{u}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WV & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{\theta}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_THTH & $k_x$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{\theta}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_THTH & $k_y$,2,z,t & & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{\theta_l}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_TLTL & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{\theta_l}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_TLTL & $k_y$,2,z,t &  $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{\theta}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WTH & $k_x$,2,z,t & & \\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &  if  & comments\\
+& diac. file &           &  & \\
+\hline
+\hline
+
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{\theta}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WTH & $k_y$,2,z,t & &\multirow{46}{5cm}{ dimension 2 is for real and imaginary parts} \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{\theta_l}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WTHL & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{\theta_l}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WTHL & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_v}(x,y)\;\tilde{r_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_RVRV & $k_x$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_v}(x,y)\;\tilde{r_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_RVRV & $k_y$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_THRV & $k_x$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_THRV & $k_y$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_TLRV & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_TLRV & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WRV & $k_x$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WRV & $k_y$,2,z,t & $r_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_c}(x,y)\;\tilde{r_c}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_RCRC & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_c}(x,y)\;\tilde{r_c}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_RCRC & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_c}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_THRC & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_c}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_THRC & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_c}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_TLRC & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_c}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_TLRC & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_c}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WRC & $k_x$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_c}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WRC & $k_y$,2,z,t & $r_c$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_i}(x,y)\;\tilde{r_i}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_RIRI & $k_x$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{r_i}(x,y)\;\tilde{r_i}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_RIRI & $k_y$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_i}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_THRI & $k_x$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta}(x,y)\;\tilde{r_i}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_THRI & $k_y$,2,z,t & $r_i$ & \\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{||p{6cm}|>{\centering}p{2.5cm}|>{\centering}p{1.5cm}|>{\centering}p{0.5cm}|p{5cm }||}
+\hline
+\hline
+field & notation in the & dim. &  if  & comments\\
+& diac. file &           &  & \\
+\hline
+\hline
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_i}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_TLRI & $k_x$,2,z,t & $r_i$ &\multirow{16}{5cm}{ dimension 2 is for real and imaginary parts} \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{\theta_l}(x,y)\;\tilde{r_i}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_TLRI & $k_y$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_i}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WRI & $k_x$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{r_i}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WRI & $k_y$,2,z,t & $r_i$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{s_v}(x,y)\;\tilde{s_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_SVSV & $k_x$,2,z,t,n & $s_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{s_v}(x,y)\;\tilde{s_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_SVSV & $k_y$,2,z,t,n & $s_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{s_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$ & SI\_WSV & $k_x$,2,z,t,n & $s_v$ & \\
+\cline{1-4}
+$\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{s_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$ & SJ\_WSV & $k_y$,2,z,t,n & $s_v$ & \\
+\hline
+\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Budget of (resolved + subgrid) turbulent quantities}
+
+\subsection{Budget of total turbulent kinetic energy}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (E+e)$ are
+computed and stored in the diachronic group BU\_KE. Here, e and E
+denote the subgrid and resolved Tke respectively:
+
+\begin{displaymath}
+<e>=<\frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})> \hspace*{2.cm}
+<E>=<\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)>
+\end{displaymath}
+
+
+Here are {\bf main terms} of the equations for the horizontal mean
+of subgrid Tke and resolved Tke, in the
+frame of Boussinesq approximation. Note that the computations of the budgets terms are done with the complete equation set and discretization of MESONH.
+The equations here are simplified only for the sake of easier
+understanding.
+Other terms can arise
+from the parametrizations of MESONH, and will also be taken into account
+in the budget.
+
+\begin{displaymath}
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <e> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <e> }^{ADVM} &
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} e > }^{ADVR} &
+\overbrace{- \frac{1}{<\rho>}<\overline{u'_\alpha \frac{\partial p'}{\partial x_\alpha}}>}^{PRES} &
+\overbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha e}>}^{TR}\\
+\vspace*{1.2cm}
+&\underbrace{- <\overline{u'_\alpha u'_\beta}> \frac{\partial {<u_\beta>}}{\partial x_\alpha}}_{DPM} &
+\underbrace{- <\overline{u'_\alpha u'_\beta} \frac{\partial {\tilde{u_\beta}}}{\partial x_\alpha}>}_{DPR} &
++ \underbrace{<\beta  \overline{w'\theta'_v}>}_{TP} & 
+\underbrace{- <\epsilon>}_{DISS}\\
+\end{array}
+\end{displaymath}
+\begin{displaymath}
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <E> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <E> }^{ADV} &
+\overbrace{- \frac{1}{<\rho>}<\tilde{u_\alpha} \frac{\partial \tilde{p}}{\partial x_\alpha}>}^{PRES} &
+\overbrace{- <\tilde{u_\alpha} \tilde{u_\beta}> \frac{\partial {<u_\beta>}}{\partial x_\alpha}}^{DP} &\\
+&+ \underbrace{<\beta  \tilde{w}\tilde{\theta_v}>}_{TP} &
+ \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} E>}_{TR} &
+\underbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\beta}\overline{u'_\alpha u'_\beta}>}_{SBGT}  &+ ...
+\end{array}
+\end{displaymath}
+
+
+The terms of (spectral) transport from resolved to subgrid motions is
+SBTG in the equation of $<E>$ (sink), and
+ADVR and DPR in the equation of $<e>$ (sources).
+One should note that: \\
+
+\begin{displaymath}
+{\rm ADVR}+{\rm DPR} = -{\rm SGBT}
+\end{displaymath}
+
+\underline{Note in case of gridnesting}\\
+
+In case of 2way gridnesting, the subgrid scheme is not alone to influence
+the resolved motions due to subgrid scale. Part of the job is done
+by the averaged of the smaller-scale models. 
+The terms of (spectral) transport from resolved to subgrid motions are
+then both SBTG and NEST in the equation of $<E>$ (sinks).
+Therefore
+
+\begin{displaymath}
+{\rm ADVR}+\hat{\rm DPR} = -({\rm SGBT+NEST})
+\end{displaymath}
+
+Where $\hat{\rm DPR}$ is the dynamical production that should produce
+the subgrid-scale model to equilibrate the sink at resolved scale.\\
+
+
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file& processus name& dim.  & comments \\
+\hline
+\hline
+$-\frac{\partial }{\partial t}<e>$ & BU\_KE & SBG TEND & z,t & (opposite of) tendency of $<e>$\\
+\hline
+$-<\overline{u'w'}>\frac{\partial }{\partial z}<u>$ & BU\_KE & SBG DP M & z,t & dyn. prod. by mean gradients \\
+$-<\overline{v'w'}>\frac{\partial }{\partial z}<v>$ &  & &  & \\
+\hline
+$<-\overline{u'_\alpha u'_\beta}\frac{\partial}{\partial x_\beta}\tilde{u_\alpha}>$ & BU\_KE & SBG DP R & z,t & dyn. prod. by resolved \\
+ & & & & fluctuations \\
+\hline
+$-<w>\frac{\partial}{\partial z}<e>$ & BU\_KE & SBG ADVM & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}e>$ & BU\_KE & SBG ADVR & z,t & advection by\\
+ & & & &resolved flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<e>$ & BU\_KE & SBG FORC & z,t & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'e}>$ & BU\_KE & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$- \frac{1}{<\rho>}<\overline{u'_\alpha \frac{\partial p'}{\partial x_\alpha}}>$&
+BU\_KE & SBG PRES & z,t & subgrid pressure-\\
+ & & & & correlation term\\
+\hline
+$<\beta  \overline{w'\theta'_v}>$ & BU\_KE & SBG TP   & z,t & thermal production \\
+\hline
+$-<\epsilon>$ & BU\_KE & SBG DISS & z,t & dissipation \\
+\hline
+{\rm numerical diffusion of } $<e>$& BU\_KE & SBG NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<e>$ & BU\_KE & SBG RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm miscellaneous} & BU\_KE & SBG MISC & z,t & ... \\
+\hline
+{\rm residual of budget of} $<e>$ & BU\_KE & SBG RESI & z,t & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<E>$ & BU\_KE & RES TEND & z,t & (opposite of) tendency\\
+ & & & &  of $<E>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<E>$ & BU\_KE & RES ADV  & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<E>$ & BU\_KE & RES FORC & z,t & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-<\tilde{u}\tilde{w}>\frac{\partial }{\partial z}<u>$ & BU\_KE & RES DP   & z,t & dyn. prod. \\
+ & & & &(by mean gradients)\\
+$-<\tilde{v}\tilde{w}>\frac{\partial }{\partial z}<v>$ &  &  & & \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} E>$ & BU\_KE & RES TR   & z,t & transport of resolved Tke\\
+ & & & &by itself \\
+\hline
+$- \frac{1}{<\rho>}<\tilde{u_\alpha} \frac{\partial \tilde{p}}{\partial x_\alpha}>$ & BU\_KE & RES PRES & z,t & pressure-correlations \\
+\hline
+$ <\beta  \tilde{w}\tilde{\theta_v}> $  & BU\_KE & RES TP   & z,t & thermal production \\
+\hline
+$- <\tilde{u_\alpha}\frac{\partial}{\partial x_\beta}\overline{u'_\alpha u'_\beta}> $ & BU\_KE & RES SBGT & z,t & sink due \\
+ & & & &to subgrid turbulence \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file& processus name& dim.  & comments \\
+\hline
+\hline
+{\rm Coriolis terms} & BU\_KE & RES CORI & z,t & should be zero for $<E>$ \\
+\hline
+{\rm numerical diffusion of } $<E>$& BU\_KE & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<E>$ & BU\_KE & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<E>$ & BU\_KE & RES NEST & z,t& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_KE & RES MISC & z,t & curvature terms, ... \\
+\hline
+{\rm residual of budget of} $<E>$ & BU\_KE & RES RESI & z,t & must be zero \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+
+Note that if a term is zero, because the process accounting for it is
+not activated in the model, the term is not listed in the diachronic file.
+So, in order to know which terms have been computed and stored, use
+the command 'print BU\_KE proc' in diaprog.\\ 
+
+\subsection{Budget of total (liquid) temperature flux}
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{w}\tilde{\theta_l}> + <\overline{w'\theta_l'}>)$ are
+computed and stored in the diachronic group BU\_WTHL. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{w'\theta_l'}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{w'\theta_l'}> }^{ADVM} \;\;
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{w'\theta_l'} > }^{ADVR} &
+\overbrace{- <\overline{u_\alpha'w'}> \frac{\partial {<\theta_l>}}{\partial x_\alpha}
+- <\overline{u'_\alpha \theta_l'}> \frac{\partial {<w>}}{\partial x_\alpha}}^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- <\overline{u'_\alpha w'} \frac{\partial {\tilde{\theta_l}}}{\partial x_\alpha}>
+- <\overline{u'_\alpha \theta_l'} \frac{\partial {\tilde{w}}}{\partial x_\alpha}>}_{DPR} \;\;
++ \underbrace{<\beta  \overline{\theta_l'\theta'_v}>}_{TP} &
+\underbrace{- \frac{1}{<\rho>}<\overline{\theta_l' \frac{\partial p'}{\partial z}}>}_{PRES} \;\;\;\;\;\;\;
+ \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha w'\theta_l'}>}_{TR} \\
+\frac{\partial }{\partial t} <\tilde{w}\tilde{\theta_l}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{w}\tilde{\theta_l}> }^{ADV} \;\;
+\overbrace{- \frac{1}{<\rho>}<\tilde{\theta_l} \frac{\partial \tilde{p}}{\partial x_\alpha}>}^{PRES} &
+\overbrace{- <\tilde{u_\alpha} \tilde{w}> \frac{\partial {<\theta_l>}}{\partial x_\alpha}
+- <\tilde{u_\alpha} \tilde{\theta_l}> \frac{\partial {<w>}}{\partial x_\alpha}}^{DP} &\\
+&+ \underbrace{<\beta  \tilde{\theta_l}\tilde{\theta_v}>}_{TP} \;\;\;\;\;\;\;\;
+ \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{\theta_l}>}_{TR} &
+\underbrace{- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>
+- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>}_{SBGT}\hspace{0.2cm} + ...&
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & SBG DP M & z,t & dyn. prod. by mean gradient \\
+\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & BU\_WTHL & SBG DP R & z,t & dyn. prod. by resolved\\
+ & & & & fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'^2\theta_l'}>$ & BU\_WTHL & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$- \frac{1}{<\rho>}<\overline{\theta_l' \frac{\partial p'}{\partial z}}>$&
+BU\_WTHL & SBG PRES & z,t & subgrid pressure-\\
+ & & & &correlation term \\
+\hline
+$<\beta  \overline{\theta_l'\theta'_v}>$ & BU\_WTHL & SBG TP   & z,t & thermal production \\
+\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'}>$ & BU\_WTHL & SBG RESI & z,t & must be small \\
+\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES TEND & z,t & (opposite of) tendency\\
+ & & & &of $<\tilde{w}\tilde{\theta_l}>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES ADV  & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES FORC & z,t & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & RES DP   & z,t & dyn. prod.\\
+ & & & &(by mean gradients) \\
+$-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<w>$ &  &  & & \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES TR   & z,t & transport of resolved \\
+ & & & & flux by itself \\
+\hline
+$- \frac{1}{<\rho>}<\tilde{\theta_l} \frac{\partial \tilde{p}}{\partial z}>$ & BU\_WTHL & RES PRES & z,t & pressure-correlations \\
+\hline
+$ <\beta  \tilde{\theta_l}\tilde{\theta_v}> $  & BU\_WTHL & RES TP   & z,t & thermal production \\
+\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$
+& BU\_WTHL & RES SBGT & z,t & sink due to\\
+ & & & & subgrid turbulence \\
+$- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$
+&&&&\\
+\hline
+{\rm Coriolis terms} & BU\_WTHL & RES CORI & z,t & \\
+\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{\theta_l}>$& BU\_WTHL & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES NEST & z,t& average from smaller \\
+ & & & & nested models \\
+\hline
+{\rm miscellaneous} & BU\_WTHL & RES MISC & z,t & ref. pressure term,\\
+ & & & & curvature term,\\
+ & & & & microphysics,\\
+ & & & & radiation, ...\\
+\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{\theta_l}>$ & BU\_WTHL & RES RESI & z,t & must be zero \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$-\frac{\partial }{\partial t}<\overline{w'\theta_l'}>$ & BU\_WTHL & NSG TEND & z,t & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency\\
+ & & & &of $<\overline{w'\theta_l'}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w'\theta_l'}>$  & BU\_WTHL & NSG ADVM & z,t & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'\theta_l'}>$  & BU\_WTHL & NSG ADVR & z,t & (neglected) advection\\
+ & & & & by resolved flow\\
+\hline
+terms due to $\overline{w}$ gradients  & BU\_WTHL & NSG DPGW & z,t & (neglected) dyn. prod. terms \\
+\hline
+terms due to hor. $\overline{\theta_l}$ gradients  & BU\_WTHL & NSG DPGT & z,t & other (neglected)\\
+ & & & & dyn. prod. terms\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+
+\subsection{Budget of total (liquid) temperature variance}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{\theta_l}^2> + <\overline{\theta_l'^2}>)$ are
+computed and stored in the diachronic group BU\_THL2. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{\theta_l'^2}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{\theta_l'^2}> }^{ADVM}  &
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{\theta_l'^2} > }^{ADVR} &
+\overbrace{- 2 <\overline{u_\alpha'\theta_l'}> \frac{\partial {<\theta_l>}}{\partial x_\alpha} }^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- 2 <\overline{u'_\alpha \theta_l'} \frac{\partial {\tilde{\theta_l}}}{\partial x_\alpha}>}_{DPR}  &
+ \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha \theta_l'^2}>}_{TR}
+ & \underbrace{-\; \epsilon_{\theta}}_{DISS}\\
+\frac{\partial }{\partial t} <\tilde{\theta_l}^2> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{\theta_l}^2> }^{ADV} &
+\overbrace{- 2<\tilde{u_\alpha} \tilde{\theta_l}> \frac{\partial {<\theta_l>}}{\partial x_\alpha}}^{DP} &\\
+& \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>}_{TR} &
+\underbrace{- 2 <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>}_{SBGT} & + ...
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in & processus & dim.  & comments \\
+      & diac. file & name      &            & \\
+\hline
+\hline
+$- 2 <\overline{w'\theta_l'}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & SBG DP M & z,t & dyn. prod. by mean gradient \\
+\hline
+$<-2 \overline{w'\theta_l'}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & BU\_WTHL & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'\theta_l'^2}>$ & BU\_WTHL & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$-<\epsilon_\theta>$ & BU\_WTHL & SBG DISS & z,t & dissipation \\
+\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'}>$ & BU\_WTHL & SBG RESI & z,t & must be small \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$-\frac{\partial }{\partial t}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES TEND & z,t & (opposite of) tendency\\
+ & & & &of $<\tilde{\theta_l}^2>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES ADV  & z,t & advection by mean flow \\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES FORC & z,t & advection by \\
+ & & & & large-scale W forcing \\
+\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & RES DP   & z,t & dyn. prod.\\
+ & & & &(by mean gradients) \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>$ & BU\_WTHL & RES TR   & z,t & resolved transport of\\
+ & & & &resolved variance \\
+\hline
+$- <2 \tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$
+& BU\_WTHL & RES SBGT & z,t & sink due \\
+ & & & &to subgrid turbulence \\
+\hline
+{\rm numerical diffusion of } $<\tilde{\theta_l}^2>$& BU\_WTHL & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{\theta_l}^2>$ & BU\_WTHL & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{\theta_l}^2>$ & BU\_WTHL & RES NEST & z,t& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_WTHL & RES MISC & z,t & ref. pressure term, \\
+ & & && radiation, microphysics, ... \\
+\hline
+{\rm residual of budget of} $<\tilde{\theta_l}^2>$ & BU\_WTHL & RES RESI & z,t & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ & BU\_WTHL & NSG TEND & z,t & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{\theta_l'^2}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$  & BU\_WTHL & NSG ADVM & z,t & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$  & BU\_WTHL & NSG ADVR & z,t & (neglected) advection by\\
+ & & & &resolved flow\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\newpage
+\subsection{Budget of total water flux}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{w}\tilde{r_t}> + <\overline{w'r_t'}>)$ are
+computed and stored in the diachronic group BU\_WRT. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{w'r_t'}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{w'r_t'}> }^{ADVM} \;\;
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{w'r_t'} > }^{ADVR} &
+\overbrace{- <\overline{u_\alpha'w'}> \frac{\partial {<r_t>}}{\partial x_\alpha}
+- <\overline{u'_\alpha r_t'}> \frac{\partial {<w>}}{\partial x_\alpha}}^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- <\overline{u'_\alpha w'} \frac{\partial {\tilde{r_t}}}{\partial x_\alpha}>
+- <\overline{u'_\alpha r_t'} \frac{\partial {\tilde{w}}}{\partial x_\alpha}>}_{DPR} \;\;
++ \underbrace{<\beta  \overline{r_t'\theta'_v}>}_{TP} &
+\underbrace{- \frac{1}{<\rho>}<\overline{r_t' \frac{\partial p'}{\partial z}}>}_{PRES} \;\;\;\;\;\;\;
+ \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha w'r_t'}>}_{TR} \\
+\frac{\partial }{\partial t} <\tilde{w}\tilde{r_t}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{w}\tilde{r_t}> }^{ADV} \;\;
+\overbrace{- \frac{1}{<\rho>}<\tilde{r_t} \frac{\partial \tilde{p}}{\partial x_\alpha}>}^{PRES} &
+\overbrace{- <\tilde{u_\alpha} \tilde{w}> \frac{\partial {<r_t>}}{\partial x_\alpha}
+- <\tilde{u_\alpha} \tilde{r_t}> \frac{\partial {<w>}}{\partial x_\alpha}}^{DP} &\\
+&+ \underbrace{<\beta  \tilde{r_t}\tilde{\theta_v}>}_{TP} \;\;\;\;\;\;\;\;
+ \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{r_t}>}_{TR} &
+\underbrace{- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>
+- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>}_{SBGT}  + ...&
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<r_t>$ & BU\_WRT & SBG DP M & z,t & dyn. prod. by mean gradient \\
+\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{r_t}>$ & BU\_WRT & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'^2r_t'}>$ & BU\_WRT & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$- \frac{1}{<\rho>}<\overline{r_t' \frac{\partial p'}{\partial z}}>$&
+BU\_WRT & SBG PRES & z,t & subgrid pressure-\\
+ & & & &correlation term \\
+\hline
+$<\beta  \overline{r_t'\theta'_v}>$ & BU\_WRT & SBG TP   & z,t & thermal production \\
+\hline
+{\rm residual of budget of} $<\overline{w'r_t'}>$ & BU\_WRT & SBG RESI & z,t & must be small \\
+\hline
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%\begin{center}
+%\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+%\hline
+%\hline
+%field & notation in diac. file & processus name& dim.  & comments \\
+%\hline
+%\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES TEND & z,t & (opposite of) tendency\\
+ & & & &of $<\tilde{w}\tilde{r_t}>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES ADV  & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES FORC & z,t & advection \\
+ & & & & by large-scale \\
+ & & & & W forcing\\
+\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<r_t>$ & BU\_WRT & RES DP   & z,t & dyn. prod.\\
+ & & & &(by mean gradients) \\
+$-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<w>$ &  &  & & \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{r_t}>$ & BU\_WRT & RES TR   & z,t & transport of resolved\\
+ & & & &flux by itself \\
+\hline
+$- \frac{1}{<\rho>}<\tilde{r_t} \frac{\partial \tilde{p}}{\partial z}>$ & BU\_WRT & RES PRES & z,t & pressure-correlations \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$ <\beta  \tilde{r_t}\tilde{\theta_v}> $  & BU\_WRT & RES TP   & z,t & thermal production \\
+\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>$
+& BU\_WRT & RES SBGT & z,t & sink due \\
+ & & & &to subgrid turbulence \\
+$- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$
+&&&&\\
+\hline
+{\rm Coriolis terms} & BU\_WRT & RES CORI & z,t & \\
+\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{r_t}>$& BU\_WRT & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES NEST & z,t& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_WRT & RES MISC & z,t & ref. pressure term, \\
+ & & & & curvature term, \\
+ & & & & radiation, \\
+ & & & & microphysics, ... \\
+\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{r_t}>$ & BU\_WRT & RES RESI & z,t & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<\overline{w'r_t'}>$ & BU\_WRT & NSG TEND & z,t & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{w'r_t'}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w'r_t'}>$  & BU\_WRT & NSG ADVM & z,t & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'r_t'}>$  & BU\_WRT & NSG ADVR & z,t & (neglected) advection \\
+ & & & & by resolved flow\\
+\hline
+terms due to $\overline{w}$ gradients  & BU\_WRT & NSG DPGW & z,t & (neglected) dyn. \\
+ & & & & prod. terms \\
+\hline
+terms due to hor. $\overline{r_t}$ gradients  & BU\_WRT & NSG DPGT & z,t & other (neglected) \\
+ & & & & dyn. prod. terms\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+\subsection{Budget of liquid temperature - total water covariance}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{\theta_l}\tilde{r_t}> + <\overline{\theta_l'r_t'}>)$ are
+computed and stored in the diachronic group BU\_THLR. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{\theta_l'r_t'}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{\theta_l'r_t'}> }^{ADVM} \;\;
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{\theta_l'r_t'} > }^{ADVR} &
+\overbrace{- <\overline{u_\alpha'\theta_l'}> \frac{\partial {<r_t>}}{\partial x_\alpha}
+- <\overline{u'_\alpha r_t'}> \frac{\partial {<\theta_l>}}{\partial x_\alpha}}^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- <\overline{u'_\alpha \theta_l'} \frac{\partial {\tilde{r_t}}}{\partial x_\alpha}>
+- <\overline{u'_\alpha r_t'} \frac{\partial {\tilde{\theta_l}}}{\partial x_\alpha}>}_{DPR} 
+ & \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha \theta_l'r_t'}>}_{TR} \;\;\;\;\;\;\;
+ \underbrace{-\; \epsilon_{\theta r}}_{DISS}\\
+ \frac{\partial }{\partial t} <\tilde{\theta_l}\tilde{r_t}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{\theta_l}\tilde{r_t}> }^{ADV} &
+\overbrace{- <\tilde{u_\alpha} \tilde{\theta_l}> \frac{\partial {<r_t>}}{\partial x_\alpha}
+- <\tilde{u_\alpha} \tilde{r_t}> \frac{\partial {<\theta_l>}}{\partial x_\alpha}}^{DP} &\\
+ & \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}\tilde{r_t}>}_{TR} &
+\underbrace{- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>
+- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>}_{SBGT} & + ...
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file& processus name& dim.  & comments \\
+\hline
+\hline
+$-<\overline{w'\theta_l'}>\frac{\partial }{\partial z}<r_t>$ & BU\_THLR & SBG DP M & z,t & dyn. prod. by mean gradient \\
+$-<\overline{w'r_t'}>\frac{\partial }{\partial z}<\theta_l>$ & & & & \\
+\hline
+$<-\overline{u_\alpha'\theta_l'}\frac{\partial}{\partial x_\alpha}\tilde{r_t}>$ & BU\_THLR & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
+$<-\overline{u_\alpha'r_t'}\frac{\partial}{\partial x_\alpha}\tilde{\theta_l}>$ &  & && \\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'\theta_l'r_t'}>$ & BU\_THLR & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$-<\epsilon_{\theta r}>$ & BU\_THLR & SBG DISS & z,t & dissipation \\
+\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'r_t'}>$ & BU\_THLR & SBG RESI & z,t & must be small \\
+\hline
+$-\frac{\partial }{\partial t}<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES TEND & z,t & (opposite of) tendency\\
+ & & & &of $<\tilde{\theta_l}\tilde{r_t}>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES ADV  & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES FORC & z,t & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>$ & BU\_THLR & RES DP   & z,t & dyn. prod.\\
+ & & & &(by mean gradients) \\
+$-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<\theta_l>$ &  &  & & \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES TR   & z,t & resolved transport of resolved flux \\
+\hline
+$- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>$
+& BU\_THLR & RES SBGT & z,t & sink due \\
+ & & & &to subgrid turbulence \\
+$- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$
+&&&&\\
+\hline
+{\rm numerical diffusion of } $<\tilde{\theta_l}\tilde{r_t}>$& BU\_THLR & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES NEST & z,t& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_THLR & RES MISC & z,t & ref. pressure term, \\
+ & & && radiation, microphysics, ... \\
+\hline
+{\rm residual of budget of} $<\tilde{\theta_l}\tilde{r_t}>$ & BU\_THLR & RES RESI & z,t & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<\overline{\theta_l'r_t'}>$ & BU\_THLR & NSG TEND & z,t & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{w'r_t'}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'r_t'}>$  & BU\_THLR & NSG ADVM & z,t & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'r_t'}>$  & BU\_THLR & NSG ADVR & z,t & (neglected) advection by\\
+ & & & &resolved flow\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+
+\subsection{Budget of total water variance}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{r_t}^2> + <\overline{r_t'^2}>)$ are
+computed and stored in the diachronic group BU\_RT2. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{r_t'^2}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{r_t'^2}> }^{ADVM}  &
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{r_t'^2} > }^{ADVR} &
+\overbrace{- 2 <\overline{u_\alpha'r_t'}> \frac{\partial {<r_t>}}{\partial x_\alpha} }^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- 2 <\overline{u'_\alpha r_t'} \frac{\partial {\tilde{r_t}}}{\partial x_\alpha}>}_{DPR}  &
+ \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha r_t'^2}>}_{TR}
+ & \underbrace{-\; \epsilon_{r}}_{DISS}\\
+\frac{\partial }{\partial t} <\tilde{r_t}^2> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{r_t}^2> }^{ADV} &
+\overbrace{- 2<\tilde{u_\alpha} \tilde{r_t}> \frac{\partial {<r_t>}}{\partial x_\alpha}}^{DP} &\\
+& \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{r_t}^2>}_{TR} &
+\underbrace{- 2 <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>}_{SBGT} & + ...
+\end{array}
+\right.
+\end{displaymath}
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in diac. file & processus name& dim.  & comments \\
+\hline
+\hline
+$- 2 <\overline{w'r_t'}>\frac{\partial }{\partial z}<r_t>$ & BU\_RT2 & SBG DP M & z,t & dyn. prod. by mean gradient \\
+\hline
+$<-2 \overline{w'r_t'}\frac{\partial}{\partial z}\tilde{r_t}>$ & BU\_RT2 & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'r_t'^2}>$ & BU\_RT2 & SBG TR   & z,t & subgrid turbulent transport\\
+\hline
+$-<\epsilon_r>$ & BU\_RT2 & SBG DISS & z,t & dissipation \\
+\hline
+$-\frac{\partial }{\partial t}<\tilde{r_t}^2>$ & BU\_RT2 & RES TEND & z,t & (opposite of) tendency of $<\tilde{r_t}^2>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{r_t}^2>$ & BU\_RT2 & RES ADV  & z,t & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{r_t}^2>$ & BU\_RT2 & RES FORC & z,t & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>$ & BU\_RT2 & RES DP   & z,t & dyn. prod.\\
+ & & & &(by mean gradients) \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{r_t}^2>$ & BU\_RT2 & RES TR   & z,t & resolved transport of\\
+ & & & &resolved variance \\
+\hline
+$- <2 \tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>$
+& BU\_RT2 & RES SBGT & z,t & sink due \\
+ & & & &to subgrid turbulence \\
+\hline
+{\rm numerical diffusion of } $<\tilde{r_t}^2>$& BU\_RT2 & RES NUMD & z,t & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{r_t}^2>$ & BU\_RT2 & RES RELA & z,t& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{r_t}^2>$ & BU\_RT2 & RES NEST & z,t& average from\\
+ & & & & smaller nested models \\
+\hline
+{\rm miscellaneous} & BU\_RT2 & RES MISC & z,t & ref. pressure term, \\
+ & & && radiation, microphysics, ... \\
+\hline
+{\rm residual of budget of} $<\tilde{r_t}^2>$ & BU\_RT2 & RES RESI & z,t & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<\overline{r_t'^2}>$ & BU\_RT2 & NSG TEND & z,t & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{r_t'^2}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{r_t'^2}>$  & BU\_RT2 & NSG ADVM & z,t & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{r_t'^2}>$  & BU\_RT2 & NSG ADVR & z,t & (neglected) advection by\\
+ & & & &resolved flow\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+\subsection{Budget of total scalar flux}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{w}\tilde{s_v}> + <\overline{w's_v'}>)$ are
+computed and stored in the diachronic group BU\_WSV. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{w's_v'}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{w's_v'}> }^{ADVM} \;\;
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{w's_v'} > }^{ADVR} &
+\overbrace{- <\overline{u'_\alpha w'} \frac{\partial {\tilde{s_v}}}{\partial x_\alpha}>
+- <\overline{u'_\alpha s_v'} \frac{\partial {\tilde{w}}}{\partial x_\alpha}>}^{DPR}&\\
+\vspace*{1.0cm}
+& \underbrace{- <\overline{u_\alpha'w'}> \frac{\partial {<s_v>}}{\partial x_\alpha}
+- <\overline{u'_\alpha s_v'}> \frac{\partial {<w>}}{\partial x_\alpha}}_{DPM}&
++ \underbrace{<\beta  \overline{s_v'\theta'_v}>}_{TP} \;\; \underbrace{- \frac{1}{<\rho>}<\overline{s_v' \frac{\partial p'}{\partial z}}>}_{PRES}&\\
+&\underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha w's_v'}>}_{TR}&&& \\
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\tilde{w}\tilde{s_v}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{w}\tilde{s_v}> }^{ADV} \;\;
+\overbrace{- \frac{1}{<\rho>}<\tilde{s_v} \frac{\partial \tilde{p}}{\partial x_\alpha}>}^{PRES} &
++\overbrace{<\beta  \tilde{s_v}\tilde{\theta_v}>}^{TP}&\\
+&\underbrace{- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>
+- <\tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>}_{SBGT} &
+ \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{s_v}>}_{TR} & & \\
+&\underbrace{- <\tilde{u_\alpha} \tilde{w}> \frac{\partial {<s_v>}}{\partial x_\alpha}
+- <\tilde{u_\alpha} \tilde{s_v}> \frac{\partial {<w>}}{\partial x_\alpha}}_{DP}&+...&& \\
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in & processus & dim.  & comments \\
+      & diac. file & name      &            & \\
+\hline
+\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<s_v>$ & BU\_WSV & SBG DP M & z,t,n & dyn. prod. by mean gradient \\
+\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{s_v}>$ & BU\_WSV & SBG DP R & z,t,n & dyn. prod. by resolved fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w'^2s_v'}>$ & BU\_WSV & SBG TR   & z,t,n & subgrid turbulent transport\\
+\hline
+$- \frac{1}{<\rho>}<\overline{s_v' \frac{\partial p'}{\partial z}}>$&
+BU\_WSV & SBG PRES & z,t,n & subgrid pressure-\\
+ & & & &correlation term \\
+\hline
+$<\beta  \overline{s_v'\theta'_v}>$ & BU\_WSV & SBG TP   & z,t,n & thermal production \\
+\hline
+{\rm residual of budget of} $<\overline{w's_v'}>$ & BU\_WSV & SBG RESI & z,t,n & must be small \\
+\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES TEND & z,t,n & (opposite of) tendency of $<\tilde{w}\tilde{s_v}>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES ADV  & z,t,n & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES FORC & z,t,n & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline \hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in & processus & dim.  & comments \\
+      & diac. file & name      &            & \\
+\hline
+\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<s_v>$ & BU\_WSV & RES DP   & z,t,n & dyn. prod.\\
+ & & & &(by mean gradients) \\
+$-<\tilde{w}\tilde{s_v}>\frac{\partial }{\partial z}<w>$ &  &  & & \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{s_v}>$ & BU\_WSV & RES TR   & z,t,n & transport of resolved flux\\
+ & & & &by itself \\
+\hline
+$- \frac{1}{<\rho>}<\tilde{s_v} \frac{\partial \tilde{p}}{\partial z}>$ & BU\_WSV & RES PRES & z,t,n & pressure-correlations \\
+\hline
+$ <\beta  \tilde{s_v}\tilde{\theta_v}> $  & BU\_WSV & RES TP   & z,t,n & thermal production \\
+\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>$
+& BU\_WSV & RES SBGT & z,t,n & sink due \\
+ & & & &to subgrid turbulence \\
+$- <\tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$
+&&&&\\
+\hline
+{\rm Coriolis terms} & BU\_WSV & RES CORI & z,t,n & \\
+\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{s_v}>$& BU\_WSV & RES NUMD & z,t,n & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES RELA & z,t,n& sponge layer relaxation \\
+\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES NEST & z,t,n& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_WSV & RES MISC & z,t,n & curvature term, chemistry, ...\\
+\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{s_v}>$ & BU\_WSV & RES RESI & z,t,n & must be zero \\
+\hline
+\hline
+$-\frac{\partial }{\partial t}<\overline{w's_v'}>$ & BU\_WSV & NSG TEND & z,t,n & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{w's_v'}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w's_v'}>$  & BU\_WSV & NSG ADVM & z,t,n & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w's_v'}>$  & BU\_WSV & NSG ADVR & z,t,n & (neglected) advection by\\
+ & & & &resolved flow\\
+\hline
+terms due to $\overline{w}$ gradients  & BU\_WSV & NSG DPGW & z,t,n & (neglected) dyn. prod. terms \\
+\hline
+terms due to hor. $\overline{s_v}$ gradients  & BU\_WSV & NSG DPGT & z,t,n & other (neglected) dyn. prod. terms\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+
+
+\newpage
+
+\subsection{Budget of total scalar variance}
+
+
+All terms of the equation of $\frac{\partial}{\partial t} (<\tilde{s_v}^2> + <\overline{s_v'^2}>)$ are
+computed and stored in the diachronic group BU\_SV2. 
+All comments made for the total Tke equation are valid here.\\
+
+\begin{displaymath}
+\left.
+\begin{array}{rllll}
+\frac{\partial }{\partial t} <\overline{s_v'^2}> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\overline{s_v'^2}> }^{ADVM}  &
+\overbrace{- <\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha} \overline{s_v'^2} > }^{ADVR} &
+\overbrace{- 2 <\overline{u_\alpha's_v'}> \frac{\partial {<s_v>}}{\partial x_\alpha} }^{DPM} \\
+\vspace*{1.0cm}
+& \underbrace{- 2 <\overline{u'_\alpha s_v'} \frac{\partial {\tilde{s_v}}}{\partial x_\alpha}>}_{DPR}  &
+ \underbrace{- <\frac{\partial}{\partial x_\alpha} \overline{u'_\alpha s_v'^2}>}_{TR}
+ & \underbrace{-\; \epsilon_{s_v}}_{DISS}\\
+\frac{\partial }{\partial t} <\tilde{s_v}^2> = & 
+\overbrace{- <u_\alpha>\frac{\partial}{\partial x_\alpha} <\tilde{s_v}^2> }^{ADV} &
+\overbrace{- 2<\tilde{u_\alpha} \tilde{s_v}> \frac{\partial {<s_v>}}{\partial x_\alpha}}^{DP} &\\
+& \underbrace{- \frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{s_v}^2>}_{TR} &
+\underbrace{- 2 <\tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>}_{SBGT} & + ...
+\end{array}
+\right.
+\end{displaymath}
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in & processus & dim.  & comments \\
+      & diac. file & name      &            & \\
+\hline
+\hline
+$- 2 <\overline{w's_v'}>\frac{\partial }{\partial z}<s_v>$ & BU\_SV2 & SBG DP M & z,t,n & dyn. prod. by mean gradient \\
+\hline
+$<-2 \overline{w's_v'}\frac{\partial}{\partial z}\tilde{s_v}>$ & BU\_SV2 & SBG DP R & z,t,n & dyn. prod. by resolved fluctuations\\
+\hline
+$-<\frac{\partial}{\partial z}\overline{w's_v'^2}>$ & BU\_SV2 & SBG TR   & z,t,n & subgrid turbulent transport\\
+\hline
+$-<\epsilon_{s_v}>$ & BU\_SV2 & SBG DISS & z,t,n & dissipation \\
+\hline
+{\rm residual of budget of} $<\overline{w's_v'}>$ & BU\_SV2 & SBG RESI & z,t,n & must be small \\
+\hline
+$-\frac{\partial }{\partial t}<\tilde{s_v}^2>$ & BU\_SV2 & RES TEND & z,t,n & (opposite of) tendency of $<\tilde{s_v}^2>$\\
+\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{s_v}^2>$ & BU\_SV2 & RES ADV  & z,t,n & advection \\
+ & & & & by mean flow\\
+\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{s_v}^2>$ & BU\_SV2 & RES FORC & z,t,n & advection \\
+ & & & & by large-scale\\
+ & & & & W forcing\\
+\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<s_v>$ & BU\_SV2 & RES DP   & z,t,n & dyn. prod.\\
+ & & & &(by mean gradients) \\
+\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{s_v}^2>$ & BU\_SV2 & RES TR   & z,t,n & resolved transport of\\
+ & & & &resolved variance \\
+\hline
+$- <2 \tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>$
+& BU\_SV2 & RES SBGT & z,t,n & sink due \\
+ & & & &to subgrid turbulence \\
+\hline
+{\rm numerical diffusion of } $<\tilde{s_v}^2>$& BU\_SV2 & RES NUMD & z,t,n & numerical diffusion\\
+ & & & &against $2\Delta x$ \\
+\hline
+{\rm relaxation of }$<\tilde{s_v}^2>$ & BU\_SV2 & RES RELA & z,t,n& sponge layer relaxation \\
+\hline\hline
+
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\begin{tabular}{||p{5cm}|>{\centering}p{2cm}|>{\centering}p{2.5cm}|>{\centering}p{0.5cm}|p{5.5cm }||}
+\hline
+\hline
+field & notation in & processus & dim.  & comments \\
+      & diac. file & name      &            & \\
+\hline
+\hline
+{\rm 2way nesting of }$<\tilde{s_v}^2>$ & BU\_SV2 & RES NEST & z,t,n& average from smaller\\
+ & & & &nested models \\
+\hline
+{\rm miscellaneous} & BU\_SV2 & RES MISC & z,t,n & chemistry, ... \\
+\hline
+{\rm residual of budget of} $<\tilde{s_v}^2>$ & BU\_SV2 & RES RESI & z,t,n & must be zero \\
+\hline
+$-\frac{\partial }{\partial t}<\overline{s_v'^2}>$ & BU\_SV2 & NSG TEND & z,t,n & (neglected) opposite of\\
+(neglected in turb. scheme) & & & &tendency of $<\overline{s_v'^2}>$ \\
+\hline
+$-<w>\frac{\partial}{\partial z}<\overline{s_v'^2}>$  & BU\_SV2 & NSG ADVM & z,t,n & (neglected) advection \\
+ & & & & by mean flow\\
+\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{s_v'^2}>$  & BU\_SV2 & NSG ADVR & z,t,n & (neglected) advection by\\
+ & & & &resolved flow\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+

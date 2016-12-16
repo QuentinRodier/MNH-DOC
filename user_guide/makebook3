@@ -1,0 +1,10 @@
+#!/bin/sh
+
+pdflatex book3
+makeindex -s stydx book3.idx
+sed "s/Symbols//g" book3.ind > book3.ind2
+mv book3.ind2 book3.ind
+sed "s/- namelist/Namelist/g" book3.ind > book3.ind2
+mv book3.ind2 book3.ind
+pdflatex book3
+

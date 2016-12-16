@@ -1,0 +1,124 @@
+\chapter{Compute spectra after a MESO-NH simulation}\label{ch:spectre}
+\section{Presentation}
+After running the model, you can compute spectra with the program SPECTRE,
+that gives the kinetic energy density according to the wavelength or the wave number (see Ricard et al., 2011).
+The calculation uses a discrete cosinus transform 
+to convert grid-point fields into spectral space ones.
+
+
+\subsection{Input file}
+The "SPECTRE" program computes spectra on MESONH files issued from a simulation or on AROME file. In this second case (CTYPEFILE='AROME'), the program does not read the true AROME file but an ASCII file obtained with the tools "edf". You must create one ASCII file per variable you want : the files will be named YINIFILE\_U, YINIFILE\_V...
+
+\subsection{Output files}
+You will obtain one ascii file per variable you have asked. A script exists to trace easily the results. (on MESONH web site in Wiki Team's)
+
+
+\section{The namelist file SPEC1.nam}
+
+\subsection{Namelist NAM\_SPECTRE\_FILE}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+YINIFILE    & array of character (len=28)  & ' '\\
+CTYPEFILE   & character (LEN=6)  & 'MESONH'      \\
+YOUTFILE    & array of character (len=28)  & ' '\\
+LSTAT       & logical  & .FALSE. \\        
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item YINIFILE : name of the input FM file.
+\item CTYPEFILE : type of the input  file ('AROME ', 'MESONH')
+\item YOUTFILE  : prefix of the output file.\\
+If the user does specify this name, the output file will be named YOUTFILE\_U, YOUTFILE\_V ....\\
+If the user does NOT specify this name, the output file will be named spectra\_YINIFILE\_U, spectra\_YINIFILE\_V ....
+\item LSTAT : flag to have some statistiques on fields if .TRUE.
+\end{itemize}
+
+\subsection{Namelist NAM\_SPECTRE}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LSPECTRE\_U &  logical &.FALSE. \\
+LSPECTRE\_V &  logical &.FALSE. \\
+LSPECTRE\_W &  logical &.FALSE. \\
+LSPECTRE\_TH &  logical &.FALSE. \\
+LSPECTRE\_RV &  logical &.FALSE. \\
+LSPECTRE\_LSU &  logical &.FALSE. \\
+LSPECTRE\_LSV &  logical &.FALSE. \\
+LSPECTRE\_LSW &  logical &.FALSE. \\
+LSPECTRE\_LSTH &  logical &.FALSE. \\
+LSPECTRE\_LSRV &  logical &.FALSE. \\
+LSMOOTH     &  logical & .FALSE.\\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LSPECTRE\_U : flag to compute spectrum of U component
+\item LSPECTRE\_V : flag to compute spectrum of V component
+\item LSPECTRE\_W : flag to compute spectrum of W
+\item LSPECTRE\_TH : flag to compute spectrum of Theta
+\item LSPECTRE\_RV : flag to compute spectrum of vapor mixing ratio
+\item LSPECTRE\_LSU : flag to compute spectrum of large scale U component
+\item LSPECTRE\_LSV : flag to compute spectrum of large scale V component
+\item LSPECTRE\_LSW : flag to compute spectrum of large scale W
+\item LSPECTRE\_LSTH : flag to compute spectrum of large scale Theta
+\item LSPECTRE\_LSRV : flag to compute spectrum of large scale vapor mixing ratio
+\item LSMOOTH : flag to smooth the results
+\end{itemize}
+
+
+\subsection{Namelist NAM\_ZOOM\_SPECTRE}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LZOOM &  logical &.FALSE. \\
+NXDEB & integer & \\
+NYDEB& integer & \\
+NITOT& integer & \\
+NJTOT& integer & \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LZOOM : flag to make a zoom on the file domain
+\item NXDEB : first point I index, left to and out of the wanted domain
+\item NYDEB : first point J index, under and out of the wanted domain
+\item NITOT : number of grid points in I direction. It must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0 $
+\item NJTOT : number of grid points in J direction. It must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+\end{itemize}
+
+\subsection{Namelist NAM\_DOMAIN\_AROME}
+This namelist is only available for CTYPEFILE='AROME'. It contains the caracteristics of the domain arome in the input file.
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NI & integer & 750\\
+NJ& integer & 720\\
+NK& integer & 60\\
+XDELTAX& integer & 2500\\
+XDELTAY& integer & 2500\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item NI : number of points to read in I direction 
+\item NJ : number of points to read in J direction 
+\item NK : : number of vertical levels to read 
+\item XDELTAX : gridsize of arome file in I direction (m)
+\item XDELTAY : gridsize of arome file in J direction (m)
+\end{itemize}
+
+

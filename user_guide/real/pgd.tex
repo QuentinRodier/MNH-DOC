@@ -1,0 +1,410 @@
+\chapter{Creation of MESO-NH physiographic data file} \label{c:PGD}
+
+
+\section{\bf PREP\_PGD}
+The physiographic fields are averaged or interpolated on the MESO-NH
+physiographic grid by the program {\bf PREP\_PGD}. 
+They are stored in a FM file, called PGD file, but with fewer elements than a MESO-NH file.
+With the physiographic 2D fields, the geographic and grid data
+are written in this file.
+Note that a MESO-NH simulation runs on the grid defined here in 
+{\bf PREP\_PGD}. \\
+
+\subsection{Namelist NAM\_CONFIO}
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+
+\subsection{Namelist NAM\_CONF\_PGD}
+\index{NAM\_CONF\_PGD!namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+NHALO\_MNH  & INTEGER & 1 \\
+JPHEXT      & INTEGER & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item
+NHALO\_MNH: Size of the halo for parallel distribution.
+This variable is related to computer performance but has no
+impact on simulation results.\\
+\index{NHALO\_MNH!\innam{NAM\_CONF\_PGD}}
+
+\item
+JPHEXT:  Horizontal External points number\\
+JPHEXT must be equal to 3 for cyclic cases with WENO5.
+\index{JPHEXT!\innam{NAM\_CONF\_PGD}}
+\end{itemize}
+
+
+
+\subsection{Namelist NAM\_NCOUT}
+See section \ref{s:namncout} page \pageref{s:namncout} for details.
+
+
+\subsection{Namelist NAM\_PGDFILE}
+\index{NAM\_PGDFILE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+CPGDFILE      & character (LEN=28) & ' '           \\
+NHALO         & INTEGER      & 15 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CPGDFILE : name of the output Physiographic Data File
+\index{CPGDFILE!\innam{NAM\_PGDFILE}}
+\item NHALO :  Size of the halo for parallel distribution
+\index{NHALO!\innam{NAM\_PGDFILE}}
+
+\end{itemize}
+\subsection{Namelist NAM\_ZSFILTER}
+\index{NAM\_ZSFILTER!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+NZSFILTER       & INTEGER      & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item NZSFILTER : number of iterations of the spatial filter applied to smooth the orography (integer, 1 iteration removes the $2\Delta x$ signal, 50\% of the $4\Delta x$
+signal, 25\% of the $6\Delta x$ signal, etc\footnote{The amplitude of the
+filtered signal for each wavelength $\lambda\Delta x$ 
+is $\frac{1}{2}\left( cos(2\pi/\lambda) +1\right)$.}...).
+\index{NZSFILTER!\innam{NAM\_ZSFILTER}}
+\end{itemize}
+%\newpage
+\subsection{Namelists for the externalized surface}
+
+As indicated above, further definition of surface parameters are not done by MESONH itself, but by the externalized surface included in it. For more informations see SURFEX documentation.\\
+
+\begin{itemize}
+\item NAM\_PGD\_SCHEMES\index{NAM\_PGD\_SCHEMES!surfex namelist}
+\item NAM\_PGD\_GRID\index{NAM\_PGD\_GRID!surfex namelist}
+\item NAM\_CONF\_PROJ\index{NAM\_CONF\_PROJ!surfex namelist}
+\item NAM\_CONF\_PROJ\_GRID\index{NAM\_CONF\_PROJ\_GRID!surfex namelist}
+\item NAM\_INIFILE\_CONF\_PROJ\index{NAM\_INIFILE\_CONF\_PROJ!surfex namelist}
+\item NAM\_WRITE\_COVER\_TEX\index{NAM\_WRITE\_COVER\_TEX!surfex namelist}
+\item NAM\_READ\_DATA\_COVER\index{NAM\_READ\_DATA\_COVER!surfex namelist}
+\item NAM\_PGD\_ARRANGED\_COVER\index{NAM\_PGD\_ARRANGED\_COVER!surfex namelist}
+\item NAM\_COVER\index{NAM\_COVER!surfex namelist}
+\item NAM\_ECOCLIMAP2\index{NAM\_ECOCLIMAP2!surfex namelist}
+\item NAM\_ZS\index{NAM\_ZS!surfex namelist}
+\item NAM\_SEABATHY\index{NAM\_SEABATHY!surfex namelist}
+\item NAM\_ISBA\index{NAM\_ISBA!surfex namelist}
+\item NAM\_DATA\_FLAKE\index{NAM\_DATA\_FLAKE!surfex namelist}
+\item NAM\_DUMMY\_PGD\index{NAM\_DUMMY\_PGD!surfex namelist}
+\item NAM\_CH\_EMIS\_PGD\index{NAM\_CH\_EMIS\_PGD!surfex namelist}
+\end{itemize}
+
+\subsection{Examples of PRE\_PGD1.nam file \label{example}}
+
+A {\bf PREP\_PGD} run where you use the data files provided by the MESO-NH team and some files of your own for the dummy fields:
+\begin{verbatim}
+&NAM_PGDFILE        CPGDFILE = 'PGDFILE_1' /
+&NAM_PGD_GRID       CGRID = 'CONF PROJ ' /
+&NAM_CONF_PROJ      XLAT0 = 45., XLON0=0., XRPK=0.7, XBETA=0. /
+&NAM_CONF_PROJ_GRID NIMAX=100, NJMAX=100, XLATCEN=42.5, XLONCEN=2.5, XDX=10000. , XDY=10000. /
+&NAM_INIFILE_CONF_PROJ /
+&NAM_PGD_SCHEMES CNATURE='ISBA  ', CSEA='SEAFLX', CTOWN='TEB   ', CWATER='WATFLX' /
+&NAM_COVER YCOVER='ecoclimap_v2', YCOVERFILETYPE='DIRECT' /
+&NAM_ZS    YZS='gtopo30', YZSFILETYPE='DIRECT' /
+&NAM_ISBA  YCLAY='clay_fao', YCLAYFILETYPE='DIRECT',  XUNIF_RUNOFFB=0.5 ,
+           YSAND='sand_fao', YSANDFILETYPE='DIRECT' /
+&NAM_DUMMY_PGD  NDUMMY_NBR         = 6
+                CDUMMY_NAME(1)     = 'SST_2001062100'          
+                CDUMMY_AREA(1)     = 'SEA'
+                CDUMMY_ATYPE(1)    = 'ARI'
+                CDUMMY_FILE(1)     = 'SSTn2001062100.dat'          
+                CDUMMY_FILETYPE(1) = 'ASCLLV'
+                CDUMMY_NAME(2)     = 'SST_2001062200'          
+                CDUMMY_AREA(2)     = 'SEA'
+                CDUMMY_ATYPE(2)    = 'ARI'
+                CDUMMY_FILE(2)     = 'SSTn2001062200.dat'          
+                CDUMMY_FILETYPE(2) = 'ASCLLV'
+                CDUMMY_NAME(3)     = 'SST_2001062300'          
+                CDUMMY_AREA(3)     = 'SEA'
+                CDUMMY_ATYPE(3)    = 'ARI'
+                CDUMMY_FILE(3)     = 'SSTn2001062300.dat'          
+                CDUMMY_FILETYPE(3) = 'ASCLLV'
+                CDUMMY_NAME(4)     = 'SST_2001062400'          
+                CDUMMY_AREA(4)     = 'SEA'
+                CDUMMY_ATYPE(4)    = 'ARI'
+                CDUMMY_FILE(4)     = 'SSTn2001062400.dat'          
+                CDUMMY_FILETYPE(4) = 'ASCLLV'
+                CDUMMY_NAME(5)     = 'SST_2001062500'          
+                CDUMMY_AREA(5)     = 'SEA'
+                CDUMMY_ATYPE(5)    = 'ARI'
+                CDUMMY_FILE(5)     = 'SSTn2001062500.dat'          
+                CDUMMY_FILETYPE(5) = 'ASCLLV'
+                CDUMMY_NAME(6)     = 'SST_2001062600'          
+                CDUMMY_AREA(6)     = 'SEA'
+                CDUMMY_ATYPE(6)    = 'ARI'
+                CDUMMY_FILE(6)     = 'SSTn2001062600.dat', CDUMMY_FILETYPE(6) = 'ASCLLV'/
+\end{verbatim}
+\newpage
+Another {\bf PREP\_PGD} run for the father PGD file, with all the namelist variables : 
+\begin{verbatim}
+&NAM_PGDFILE CPGDFILE='PGD_AMMA1_10km_m46_b1' /
+&NAM_PGD_SCHEMES  CNATURE='ISBA' , CSEA='SEAFLX', CWATER='WATFLX', CTOWN='TEB'/
+&NAM_PGD_GRID CGRID='CONF PROJ'/
+&NAM_CONF_PROJ   XLAT0=13. ,XLON0=-1.5, XRPK=0.2249510543, XBETA=0 /
+&NAM_CONF_PROJ_GRID  XLATCEN=13. , XLONCEN=-1.5 , NIMAX=324 ,NJMAX=240 ,
+                     XDX=10000 , XDY=10000/
+&NAM_COVER     YCOVER='ecoclimats_v2', YCOVERFILETYPE='DIRECT',LRM_TOWN=.FALSE. /
+&NAM_ZS        YZS='gtopo30',    YZSFILETYPE='DIRECT' ,
+               COROGTYPE='AVG', XENV=0./
+&NAM_ISBA      NPATCH=12, CISBA='3-L',  CPHOTO='AGS', NGROUND_LAYER=3, 
+               YCLAY='clay_fao', YCLAYFILETYPE='DIRECT' ,
+               YSAND='sand_fao', YSANDFILETYPE='DIRECT',
+               XUNIF_RUNOFFB=0.5 /
+&NAM_CH_EMIS_PGD NEMIS_PGD_NBR=0 /               
+&NAM_DUMMY_PGD  NDUMMY_PGD_NBR=0 /
+\end{verbatim}
+
+And for the son PGD file : 
+\begin{verbatim}
+&NAM_PGDFILE CPGDFILE='PGD_AMMA1_5km_m46_b1' /
+&NAM_PGD_SCHEMES  CNATURE='ISBA' , CSEA='SEAFLX', CWATER='WATFLX', CTOWN='TEB'/
+&NAM_PGD_GRID YINIFILE='PGD_AMMA1_10km_m46_b1',YINIFILETYPE='MESONH' /
+&NAM_INIFILE_CONF_PROJ IXOR=101 ,IYOR=21 ,IXSIZE=180 ,IYSIZE=150 ,
+                       IDXRATIO=2, IDYRATIO=2/
+&NAM_COVER     YCOVER='ecoclimats_v2', YCOVERFILETYPE='DIRECT',LRM_TOWN=.FALSE. /
+&NAM_ZS        YZS='gtopo30', YZSFILETYPE='DIRECT' ,
+               COROGTYPE='AVG', XENV=0./
+&NAM_ISBA      NPATCH=12, CISBA='3-L',  CPHOTO='AGS', NGROUND_LAYER=3, 
+               YCLAY='clay_fao', YCLAYFILETYPE='DIRECT' ,
+               YSAND='sand_fao', YSANDFILETYPE='DIRECT',
+               XUNIF_RUNOFFB=0.5 /
+&NAM_CH_EMIS_PGD NEMIS_PGD_NBR=0 /               
+&NAM_DUMMY_PGD  NDUMMY_PGD_NBR=0 /
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Modification of PGD files for grid-nesting: {\bf
+PREP\_NEST\_PGD}}
+
+In order to run models with the gridnesting technique, a condition on
+the orography must be satisfied. In the following, if file \#2 is completely
+included in (and therefore in interaction during the run with) file \#1,
+file \#2 will be called the SON file, and file \#1 the DAD file.
+In the following, the DAD file number must be smaller than any of its SON number.
+
+The condition on the orography is:
+"the mean of orography for a SON file in the domain corresponding to the
+grid mesh of its DAD file, must be equal to the orography of the DAD file
+in this mesh".
+
+Such a condition is not automatically satisfied when using enhanced
+orographies.
+The program {\bf PREP\_NEST\_PGD} performs post-treatments on the orographies
+of up to 8 PGD files that will be used to create initialization files 
+for a gridnested run. It modifies the orography of a DAD from the mean
+of the orography of its (several) SON(s).
+
+
+
+The namelist file PRE\_NEST\_PGD1.nam contains:
+\begin{enumerate}
+\item
+\underline{Namelists NAM\_PGD{\it \bf{N}}} (where {\it \bf{N}} goes from 1 to 8):
+\index{YPGD1!\innam{NAM\_PGD1}}
+\index{YPGD2!\innam{NAM\_PGD2}}
+\index{YPGD3!\innam{NAM\_PGD3}}
+\index{YPGD4!\innam{NAM\_PGD4}}
+\index{YPGD5!\innam{NAM\_PGD5}}
+\index{YPGD6!\innam{NAM\_PGD6}}
+\index{YPGD7!\innam{NAM\_PGD7}}
+\index{YPGD8!\innam{NAM\_PGD8}}
+\index{IDAD!\innam{NAM\_PGD1}}
+\index{IDAD!\innam{NAM\_PGD2}}
+\index{IDAD!\innam{NAM\_PGD3}}
+\index{IDAD!\innam{NAM\_PGD4}}
+\index{IDAD!\innam{NAM\_PGD5}}
+\index{IDAD!\innam{NAM\_PGD6}}
+\index{IDAD!\innam{NAM\_PGD7}}
+\index{IDAD!\innam{NAM\_PGD8}}
+\begin{itemize}
+\item YPGD{\it \bf{N}}: name of the PGD file \#{\it \bf{N}}
+\item IDAD: number of the DAD file of file \#{\it \bf{N}}.
+The DAD file number IDAD must be \underline{smaller} than \#{\it \bf{N}}.
+\end{itemize}
+\bigskip
+\item
+\underline{Namelist NAM\_NEST\_PGD}:
+\begin{itemize}
+\item
+YNEST: string of 2 characters to be added to the PGD file names to define
+the corresponding output PGD file names. The input file {\it YPGD{\bf N}}
+will be modified into file {\it YPGD{\bf N}}.nest{\it YNEST}
+\index{YNEST!\innam{NAM\_NEST\_PGD}}
+\end{itemize}
+
+\bigskip
+\item
+\underline{Namelist NAM\_CONFIO}:
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+
+\bigskip
+\item
+\underline{Namelist NAM\_CONF\_NEST} :
+\index{NAM\_CONF\_NEST!namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+NHALO\_MNH  & INTEGER & 1 \\
+JPHEXT      & INTEGER & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item
+NHALO\_MNH: Size of the halo for parallel distribution.
+This variable is related to computer performance but has no
+impact on simulation results.\\
+NHALO must be equal to 3 for WENO5 cases in parallel runs
+\index{NHALO!\innam{NAM\_CONF\_NEST}}
+
+\item
+JPHEXT:  Horizontal External points number\\
+JPHEXT must be equal to 3 for cyclic cases with WENO5.
+\index{JPHEXT!\innam{NAM\_CONF\_NEST}}
+\end{itemize}
+
+\end{enumerate}
+
+
+
+\underline{Example of namelist PRE\_NEST\_PGD1.nam:}
+\begin{verbatim}
+&NAM_PGD1 YPGD1 = 'PGDFILE_1' /
+&NAM_PGD2 YPGD2 = 'PGDFILE_2', IDAD = 1 /
+&NAM_PGD3 YPGD3 = 'PGDFILE_3', IDAD = 1 /
+&NAM_PGD4 YPGD4 = 'PGDFILE_4', IDAD = 3 /
+&NAM_PGD5 YPGD5 = 'PGDFILE_5', IDAD = 2 /
+&NAM_PGD6  /
+&NAM_PGD7  /
+&NAM_PGD8  /
+&NAM_NEST_PGD YNEST = 'e1' /
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Zoom of a PGD file: {\bf ZOOM\_PGD}}
+The previous condition on the orography needed
+when using the gridnesting technique implies that all the PGD files have to be
+created (with {PREP\_PGD} and {PREP\_NEST\_PGD} programs)
+{\bf before} beginning the run.
+However, the user is not always sure where (and when) to initialize
+the inner models.
+To avoid to set exactly the domain of inner models at the PREP\_PGD step, 
+one solution is to make PGD file on larger domain
+and then, zoom it\footnote{This was done during the PREP\_IDEAL\_CASE or 
+PREP\_REAL\_CASE step before the masdev4\_6 version.}
+ on the part of the domain of interest when known
+with the following program {\bf ZOOM\_PGD}. Then the output PGD file is used
+as PGD file for the interpolations of atmospheric fields
+with {SPAWNING} and {PREP\_REAL\_CASE} programs. 
+
+
+
+The namelist file PRE\_ZOOM1.nam contains 2 namelists:
+\begin{enumerate}
+\item
+\underline{Namelist NAM\_PGDFILE}: (contains file names)
+\index{NAM\_PGDFILE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+CPGDFILE      & character (LEN=28) & 'PGDFILE'      \\
+YZOOMFILE     & character (LEN=28) & none           \\
+YZOOMNBR      & character (LEN=2)  & '00'           \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CPGDFILE : name of the input Physiographic Data File
+\index{CPGDFILE!\innam{NAM\_PGDFILE}}
+\item YZOOMFILE : optional name of the zoomned FM-file (output file).
+\index{YZOOMFILE!\innam{NAM\_PGDFILE}} 
+If the user does not specify this name,
+or if YZOOMFILE = CPGDFILE, the code builds the zoomned FM-file name as:
+\subitem YZOOMFILE = CPGDFILE.zYZOOMNBR
+\item YZOOMNBR :
+\index{YZOOMNBR!\innam{NAM\_PGDFILE}} :
+NumBeR which will be added to CPGDFILE to generate the  
+name of the Zoomned FM-file (string of 2 characters).
+\end{itemize}
+\item
+\underline{Namelist NAM\_CONFIO}
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+\item
+\underline{Namelist NAM\_MESONH\_DOM}: (contains domain definition variables)
+\index{NAM\_MESONH\_DOM!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|l|}
+\hline
+Fortran name & Fortran type & default value & remarks \\
+\hline
+\hline
+NIMAX & integer & input PGD domain & \\
+NJMAX & integer & input PGD domain & \\
+NXOR  & integer & NUNDEF & if NUNDEF, domain is \\ 
+      &         &        & in the middle of PGD \\ 
+NYOR  & integer & NUNDEF & if NUNDEF, domain is \\ 
+      &         &        & in the middle of PGD \\ 
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item NIMAX : number of grid points in I direction, according to input file 
+grid, recovered by the new domain. NIMAX must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \in [0,+\infty[$
+\index{NIMAX!\innam{NAM\_MESONH\_DOM}}
+\item NJMAX : number of grid points in J direction, according to input file 
+grid, recovered by the new domain. NJMAX must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \in [0,+\infty[$
+\index{NJMAX!\innam{NAM\_MESONH\_DOM}}
+\item NXOR : first point I index, left to and out of the new physical domain.
+\index{NXOR!\innam{NAM\_MESONH\_DOM}}
+\item NYOR : first point J index, under and out of the new physical domain.
+\index{NYOR!\innam{NAM\_MESONH\_DOM}}
+\end{itemize}
+
+\end{enumerate}
+
+\underline{Example of namelist PRE\_ZOOM1.nam:}
+\begin{verbatim}
+&NAM_PGDFILE CPGDFILE = 'PGDFILE_1.neste1' ,
+             YZOOMNBR = '58'    /
+&NAM_MESONH_DOM NIMAX=60, NJMAX=50,
+                NXOR=5, NYOR=8      /
+\end{verbatim}
+
+

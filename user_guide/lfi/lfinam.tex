@@ -1,0 +1,225 @@
+\chapter{The MESONH files :}
+  
+\section{The F90 namelists}
+
+All the information required  to  perform a given step of a numerical
+experiment, are provided by
+different files including a NAMELIST set. 
+Thus, the Meso-NH user can change the value of the parameters without
+any compilation (and therefore save computer time). These files provide the way 
+for the Meso-NH user to interact with the numerical code and finally, they
+ contain the identification
+cards of the different steps of the numerical experiment. 
+
+
+These NAMELISTs are Fortran 90
+NAMELISTs, which obey to strict writing rules (Metcalf and Reid 1993): no
+comment is allowed inside the namelists, no empty namelist can be written (it
+gives a Fortran execution error). 
+
+The information are written in the following form :
+
+\begin{verbatim}
+ &NAM_LUNITn  CINIFILE = "     FMFILE.1               " /
+ &NAM_CONFn  LUSERV = T, LUSERC = F, LUSERR = F, LUSERI = F, LUSERS = F,
+ LUSERG = F, LUSERH = F, NSV = 0 /
+\end{verbatim}
+
+
+ {\tt \&NAM\_LUNITn}
+is the name of the first namelist of this file, the $/$ character indicates the 
+end of the list of information. These namelists  parameters are defined by VAR = VALUE and
+these prescriptions are separated one from each others by a comma and a blank 
+character. Note that you can use more than one line to give a namelist, but in
+this case it is imperative to let a blank character at the end of each line.
+ 
+The Meso-NH user does not need to prescribe all the parameters of a namelist,
+the missing information are taken equal to the default values
+written in the fortran code. For example, the second namelist in the previous 
+example can be written as:
+\begin{verbatim}
+ &NAM_CONFn  LUSERV = T /
+\end{verbatim}
+because the other variables of {\tt \&NAM\_CONFn} are set to the default values.
+\\
+
+In order to clearly separate what can be modified for a given step of a
+numerical experiment, we affect a different namelist file name for each step.
+
+\begin{itemize}
+\item
+To PREpare a Meso-NH file containing PhysioGraphical Datas
+\subitem  ${ \large \Longrightarrow } $ file PRE\_PGD1.nam 
+\item
+To PREpare a Meso-NH file with PhysioGraphical Datas in conformity
+\subitem  ${ \large \Longrightarrow } $ file PRE\_NEST\_PGD1.nam 
+\item
+To PREpare a ZOOMed Meso-NH file with PhysioGraphical Datas
+\subitem  ${ \large \Longrightarrow } $ file PRE\_ZOOM1.nam 
+\item
+To PREpare an initial Meso-NH file for an IDEAlized case study 
+\subitem  ${ \large \Longrightarrow } $ file PRE\_IDEA1.nam 
+\item
+To PREpare an initial Meso-NH file for an REAL case study 
+\subitem  ${ \large \Longrightarrow } $ file PRE\_REAL1.nam 
+\item
+To SPAWN a Meso-NH file into another one with better horizontal resolution
+\subitem  ${ \large \Longrightarrow } $ file SPAWN1.nam 
+\item
+To EXecute a simulation SEGment for the $n ^{th} $ model 
+\subitem  ${ \large \Longrightarrow } $ file EXSEGn.nam
+\item
+To compute DIAGnostics after a simulation
+\subitem  ${ \large \Longrightarrow } $ file DIAG1.nam
+\end{itemize}
+
+
+ Because the grid-nesting technique requires the simultanous presence
+of multiple models in the computer memory, free-parameters 
+must be fixed for every model. This is performed by associating a namelist 
+file per model, this explains why the namelist are suffixed by a number 1 or n 
+just above.
+
+
+The different parameters present in these files are all given in this book 
+ and more
+details on the description of a given parameter are present in the code itself.
+
+
+\section{The Meso-NH files}
+
+A Meso-NH FM-file is a set of 2 files, (which can be sticked together via the cpio UNIX
+command):
+\begin{itemize}
+\item
+ a \underline{descriptive part} ( {\tt .des}) containing 
+information about the file generation and its description (in ASCII
+characters)
+\item
+a \underline{binary part} ( {\tt .lfi}) where the fields are stored. The structure of this
+ file is a direct access  type file, written and read by routines developped in
+M\'et\'eo-France (Fischer, 1994) based on {\sc lfi} routines (Clochard, 1989), 
+which can be used on a lot of different computers.
+\end{itemize}
+
+This type of file is used to store all the data necessary to run any step 
+of a numerical experiment. Three different files are taken into account in the 
+Meso-NH project:
+\begin{itemize}
+\item
+the \underline{synchronous file} contains all the values of all the fields allowing a
+restart of the model and of some diagnostic fields desired by the Meso-NH user.
+All these informations are obtained at the same instant during the simulation,
+
+thus they are synchronous.
+\item
+the \underline{diachronic file} contains time series of information desired by the Meso-NH 
+user. They are obtained during more than one time step of the model.
+It is the format in which your file must be if you want to plot it with
+the graphics software \tt diaprog \rm (you can convert a synchronous file
+into a diachronic one with \tt conv2dia\rm ).
+\item
+the \underline{physiographic file} contains external information like 
+orography, vegetation classes, chemical emissions, data sets, etc.
+\end{itemize}
+
+
+\subsection{The synchronous file} \label{ss:synchro}
+
+This type of file contains only information corresponding to the same instant
+of the simulation, it remains open during a whole time step of the simulation,
+and the writing orders can be given from any routine of the model.
+
+\subsubsection{The descriptive part}
+This part is the list of all the namelists of the EXSEG\$n.nam file.
+Thus, a complete description of this part is given
+with the EXSEG\$n.nam description in chapter \ref{ch:model}.
+
+If the file has been generated during a segment of the model integration, the 
+{\tt .des} part contains the different
+namelists fixing the free-parameters for the dynamics and the physics 
+of the Meso-NH model. This allows the user to know a large
+part of the history of this file. For the namelists or variables ommited 
+in the EXSEG\$n.nam file, the values are set to the default ones
+ (see the tables in ch.\ref{ch:model}).
+
+If the file is the result of the initialization programs 
+({\tt PREP\_IDEAL\_CASE}, {\tt PREP\_REAL\_CASE} or {\tt SPAWNING}),
+ the values of the namelists variables are the ones of the descriptive part
+of the input file of the program if it does exist. Otherwise, the values are
+set to the default ones, except for these that can be initialized during the
+initialization program (e.g. {\tt CINIFILE} or {\tt LUSERV}).
+
+Note that a physiographic file does not have a descriptive part.
+
+\subsubsection{The binary part}
+
+All the writings and readings of this type of files are done through LFI 
+routines. A general subroutine to read and write a Meso-NH file is given in the
+Meso-NH library, it provides a file including the fields of the previous record
+list. This Fortran library provides a way to tackle direct access binary files
+and thus a very quick access to the data stored in this file in any order.
+
+It should be noted that supplementary fields can be added to these basic
+information, which have been obtained at the same instant. 
+ In order to be easily drawn by the Meso-NH graphic package, the
+commentar field must be filled, according to the following rules:
+\begin{itemize}
+\item 
+the length of the character string is equal to 100
+\item 
+the type of the supplementary field must be specified :
+
+\begin{tabular} {|| c |c|| }
+\hline
+\hline
+type & commentar field \\
+\hline
+3D scalar & X\_Y\_Z\_varname  (UNIT) \\
+\hline
+2D scalar & X\_Y\_varname  (UNIT) \\
+\hline
+3D vector & VX\_xvarname\_VY\_yvarname\_VZ\_zvarname  (UNIT) \\
+\hline
+2D scalar & VX\_xvarname\_VY\_yvarname\_VZ\_zvarname  (UNIT) \\
+          & or  VX\_xvarname\_VY\_yvarname       (UNIT) \\
+\hline
+1D scalar & Z\_zvarname  (UNIT) \\
+\hline
+\hline
+\end{tabular}
+\end{itemize}
+
+\subsection{The diachronic file}
+It is a file obtained during a segment of simulation or resulting of the
+conversion of a synchronous file with {\tt conv2dia} for graphical purposes.
+
+The file directly obtained during the simulation has a name ended by {\tt .000},
+and contains records such as averaged variables, tendencies, fluxes stored
+at different times of the simulation on the whole or some parts of the domain.
+Such records are obtained by asking for temporal series (\ref{ss:series}),
+budgets (\ref{ss:budget}), aircraft or balloon (\ref{ss:balloon}), profiler
+or station (\ref{ss:station}), LES diagnostics (\ref{s:LESdiag}).
+
+\subsection{The physiographic file}
+It is a bidimensional MesoNH file with contains surface data as orography,
+vegetation classes, chemical emissions, etc.
+
+See the documentation :``THE EXTERNALIZED SURFACE USER'S GUIDE'' for more
+details.
+
+
+\section{References}
+\decrefname
+J. Clochard, 1989: Logiciel de Fichiers Index\'es. Direction de la
+ Météorologie Nationale. Note de travail ARPEGE n$^\circ$12.
+
+\decrefname
+J. Clochard, 1991: Logiciel de Fichiers Index\'es. Direction de la
+ Météorologie Nationale.  Technical report.
+
+\decrefname
+D. Gazen, 1999: Parallel IO routines. Man page on Meso-NH web site.
+
+\decrefname
+C. Fischer, 1994: File structure and content in the Meso-NH model. Meso-NH note.

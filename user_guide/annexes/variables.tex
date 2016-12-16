@@ -1,0 +1,129 @@
+\chapter{Name of the variables in MESONH}
+
+We will make a list of the variables present in a MESONH file without LES and budget variables. For the DIAG program the list is made in the chapter \ref{ch:diag}. Only the MESONH variables are referenced, not SURFEX one.
+
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{1cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt ACPRC} & [D]&Accumulated Cloud Precipitation Rain Rate &mm \\ \hline
+{\tt ACPRG} & [D]&Accumulated  Precipitation Graupel Rate &mm \\ \hline
+{\tt ACPRH} & [D]&Accumulated  Precipitation Hail Rate &mm \\ \hline
+{\tt ACPRR} & [D]&Accumulated Precipitation Rain Rate &mm \\ \hline
+{\tt ACPRS} & [D]&Accumulated  Precipitation Snow Rate &mm \\ \hline
+{\tt ACPRT} & [D]&Total Accumulated  Precipitation  Rate &mm \\ \hline
+{\tt AZIM} & [2D]&azimuth &rad \\ \hline
+{\tt CG\_RATE} &[2D]& CloudGround lightning Rate &/s \\ \hline
+{\tt CG\_TOTAL\_NB}&[2D]& CloudGround lightning Number& - \\ \hline
+{\tt CLDFR} & [2D]&Cloud fraction & \\ \hline
+{\tt CLEARCOL\_TM1} & [2D]&Trace of cloud & -\\ \hline
+{\tt DIR\_ALB} & [2D]&Direct albedo &- \\ \hline
+{\tt DIRFLASWD} & [2D]&Direct Downward Long Waves on flat surface & W/m$^2$\\ \hline
+{\tt DIRSRFSWD} & [2D]&Direct Downward Long Waves &W/m$^2$ \\ \hline
+{\tt DSVCONVxxx} & [3D]& Convective tendency for scalar variable& /s\\ \hline
+{\tt DSVCONV\_LINOX}&[3D]&Convective tendency for linox & /s\\\hline
+{\tt DRCCONV} & [2D]&Convective R\_c tendency & /s \\ \hline
+{\tt DRICONV} & [2D]&Convective R\_i tendency & /s \\ \hline
+{\tt DRVCONV} & [2D]&Convective R\_v tendency & /s \\ \hline
+{\tt DTHCONV} & [2D]&Convective heating/cooling rate &K/s \\ \hline
+{\tt DTHRAD} & [2D]&Radiative heating/cooling rate & K/s \\ \hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{1cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt EMIS} & [2D]&Emissivity & -\\ \hline
+{\tt EVAP3D} & [2D]&Instantaneous 3D Rain Evaporation flux  &kg/kg/s \\ \hline
+{\tt EXNTOP}  & & Exner function at model top&\\ \hline
+{\tt FLALWD } & [2D]&Downward Long Waves on flat surface & W/m$^2$\\ \hline
+{\tt GXTHFRC} & [1D]& $(\partial\theta/ \partial x)_{frc}$ &K/m \\ \hline
+{\tt GYTHFRC} & [1D]& $(\partial\theta/ \partial y)_{frc}$  &K/m \\ \hline
+{\tt IC\_RATE} &[2D]& IntraCloud lightning Rate   &/s\\\hline
+{\tt IC\_TOTAL\_NB}&[2D]& IntraCloud lightning Number &-\\ \hline
+{\tt INPRC} & [2D]&Instantaneous Cloud Precipitation Rain Rate &mm/h \\ \hline
+{\tt INPRG} & [2D]&Instantaneous  Precipitation Graupel Rate &mm/h \\ \hline
+{\tt INPRH} & [2D]&Instantaneous  Precipitation Hail Rate &mm/h \\ \hline
+{\tt INPRR} & [2D]&Instantaneous Precipitation Rain Rate &mm/h \\ \hline
+{\tt INPRR3D} & [2D]&Instantaneous 3D Rain Precipitation flux &m/s \\ \hline
+{\tt INPRS} & [2D]&Instantaneous  Precipitation Snow Rate &mm/h \\ \hline
+{\tt INPRT} & [2D]&Total Instantaneous  Precipitation  Rate &mm/h \\ \hline
+{\tt LSPABSM} & [3D]&Large scale absolute pression at $t-dt$ time& Pa \\ \hline
+{\tt LSRVM} & [3D]&Large scale Vapor mixing Ratio at $t-dt$ time & kg/kg\\ \hline
+{\tt LSTHM } & [3D]&Large scale  potential temperature at $t-dt$ time& K\\ \hline
+{\tt LSUM } & [3D]&Large scale horizontal component U of wind at $t-dt$ time& m/s\\ \hline
+{\tt LSVM} & [3D]&Large scale horizontal component V of wind at $t-dt$ time& m/s\\ \hline
+{\tt LSWM} & [3D]&Large scale vertical wind at $t-dt$ time& m/s\\ \hline
+{\tt PABST} & [3D]&absolute pression at $t$ time& Pa \\ \hline
+{\tt PACCONV} & [2D]&Convective Accumulated Precipitation rate (from the beginnning of the experiment) &mm \\ \hline
+{\tt PGROUNDFRC} & [0D]& forcing ground pressure & Pa \\ \hline
+{\tt PRCONV} & [2D]&Convective instantaneous Precipitation Rate &mm/h \\ \hline
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{1cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt PRSCONV} & [2D]& Convective instantaneous Precipitation Rate for Snow& mm/h\\ \hline
+{\tt RCT} & [3D]&Cloud mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RGT} & [3D]&Graupel mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RHODREF }& [3D] &Dry density for reference state with orography &kg/m$^3$ \\ \hline
+{\tt RHOREFZ }&  [1D] &rhodz for reference state without orography &kg/m$^3$  \\ \hline
+{\tt RHT} & [3D]&Hail mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RIT} & [3D]&Ice mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RRT} & [3D]&Rain mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RST} & [3D]&Snow mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt RVFRC} & [1D]&$(\partial r_v/ \partial t)_{frc}$ forcing vapor mixing ratio  & kg/kg\\ \hline
+{\tt RVT} & [3D]&Vapor mixing Ratio  at $t$ time& kg/kg\\ \hline
+{\tt SCA\_ALB} & [2D]&Scattered albedo &- \\ \hline
+{\tt SCAFLASWD} & [2D]& Scattered Downward Long Waves on flat surface&W/m$^2$ \\ \hline
+{\tt SVTnnn} & [3D]&User or passive scalar variables at $t$ time& kg/kg \\ \hline
+{\tt TENDRVFRC} & [1D]&$(\partial r_v/ \partial t)_{frc}$ &/s  \\ \hline
+{\tt TENDTHFRC} & [1D]&$(\partial\theta / \partial t)_{frc}$ &K/s \\ \hline
+{\tt THFRC} & [1D]& $\theta_{frc}$ forcing potential temperature& K\\ \hline
+{\tt THT } & [3D]& potential temperature at $t$ time& K\\ \hline
+{\tt THVREF }& [3D]& Thetav for reference state with orography &K  \\ \hline
+{\tt THVREFZ} & [1D] &thetavz for reference state without orography &K \\ \hline
+{\tt TKET} & [3D]& Turbulent Kinetic Energy at $t$ time& m$^2$/s$^2$ \\ \hline
+{\tt TSRAD} & [2D]&Radiative Surface Temperature & K\\ \hline
+{\tt UFRC} & [1D]&  zonal component of horizontal forcing wind&m/s \\ \hline
+{\tt UT } & [3D]& horizontal component U of wind at $t$ time& m/s\\ \hline
+{\tt VFRC} & [1D]& meridian component of horizontal forcing wind &m/s \\ \hline
+{\tt VT} & [3D]& horizontal component V of wind at $t$ time& m/s\\ \hline
+{\tt WFRC} & [D]& vertical forcing wind  & m/s\\ \hline
+{\tt WT} & [3D]&vertical wind at $t$ time& m/s\\ \hline
+{\tt ZENITH} & [2D]&zenith & rad\\ \hline
+{\tt ZS }& [2D] &orography &m  \\ \hline
+{\tt ZSMT }& [2D] &smoothed orography for SLEVE vertical coordinate &m  \\ \hline
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+\paragraph{Hurricane initialization in PREP\_REAL\_CASE program}
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{1cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt UT15 } &[3D]&component U of Total wind & m/s\\ \hline
+{\tt VT15 } &[3D]&component V of Total wind & m/s\\ \hline
+{\tt TEMPTOT} & [3D]&Total Temperature &K \\ \hline
+{\tt PRESTOT} & [3D]&Total pressure &Pa \\ \hline
+{\tt UT16 } &[3D]&component U of Environmental wind & m/s\\ \hline
+{\tt VT16 } &[3D]&component V of Environmental wind & m/s\\ \hline
+{\tt TEMPENV} & [3D]&Environmental Temperature &K \\ \hline
+{\tt PRESENV} & [3D]&Environmental pressure &Pa \\ \hline
+{\tt UT17 } &[3D]&component U of Basic (filtered)  wind & m/s\\ \hline
+{\tt VT17 } &[3D]&component V of Basic (filtered) wind & m/s\\ \hline
+{\tt TEMPBAS} & [3D]&Basic (filtered) Temperature &K \\ \hline
+{\tt PRESBAS} & [3D]&Basic (filtered) pressure &Pa \\ \hline
+{\tt VTDIS} & [3D]&Total disturbance tangential wind &m/s \\ \hline
+\hline
+\end{tabular}
+\end{center}
+
+

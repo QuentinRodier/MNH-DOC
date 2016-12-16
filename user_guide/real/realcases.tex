@@ -1,0 +1,905 @@
+\chapter{{\bf PREP\_REAL\_CASE}}\label{c:PREPREAL}
+\section{Presentation}
+{\bf PREP\_REAL\_CASE } program performs the change of
+orography and vertical grid by interpolating horizontally and vertically for a 
+GRIB file or only vertically for a MESO-NH file. The MESO-NH output file  will
+ be used either for the beginning of the simulation or for coupling.\\
+The main hypothesis is that hydrostatism is verified.
+Therefore, if the input file is a MESO-NH file, there is a small 
+loss of information.\\
+
+What's going in and out?
+\begin{itemize}
+\item Input:
+\begin{itemize}
+\item a file containing the atmospheric 3D and surface 2D variable fields
+(hereafter called atmospheric file); it can be
+either
+\begin{itemize}
+\item a GRIB file obtained from {\bf extractecmwf} or {\bf extractarpege}
+\item or a MESO-NH file (obtained with {\bf SPAWNING} for example)
+\end{itemize}
+In the first case, both horizontal and vertical interpolations are carried
+ utn by the PREP\_REAL\_CASE. In the second case, only vertical interpolation is 
+carried on by PREP\_REAL\_CASE  as the horizontal interpolation is already 
+done by the spwaning (see chapter \ref{c:SPAWNING})
+\item a physiographic data file (it can also be a complete MESO-NH file).
+\item an optional file containing the chemical species (here after called
+chemical file); it is used only if the atmospheric file is a GRIB file. 
+It can be either
+\begin{itemize}
+\item a GRIB file obtained from {\bf extractarpege} (e.g. an file from the
+Mocage french model)
+\item or a MESO-NH file (obtained in a previous simulation for example)
+\end{itemize}
+\item the file PRE\_REAL1.nam which contains the directives for PREP\_REAL\_CASE
+\end{itemize}
+\item Output:
+\begin{itemize}
+\item the MESO-NH FM-file
+\end{itemize}
+\end{itemize}
+
+
+\subsection{The physiographic data file}
+This is a FM file, but with fewer elements than a MESO-NH file. It contains
+the physiographic 2D fields. The geographic and grid data are stored on this 
+file.
+This file is created by the program PREP\_PGD.
+It is possible to use a complete MESO-NH file, since it also contains
+the physiographic fields.
+If one only wants to modify the vertical grid of
+a MESO-NH file, without any change to the orography, one can specify it as both  atmospheric file and physiographic files.
+
+It contains:
+\begin{itemize}
+\item the definition of the projection, the horizontal domain and the 
+horizontal grid
+\item the physiographic fields
+\end{itemize}
+
+\subsection{The atmospheric file}
+Both GRIB and FM files are self explanatory.
+The physiographic data stored in it will not be saved in the output
+MESONH file.
+
+\subsection{The surface file (optional)}
+Both GRIB and FM files are self explanatory. The surface fields can be read in another file than the atmospheric one.
+ 
+\subsection{The chemical file (optional)}
+Both GRIB and FM files are self explanatory. If the atmospheric file is a GRIB
+file, the chemical species can be read in another file than the atmospheric one.
+ 
+\newpage
+\section{The file PRE\_REAL1.nam}
+This file contains namelists with the directives to run PREP\_REAL\_CASE.
+The namelists contain the names of the files and the definition of
+the vertical grid.  The file can also contain a free formatted part after the vertical grid
+definition namelist, where  the vertical levels can be prescribed  if this
+option is chosen.
+\subsection{Namelist NAM\_AERO\_CONF (aerosol initialization)}
+\index{NAM\_AERO\_CONF!namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LORILAM      & logical       & FALSE    \\
+LDUST        & logical       & FALSE    \\
+LSALT        & logical       & FALSE    \\
+LINITPM      & logical       & FALSE    \\
+XINIRADIUSI  & real          & 0.05     \\
+XINIRADIUSJ  & real          & 0.2      \\
+XINISIGI     & real          & 1.8      \\
+XINISIGJ     & real          & 2.0      \\
+XN0IMIN      & real          & 10.      \\
+XN0JMIN      & real          & 1.       \\
+CRGUNIT      & character     & "NUMB"   \\
+NMODE\_DST   & integer       & 3       \\
+XN0MIN       & real          & 1.e3 , 1.e1 , 1.e-2 \\
+XINIRADIUS   & real          & 0.044, 0.3215, 1.575 \\
+XINISIG      & real          & 2.0, 1.78, 1.85 \\
+CRGUNITD     & character     & "NUMB"   \\
+NMODE\_SLT   & integer       & 3       \\
+XN0MIN\_SLT  & real          & 1.e4 , 1.e2 , 1.e-1 \\
+XINIRADIUS\_SLT & real       & 0.14, 1.125,  7.64\\
+XINISIG\_SLT    & real       & 1.9, 2., 2. \\
+CRGUNITS     & character     & "MASS"   \\
+\hline
+\end{tabular}
+\end{center}
+
+See section \ref{s:namaeropre} page \pageref{s:namaeropre} for details.
+			  
+			  
+\subsection{Namelist NAM\_BLANK}
+See section \ref{s:namblank} page \pageref{s:namblank} for details.
+
+\subsection{Namelist NAM\_CH\_CONF ( file names)}
+\index{NAM\_CH\_CONF!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LUSECHAQ  & logical  & .FALSE.  \\
+LUSECHIC  & logical  & .FALSE.   \\
+LUSECHEM  & logical  & .FALSE.   \\
+
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LUSECHAQ : switch to initialize aqueous phase chemistery.
+\index{LUSECHAQ!\innam{NAM\_CH\_CONF}}
+\item LUSECHIC : switch to initialize ice  phase chemistery.
+\index{LUSECHIC!\innam{NAM\_CH\_CONF}}
+\item LUSECHEM : switch to initialize gazeous phase chemistery whithout aqueous phase chemistery
+\index{LUSECHEM!\innam{NAM\_CH\_CONF}}
+
+\end{itemize}
+
+\subsection{Namelist NAM\_CONFIO}
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+
+\subsection{Namelist NAM\_CONFZ}
+See section \ref{s:namconfz} page \pageref{s:namconfz} for details.
+
+\subsection{Namelist NAM\_FILE\_NAMES ( file names)}
+\index{NAM\_FILE\_NAMES!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+HATMFILE      & character (LEN=28) & ' '           \\
+HATMFILETYPE  & character (LEN=6)  & 'MESONH'      \\
+HPGDFILE      & character (LEN=28) & ' '           \\
+HSURFFILE     & character (LEN=28) & ' '           \\
+HSURFFILETYPE & character (LEN=6)  & 'MESONH'      \\
+HCHEMFILE     & character (LEN=28) & ' '           \\
+HCHEMFILETYPE & character (LEN=6)  & 'MESONH'      \\
+CINIFILE      & character (LEN=28) & 'INIFILE'     \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item HATMFILE : name of the atmospheric file.
+\index{HATMFILE!\innam{NAM\_FILE\_NAMES}}
+\item HATMFILETYPE : type of  atmospheric file ('GRIBEX', 'MESONH')
+\index{HATMFILETYPE!\innam{NAM\_FILE\_NAMES}}
+\item HPGDFILE : name of the Physiographic Data File.
+\index{HPGDFILE!\innam{NAM\_FILE\_NAMES}}
+\item HSURFFILE : optional name of the file containing the surface fields.
+\index{HSURFFILE!\innam{NAM\_FILE\_NAMES}}
+\item HSURFFILETYPE : type of surface file ('GRIBEX', 'MESONH')
+\index{HSURFFILETYPE!\innam{NAM\_FILE\_NAMES}}
+\item HCHEMFILE : optional name of the file containing
+the chemical species if they are not in the HATMFILE or if the ones of the
+HATMFILE are not used (only if HATMFILETYPE is 'GRIBEX'). The grids must
+be the same as the ones of the output file (CINIFILE).
+\index{HCHEMFILE!\innam{NAM\_FILE\_NAMES}}
+\item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH')
+\index{HCHEMFILETYPE!\innam{NAM\_FILE\_NAMES}}
+\item CINIFILE : name of the MESO-NH output FM-file, used as initial
+or coupling file in a MESO-NH simulation
+\index{CINIFILE!\innam{NAM\_FILE\_NAMES}}
+\end{itemize}
+\newpage
+\subsection{Namelist NAM\_HURR\_CONF (hurricane filtering and vortex bogussing)}
+\index{NAM\_HURR\_CONF!namelist description}
+Two PREP\_REAL\_CASE jobs are to be performed.
+In a mono-model configuration, the
+first job allows to remove analysed hurricane from the input GRIB fields:
+filtered and interpolated fields are written in a MesoNH file.
+It is used as input file for the second
+PREP\_REAL\_CASE job during which the analytical vortex is added.\\
+
+Each step (hurricane filtering and vortex bogussing) is separately invoked
+within the PREP\_REAL\_CASE program:
+\subitem
+i) The hurricane filtering is applied on four input atmospheric GRIB fields
+(HATMFILETYPE='GRIBEX'), when they are in the horizontal grid of the PGD file
+and in the vertical grid of the GRIB file. The input atmospheric GRIB fields 
+filtered are the two horizontal components of wind, the absolute temperature,
+the humidity 
+and the surface pressure reduced to ground level. Each field is decomposed 
+into three parts: first, the BASic part is computed by the low-pass Barnes
+filter; then the hurricane (symmetric) disturbance is computed from the 
+remainder disturbance part. The initial fields are then remplaced by their 
+ENVironmental part: total field minus hurricane disturbance part.
+\subitem
+ii) The vortex bogussing consists on a symmetric vortex added to the input
+atmospheric MesoNH fields (HATMFILETYPE='MESONH'). 
+The tangential wind is computed from an analytical formulation (Holland, 1980):
+{\bf Mercator projection must be used} to respect hypotheses of Holland.
+Then, the balanced mass field is deduced
+from the thermal wind relation. The bogus of the two horizontal components of
+wind and the potential temperature is added to the initial (filtered) fields.
+
+For a grid-nesting simulation, the hurricane filtering is first applied for
+the outer domain (dad model), with the program PREP\_REAL\_CASE.
+The filtered fields are then horizontally interpolated for inner domains
+with the program SPAWNING (see section \ref{s:spawn}). 
+Then, for each inner domain, a vortex bogussing is added with the program
+PREP\_REAL\_CASE.
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LFILTERING     & logical  & .FALSE.    \\
+CFILTERING     & character (LEN=5)  & 'UVT  '  \\
+NK             & integer  & 50  \\
+XLAMBDA        & real & 0.2     \\
+XLATGUESS      & real & XUNDEF  \\
+XLONGUESS      & real & XUNDEF  \\
+XBOXWIND       & real & XUNDEF  \\
+XRADGUESS      & real & XUNDEF  \\
+NPHIL          & integer  & 24  \\
+NDIAG\_FILT    & integer  & -1  \\
+NLEVELR0       & integer  & 15  \\
+\hline
+LBOGUSSING     & logical    & .FALSE.   \\
+XLATBOG        & real & XUNDEF  \\
+XLONBOG        & real & XUNDEF  \\
+XVTMAXSURF     & real & XUNDEF  \\
+XRADWINDSURF   & real & XUNDEF  \\
+XMAX           & real & 16000.  \\
+XC             & real & 0.7  \\
+XRHO\_Z        & real & -0.3  \\
+XRHO\_ZZ       & real & 0.9   \\
+XB\_0          & real & 1.65    \\
+XBETA\_Z       & real & -0.5   \\
+XBETA\_ZZ      & real & 0.35   \\
+XANGCONV0      & real & 0.   \\
+XANGCONV1000   & real & 0.   \\
+XANGCONV2000   & real & 0.   \\
+CDADATMFILE    & character (LEN=28) & ' '           \\
+CDADBOGFILE    & character (LEN=28) & ' '           \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LFILTERING : Flag to filter the fields (U,V,T,Q,reduced Ps) of the 
+                  atmospheric file (logical)
+\index{LFILTERING!\innam{NAM\_HURR\_CONF}}
+\item CFILTERING : to choose the fields to be filtered (U,V,T,reduced Ps).
+\index{CFILTERING!\innam{NAM\_HURR\_CONF}}
+\begin{itemize}
+\item 'UVT  ' : U,V,T are filtered (default),
+\item 'UVTQ  ' : U,V,T,Q are filtered (default),
+\item 'UVTP ' : U,V,T and reduced PS are filtered,
+\item 'UVTPQ ' : U,V,T,Q and reduced PS are filtered,
+\end{itemize}
+\item NK : number of points of the half-width of the window in which the 
+Barnes filter is applied to compute low-pass component of a given field
+\index{NK!\innam{NAM\_HURR\_CONF}}
+\item XLAMBDA : a coefficient in the exponential weighting function of the 
+Barnes filter
+\index{XLAMBDA!\innam{NAM\_HURR\_CONF}}
+\item XLATGUESS : latitude of the guessed position of the cyclone center
+\index{XLATGUESS!\innam{NAM\_HURR\_CONF}}
+\item XLONGUESS : longitude of the guessed position of the cyclone center
+\index{XLONGUESS!\innam{NAM\_HURR\_CONF}}
+\item XBOXWIND : half-width of the box inside which the dynamical center
+is searched from the guessed position (km)
+\index{XBOXWIND!\innam{NAM\_HURR\_CONF}}
+\item XRADGUESS : guess  of the radius of the domain in which the cyclone 
+will be filtered (km)
+\index{XRADGUESS!\innam{NAM\_HURR\_CONF}}
+\item NPHIL : number of azimuthal directions used for the cylindrical coordinates
+\index{NPHIL!\innam{NAM\_HURR\_CONF}}
+\item NDIAG\_FILT : allows storage of several components calculated from total fields. {\bf Be careful, the components are on the GRIB vertical grid: in diaprog,
+plot them only on \_K\_ levels}. 
+Then to visualize all the GRIB vertical levels, the 
+number of MesoNH vertical levels must be equal or greater than the number of
+levels in the input GRIB file.
+\index{NDIAG\_FILT!\innam{NAM\_HURR\_CONF}}
+\begin{enumerate}
+\item[] 0 : total (unfiltered) fields: UT15, VT15 for wind components; TEMPTOT,
+PRESTOT for absolute temperature and surface pressure, \\
+        \hspace*{0.5cm} environmental (filtered) fields (total field minus 
+ hurricane disturbance component): UT16, VT16, TEMPENV, PRESENV,
+\item[] 0,1 : basic fields (low-pass component isolated
+ by the Barnes filter): UT17, VT17, TEMPBAS, PRESBAS, 
+\item[] 0,1,2 : total disturbance tangential wind component (XVTDIS).
+\end{enumerate}
+\item NLEVELR0 : level used to compute R0
+\index{NLEVELR0!\innam{NAM\_HURR\_CONF}}
+\item LBOGUSSING : Flag to switch on the addition of the bogus vortex (logical)
+\index{LBOGUSSING!\innam{NAM\_HURR\_CONF}}
+\item XLATBOG : latitude of the bogussed position of the analytical
+ cyclone center
+\index{XLATBOG!\innam{NAM\_HURR\_CONF}}
+\item XLONBOG : longitude of the bogussed position of the analytical
+ cyclone center
+\index{XLONBOG!\innam{NAM\_HURR\_CONF}}
+\item XVTMAXSURF : maximum tangential wind near the surface or about 500 m 
+ altitude (m/s)
+\index{XVTMAXSURF!\innam{NAM\_HURR\_CONF}}
+\item XRADWINDSURF : radius of maximum wind near the surface or about 500 m 
+ altitude (km)
+\index{XRADWINDSURF!\innam{NAM\_HURR\_CONF}}
+\item XMAX : altitude where the tangential wind vanishes (m)
+\index{XMAX!\innam{NAM\_HURR\_CONF}}
+\item The following variables are parameters describing tangential wind in 
+Holland's law (see formulation in routine {\tt holland\_vt.f90}).
+\subitem {XC :} standard coefficient for maximum tangential wind,
+\index{XC!\innam{NAM\_HURR\_CONF}}
+\subitem{XRHO\_Z, XRHO\_Z :} standard coefficients for radius of maximum wind,
+\index{XRHO\_Z, XRHO\_Z!\innam{NAM\_HURR\_CONF}}
+\subitem{XB\_0, XBETA\_Z, XBETA\_ZZ :} standard coefficients for B parameter.
+\index{XB\_0,XBETA\_Z,XBETA\_ZZ!\innam{NAM\_HURR\_CONF}}
+\item XANGCONV0, XANGCONV1000, XANGCONV2000 : convergence angle of wind near the
+surface, at 1000m and 2000m altitude.  
+\index{XANGCONV0!\innam{NAM\_HURR\_CONF}}
+\index{XANGCONV1000!\innam{NAM\_HURR\_CONF}}
+\index{XANGCONV2000!\innam{NAM\_HURR\_CONF}}
+
+\item CDADATMFILE : if LBOGUSSING=.TRUE. : name of the dad of HATMFILE
+\index{CDADATMFILE!\innam{NAM\_HURR\_CONF}}
+\item CDADBOGFILE : if LBOGUSSING=.TRUE. : name of the dad of CINIFILE.
+The program will check that CDADATMFILE and CDADBOGFILE have the same 
+characteristics,
+before replacing the dad name of CINIFILE by CDADBOGFILE instead of CDADATMFILE.
+CDADBOGFILE must exist before running the prep\_real\_case job. 
+\index{CDADBOGFILE!\innam{NAM\_HURR\_CONF}}
+\end{itemize}
+\subsection{Namelist NAM\_NCOUT}
+See section \ref{s:namncout} page \pageref{s:namncout} for details.
+
+\subsection{Namelist NAM\_REAL\_CONF  (configuration variables)}
+\index{NAM\_REAL\_CONF!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+CEQNSYS       & character (LEN=3)  &if HATMFILETYPE = 'GRIBEX': \\
+ & & \hspace*{0.5cm}'DUR' \\
+              &                    & if HATMFILETYPE = 'MESONH': \\
+ & & \hspace*{0.5cm} CEQNSYS value used in input MESONH file\\
+CPRESOPT      & character (LEN=5)  & 'CRESI' \\
+NVERB         & integer            & 1      \\
+LSHIFT        & logical            & if HATMFILETYPE = 'GRIBEX':  \\
+ & & \hspace*{0.5cm}.TRUE. \\
+              &                    & if HATMFILETYPE = 'MESONH': \\
+ & & \hspace*{0.5cm}.FALSE. \\
+LDUMMY\_REAL  & logical            & .FALSE.                     \\
+LRES          & logical            & .FALSE.                     \\
+XRES          & real               & 1.E-07                      \\
+LCOUPLING     & logical            & .FALSE.                     \\
+NHALO      & integer        & 1      \\
+JPHEXT     & integer        & 1      \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CEQNSYS : EQuatioN SYStem
+\index{CEQNSYS!\innam{NAM\_REAL\_CONF}}
+\begin{itemize}
+\item 'LHE': Lipps-HEmler 1982
+\item 'MAE': Modified Anelastic Equations
+\item 'DUR': following DURran 1990 derivations
+\end{itemize}
+
+\item CPRESOPT : option for pressure solver 
+('RICHA', 'CGRAD', 'CRESI', 'ZRESI').
+\index{CPRESOPT!\innam{NAM\_REAL\_CONF}}
+
+\item NVERB : verbosity level (error diagnostics are computed if
+NVERB$>$4)
+\index{NVERB!\innam{NAM\_REAL\_CONF}}
+
+\item LSHIFT : flag to shift altitudes in boundary layer
+\index{LSHIFT!\innam{NAM\_REAL\_CONF}}
+
+\item LDUMMY\_REAL : flag to read dummy fields stored in the GRIB file (if you have previously run {\bf extractarpege}
+asking for additionnal fields by modifying FULLPOS namelist or {\bf extractecmwf} by modifying MARS requests).You have to fill also a free formatted part as described in the exemple of AROME field in section \ref{i:realdummy} p.\pageref{i:realdummy}).
+\index{LDUMMY\_REAL!\innam{NAM\_REAL\_CONF}}
+
+\item LRES : flag to change the residual divergence limit
+\index{LRES\innam{NAM\_REAL\_CONF}}
+
+\item XRES : Value of the residual divergence limit
+\index{XRES\innam{NAM\_REAL\_CONF}}
+
+\item LCOUPLING : Flag to handle the output file as coupling file instead of initial file : no surface field will be computed. (time saving and smaller file) 
+\index{LCOUPLING\innam{NAM\_REAL\_CONF}}
+
+\item
+NHALO: Size of the halo for parallel distribution.
+This variable is related to computer performance but has no
+impact on simulation results.\\
+\index{NHALO!\innam{NAM\_REAL\_CONF}}
+
+\item
+JPHEXT:  Horizontal External points number\\
+JPHEXT must be equal to 3 for cyclic cases with WENO5.
+\index{JPHEXT!\innam{NAM\_REAL\_CONF}}
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_VER\_GRID (vertical grid definition)}
+\index{NAM\_VER\_GRID!namelist description}
+
+The use of the THINSHELL approximation is specified in this namelist.
+There are five ways to compute the vertical grid (the three first ones are
+ similar to PREP\_IDEAL\_CASE):
+\begin{enumerate}
+\item
+constant grid mesh: only the number of levels NKMAX and the grid mesh sizes 
+ZDZGRD and ZDZTOP are used. These must be equal. The type of grid 
+YZGRID\_TYPE is set to 'FUNCTN'.
+\item
+two layers are defined, with constant stretching in each of these, the grid
+mesh sizes being given near the ground and at top of the model. It is possible
+that the top grid size is never reached, if the number of points is not enough
+for the prescribed stretchings. The type of grid 
+YZGRID\_TYPE is also set to 'FUNCTN'.
+\item
+the levels are given by the user. The type of grid YZGRID\_TYPE is set to
+'MANUAL' in the namelist, and only the number of levels NKMAX is also used in it. 
+\item
+The levels in the output MESONH file are the same as in the input MESONH file 
+(only if the atmospheric input file is a MESONH file).
+The type of grid YZGRID\_TYPE is set to 'SAMEGR' (for "same grid") and
+NKMAX is not specified.
+\item 
+The physical levels of the output MESONH file are the same as 
+the lower NKMAX physical levels in the input MESONH file 
+(only if the atmospheric input file is a MESONH file).
+The type of grid YZGRID\_TYPE is set to 'SAMEGR' (for "same grid") and NKMAX
+is specified.
+\end{enumerate}
+
+The variables of this namelist are:
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LTHINSHELL     & logical    & .FALSE.    \\
+NKMAX          & integer    & 60     if HATMFILETYPE='GRIBEX'  \\
+               & integer    & same as in input file if HATMFILETYPE='MESONH'  \\
+YZGRID\_TYPE   & character (len=6) & 'FUNCTN' if HATMFILETYPE='GRIBEX'  \\
+               &                   & 'SAMEGR' if HATMFILETYPE='MESONH'  \\
+ZDZGRD         & real & 300 m  \\
+ZDZTOP         & real & 300 m     \\
+ZZMAX\_STRGRD  & real & 0 m     \\
+ZSTRGRD        & real & 0  \%        \\
+ZSTRTOP        & real & 0 \% \\
+LSLEVE         & logical & FALSE   \\
+XLEN1          & real & 7500.   \\
+XLEN2          & real & 2500.   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LTHINSHELL : Flag for the thinshell approximation (logical)
+\index{LTHINSHELL!\innam{NAM\_VER\_GRID}}
+\item NKMAX : number of points in z-direction of the required 
+              physical domain. The total size of the array written in initial
+file will be $NKMAX +2 JPVEXT$ ($JPVEXT$ is fixed to 1 for the present version
+ of Meso-NH) 
+\index{NKMAX!\innam{NAM\_VER\_GRID}}
+\item   YZGRID\_TYPE : type of vertical grid definition:
+\index{YZGRID\_TYPE!\innam{NAM\_VER\_GRID}}
+\begin{itemize}
+\item 'FUNCTN' : the levels are calculated by the program, according to the
+namelist variables.
+\item 'MANUAL' : the levels are written in the free-formatted part after the
+namelist.
+\item 'SAMEGR' : the levels are the same as those in the input file. Only
+available when atmospheric input file is a MESONH file.
+\end{itemize}
+ 
+\item   ZDZGRD :   mesh length in z-direction near the ground (m)
+\index{ZDZGRD!\innam{NAM\_VER\_GRID}}
+
+\item   ZDZTOP :   mesh length in z-direction near the top of the model (m)
+\index{ZDZTOP!\innam{NAM\_VER\_GRID}}
+
+\item   ZZMAX\_STRGRD :   Altitude separating the two constant stretching layers  (m)
+\index{ZZMAX\_STRGRD!\innam{NAM\_VER\_GRID}}
+
+\item   ZSTRGRD :   Constant imposed stretching (in \%) in the lower layer
+(below ZZMAX\_STRGRD)
+\index{ZSTRGRD!\innam{NAM\_VER\_GRID}}
+
+\item   ZSTRTOP :   Constant imposed stretching (in \%) in the upper layer
+(above ZZMAX\_STRGRD)
+\index{ZSTRTOP!\innam{NAM\_VER\_GRID}}
+
+\item  LSLEVE \index{LSLEVE!\innam{NAM\_VER\_GRID}} : flag for Sleve 
+vertical coordinate.
+\item  XLEN1 \index{XLEN1!\innam{NAM\_VER\_GRID}} : decay scale for
+smooth topography (in meters)
+\item  XLEN2 \index{XLEN2!\innam{NAM\_VER\_GRID}} : decay scale for
+smale-scale topography deviation (in meters)
+
+\end{itemize}
+
+\subsection{Namelists of the externalized surface for PREP\_REAL\_CASE} \label{surfex_prep}
+Fore more informations, see SURFEX documentation.
+\begin{itemize}
+\item NAM\_PREP\_SURF\_ATM\index{NAM\_PREP\_SURF\_ATM!surfex namelist}
+\item NAM\_PREP\_SEAFLUX\index{NAM\_PREP\_SEAFLUX!surfex namelist}
+\item NAM\_PREP\_WATFLUX\index{NAM\_PREP\_WATFLUX!surfex namelist}
+\item NAM\_PREP\_FLAKE\index{NAM\_PREP\_FLAKE!surfex namelist}
+\item NAM\_PREP\_ISBA\index{NAM\_PREP\_ISBA!surfex namelist}
+\item NAM\_PREP\_ISBA\_SNOW\index{NAM\_PREP\_ISBA\_SNOW!surfex namelist}
+\item NAM\_PREP\_ISBA\_CARBON\index{NAM\_PREP\_ISBA\_CARBON!surfex namelist}
+\item NAM\_PREP\_TEB\index{NAM\_PREP\_TEB!surfex namelist}
+\item NAM\_PREP\_TEB\_SNOW\index{NAM\_PREP\_TEB\_SNOW!surfex namelist}
+\item NAM\_PREP\_TEB\_GARDEN\index{NAM\_PREP\_TEB\_GARDEN!surfex namelist}
+\item NAM\_PREP\_GARDEN\_SNOW\index{NAM\_PREP\_GARDEN\_SNOW!surfex namelist}
+\end{itemize}
+
+
+\subsection{Free formatted part : Vertical grid}
+
+This part is optional in the file, read only if YZGRID\_TYPE='MANUAL'.
+It must begin by the keyword {\bf ZHAT}
+In this case (NKMAX+1) levels are written in meters in free format after the keyword, 
+from ground level (generally 0) to rigid top level.
+
+\subsection{Second free formatted part related to chemical species}:
+This part is only used if you have previously run {\bf extractarpege}
+with MOCAGE outputs. This part must begin by the keyword {\bf MOC2MESONH}.
+Then, the list of the MesoNH chemical species, and
+their corresponding GRIB code in the GRIB file, is specified as follows: 
+\begin{verbatim}
+MOC2MESONH
+transfer mocage/RACM variables (default values)
+2 # NUMBER OF OPTIONAL GRIB VARIABLES
+(A4,1X,I5)
+O3   180
+NO2  183
+\end{verbatim}
+
+\subsection{Examples of namelist file PRE\_REAL1.nam}
+\begin{itemize}
+\item GRIBEX file, levels being calculated, and chemical species
+\begin{verbatim}
+&NAM_FILE_NAMES HATMFILE   ='ALT90101500'     , HATMFILETYPE='GRIBEX' ,
+                HPGDFILE   ='PGDFILE_10km'    ,
+                CINIFILE   ='CPL_example1'    /
+&NAM_REAL_CONF CEQNSYS="LHE", NVERB=7 /
+&NAM_VER_GRID NKMAX=60, YZGRID_TYPE='FUNCTN', ZDZGRD=50., ZDZTOP=500., 
+              ZZMAX_STRGRD=3000., ZSTRGRD=2., ZSTRTOP=6. /
+&NAM_BLANK
+              
+MOC2MESONH
+transfer mocage/RACM variables 
+2 # NUMBER OF OPTIONAL GRIB VARIABLES
+(A4,1X,I5)
+O3   180
+NO2  183
+\end{verbatim}
+{\bf N.B.:} the mocage part is written at the end of namelist file.
+\subitem
+
+\item MESONH file and levels given manually
+\begin{verbatim}
+&NAM_FILE_NAMES HATMFILE   ='POI03.1.DAY01.001'  , HATMFILETYPE='MESONH' ,
+                HPGDFILE   ='PGDFILE_10km'       ,
+                CINIFILE   ='CPL_example2'       /
+&NAM_REAL_CONF NVERB=5 /
+&NAM_VER_GRID NKMAX=10, YZGRID_TYPE='MANUAL' /
+ZHAT
+0.
+1050.
+2100.
+3250.
+4300.
+5200.
+6100.
+7000.
+8000.
+9000.
+10000.
+\end{verbatim}
+\end{itemize}
+
+
+%---------------------------------------------------------------
+\section{Processing of extra fields in AROME GRIB file}
+\label{i:realdummy}
+
+AROME GRIB files obtained with extractarpege contain fields which aren't read by default by PREP\_REAL\_CASE. You could want to have this extra fields in your FM file. To get this fields, you have to use LDUMMY\_REAL=T and fill a free formatted part at the end of PRE\_REAL1.nam.
+
+This part must begin by the keyword {\bf DUMMY\_2D} (for 2D fields).
+Then, the list of the MesoNH dummy fields, and their corresponding GRIB code in the GRIB file (parameter code, and if 
+ambiguity with another variables type and value of level),
+ is specified as follows (This example  matches with all the extra fields available in AROME GRIB file): 
+
+\begin{verbatim}
+DUMMY_2D
+diagnostiques prevus
+10
+ACCPLUIE 62
+ACCNEIGE 79
+ACCGRAUPEL 78
+INSPLUIE 169
+INSNEIGE 64
+INSGRAUPEL 63
+UM05 33 105 10
+VM05 34 105 10
+CLSHUMI.RELA 52 105 2
+CLSTEMPE 11 105 2
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\chapter{Horizontal interpolation from a MESO-NH file: {\bf SPAWNING}} \label{c:SPAWNING}
+\label{s:spawn}
+\section{Presentation}
+This program performs the horizontal interpolation from one MESO-NH file
+into another (respectively file 1 and file 2).
+The grid of the file 2 must be exactly included in
+the grid of file 1. The file 2 can be directly used
+for a model run, but it contains smooth surface fields (especially the orography).
+It is possible to run the model with
+the two files with gridnesting interaction, since a iterative procedure
+insures the gridnesting condition on the orographies.
+
+The domain of the file 2 can be defined either:
+\begin{enumerate}
+\item by namelist NAM\_GRID2\_SPA specification.
+\item with the domain of another FM file, which grid is coherent with the
+input file. For example this file can be a PGD file created by {\bf
+PREP\_PGD} with a domain defined from the domain of file 1 and the same
+type of specifications as those in NAM\_GRID2\_SPA (see above).
+\end{enumerate}
+
+
+
+\section{The input SPAWN1.nam file}
+
+\subsection{Namelist NAM\_BLANK} 
+See section \ref{s:namblank} page \pageref{s:namblank} for details.
+\newpage
+
+\subsection{Namelist NAM\_GRID2\_SPA (manual definition of domain) }
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+IXOR         & integer    & 1   \\
+IYOR         & integer    & 1  \\
+IXSIZE       & integer    & file 1 domain  \\
+IYSIZE       & integer    & file 1 domain \\
+IDXRATIO     & integer    & 1   \\
+IDYRATIO     & integer    & 1  \\
+GBAL\_ONLY    & logical    & .FALSE.  \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}
+\item IXOR: first point I index, according to the file 1 grid, left to 
+and out of the new physical domain.
+\index{IXOR!\innam{NAM\_GRID2\_SPA}}
+\item IYOR: first point J index, according to the file 1 grid, under 
+and out of the new physical domain.
+\index{IYOR!\innam{NAM\_GRID2\_SPA}}
+\item IXSIZE: number of grid points in I direction, according to file 1 grid, recovered
+by the new domain. It must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+\index{IXSIZE!\innam{NAM\_GRID2\_SPA}}
+\item IYSIZE: number of grid points in J direction, according to file 1 grid, recovered
+by the new domain. It must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+\index{IYSIZE!\innam{NAM\_GRID2\_SPA}}
+\item IDXRATIO: resolution factor in I direction between the file 1 grid and the new grid.
+It must be  equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+\index{IDXRATIO!\innam{NAM\_GRID2\_SPA}}
+\item IDYRATIO: resolution factor in J direction between the file 1 grid and the new grid.
+It must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+\index{IDYRATIO!\innam{NAM\_GRID2\_SPA}}
+\item GBAL\_ONLY: Flag  to enforce anelastic constraint only. The spawned file have the same characteristics as the CINIFILE one.
+\index{GBAL\_ONLY!\innam{NAM\_GRID2\_SPA}}
+\end{itemize}
+
+\subsection{Namelist NAM\_LUNIT2\_SPA (file names)}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+CINIFILE     & character (len=28)    & 'INIFILE'   \\
+CINIFILEPGD  & character (len=28)    & ''   \\
+YDOMAIN      & character (len=28)    & none  \\
+YSPAFILE     & character (len=28)    & none \\
+YSPANBR      & character (len=2)     & '00' \\
+YDADINIFILE  & character (len=28)    & ''   \\
+YDADSPAFILE  & character (len=28)    & ''   \\
+YSONFILE     & character (len=28)    & ''   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CINIFILE :
+\index{CINIFILE!\innam{NAM\_LUNIT2\_SPA}} 
+name of the initial FM-file 1 (father domain)
+which will be used to spawn model 2.
+\item CINIFILEPGD :
+\index{CINIFILEPGD!\innam{NAM\_LUNIT2\_SPA}} 
+name of the PGD associated to the initial FM-file 1 CINIFILE (father domain).
+\item YDOMAIN : 
+\index{YDOMAIN!\innam{NAM\_LUNIT2\_SPA}}
+name of the file which defines the domain for model 2. If a domain file is provided for YDOMAIN, then all the information of namelist NAM\_GRID2\_SPA will be ignored. 
+\item YSPAFILE : optional name of the spawned FM-file 2 (output file).
+\index{YSPAFILE!\innam{NAM\_LUNIT2\_SPA}}
+If the user does not specify this name,
+or if YSPAFILE = CINIFILE, the code builds the spawned FM-file name as:
+\subitem YSPAFILE = CINIFILE.spaYSPANBR
+\subitem or YSPAFILE = CINIFILE.sprYSPANBR if YSONFILE is provided.
+\item YSPANBR :
+\index{YSPANBR!\innam{NAM\_LUNIT2\_SPA}} :
+NumBeR which will be added to CINIFILE to generate the  
+FM-file name of the SPAwned file (string of 2 characters)
+\item YDADINIFILE : if GBAL\_ONLY=.TRUE. : name of the CINIFILE dad.
+\index{YDADINIFILE!\innam{NAM\_LUNIT2\_SPA}}
+\item YDADSPAFILE : if GBAL\_ONLY=.TRUE. : name of the YSPAFILE dad. 
+\index{YDADSPAFILE!\innam{NAM\_LUNIT2\_SPA}}
+Program will check that YDADINIFILE and YDADSPAFILE have the same 
+characteristics,
+before replacing the dad name of YSPAFILE by YDADSPAFILE instead of YDADINIFILE.
+YDADSPAFILE must exist before running the spawning job. 
+\item YSONFILE : optional name of a spawned FM-file (input file). 
+It must have the same resolution as the spawned FM-file 2 (output file).
+The fields of YSONFILE will be used at points included in the domain
+defined by YDOMAIN or NAM\_GRID2\_SPA, instead of interpolated fields
+ of CINIFILE.
+This allows to keep finest information when defining a new finest domain to
+follow atmospheric system.
+\index{YSONFILE!\innam{NAM\_LUNIT2\_SPA}}
+\end{itemize} 
+\subsection{Namelist NAM\_NCOUT}
+See section \ref{s:namncout} page \pageref{s:namncout} for details.
+
+\subsection{Namelist NAM\_SPAWN\_SURF}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LSPAWN\_SURF & logical   & .TRUE.   \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LSPAWN\_SURF :
+\index{LSPAWN\_SURF!\innam{NAM\_SPAWN\_SURF}} : 
+flag to  perform or not the interpolation of all the surface fields (both physiographic and prognostic fields). Note that these interpolations are performed by the {\bf externalized surface} facilities. However, no specific namelist is required for this operation.
+\begin{itemize}
+\item LSPAWN\_SURF = .TRUE. : the interpolations are made
+\item LSPAWN\_SURF = .FALSE. : the interpolations are not made and therefore \underline{no} surface field will be present in the output spawned file.
+\end{itemize}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{{\bf PREP\_SURFEX}}
+\section{Presentation}
+{\bf PREP\_SURFEX} performs the interpolations of surface fields from one
+grid to another.
+\\
+
+What's going in and out?
+\begin{itemize}
+\item Input:
+\begin{itemize}
+\item a file containing the surface 2D variable fields
+(hereafter called input file); it can be either
+\begin{itemize}
+\item a GRIB file obtained from {\bf extractecmwf} or {\bf extractarpege}
+\item a MESO-NH file (obtained with {\bf SPAWNING} for example)
+\end{itemize}
+\item a physiographic data file (it can also be a complete MESO-NH file).
+\item the file PRE\_REAL1.nam which contains the directives for PREP\_SURFEX
+\end{itemize}
+\item Output:
+\begin{itemize}
+\item the FM-file containing the physiographic and pronostic surface fields.
+\end{itemize}
+\end{itemize}
+
+
+\section{The file PRE\_REAL1.nam}
+This file contains namelists with the directives to run PREP\_SURFEX.
+The namelists contain the names of the files.
+\begin{enumerate}
+
+\item\underline{Namelist NAM\_FILE\_NAMES}: (contains file names)
+\index{NAM\_FILE\_NAMES!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+HATMFILE      & character (LEN=28) & ' '           \\
+HATMFILETYPE  & character (LEN=6)  & 'GRIBEX'      \\
+HPGDFILE      & character (LEN=28) & ' '           \\
+CINIFILE      & character (LEN=28) & 'INIFILE'     \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item HATMFILE : name of the atmospheric file (up to 28 characters)
+\index{HATMFILE!\innam{NAM\_FILE\_NAMES}}
+\item HATMFILETYPE : type of the atmospheric file ('GRIBEX', 'MESONH')
+\index{HATMFILETYPE!\innam{NAM\_FILE\_NAMES}}
+\item HPGDFILE : name of the Physiographic Data File (up to 28 characters)
+\index{HPGDFILE!\innam{NAM\_FILE\_NAMES}}
+\item CINIFILE : name of the MESO-NH output FM-file, used as initial
+or coupling file in a MESO-NH simulation
+\index{CINIFILE!\innam{NAM\_FILE\_NAMES}}
+\end{itemize}
+
+\item\underline{ externalized surface} namelists for {\bf PREP\_SURFEX}
+
+The surface initial fields are produced by the {\bf externalized surface} facilities.
+Refer to the {\bf documentation of the surface} for more details.
+For {\bf PREP\_SURFEX}, you must fill the following namelists:
+
+\begin{itemize}
+\item NAM\_PREP\_SURF\_ATM
+\item NAM\_PREP\_SEAFLUX (if you chose to use the SEAFLX scheme)
+\item NAM\_PREP\_WATFLUX (if you chose to use the WATFLX scheme)
+\item NAM\_PREP\_TEB (if you chose to use the TEB urban scheme)
+\item NAM\_PREP\_ISBA (if you chose to use the ISBA scheme)
+\end{itemize}
+
+\underline{CAUTION}: 
+\begin{enumerate}
+\item Note that all namelists can be void, but only if the initial file name for HATMFILE you provide in namelist NAM\_FILE\_NAMES \underline{contains} the externalized surface fields.
+\item If the file HATMFILE does not contain externalized surface fields, you must fill at least namelist NAM\_PREP\_SURF\_ATM (if you want to initialize the surface prognostic fields from an input file). You can also define more precisely the surface fields by using the namelists for each scheme.
+\end{enumerate}
+
+\end{enumerate}
+
+
+
+

@@ -1,0 +1,1120 @@
+\chapter{Compute diagnostics after a MESO-NH simulation} \label{ch:diag}
+\section{Presentation}
+
+After running the model, useful quantities can be diagnosed from
+prognostic variables contained in the FM output files. It is done by
+the program {\bf DIAG} which computes diagnostic variables.\\
+
+\noindent Available diagnostics are listed in section \ref{s:diag_list}.\\
+
+\subsection{The namelist file DIAG1.nam } \label{ss:diag_nam}
+
+The {\tt DIAG1.nam} namelist file contains the diagnostics required
+by the user, the name of the input FM files, the suffix of the
+output diachronic files, and output file type. The user can reset
+options for the convective and radiation scheme with
+NAM\_PARAM\_KAFRn and NAM\_PARAM\_RADn namelist  (see chapter
+\ref{ch:model}).
+\begin{enumerate}
+\item\underline{Namelist NAM\_DIAG} (controls diagnostic variables)\\
+
+see section \ref{s:diag_list} for the list of all the keywords.
+
+\item\underline{Namelist NAM\_DIAG\_BLANK}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+XDUMMY\_DIAG \index{XDUMMY\_DIAG!\innam{NAM\_DIAG\_BLANK}}  & array(real)          & 20* 0.   \\
+NDUMMY\_DIAG \index{NDUMMY\_DIAG!\innam{NAM\_DIAG\_BLANK}}  & array(integer)       & 20* 0    \\
+LDUMMY\_DIAG \index{LDUMMY\_DIAG!\innam{NAM\_DIAG\_BLANK}}  & array(logical)       & 20* TRUE \\
+CDUMMY\_DIAG \index{CDUMMY\_DIAG!\innam{NAM\_DIAG\_BLANK}}  & array(80 characters) & 20* ''   \\
+\hline
+\end{tabular}
+\end{center}
+similar use than NAM\_BLANK (see section \ref{s:namblank} page \pageref{s:namblank}).
+Add USE MODD\_DIAG\_BLANK in a diag subroutine to use
+any of these variables.
+
+\item\underline{Namelist NAM\_DIAG\_FILE} 
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+YINIFILE     & array of character (len=28)  & 24*' '   \\
+YINIFILEPGD  & array of character (len=28)  & 24*' '   \\
+YSUFFIX      & character (len=5)  & '\_DIAG'   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item YINIFILE \index{YINIFILE!\innam{NAM\_DIAG\_FILE}}: name of the input FM files.
+\item YINIFILEPGD \index{YINIFILEPGD!\innam{NAM\_DIAG\_FILE}}: name of the PGD file associated to YINIFILE
+
+\item YSUFFIX \index{YSUFFIX!\innam{NAM\_DIAG\_FILE}}: suffix appended to input file name to form output file name.
+\end{itemize}
+
+\item\underline{Namelist NAM\_STO\_FILE} (controls trajectories computation) \\
+only read if LTRAJ=.TRUE. in NAM\_DIAG
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+CFILES        & array of character (len=28)  & 100*' '   \\
+NSTART\_SUPP  & array of integer  & 100*NUNDEF   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CFILES \index{CFILES!\innam{NAM\_STO\_FILE}}: name of all the input FM files used to compute 
+trajectories. They must be in {\bf inverse} chronological order, and correspond
+to a reinitialisation of Lagrangian tracers (see chapter \ref{ch:model}).
+\item NSTART\_SUPP \index{NSTART\_SUPP!\innam{NAM\_STO\_FILE}}: extra origins for trajectory computations. In the second 
+example of \ref{ss:diag_ex}, the output files will contain the set of variables
+(X000, Y000, Z000, TH000, RV000) with origin corresponding to the last file
+(CFILES(6)), and 2 extra sets (X{\tt n}, Y{\tt n}, Z{\tt n}, TH{\tt n}, 
+RV{\tt n}) with {\tt n}=001 for origin corresponding to the CFILES(4),
+{\tt n}=002 corresponding to CFILES(2). (Note that extra origins are in
+chronological order).
+
+\end{itemize}
+\item\underline{Namelist NAM\_NCOUT}
+See section \ref{s:namncout} page \pageref{s:namncout} for details.
+
+\item\underline{Namelist NAM\_CONFIO}
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+
+\item\underline{Namelist NAM\_CONF\_DIAG}
+\index{NAM\_CONF\_DIAG!namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+NHALO  & INTEGER & 1 \\
+JPHEXT & INTEGER & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item
+NHALO: Size of the halo for parallel distribution.
+This variable is related to computer performance but has no
+impact on simulation results.\\
+\index{NHALO!\innam{NAM\_CONF\_DIAG}}
+
+\item
+JPHEXT:  Horizontal External points number\\
+JPHEXT must be equal to 3 for cyclic cases with WENO5.
+\index{JPHEXT!\innam{NAM\_CONF\_DIAG}}
+\end{itemize}
+
+\item\underline{Namelist NAM\_PARAM\_KAFRn} (options for the convective scheme when convective diagnostics with NCONV\_KF) \\
+see chapter \ref{ch:model} for variable meanings.
+
+\item\underline{Namelist NAM\_PARAM\_RADn} (options for the radiative budget when radiation diagnostics with NRAD\_3D) \\
+see chapter \ref{ch:model} for variable meaning.
+
+\item\underline{Namelists of the externalized surface} \\
+See section \ref{s:surfexdiag} for details.
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Variables available in the output diachronic file} \label{s:diag_list}
+
+\subsection{Variables by default}
+\begin{center}
+\begin{tabular}{>{\centering}p{3cm}>{\centering}p{2.5cm}|p{11cm}|}
+\cline{3-3}
+&&{\tt ZS }: [2D] orography (m)  \\ \cline{3-3}
+&&{\tt ZSMT }: [2D] smoothed orography for SLEVE vertical coordinate (m)  \\ \cline{3-3}
+&&{\tt RHODREF }: [3D] Dry density for reference state with orography (kg/m$^3$)  \\ \cline{3-3}
+&&{\tt THVREF }: [3D] Thetav for reference state with orography (K)  \\ \cline{3-3}
+&&{\tt RHOREFZ } : [1D] rhodz for reference state without orography (kg/m3)  \\ \cline{3-3}
+&&{\tt THVREFZ} : [1D] thetavz for reference state without orography (K) \\ \cline{3-3}
+&&{\tt EXNTOP} :  Exner function at model top\\ \cline{3-3}
+&&{\tt PPTn } : [3D] passive pollutant n concentration (g/m$^3$) only if LPASPOL=T in YINIFILE.des\\ \cline{3-3}
+\end{tabular} 
+\end{center}
+\underline{Diagnostic relative to surface}\\
+Only available if CSURF='EXTE' in YINIFILE.des
+\begin{center}
+\begin{tabular}{>{\centering}p{3cm}>{\centering}p{2.5cm}|p{11cm}|}
+\cline{3-3}
+&&{\tt UM10 VM10} : [2D] components of wind at 10m (m/s)\\\cline{3-3}
+&&{\tt FF10MAX} : [2D] Wind gusts at 10 m (only if CTURB='TKEL')\\ \cline{3-3}
+&&{\tt SFCO2} : [2D] CO2 flux (mg/m2/s) (if present in YINIFILE)\\ \cline{3-3}
+&&{\tt SW} : [2D] SW (W/m2)\\ \cline{3-3}
+&&{\tt LW} : [2D] LW (W/m2) \\ \cline{3-3}
+\end{tabular} 
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{General variables}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+Fortran name  & Possible &\multirow{2}{*}{ Variables [dim] meaning (unit)} \\
+in \&NAM\_DIAG & Values& \\ \hline
+\multirow{7}{*}{CISO} \index{CISO!\innam{NAM\_DIAG}} & 'PR' & {\tt PABST }: [3D] pression (Pa)\\\cline{2-3}
+     & 'TK'    & {\tt THT }: [3D] potential temperature (K)\\\cline{2-3}
+     & 'EV'    & {\tt POVOT }: [3D] potential vorticity (PVU)\\\cline{2-3}
+     & 'PRTK'  & {\tt PABST + THT }\\\cline{2-3}
+     & 'PREV'  & {\tt PABST + POVOT }\\\cline{2-3}
+     & 'TKEV'  & {\tt THT + POVOT  }\\\cline{2-3}
+     & {\bf 'PREVTK'} & {\tt PABST + POVOT + THT } (by default)\\\hline \hline
+\multirow{6}{*}{LVAR\_RS}\index{LVAR\_RS!\innam{NAM\_DIAG}} &{.FALSE.} &no field \\\cline{2-3}
+&\multirow{5}{*}{\bf .TRUE.} & {\tt UT, VT, WT }: [3D] wind components (m/s)\\\cline{3-3}
+&&{\tt RVT }: [3D] water vapor mixing ratio (kg/kg) \\\cline{3-3}
+& & \textbf{with LWIND\_ZM=.TRUE.}\index{LWIND\_ZM!\innam{NAM\_DIAG}}\\
+& & {\tt UT\_ZM VT\_ZM }[3D] :Zonal and meridian components of horizontal wind (M/S)\\ \hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+\multirow{5}{*}{LVAR\_LS} \index{LVAR\_LS!\innam{NAM\_DIAG}} &\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&\multirow{4}{*}{.TRUE.} & {\tt LSUM, LSVM, LSWM LSTHM,LSRVM  }: [3D] large scale variables\\\cline{3-3}
+&  & {\bf with LWIND\_ZM=.TRUE. : }\index{LWIND\_ZM!\innam{NAM\_DIAG}}\\
+& & {\tt LSUM\_ZM LSVM\_ZM }[3D] : Large scale zonal and meridian components of horizontal wind \\ \hline \hline
+\multirow{11}{*}{LVAR\_FRC}\index{LVAR\_FRC!\innam{NAM\_DIAG}} &\textbf{.FALSE.} & by default :  no field \\\cline{2-3}
+&\multirow{10}{*}{.TRUE.} & {\tt UFRCn }: [1D]  zonal component of horizontal forcing wind (m/s)\\\cline{3-3}
+& & {\tt VFRCn }: [1D]  meridian component of horizontal forcing wind (m/s)\\\cline{3-3}
+& & {\tt WFRCn }: [1D] vertical forcing wind (m/s)\\\cline{3-3}
+& & {\tt THFRCn }: [1D] $\theta_{frc}$ forcing potential temperature  (K)\\\cline{3-3}
+& & {\tt RVFRCn }: [1D] $(\partial r_v/ \partial t)_{frc}$ forcing vapor mixing ratio (kg/kg)\\\cline{3-3}
+& & {\tt TENDTHFRCn }: [1D] $(\partial\theta / \partial t)_{frc}$ (K/s)\\\cline{3-3}
+& & {\tt TENDRVFRCn }: [1D] $(\partial r_v/ \partial t)_{frc}$ ((kg/kg)/s)\\\cline{3-3}
+& & {\tt GXTHFRCn}: [1D] $(\partial\theta/ \partial x)_{frc}$ (K/m)\\\cline{3-3}
+{\scriptsize (if LFORCING=T}& & {\tt GYRVFRCn}: [1D] $(\partial\theta/ \partial y)_{frc}$ (K/m)\\\cline{3-3}
+{\scriptsize in YINIFILE.des)}& &{\tt PGROUNDFRCn}: [0D] forcing ground pressure (Pa) \\ \hline
+\hline
+\multirow{6}{*}{LTPZH}\index{LTPZH!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&\multirow{5}{*}{.TRUE.} &{\tt TEMP}: [3D] Temperature (C) \\\cline{3-3}
+& &{\tt PRES }: [3D] Pressure (hPa)\\\cline{3-3}
+& &{\tt ALT }: [3D] height of model levels (geopotentiel in pressure level) (m)\\\cline{3-3}
+& &{\tt REHU }: [3D] Relative Humidity (\%) (if LUSERV=T) \\\cline{3-3}
+& &{\tt VPRES }: [3D]  Vapor Pressure (hPa) (if LUSERV=T)\\ \hline
+\hline
+\multirow{3}{*}{LCOREF}\index{LCOREF!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} &{\tt COREF }: [3D] Refraction coindex (if LUSERV=T)\\\cline{3-3}
+& &{\tt  MCOREF }: [3D] modified refraction coindex (if LUSERV=T)\\ \hline
+\hline
+\multirow{5}{*}{LMOIST\_V}\index{LMOIST\_V!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{3}{*}{.TRUE.} & {\tt THETAV }: [3D] Virtual potential Temperature (K)\\\cline{3-3}
+& &{\tt POVOV }: [3D] Virtual Potential Vorticity (PVU)\\\cline{3-3}
+&& with \textbf{LMEAN\_POVO=T}\index{LMEAN\_POVO!\innam{NAM\_DIAG}}\\
+& &{\tt MEAN\_POVOV }: [2D] Mean Virtual Potential Vorticity (PVU)  \\\hline
+\hline
+\multirow{5}{*}{LMOIST\_E}\index{LMOIST\_E!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{3}{*}{.TRUE.} & {\tt THETAE }: [3D] Equivalent potential Temperature (K)\\\cline{3-3}
+& &{\tt POVOE }: [3D] Equivalent Potential Vorticity (PVU)\\\cline{3-3}
+&& with \textbf{LMEAN\_POVO=T}\index{LMEAN\_POVO!\innam{NAM\_DIAG}}\\
+& &{\tt MEAN\_POVOE }: [2D] Mean Equivalent Potential Vorticity (PVU)\\ \hline
+\hline
+\multirow{5}{*}{LMOIST\_ES}\index{LMOIST\_ES!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{3}{*}{.TRUE.} & {\tt THETAES }: [3D] Equivalent Saturated Potential Temperature (K)\\\cline{3-3}
+& &{\tt POVOES }: [3D] Equivalent Saturated Potential Vorticity (PVU)\\\hline
+
+\hline
+\multirow{7}{*}{LMEAN\_POVO}\index{LMEAN\_POVO!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{6}{*}{.TRUE.} &{\tt MEAN\_POVO }: [2D] Mean Potential Vorticity (PVU)\\\cline{3-3}
+&& with \textbf{LMOIST\_V=T}\index{LMOIST\_V!\innam{NAM\_DIAG}}\\
+& &{\tt MEAN\_POVOV }: [2D] Mean Virtual Potential Vorticity (PVU)  \\\cline{3-3}
+&& with \textbf{LMOIST\_E=T}\index{LMOIST\_E!\innam{NAM\_DIAG}}\\
+& &{\tt MEAN\_POVOE }: [2D] Mean Equivalent Potential Vorticity (PVU)\\ \hline
+XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged between two isobaric levels in Pa (XMEAN\_POVO(1),XMEAN\_POVO(2))\\\hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{5}{*}{LVORT}\index{LVORT!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{4}{*}{.TRUE.} & {\tt ABVOR }: [3D] vertical component of Absolute Vorticity (/s)\\\cline{3-3}
+& &{\tt UM1, VM1, WM1 }: [3D] relative vorticity components  (/s)\\\cline{3-3}
+&& with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
+& &{\tt UM1\_ZM, VM1\_ZM }: [3D] Zonal and Meridian components of horizontal vorticity (M/S) (/s)\\ \hline
+\hline
+\multirow{3}{*}{LDIV}\index{LDIV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} &{\tt HDIV }: [3D] Horizontal divergence (/s)\\\cline{3-3}
+& &{\tt HMDIV }: [3D] Horizontal Moisture divergence (kg/m$^3$/s)\\ \hline
+\hline
+\multirow{4}{*}{LGEO}\index{LGEO!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{3}{*}{.TRUE.} & {\tt UM88, VM88, WM88 }: [3D] Geostrophic wind components (m/s) \\\cline{3-3}
+&& with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
+& &{\tt UM88\_ZM, VM88\_ZM }: [3D] Zonal and Meridian components of Geostrophic wind (m/s)\\ \hline
+\hline
+\multirow{4}{*}{LAGEO}\index{LAGEO!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{3}{*}{.TRUE.} & {\tt UM89, VM89, WM89 }: [3D] Ageostrophic wind components (m/s) \\\cline{3-3}
+&& with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
+& &{\tt UM89\_ZM, VM89\_ZM }: [3D] Zonal and Meridian components of Ageostrophic wind (m/s)\\ \hline
+\hline
+\multirow{2}{*}{LMSLP}\index{LMSLP!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&.TRUE. &{\tt MSLP }: [2D] Mean Sea Level Pressure (hPa)\\\hline
+\hline
+\multirow{8}{*}{LTHW}\index{LTHW!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{7}{*}{.TRUE.} &{\tt THVW }: [2D] Thickness of Vapor Water (mm) (if LUSERV=T)\\\cline{3-3}
+& &{\tt THCW }: [2D] Thickness of Cloud Water (mm) (if LUSERC=T)\\\cline{3-3}
+& &{\tt THRW }: [2D] Thickness of Rain Water (mm) (if LUSERR=T)\\\cline{3-3}
+& &{\tt THIC }: [2D] Thickness of Ice (mm) (if LUSERI=T)\\\cline{3-3}
+& &{\tt THSN }: [2D] Thickness of Snow (mm) (if LUSERS=T)\\\cline{3-3}
+& &{\tt THGR }: [2D] Thickness of Graupel (mm) (if LUSERG=T)\\\cline{3-3}
+& &{\tt THHA }: [2D] Thickness of Hail (mm) (if LUSERH=T) \\ \hline
+\hline
+\multirow{3}{*}{LBV\_FR}\index{LBV\_FR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} &{\tt BV }: [3D] Brunt-Vaissala frequency (/s)\\\cline{3-3}
+& &{\tt  BVE }: [3D] Equivalent Brunt-Vaissala frequency (/s)\\ \hline
+\hline
+\multirow{10}{*}{LVAR\_MRW}\index{LVAR\_MRW!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&\multirow{9}{*}{.TRUE.} &{\tt MRV }: [3D] Mixing Ratio for Vapor (g/kg)(if LUSERV=T)\\\cline{3-3}
+& &{\tt MRC }: [3D] Mixing Ratio for Cloud (g/kg) (if LUSERC=T)\\\cline{3-3}
+& &{\tt MRR }: [3D] Mixing Ratio for Rain (g/kg) (if LUSERR=T)\\\cline{3-3}
+& &{\tt MRI }: [3D] Mixing Ratio for Ice (g/kg) (if LUSERI=T)\\\cline{3-3}
+& &{\tt CIT }: [3D] Ice concentration (m${-3}$ (if LUSECI=T)\\\cline{3-3}
+& &{\tt MRS }: [3D] Mixing Ratio for Snow (g/kg) (if LUSERS=T)\\\cline{3-3}
+& &{\tt MRG }: [3D] Mixing Ratio for Graupel (g/kg) (if LUSERG=T)\\\cline{3-3}
+& &{\tt MRH }: [3D] Mixing Ratio for Hail (g/kg) (if LUSERH=T)\\\cline{3-3}
+& &{\tt CCCNM} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt CCLOUDM} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt RAINM }: [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt CICEM }: [3D] if CCLOUD='C1R3' \\\cline{3-3}
+& &{\tt CINM }: [3D] if CCLOUD='C1R3' \\\hline
+\hline
+\multirow{2}{*}{LVAR\_MRSV}\index{LVAR\_MRSV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&.TRUE. &{\tt MRSVnnn }: [3D] Mixing Ratio for User Scalar Variable {\tt n }(g/kg) \\ \hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{5}{*}{LBLTOP}\index{LBLTOP!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{4}{*}{.TRUE.} &{\tt HBLTOP}: [2D] Height of boundary layer top (m)\\\cline{3-3}
+& &{\tt KBLTOP}: [2D] Index of boundary layer top\\\cline{3-3}
+& &{\tt FREE\_ATM\_GR}: [2D] Gradient of free atmosphere above BL top (K/m)\\\cline{3-3}
+& &{\tt THV\_FREE}: [3D] Thetav above BL top (K)\\ \hline
+\hline
+\multirow{35}{*}{LVAR\_PR}\index{LVAR\_PR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{34}{*}{.TRUE.} & {\tt ACPRR }: [2D] (if LUSERR=T) \\
+&&  Accumulated explicit Precipitation Rate for Rain (mm) \\\cline{3-3}
+&&  (accumulated from the beginning of the simulation) \\\cline{3-3}
+& &{\tt INPRR }: [2D]  (if LUSERR=T)\\
+&&Instantaneous explicit Precipitation Rate (mm/h)\\\cline{3-3}
+& & {\tt INPRR3D }: [3D] (if LUSERR=T)\\
+&& Instantaneous explicit 3D Rain Precipitation flux (m/s) \\\cline{3-3}
+& &{\tt EVAP3D }: [3D] (if LUSERR=T)\\
+&& Instantaneous 3D Rain Evaporation flux (kg/kg/s) \\\cline{3-3}
+& &{\tt ACPRC }: [2D] (if LUSERC=T)\\
+&& Accumulated Cloud Precipitation Rate (mm)\\\cline{3-3}
+& &{\tt INPRC }: [2D] (if LUSERC=T)\\
+&& Instantaneous Cloud Precipitation Rate (mm/h)\\\cline{3-3}
+& &{\tt ACPRS }: [2D] (if LUSERS=T)\\
+&& Accumulated explicit Precipitation Rate for Snow (mm) \\\cline{3-3}
+& &{\tt INPRS }: [2D] (if LUSERS=T) \\
+&& Instantaneous explicit Precipitation Rate for Snow (mm/h)  \\\cline{3-3}
+& &{\tt ACPRG }: [2D] (if LUSERG=T)\\
+&& Accumulated explicit Precipitation Rate for Graupel (mm) \\\cline{3-3}
+& &{\tt INPRG }: [2D] (if LUSERG=T)\\
+&& Instantaneous explicit Precipitation Rate for Graupel (mm/h)\\\cline{3-3}
+& &{\tt ACPRH }: [2D] (if LUSERH=T)\\
+&& Accumulated explicit Precipitation Rate for Hail (mm)\\\cline{3-3}
+& &{\tt ACPRH, INPRH }: [2D](if LUSERH=T)\\
+&& Instantaneous explicit Precipitation Rate for Hail (mm/h) \\\cline{3-3}
+& &{\tt ACPRT }:(if LUSERR=T)\\
+&& [2D] Total Accumulated explicit Precipitation Rate (mm) \\\cline{3-3}
+& &{\tt INPRT }: [2D] (if CCLOUD$\neq$'NONE')\\
+&& Total Instantaneous explicit Precipitation Rate (mm/h) \\\cline{3-3}
+& &{\tt PACCONV }: [2D] (if CDCONV$\neq$'NONE')\\
+&&Convective Accumulated Precipitation Rate (mm)\\\cline{3-3}
+& &{\tt PRCONV }: [2D] (if CDCONV$\neq$'NONE')\\
+&& Convective Instantaneous Precipitation Rate (mm/h)\\\cline{3-3}
+& &{\tt PRSCONV }: [2D] (if CDCONV$\neq$'NONE')  (mm/h) \\
+&& Convective instantaneous Precipitation Rate for Snow  \\ \cline{3-3}
+& &{\tt PRECIP\_WAT }: [2D]   ($kg/m^2$) \\
+&&  Precipitable water \\ \hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+
+\hline
+\multirow{20}{*}{LHU\_FLX}\index{LHU\_FLX!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{19}{*}{.TRUE.} &{\tt UM90, VM90 }: [2D]   ($kg/s/m^2$) \\
+&&  wind components of moisture ground flux  \\ \cline{3-3}
+& &{\tt UM91, VM91 }: [2D]   ($kg/s/m$) \\
+&&  wind components of moisture ground flux integrated on 3000 meters \\ \cline{3-3}
+& &{\tt HMCONV }: [2D]   ($kg/s/m$) \\
+&&  Horizontal CONVergence of moisture flux \\ \cline{3-3}
+& &{\tt HMCONV3000 }: [2D]   ($kg/s/m$) \\
+&&  Horizontal CONVergence of moisture flux integrated on 3000 meters\\ \cline{3-3}
+& &{\tt UM92, VM92 }: [2D] (if CCLOUD=ICE3 or ICE4)   ($kg/s/m^2$) \\
+&&  wind components of hydrometeores ground flux  \\ \cline{3-3}
+& &{\tt UM93, VM93 }: [2D] (if CCLOUD=ICE3 or ICE4)   ($kg/s/m$) \\
+&&  wind components of hydrometeor ground flux   \\ \cline{3-3}
+& &{\tt HMCONV\_TT }: [2D]   ($kg/s/m$) \\
+&&  Horizontal CONVergence of hydrometeor flux \\ \cline{3-3}
+& &{\tt HMCONV3000\_TT }: [2D]   ($kg/s/m$) \\
+&&  Horizontal CONVergence of hydrometeor flux integrated on 3000 meters\\ \hline
+
+\hline
+\multirow{6}{*}{LTOTAL\_PR}\index{LTOTAL\_PR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{5}{*}{.TRUE.} &{\tt ACTOPR }: [2D] Accumulated Total Precipitation (mm)\\\cline{3-3}
+& &{\tt INTOPR }: [2D] Instantaneous Total Precipitation (mm/h)\\\cline{3-3}
+&& with \textbf{LMEAN\_PR=T}\index{LMEAN\_PR!\innam{NAM\_DIAG}} \\
+& &$
+\left.
+    \begin{array}{l}
+        {\tt LS\_ACTOPR}  \\
+        {\tt  LS\_INTOPR }\\
+    \end{array}
+\right\}
+$
+\begin{tabular}{p{7cm}}
+[2D] Total Precipitations averaged in a Large Scale grid mesh
+\end{tabular}
+\\\hline
+
+\multirow{2}{*}{XMEAN\_PR}\index{XMEAN\_PR!\innam{NAM\_DIAG}}&\multirow{2}{*}{(1,1)}&  nb of grid points of the small-scale model inside the LS grid mesh along x, y for LMEAN\_PR
+\\ \hline
+%\end{tabular} 
+%\end{makeimage}
+%\end{center}
+%
+%\begin{center}
+%\begin{makeimage}
+%\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{4}{*}{LCLD\_COV}\index{LCLD\_COV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{5}{*}{.TRUE.} &{\tt HECL }: [2D] Height of Explicit CLoud top (km)\\\cline{3-3}
+& &{\tt HCL }: [2D] Height of maximum CLoud top (km)\\\cline{3-3}
+(if & &{\tt TCL }: [2D] Temperature of maximum Cloud top\\\cline{3-3}
+LUSERC=T)& &{\tt CLDFR }: [3D] Cloud Fraction (\_)\\\cline{3-3}
+& &{\tt VISI\_HOR }: [3D]  Visibility (m)\\ \hline
+\hline
+\multirow{9}{*}{NCAPE}\index{NCAPE!\innam{NAM\_DIAG}}&\bf -1 & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{0} &{\tt CAPEMAX }: [2D] maximum of {\tt CAPE3D}  (J/kg)\\\cline{3-3}
+& &{\tt CINMAX }: [2D] value of {\tt CIN3D} corresponding to {\tt CAPEMAX} (J/kg)\\\cline{2-3}
+&\multirow{4}{*}{1} &{\tt CAPEMAX CINMAX }\\\cline{3-3}
+& &{\tt CAPE3D }: [3D] Convective Available Potential Energy (J/kg)\\\cline{3-3}
+& &{\tt CIN3D }: [3D] Convective INhibition energy (J/kg)\\\cline{3-3}
+& &{\tt DCAPE3D }: [3D] Downdraft cape (J/kg)\\\cline{2-3}
+(if&\multirow{2}{*}{2} &{\tt CAPEMAX CINMAX CAPE3D, CIN3D, DCAPE3D} \\\cline{3-3}
+LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical motion) (J/kg)\\ \hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{10}{*}{LLIMA\_DIAG}\index{LLIMA\_DIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&\multirow{19}{*}{.TRUE.} &{\tt MRV }: [3D] Mixing Ratio for Vapor (g/kg)(if LUSERV=T)\\\cline{3-3}
+& &{\tt MRC }: [3D] Mixing Ratio for Cloud (g/kg) \\\cline{3-3}
+& &{\tt MRR }: [3D] Mixing Ratio for Rain (g/kg) \\\cline{3-3}
+& &{\tt MRI }: [3D] Mixing Ratio for Ice (g/kg)\\\cline{3-3}
+& &{\tt MRS }: [3D] Mixing Ratio for Snow (g/kg)\\\cline{3-3}
+& &{\tt MRG }: [3D] Mixing Ratio for Graupel (g/kg) \\\cline{3-3}
+& &{\tt MRH }: [3D] Mixing Ratio for Hail (g/kg) (if LUSERH=T)\\\cline{3-3}
+& &{\tt NCT }: [3D] Cloud concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt NRT }: [3D] Rain concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt NFREET }: [3D] Free CCN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt NCCNT }: [3D] CCN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt MASSAPT }: [3D] Scavenging (kg.cm${-3}$)\\\cline{3-3}
+& &{\tt CICET }: [3D] Ice concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CIFNFREET }: [3D] Free IFN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CIFNNUCLT }: [3D] Nucleated IFN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CCNINIMMT }: [3D] Nucleated IMM concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CCCNNUCLT }: [3D] Homogeneous Freezing of CCN (cm${-3}$)\\\cline{3-3}
+& &{\tt LWC }: [3D] Liquid Water content (g.m${-3}$) (if LUSERC=T)\\\cline{3-3}
+& &{\tt IWC }: [3D] Ice Water content (g.m${-3}$) (if LUSERC=T)\\\cline{3-3}
+\hline
+\multirow{10}{*}{LVISI}\index{LVISI!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
+&\multirow{6}{*}{.TRUE.} &{\tt VISIKUN }: [3D] Visibility from Kunkel (m) (if CCLOUD/=REVE or NONE) \\\cline{3-3}
+& &{\tt VISIGUL }: [3D] Visibility from Gultepe (m) (if CCLOUD=C2R2 or KHKO)\\\cline{3-3}
+& &{\tt VISIZHA }: [3D] Visibility from Zhang (m) (if CCLOUD=C2R2 or KHKO)\\\cline{3-3}
+\hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+
+\subsection{Convective scheme KAFR}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+\multirow{16}{*}{NCONV\_KF}\index{NCONV\_KF!\innam{NAM\_DIAG}} &{\bf -1} & default value : no fields\\\cline{2-3}
+&\multirow{3}{*}{0} & {\tt CAPE }: [2D] Convective Available Potentiel Energy
+                        (J/kg) \\\cline{3-3}
+& &{\tt CLTOPCONV }: [2D] top  of convective clouds(km) \\\cline{3-3}
+& &{\tt CLBASCONV }: [2D]  base of convective clouds(km) \\\cline{2-3}
+&\multirow{7}{*}{1} & {\tt CAPE CLTOPCONV CLBASCONV} \\\cline{3-3}
+& & {\tt DTHCONV }: [3D] Convective tendency for potential temperature
+                      (K/s)\\\cline{3-3}
+& & {\tt DRVCONV}: Convective tendency for vapor (/s)\\\cline{3-3}
+& & {\tt DRCCONV}: Convective tendency for  cloud (/s)\\\cline{3-3}
+& & {\tt DRICONV }: Convective tendency for ice (/s)\\\cline{3-3}
+& & {\tt DSVCONVnnn }:Convective tendency for scalar variable {\tt n} (/s)\\\cline{2-3}
+&\multirow{5}{*}{2} & {\tt CAPE CLTOPCONV CLBASCONV DTHCONV DRVCONV DRCCONV DRICONV DSVCONVnnn}\\\cline{3-3}
+&&{\tt UMFCONV }: [3D] Updraft Convective Mass Flux (m$^2$ kg/s) \\\cline{3-3}
+&&{\tt DMFCONV }: [3D] Downdraft Convective Mass Flux (m$^2$ kg/s) \\\cline{3-3} 
+& &{\tt PRLFLXCONV}: [3D] Liquid  PRecipitation Convective FLuX (m/s) \\\cline{3-3}
+& & {\tt PRSFLXCONV }: [3D]  Solid PRecipitation Convective FLuX (m/s)\\\hline
+
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\subsection{Mass Flux Shallow Convection scheme}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+\multirow{6}{*}{LMFFLX}\index{LMFFLX!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+ &\multirow{5}{*}{.TRUE.} & {\tt MF\_THW\_FLX }: [3D] conservative potential temperature vertical flux
+ (K*m/s)\\\cline{3-3}
+& &{\tt MF\_RCONSW\_FLX }: [3D] conservative mixing ratio vertical flux (kg/kg*m/s) \\\cline{3-3}
+&&{\tt MF\_THVW\_FLX }: [3D] theta\_v vertical flux (K*m/s) \\ \cline{3-3}
+& &{\tt MF\_UW\_VFLX }: [3D] U momentum vertical flux (m$^2$/s$^2$) \\ \cline{3-3}
+& &{\tt MF\_VW\_VFLX }: [3D] V momentum vertical flux (m$^2$/s$^2$) \\ \hline
+\end{tabular} 
+\end{makeimage}
+
+
+
+\subsection{Turbulent scheme}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+\multirow{4}{*}{LVAR\_TURB}\index{LVAR\_TURB!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} & {\tt TKET }: [3D] Turbulent Kinetic Energy (m$^2$/s$^2$)\\\cline{3-3}
+& &  {\tt SIGS }: [3D] Sigma\_s from turbulence scheme (kg/kg$^2$) \\\cline{3-3}
+& & {\tt SRCM }: [3D] Normalized 2nd\_order moment (kg/kg$^2$)\\\cline{3-3}
+& &{\tt BL\_DEPTH }: [3D] Boundary Layer Depth if {\tt CTOM='TM06'} (m) \\ \hline 
+\hline 
+\multirow{21}{*}{LTURBDIAG}\index{LTURBDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+ &\multirow{21}{*}{.TRUE.} & {\tt AMOIST }: [3D] (m) See Scientific documentation part III, chap 7 equation 7.29\\\cline{3-3}
+& & {\tt ATHETA }: [3D] (m)  See Scientific documentation part III, chap 7 equation 7.30\\\cline{3-3}
+& &{\tt RED\_TH1, RED\_R1, RED2\_TH3, RED2\_R3, RED2\_THR3 }: [3D] \\
+& & Redelsperger numbers \\\cline{3-3}
+& &{\tt DP}: [3D] dynamical production of TKE (m$^2$/s$^3$) \\\cline{3-3}
+& &{\tt TP}: [3D] thermal production of TKE (m$^2$/s$^3$) \\\cline{3-3}
+& &{\tt  TR}: [3D]  transport of TKE (m$^2$/s$^3$) \\\cline{3-3}
+& &{\tt  DISS}: [3D] dissipation of TKE (m$^2$/s$^3$)\\\cline{3-3}
+& &{\tt  LM\_CLEAR\_SKY }: [3D]  mixing length in clear sky (m) \\\cline{3-3}
+& &{\tt COEF\_AMPL }: [3D] amplification of the mixing length (\_) \\\cline{3-3}
+& &{\tt LM\_CLOUD }: [3D]  mixing length in the clouds (m) \\\cline{3-3}
+& & {\tt LM} : [3D] mixing length (m)\\\cline{3-3}
+& & {\tt THLM }:[3D] conservative potential temperature (K)\\\cline{3-3}
+& & {\tt RNPM }:[3D] conservative mixing ratio (kg/kg)\\\cline{3-3}
+&& {\tt RVCI }: [3D] $rv+rc+ri$ (kg/kg)\\\cline{3-3}
+& & {\tt GX\_RVCI,GY\_RVCI }: [3D] x and y gradient of RVCI (kg/kg/m) \\\cline{3-3}
+& &{\tt GNORM\_RVCI }: [3D] Horizontal norm of the gradient of RVCI (kg/kg/m) \\\cline{3-3}
+& &{\tt QX\_RVCI }: [3D] x  gradient of the advection of RVCI (kg/kg/m)  \\\cline{3-3}
+& &{\tt QY\_RVCI }: [3D] y gradient of the advection of RVCI (kg/kg/m)  \\\cline{3-3}
+
+& &{\tt QNORM\_RVCI }: [3D] Horizontal norm of the gradient\\
+& &  of the advection of RVCI (kg/kg/m)  \\\cline{3-3}
+& &{\tt CEI }: [3D] Cloud entrainment instability index (kg/kg/m/s) \\ \hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+\newpage
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{30}{*}{LTURBFLX}\index{LTURBFLX!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+
+ &\multirow{29}{*}{.TRUE.} &  {\tt PHI3 }: [3D] Turbulent Prandtl number (\_)\\\cline{3-3}
+& & {\tt PSI3 }: [3D] Turbulent Schmidt number (\_)\\\cline{3-3}
+&  & {\tt PSI\_SV\_n }: [3D] Turbulent Schmidt number for the scalar variables (\_)\\\cline{3-3}
+
+& &
+$
+\left.
+    \begin{array}{p{8.5cm}}
+        {\tt THW\_FLX}: [3D]  theta vertical flux (K*m/s)  \\ 
+        {\tt RCONSW\_FLX }: [3D] rv vertical flux (kg*m/s/kg)\\ 
+        {\tt  RCW\_FLX }: [3D] liquid water mixing ratio vertical flux (kg*m/s/kg) \\
+        {\tt THL\_VVAR}: [3D] $<THl,THl>$ (K$^{2}$) \\
+        {\tt THLRCONS\_VCOR }: [3D] $<THl,Rnp>$( K*kg/kg) \\
+        {\tt RTOT\_VVAR }: [3D] $<Rnp,Rnp>$ ((kg/kg)$^{2}$) \\
+        {\tt UW\_VFLX, VW\_VFLX }: [3D]  wind component vertical flux (m$^{2}$/s$^2$) \\
+        {\tt WSV\_FLX\_n }: [3D] $<W,SVth>$(SVunit m/s)\\
+
+  \end{array}
+\right\}
+$
+\begin{tabular}{p{1cm}}
+1D\\
+scheme\\
+turbulent\\
+fluxes\\
+\end{tabular}
+
+\\\cline{3-3}
+& &
+$
+\left.
+    \begin{array}{p{8.5cm}}
+{\tt U\_VAR }: [3D] U variance ((m/s)$^2$) \\
+{\tt V\_VAR }: [3D] V variance ((m/s)$^2$)\\
+{\tt W\_VAR }: [3D] W variance ((m/s)$^2$)\\
+{\tt UV\_FLX}: [3D] $<U, V>$((m/s)$^2$,)\\
+{\tt UW\_HFLX }: [3D] $<U, W>$ ((m/s)$^2$)\\
+{\tt VW\_HFLX }: [3D] $<V, W>$ ((m/s)$^2$)\\
+{\tt USV\_FLX\_n }: [3D] $ <U, SVth>$ ( SVunit m/s)\\
+{\tt VSV\_FLX\_n }: [3D] $ <V, SVth>$ ( SVunit m/s)\\
+{\tt THL\_HVAR }: [3D] $<THl, THl>$ (K$^2$) \\
+{\tt THLR\_HCOR }: [3D] $<THl, Rnp>$ (K*kg/kg)\\
+{\tt  R\_HVAR }: [3D] $<Rnp, Rnp>$ ( (kg/kg)$^2$) \\
+{\tt UTHL\_FLX }: [3D] horizontal $<U, THl>$ (K*m/s) \\
+{\tt  VTHL\_FLX}: [3D] horizontal $<V, THl>$ (K*m/s)\\
+{\tt  UR\_FLX }: [3D] horizontal $<U, Rnp>$ (kg/kg*m/s)\\
+{\tt  VR\_FLX }: [3D] horizontal $<V, Rnp>$ (kg/kg*m/s)\\
+  \end{array}
+\right\}
+$
+\begin{tabular}{p{1cm}}
+3D\\
+scheme\\
+turbulent\\
+fluxes\\
+\end{tabular}
+
+\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\subsection{Radiation scheme}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
+\multirow{47}{*}{NRAD\_3D}\label{nrad3d}\index{NRAD\_3D!\innam{NAM\_DIAG}} & {\bf -1} & default value : no field\\\cline{2-3}
+&\multirow{12}{*}{0} & {\tt DTHRAD} : [3D] Radiative heating/cooling rate (K/s) \\\cline{3-3}
+& &{\tt FLALWD} : [2D] Downward LW on FLAT surface  (W/m$^2$) \\\cline{3-3}
+& &{\tt DIRFLASWD} : [2D] Direct Downward SW on FLAT surface  (W/m$^2$) \\\cline{3-3}
+& &{\tt SCAFLASWD} : [2D] Scattered Downward SW on FLAT surface (W/m$^2$) \\\cline{3-3}
+& &{\tt DIRSRFSWD} : [2D] Direct Downward SW  (W/m$^2$) \\\cline{3-3}
+& & {\tt CLEARCOL\_TM1} : [2D] trace of cloud (\_)\\\cline{3-3}
+& & {\tt  EMIS} : [2D] emmissivity (\_)\\\cline{3-3}
+& & {\tt ZENITH} : [2D] solar zenithal angle (RAD)\\\cline{3-3}
+& & {\tt AZIM}: [2D]  azimuthal angle (RAD)\\\cline{3-3}
+& & {\tt DIR\_ALB}: [2D] direct albedo(\_)\\\cline{3-3}
+& & {\tt SCA\_ALB}: [2D]  scattered albedo (\_)\\\cline{3-3}
+& & {\tt TSRAD}: [2D] radiative surface temperature (K)\\\cline{2-3}
+&\multirow{12}{*}{1} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD}\\\cline{3-3}
+& & {\tt SWF\_DOWN}: [3D] Downward SW radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt SWF\_UP}: [3D] Upward SW radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt LWF\_DOWN}: [3D] Downward LW  radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt LWF\_UP} : [3D] Upward LW  radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt LWF\_NET} : [3D] Total LW net radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt SWF\_NET} : [3D] Total SW  radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt DTRAD\_LW }: [3D] LW radiative tendency for {\tt T} (K/day)\\\cline{3-3}
+& & {\tt DTRAD\_SW }: [3D] SW radiative tendency for {\tt T} (K/day)\\\cline{3-3}
+& & {\tt RADSWD\_VIS }: [2D] surface radiative flux in visible (W/m$^2$)\\\cline{3-3}
+(Only& & {\tt RADSWD\_NIR }: [2D] surface radiative flux in near-infrared (W/m$^2$)\\\cline{3-3}
+available if & & {\tt RADLWD }: [2D] LW surface radiative flux (W/m$^2$)\\\cline{2-3}
+CRAD$\neq$'NONE')&\multirow{8}{*}{2} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD }\\\cline{3-3}
+&& Clear Sky results :\\
+& &{\tt SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS }\ \\\cline{2-3}
+&\multirow{13}{*}{3} &{\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  }  \\\cline{3-3}
+& & {\tt PLAN\_ALB\_VIS }: [2D] planetary albedo in visible (\_) \\\cline{3-3}
+& & {\tt PLAN\_ALB\_NIR }: [2D] planetary albedo  in near-infrared (\_) \\\cline{3-3}
+& &{\tt PLAN\_TRA\_VIS} : [2D] planetary transmission in visible(\_) \\\cline{3-3}
+& &{\tt PLAN\_TRA\_NIR} : [2D] planetary transmission in near-infrared (\_) \\\cline{3-3}
+& & {\tt PLAN\_ABS\_VIS }: [2D]  planetary absorption in visible (\_)\\\cline{3-3}
+& & {\tt PLAN\_ABS\_NIR }: [2D]  planetary absorption in  near-infrared (\_)\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{36}{*}{NRAD\_3D}\index{NRAD\_3D!\innam{NAM\_DIAG}}&\multirow{20}{*}{4} &{\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  PLAN\_ALB\_VIS  PLAN\_ALB\_NIR PLAN\_TRA\_VIS PLAN\_TRA\_NIR PLAN\_ABS\_VIS PLAN\_ABS\_NIR}  \\\cline{3-3}
+& & {\tt EFNEB\_UP} : [3D] upward equivalent emissivity (Morcrette scheme)(\_) \\\cline{3-3}
+
+& & {\tt EFNEB\_DOWN} : [3D] downward equivalent emissivity (\_) \\\cline{3-3}
+& &{\tt FLWP }: [3D] liquid water path (g/m$^2$) \\\cline{3-3}
+& &{\tt FIWP }: [3D] ice water path (g/m$^2$) \\\cline{3-3}
+& &{\tt EFRADL }: [3D] cloud liquid water effective radius ($\mu$m) \\\cline{3-3}
+& &{\tt EFRADI }: [3D] cloud ice effective radius ($\mu$m) \\\cline{3-3}
+
+& &{\tt SW\_NEB RRTM\_LW\_NEB }: [3D]  effective cloud fraction (\_) \\\cline{3-3}
+& &{\tt OTH\_VIS OTH\_NI1 OTH\_NI2 OTH\_NI3 }: [3D] cloud optical thickness (\_)\\\cline{3-3}
+& & {\tt SSA\_VIS SSA\_NI1 SSA\_NI2 SSA\_NI3}: [3D] cloud  single scattering albedo (\_) \\\cline{3-3}
+& &{\tt ASF\_VIS ASF\_NIR1 ASF\_NIR2 ASF\_NIR3 }: [3D] cloud  asymetry factor (\_)\\\cline{3-3}
+& & {\tt ODAER\_VIS ODAER\_NIR1 ODAER\_NIR2 ODAER\_NIR3} :[3D]\\\cline{3-3}
+& & {\tt SSAAER\_VIS SSAAER\_NIR1 SSAAER\_NIR2 SSAAER\_NIR3} :[3D]\\\cline{3-3}
+& & {\tt GAER\_VIS GAER\_NIR1 GAER\_NIR2 GAER\_NIR3} :[3D]\\\cline{2-3}
+&\multirow{16}{*}{5}& {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  PLAN\_ALB\_VIS  PLAN\_ALB\_NIR PLAN\_TRA\_VIS PLAN\_TRA\_NIR PLAN\_ABS\_VIS PLAN\_ABS\_NIR EFNEB\_DOWN EFNEB\_UP FLWP FIWP EFRADL EFRADI SW\_NEB RRTM\_LW\_NEB OTH\_VIS OTH\_NI1 OTH\_NI2 OTH\_NI3 SSA\_VIS SSA\_NI1 SSA\_NI2 SSA\_NI3 ASF\_VIS ASF\_NIR1 ASF\_NIR2 ASF\_NIR3 ODAER\_VIS ODAER\_NIR1 ODAER\_NIR2 ODAER\_NIR3 SSAAER\_VIS SSAAER\_NIR1 SSAAER\_NIR2 SSAAER\_NIR3 GAER\_VIS GAER\_NIR1 GAER\_NIR2 GAER\_NIR3 }\\\cline{3-3}
+& & {\tt O3CLIM}: [3D]  climatological ozone content (Pa/Pa)\\\cline{3-3}
+& & $
+\left.
+    \begin{array}{l}
+        {\tt CUM\_AER\_LAND, CUM\_AER\_SEA} \\
+        {\tt CUM\_AER\_DES, CUM\_AER\_URB}\\
+        {\tt CUM\_AER\_VOL, CUM\_AER\_STRB}\\
+    \end{array}
+\right\}
+$
+\begin{tabular}{p{5cm}}
+[3D] cumulated optical thickness of the different aerosols from the top of the domain (\_)
+\end{tabular}
+\\ \hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+\newpage
+\subsection{Lagrangian tracers}
+Only available if \verb|LLG=T| in YINIFILE.des
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{6}{*}{LTRAJ}\index{LTRAJ!\innam{NAM\_DIAG}}&{\bf .FALSE} & by default : no field\\\cline{2-3}
+&\multirow{5}{*}{.TRUE.} &{\tt X, Y }: [3D] X and Y coordinates (km) \\\cline{3-3}
+& &{\tt LGXM, LGYM, LGZM }: [3D] Lagrangian tracers coordinates (m)\\\cline{3-3}
+& &{\tt Xn, Yn, Zn }: [3D] Lagrangian tracers coordinates at time origin {\tt n} \\ \cline{3-3}
+& &{\tt THn }: [3D] corresponding Theta  (K)\\\cline{3-3}
+& &{\tt RVn }: [3D] corresponding Vapor mixing Ratio (g/kg)\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+A documentation is available at \url{http://mesonh.aero.obs-mip.fr/mesonh/dir_doc/lag_m46_22avril2005/lagrangian46/}
+\subsection{Dust variables}
+Only available if \verb|LDUST=T| in YINIFILE.des.
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{23}{*}{by default}& &{\tt DSTM0nM}: [3D] Dust 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
+& &{\tt DSTM3nM} : [3D] Dust 3$^{rd}$-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
+& &{\tt DSTM6nM} : [3D] Dust 6$^{rd}$-order moment of mode n 
+              {\small(if {\tt LVARSIG})} (ppbv)\\\cline{3-3}
+& &{\tt DSTRGAn} : [3D] Dust number mean Radius of the lognormal mode n ($\mu$m)
+\\\cline{3-3}
+& &{\tt DSTRGAMn} : [3D] Dust Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
+& &{\tt DSTN0An} : [3D] Dust Number of the lognormal mode n (/m$^3$)\\\cline{3-3}
+& &{\tt DSTSIGAn} : [3D] Dust Standard deviation of the lognormal mode n (\_)\\\cline{3-3}
+& &{\tt DSTMSSn} : [3D] Dust Mass concentration of the lognormal mode n 
+($\mu$g/m$^3$)\\\cline{3-3}
+& &{\tt DSTBRDNn} : [2D] Dust Burden of the lognormal mode n (g/m$^2$)\\\cline{3-3}
+& &{\tt DEDSTM3nCM}  : [3D] Dust Mass of mode n in cloud water only if \verb|LDEPOS_DST=T| (ppb) \\\cline{3-3}
+& &{\tt DEDSTM3nRM}  : [3D]  Dust Mass of mode n in rain only if \verb|LDEPOS_DST=T| (ppb)\\\cline{3-3}
+& &{\tt DEDSTN0An} : [3D] Number of dust particles in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_DST=T| (/m$^3$)\\\cline{3-3}
+& &{\tt DEDSTMSSn} : [3D] Dust mass in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_DST=T|($\mu$g/m$^3$)\\\cline{1-3}
+\multirow{3}{*}{NRAD\_3D}& \multirow{3}{*}{$\ge$ 1}&{\tt DSTAOD2D}: [2D] Dust Optical Depth (\_)\\\cline{3-3}
+& &{\tt DSTAOD3D}: [3D] Dust Optical Depth between two vertical levels (\_)
+\\\cline{3-3}
+& &{\tt DSTEXT}: [3D] Dust Extinction (1/km)\\\hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+\newpage
+\subsection{Salt variables}
+Only available if \verb|LSALT=T| in YINIFILE.des.
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{23}{*}{by default}& &{\tt SLTM0nM}: [3D] Salt 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
+& &{\tt SLTM3nM} : [3D] Salt 3$^{rd}$-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
+& &{\tt SLTM6nM} : [3D] Salt 6$^{rd}$-order moment of mode n 
+              {\small(if {\tt LVARSIG\_SLT})} (ppbv)\\\cline{3-3}
+& &{\tt SLTRGAn} : [3D] Salt number mean Radius of the lognormal mode n ($\mu$m)
+\\\cline{3-3}
+& &{\tt SLTRGAMn} : [3D] Salt Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
+& &{\tt SLTN0An} : [3D] Salt Number of the lognormal mode n (/m$^3$)\\\cline{3-3}
+& &{\tt SLTSIGAn} : [3D] Salt Standard deviation of the lognormal mode n (\_)\\\cline{3-3}
+& &{\tt SLTMSSn} : [3D] Salt Mass concentration of the lognormal mode n 
+($\mu$g/m$^3$)\\\cline{3-3}
+& &{\tt SLTBRDNn} : [2D] Salt Burden of the lognormal mode n (g/m$^2$)\\\cline{3-3}
+& &{\tt DESLTM3nCM}  : [3D] Salt Mass of mode n in cloud water only if \verb|LDEPOS_SLT=T| (ppb) \\\cline{3-3}
+& &{\tt DESLTM3nRM}  : [3D] Salt  Mass of mode n in rain only if \verb|LDEPOS_SLT=T| (ppb)\\\cline{3-3}
+& &{\tt DESLTN0An} : [3D] Number of salt particles in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_SLT=T|  (/m$^3$)\\\cline{3-3}
+& &{\tt DESLTMSSn} : [3D] Salt mass in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_SLT=T| ($\mu$g/m$^3$)\\\cline{1-3}
+\multirow{3}{*}{NRAD\_3D}& \multirow{3}{*}{$\ge$ 1}&{\tt DSTAOD2D}: [2D] Dust Optical Depth (\_)\\\cline{3-3}
+& &{\tt SLTAOD3D}: [3D] Salt Optical Depth between two vertical levels (\_)
+\\\cline{3-3}
+& &{\tt SLTEXT}: [3D] Salt Extinction (1/km)\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\subsection{Chemical variables}
+Only available if \verb|LUSECHEM=T| in YINIFILE.des
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{3}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no fields\\\cline{2-3}
+& \multirow{2}{*}{.TRUE.}&{\tt O3T ... } : [3D] Chemical scalar variables as defined in BASIC.f90 (ppbv)\\ \hline
+XCHEMLAT,&\textbf{XUNDEF}&  by default : no fields\\\cline{2-3}
+XCHEMLON&arrays of real & write chemicals species on vertical profile defined by (XCHEMLAT,XCHEMLON)\\ \hline
+CSPEC\_DIAG&character(*1024) &  to compute chemical production/loss terms for each variables specified\\ \hline
+CSPEC\_BU\_DIAG&character(*1024) & to compute chemical production/loss terms for each reaction for each variables specified \\ \hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+\begin{itemize}
+\item CSPEC\_DIAG \index{CSPEC\_DIAG!\innam{NAM\_DIAG}}:list of the chemical species for production/loss terms computation. Each species is separated by a comma. Ex : CSPEC\_DIAG='O3,CO,BIO'
+\item CSPEC\_BU\_DIAG \index{CSPEC\_BU\_DIAG!\innam{NAM\_DIAG}} :list of the chemical species for production/loss terms computation in all the reactions where the species is involved.  Each species is separated by a comma. Ex : CSPEC\_BU\_DIAG='O3,CO,BIO'
+
+\end{itemize}
+
+%\newpage
+\subsection{Aerosol variables}
+Only available if \verb|LUSECHEM=T| and  \verb|LORILAM=T| in YINIFILE.des
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{26}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no field\\\cline{2-3}
+&\multirow{25}{*}{.TRUE.}  &{\tt SOAIM ... } : [3D] Aerosol scalar variable as defined in ch\_aer\_init\_soa.f90 (ppbv)\\ \cline{3-3}
+& &{\tt RGAn}: [3D] Aerosol number mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
+&  &{\tt RGAMn}: [3D] Aerosol Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
+&  &{\tt N0An}: [3D] Aerosol Number of the lognormal mode n (/cc)
+\\\cline{3-3}
+& &{\tt SIGAn}: [3D] Aerosol Standard deviation of the lognormal mode n (\_)\\\cline{3-3}
+& &{\tt MSO4n}: [3D] Mass SO4 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MNO3n}: [3D] Mass NO3 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MNH3n}: [3D] Mass NH3 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MH2On}: [3D] Mass H2O aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA1n}: [3D] Mass SOA1 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA2n}: [3D] Mass SOA2 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA3n}: [3D] Mass SOA3 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA4n}: [3D] Mass SOA4 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA5n}: [3D] Mass SOA5 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA6n}: [3D] Mass SOA6 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA7n}: [3D] Mass SOA7 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA8n}: [3D] Mass SOA8 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA9n}: [3D] Mass SOA9 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MSOA10n}: [3D] Mass SOA10 aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MOCn}: [3D] Mass OC aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
+& &{\tt MBCn}: [3D] Mass BC aerosol mode n ($\mu$m/m$^3$)\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\subsection{Production of NOx by lightening flashes}
+only available if  LCH\_CONV\_LINOX=T and LUSECHEM=F in YINIFILE.des with LCHEMDIAG=F in DIAG1.nam
+\begin{center}
+\begin{tabular}{>{\centering}p{3cm}>{\centering}p{2.5cm}|p{11cm}|}
+\cline{3-3}
+&&{\tt LINOXT} : [3D] linox scalar variables\\\cline{3-3}
+&&{\tt IC\_RATE} : [2D] IntraCloud lightning Rate   (/s) \\ \cline{3-3}
+&&{\tt CG\_RATE} :[2D] CloudGround lightning Rate (/s) \\ \cline{3-3}
+&&{\tt IC\_TOTAL\_NB} :[2D] IntraCloud lightning Number (\_)\\ \cline{3-3}
+&&{\tt CG\_TOTAL\_NB} :[2D] CloudGround lightning Number (\_) \\ \cline{3-3}
+\end{tabular} 
+\end{center}
+
+\newpage
+\subsection{GPS synthetic delays}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+CNAM\_GPS\index{CNAM\_GPS!\innam{NAM\_DIAG}}       & array(character)     & 50* ''     \\
+XLAT\_GPS\index{XLAT\_GPS!\innam{NAM\_DIAG}}       & array(real)          & 50* XUNDEF \\
+XLON\_GPS \index{XLON\_GPS!\innam{NAM\_DIAG}}      & array(real)          & 50* XUNDEF \\
+XZS\_GPS \index{XZS\_GPS!\innam{NAM\_DIAG}}       & array(real)          & 50* -999.  \\
+XDIFFORO \index{XDIFFORO!\innam{NAM\_DIAG}}       & real                 & 150.       \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CNAM\_GPS: name of the GPS stations
+\item XLAT\_GPS: latitude of the GPS stations
+\item XLON\_GPS: longitude of the GPS stations
+\item XZS\_GPS: height of the GPS stations (m)
+\item XDIFFORO: maximum difference between model orography and station height accepted when computing interpolated delays value (m)
+\end{itemize}
+For stations where latitude, longitude and height are different from default
+values, the interpolated values of GPS delays are written in ASCII files 
+{\it YINIFILEYSUFFIX}GPS[.P00n] (where n is the number of processor).  \\
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{5}{*}{NGPS}\index{NGPS!\innam{NAM\_DIAG}}& \textbf{-1}& by default : no field\\\cline{2-3}
+&0 & {\tt ZTD }: [2D] Zenithal Total Delay (m)\\\cline{2-3}
+&\multirow{3}{*}{1} &  {\tt ZTD }: [2D] Zenithal Total Delay (m)\\\cline{3-3}
+&&{\tt ZHD }: [2D] Zenithal Hydrostatic Delays (m) \\\cline{3-3}
+& &{\tt ZWD }: [2D] Zenithal Wet Delays (m)\\ \hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+\subsection{Computing Satellite image from a MESO-NH run}
+
+A comparison between model outputs and satellite observations provides an assessment on how well the model can reproduce the meteorological situation.
+ The model-to-satellite approach compares directly the satellite brightness temperatures (BTs) to the BTs computed from the predicted model fields 
+(Morcrette, 1991). It has been first applied to Meso-NH outputs for comparison
+ with Meteosat observations in the infrared using a narrow-band code 
+(Chaboureau et al., 2000).
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
+\hline
+\multirow{7}{*}{CRAD\_SAT}\index{CRAD\_SAT!\innam{NAM\_DIAG}}&\textbf{' '} & by default : no computation is made\\\cline{2-3}
+&\multirow{2}{*}{'METEOSAT'} & {\tt METEOSAT\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
+& &{\tt METEOSAT\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
+&\multirow{2}{*}{'GMS'} & {\tt GMS\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
+& &{\tt GMS\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
+&\multirow{2}{*}{'GOES-E'} &{\tt GOES-E\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
+& &{\tt GOES-E'\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
+&\multirow{2}{*}{'GOES-W'} &{\tt GOES-W\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
+& &{\tt GOES-W\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
+&\multirow{2}{*}{'INDSAT'} &{\tt INDSAT\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
+& &{\tt INDSAT\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\hline
+\multirow{2}{*}{\small LRAD\_SUBG\_COND}&{\bf .TRUE.} & WITH subgrid condensation scheme taken into account \\\cline{2-3}
+&{.FALSE.} & WITHOUT subgrid condensation scheme \\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\subsection{Radar}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|p{2.5cm}|c|l|p{6cm}|}
+\hline
+\multirow{11}{*}{LRADAR=T}\index{LRADAR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} &\multicolumn{2}{|l|}{ by default : no field} \\\cline{2-4}
+&\multirow{10}{*}{.TRUE.} &\multirow{8}{*}{ \textbf{NVERSION\_RAD=1}}\index{NVERSION\_RAD!\innam{NAM\_DIAG}}&{\tt RARE }: [3D] (dBZ)\\
+&&& Radar Reflectivity \\\cline{4-4}
+& &&{\tt VDOP }: [3D] (m/s)\\
+&&&radar Doppler fall speed\\\cline{4-4}
+& &&{\tt ZDR  }: [3D]  (dBZ)\\
+&&&radar Differential Reflectivity\\\cline{4-4}
+& &&{\tt KDP  }: [3D] (degree/km)\\
+&&& radar Differential Phase shift \\\cline{3-4}
+& &\multirow{2}{*}{NVERSION\_RAD=2}&Simulator of radar \\
+& &&See below for more informations\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+\subsubsection{Simulator of Radar}
+Only available on mono-processor.\\
+A radar simulator already existed in Meso-NH (Richard et al.,2003) that computes reflectivities in the Rayleigh approximation on each grid points of the model : (NVERSION=1). However, with the view to code an observation operator for radar reflectivities, this simulator was not sufficient. That is why a new simulator was built, while the original version is still available. This new simulator (NVERSION=2) simulates Plan Position Indicators (PPI), which are cones usually projected on a horizontal plane obtained by scanning the atmosphere at constant elevation. New features are:
+\begin{itemize}
+\item possibility to choose among several scattering models,
+\item beam bending taken into account,
+\item possibility to take attenuation into account,
+\item antenna's radiation pattern (beam broadening) modeled,
+\item ouptut on operational (Cartesian) grids of the Aramis French radar network.
+\end{itemize}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
+Fortran name      &Fortran type&Values& Meaning\\\hline \hline
+\tt XLAT\_RAD     &array of reals & XUNDEF&latitude of each radar\\\hline
+\tt XLON\_RAD     &array of reals & \tt XUNDEF&longitude of each radar\\\hline
+\tt XALT\_RAD     &array of reals & \tt XUNDEF&altitudes of radars (m)\\\hline
+\tt CNAME\_RAD    &array of strings & \tt "XUNDEF"&names of radars\\\hline
+\tt XLAM\_RAD     &array of reals &  \tt XUNDEF&radar wavelengths\\\hline
+\tt XDT\_RAD      & array of reals&  \tt XUNDEF&beam width to the $-3\rm~dB$ level for one-way transmission ($\Delta\theta$\\\hline
+\tt XELEV         & 2-dim array of reals&  \tt XUNDEF&radar elevations ($\theta$, in \char23). First dimension: radar; second: site number\\\hline
+\tt NBSTEPMAX     &integer & -1&number of gates\\\hline
+\tt XSTEP\_RAD    &real& \tt XUNDEF&gate length (m)\\\hline
+\tt LATT          & logical &\tt.FALSE.& attenuation is taken into account if true\\\hline
+\tt LQUAD         & logical & \tt.FALSE.&if true Gauss-Legendre quadrature if false Gauss-Hermite quadrature\\\hline
+\tt NPTS\_H       & integer & 1&number of angles for the quadrature in horizontal\\\hline
+\tt NPTS\_V       & integer & 1&number of angles for the quadrature in vertical\\\hline
+\multirow{4}{*}{\tt CARF} &\multirow{2}{*}{ string} &\tt "PB70"& (default) axis ratio of raindrops : Pruppacher and Beard (1970)\\\cline{3-4}
+&&\tt"AND99"&axis ratio of raindrops : Andsager et al. (1999). \\\cline{3-4}
+&&\tt"BR02"&axis ratio of raindrops : Brandes et al. (2002). \\\cline{3-4}
+&&\tt"SPHE"&axis ratio for spheres (r=1)\\\hline
+
+\tt LREFR         & logical & \tt.FALSE.&if true writes out refractivity ($N\equiv(n-1)\times10^6$)\\\hline
+\tt LDNDZ         & logical & \tt.FALSE.&if true writes out vertical gradient of refractivity ($\d N/\d z$)\\\hline
+\multirow{2}{*}{\tt NCURV\_INTERPOL}&\multirow{2}{*}{integer} & 0& use an average beam bending equivalent to 4/3 of the Earth's radius\\\cline{3-4}
+& &1& compute the beam bending at each gate by using model variables\\\hline
+\tt LCART\_RAD    & integer & \tt.TRUE.&true if  interpolation of  reflectivity on a cartesian grid ; false if polar\\\hline
+\tt NBAZIM    & logical & \tt.720&Number of azimuths in polar coordinates (used only if LCART\_RAD=.FALSE)\\\hline
+\multirow{5}{*}{\tt NDIFF}&\multirow{4}{*}{integer}  & 0& Rayleigh scattering\\\cline{3-4}
+& & 1&Mie scattering \\\cline{3-4}
+& & 3& Rayleigh for spheroids scattering\\\cline{3-4}
+& & 4& Rayleigh with $6^{th}$ order for attenuation calculations\\\cline{3-4}
+& & 7&T-matrix scattering (from lookup tables reading) \\\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
+	
+\tt NPTS\_GAULAG  &integer  & 7&number of points of the quadrature\\\hline
+\tt XGRID         &real     & 2000.& size of the Cartesian grid (m)\\\hline
+%\tt NDGS          &integer  &2&  number of points taken to evaluate 2-dimensional integrals in the T-matrix code\\\hline
+\tt LFALL         &logical  &  \tt.FALSE.&if true takes into account hydrometeor fall speeds\\\hline
+\tt LWREFL        &logical  &  \tt.FALSE.&if true takes into account the weighting by reflectivities\\\hline
+\tt LWBSCS        &logical  &  \tt.FALSE.&if true takes into account the weighting by hydrometeor concentrations\\\hline
+\tt XREFLMIN      &real     & $-30.$& minimum detectable reflectivity (in dB$Z$)\\\hline
+\tt XREFLVDOPMIN  & real    & $-990.$&minimum detectable reflectivity to compute Doppler velocities (in dB$Z$; useless when \texttt{LWREFL=.FALSE.})\\\hline
+\tt LSNRT         &logical  &  \tt.TRUE.&if true ZHH ZER ZEI ZES ZEG and doppler velocity are thresholded when SNR<XSNRMIN\\\hline
+\tt XSNRMIN      &real     & $0$& minimum SNR (used only if LSNRT=T)\\\hline
+	
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\underline{Output files}\\
+As output fields are not on the model grid, they have to be written in other files than LFIs. Therefore the following files are written in the following format: AAABBBCC.CDDD{\bf X} for cartesian coordinates and PAAABBBCC.C{\bf X} for polar coordinates, where AAA is the descriptor of the field (3 characters, see below for further explanations), BBB is the name of the radar (3 characters), CC.C is the elevation (in degrees), DDD is half the number of pixels on each row or column (3 characters), and {\bf X} is the name of the input file. Example of file name for cartesian coordinates : {\tt ZHHBOL00.4300BOG12.2.SEG04.004RD}.
+
+Field descriptors can be
+\begin{multicols}2
+\begin{itemize}
+\item ZHH : overall reflectivity (dB$Z$),
+\item ZER : reflectivity due to rain (dB$Z$),
+\item ZEI : reflectivity due to pristine ice (dB$Z$),
+\item ZES : reflectivity due to snow (dB$Z$),
+\item ZEG : reflectivity due to graupel (dB$Z$),
+\item KDP : specific differential phase (\char23 $ km^{-1}$),
+\item ZDR : differential reflectivity (dB),
+\item VRU : Doppler velocity (m s$^{-1}$),
+\item HAS : height of middle of beam MSL (m),
+\item M\_R : rainwater contents in the middle of the beam (kg kg$^{-1}$),
+\item M\_I : primary ice contents in the middle of the beam (kg kg$^{-1}$),
+\item M\_S : snow contents in the middle of the beam (kg kg$^{-1}$),
+\item M\_G : graupel contents in the middle of the beam (kg kg$^{-1}$),
+\item CIT : pristine ice concentration in the middle of the beam (kg m$^{-3}$),
+\item AET : overall two-way specific attenuation (dB km$^{-1}$) (if LATT=T),
+\item AER : two-way specific attenuation due to rain (dB km$^{-1}$) (if LATT=T),
+\item AEI : two-way specific attenuation due to pristine ice (dB km$^{-1}$) (if LATT=T),
+\item AES : two-way specific attenuation due to snow (dB km$^{-1}$) (if LATT=T),
+\item AEG : two-way specific attenuation due to graupel (dB km$^{-1}$) (if LATT=T),
+\item ATT : overall two-way path-integrated attenuation (PIA) (dB) (if LATT=T),
+\item ATR : two-way PIA due to rain (dB) (if LATT=T),
+\item ATI : two-way PIA due to pristine ice (dB) (if LATT=T),
+\item ATS : two-way PIA due to snow (dB) (if LATT=T),
+\item ATG : two-way PIA due to graupel (dB) (if LATT=T),
+\item RFR : refractivity in the middle of the beam (if LREFR=T),
+\item DNZ : vertical gradient of refractivity in the middle of the beam (km$^{-1}$) (if LDNDZ=T),
+\item CSR : index characterizing the pixel: 0 stands for clear-air, 1 for stratiform, 2 for convective.
+\item PDP : differential phase beetween horizontal and vertical polarizations (°)
+\item KDR,KDS,KDG :	specific differential phase due to rain, snow or graupel(\char23 $ km^{-1}$),
+\item ZDA,ZDS,ZDG : differential reflectivity due to rain, snow or graupel (dB),
+\item RHV,RHR,RHS,RHG : copolar correlation coefficient  due to all hydrometeors, rain, snow or graupel (/),
+\item TEM : model temperature (\char23 C),
+\item DHV : backscattering differentiel phase (\char23),
+
+\end{itemize}
+\end{multicols}
+\newpage
+\subsection{Lidar}
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+\hline
+\multirow{5}{*}{LLIDAR}\index{LLIDAR!\innam{NAM\_DIAG}}& \textbf{.FALSE.}& by default : no field\\\cline{2-3}
+&\multirow{2}{*}{.TRUE} & {\tt  LIDAR }: [3D] total backscatter coefficient (1/m/sr)\\\cline{3-3}
+& &  {\tt LIPAR  }: [3D] particle backscatter coefficient  (1/m/sr)\\\hline
+\end{tabular} 
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+CVIEW\_LIDAR& character(*5)     & 'NADIR'    \\
+XALT\_LIDAR& real &  0   \\
+XWVL\_LIDAR& real &  0.532E-6   \\
+
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CVIEW\_LIDAR : gives the lidar point of view : either 'NADIR' or 'ZENIT'
+\item XALT\_LIDAR : gives the altitude of the lidar source  (in meters)  (by default, the altitude of the ground
+will be used for zenithal view, and the altitude of the model top will be used for nadir view) 
+\item XWVL\_LIDAR : gives the wavelength of the lidar source (in meters)
+\end{itemize}
+
+\subsection{Aircraft and balloon}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+LAIRCRAFT\_BALLOON       & logical     & .FALSE.   \\
+NTIME\_AIRCRAFT\_BALLOON & integer     & NUNDEF    \\
+XSTEP\_AIRCRAFT\_BALLOON & real        & XUNDEF    \\
+XLAT\_BALLOON            & array(real) & 9*XUNDEF  \\
+XLON\_BALLOON            & array(real) & 9*XUNDEF  \\
+XALT\_BALLOON            & array(real) & 9*XUNDEF  \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LAIRCRAFT\_BALLOON \index{!\innam{NAM\_DIAG}}:  flag to compute aircraft and balloon trajectories
+with stationnary fields.
+Trajectories will be written in diachronic file {\it YINIFILE}BAL
+\item NTIME\_AIRCRAFT\_BALLOON\index{NTIME\_AIRCRAFT\_BALLOON!\innam{NAM\_DIAG}}: time length of trajectories computation 
+centered on CURrent time (s)
+\item XSTEP\_AIRCRAFT\_BALLOON\index{XSTEP\_AIRCRAFT\_BALLOON!\innam{NAM\_DIAG}}: minimum time step for trajectories computation (s)
+\item XLAT\_BALLOON\index{XLAT\_BALLOON!\innam{NAM\_DIAG}}: initial latitudes of the balloons
+\item XLON\_BALLOON\index{XLON\_BALLOON!\innam{NAM\_DIAG}}: initial longitudes of the balloons
+\item XALT\_BALLOON\index{XALT\_BALLOON!\innam{NAM\_DIAG}}: initial altitudes of the balloons (m)
+\end{itemize}
+
+\subsection{Interpolation on isobaric and isentropic levels}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+LISOPR       & logical     & .FALSE.   \\
+XISOPR       & array(real) & 10*0  \\
+LISOTH       & logical     & .FALSE.   \\
+XISOTH       & array(real) & 10*0  \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LISOPR\index{!\innam{NAM\_DIAG}}: flag to interpolate on pressure levels the following variables : potential temperature, wind, water vapour mixing ratio, geopotential (in meters)
+\item XISOPR\index{!\innam{NAM\_DIAG}}: altitude of the isobaric levels
+\item LISOTH\index{!\innam{NAM\_DIAG}}: flag to interpolate on isentropic levels the following variables : pressure, potential vorticity, wind, water
+\item XISOTH\index{!\innam{NAM\_DIAG}}: altitude of the isentropic levels
+\end{itemize}

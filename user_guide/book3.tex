@@ -1,0 +1,152 @@
+%\documentstyle[11pt,epsfig]{book}
+\documentclass[11pt,a4paper]{book}
+\usepackage{epsfig}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\hypersetup{pdfborder = {0 0 0}}
+\usepackage{natbib}
+\usepackage{multicol,multirow,array}
+\usepackage{makeidx}
+\usepackage{html}
+%
+%\date{February 20, 2009}
+\setlength{\textwidth}{16.0cm}
+\setlength{\textheight}{23.0cm}
+\hoffset=-1.5cm
+%\hoffset=-3cm
+%\voffset=-3.2cm
+\oddsidemargin=2cm
+\evensidemargin=1cm
+\renewcommand{\textfraction}{.15}
+\renewcommand{\topfraction}{.85}
+\renewcommand{\floatpagefraction}{.80}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\bull}{\vrule height .9ex width .8ex depth -.1ex \ }
+%
+
+
+
+\newcommand{\parttoccolor}{blue}
+\newcommand{\chaptertoccolor}{blue}
+\newcommand{\sectiontoccolor}{green!70!black}
+\newcommand{\subsectiontoccolor}{violet}
+
+\makeatletter
+\renewcommand*\l@part[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{2.25em \@plus\p@}%
+    \setlength\@tempdima{3em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      {\leavevmode
+       \color{\parttoccolor}\def\@linkcolor{\parttoccolor}%
+       \large\bfseries{\mathversion{bold}#1}\hfil
+       \hb@xt@\@pnumwidth{\hss
+       \def\@linkcolor{\parttoccolor}\color{\parttoccolor}#2}}\par
+       \nobreak
+         \global\@nobreaktrue
+         \everypar{\global\@nobreakfalse\everypar{}}%
+    \endgroup
+  \fi}
+\renewcommand*\l@chapter[2]{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \def\@linkcolor{\chaptertoccolor}%
+      \color{\chaptertoccolor}{\mathversion{bold}#1}\nobreak\
+       \leaders\hbox{$\m@th
+        \mkern \@dotsep mu\hbox{.}\mkern \@dotsep
+        mu$}\hfil\nobreak\hb@xt@\@pnumwidth{\hss
+        \def\@linkcolor{\chaptertoccolor}%
+        \color{\chaptertoccolor}#2}\par
+      \penalty\@highpenalty
+    \endgroup
+  \fi}
+\def\@dottedtocline#1#2#3#4#5{%
+  \ifnum #1>\c@tocdepth \else
+    \vskip \z@ \@plus.2\p@
+    {\leftskip #2\relax \rightskip \@tocrmarg \parfillskip -\rightskip
+     \parindent #2\relax\@afterindenttrue
+     \interlinepenalty\@M
+     \leavevmode
+     \@tempdima #3\relax
+     \advance\leftskip \@tempdima \null\nobreak\hskip -\leftskip
+     {#4}\nobreak
+     \leaders\hbox{$\m@th
+        \mkern \@dotsep mu\hbox{.}\mkern \@dotsep
+        mu$}\hfill
+     \nobreak
+     \hb@xt@\@pnumwidth{\hfil\normalfont #5}%
+     \par}%
+  \fi}
+\renewcommand*\l@section{\color{\sectiontoccolor}\def\@linkcolor{\sectiontoccolor}\@dottedtocline{1}{1.5em}{2.3em}}
+\renewcommand*\l@subsection{\color{\subsectiontoccolor}\def\@linkcolor{\subsectiontoccolor}\@dottedtocline{1}{3.em}{3.3em}}
+
+\makeatother
+
+\usepackage[nottoc]{tocbibind}
+
+%  definition of  new commands for the references :
+\def \decrefname {\par\noindent\hangindent=1truecm \hangafter=1}
+%  definition of  new commands for the indexes :
+\newcommand{\rind}[1]{\index{#1,module MODD CST}}
+\newcommand{\innam}[2]{{\it in namelist \/}#1} 
+\makeindex
+\begin{document}
+\baselineskip=18pt
+\newcommand{\dfrac}[2]{\frac{\displaystyle#1}{\displaystyle#2}}
+\newcounter{equA}\newcounter{equB}
+\newcounter{equC}\newcounter{equD}
+\parindent=25pt
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+\title{ {\bf THE MESONH USER'S GUIDE}}
+\author{MASDEV5.3.0 version and SURFEX 8.0+ version }
+\end{titlepage}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+
+\include{intro/introduction}
+
+\include{install/install}
+
+\include{lfi/lfinam}
+\include{real/pgd}
+\include{ideal/idealcases}
+\include {real/realcases}
+\include{simul/simulation}
+
+\include{diag/diag}
+\include{diag/surfex_diag}
+\include{diag/diag_exple}
+\include{diag/spectre}
+
+\appendix
+\include{annexes/variables}
+\include{annexes/sequences}
+\include{annexes/annexesLES}
+\include{annexes/grille}
+
+\printindex
+\phantomsection
+\addcontentsline{toc}{chapter}{Index}
+\end{document}

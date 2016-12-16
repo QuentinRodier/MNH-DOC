@@ -1,0 +1,1752 @@
+\chapter{Preparation of an ideal simulation : PREP\_IDEAL\_CASE}\label{c:PREPIDEAL}
+
+\section{Overview of PREP\_IDEAL\_CASE functionalities}
+
+
+The "PREP\_IDEAL\_CASE" program  prepares a MESONH file, that contains all the
+parameters and fields necessary for the execution of the MESONH model.
+Specifically, the grid parameters, the initial fields and the geophysical fields
+are included in this file. It is possible using this program to generate
+idealized fields defined by few parameters.\\ 
+
+The generated initial conditions are produced analytically, leading to 
+ quasi-1D fields or 3D fields or a single profile build with either:
+\begin{itemize}
+\item
+layers of constant Brunt-Vaisala frequency, shear  and 
+humidity  
+\item a Radiosounding and ideal surface fields
+\item a Radiosounding and real physiographic fields 
+\item
+a Radiosounding and real and ideal surface fields at the same time
+\end{itemize}
+
+For these latter cases, the initial fields may be  hydrostatically or
+geostrophically  balanced or not.
+For these fields to satisfy the anelastic constraint, a final correction is
+applied to them.
+
+
+The interaction between the PREP\_IDEAL\_CASE program and the user is made through 
+the PRE\_IDEA1.nam file. The degrees of freedom  are collected in a set of
+namelists,  read by this program. 
+
+\newpage
+\section {The input: the PRE\_IDEA1.nam file}
+
+It is made  of  two parts :
+
+\begin{itemize}
+\item A namelist-part with directives for the preparation
+of an idealized case (always present).  The
+order of namelists is free and unset namelists can be ommited.
+\item A free-formatted part describing
+a vertical profile of n layers of constant moist Brunt-Vaisala frequency or
+a radiosounding and sometimes the explicit list of the heights of the vertical
+levels. This part can be present or absent in the other cases.
+
+\end{itemize}
+
+To initialize a simulation with a radiosounding and real
+terrain conditions, it is necessary to perform the PREP\_PGD program 
+to create a MESO-NH physiographic data file. This data file contains
+ the orography and the physiographic data fields (related to the soil scheme).
+It is also possible to perform a complete ideal case with ideal orography and 
+non trivial surface conditions.
+The user can combine the two possibilities with flags included in the namelist 
+NAM\_REAL\_PGD and initialize a simulation with a real orography and
+idealized homogeneous surface fields.
+If a PREP\_PGD file is specified and if the flags in namelist NAM\_REAL\_PGD
+are set to FALSE, homogeneous values can be imposed by the user in namelists 
+from the externalized surface facility PGD (namelists NAM\_COVER and NAM\_ISBA),
+else the PREP\_PGD fields are taken into account.
+\\
+
+In the following, the namelists are listed in alphabetical order.
+\newpage
+\subsection{Namelist NAM\_AERO\_PRE (init. aerosol scalar variables)} \label{s:namaeropre}
+\index{NAM\_AERO\_PRE!namelist description}
+
+If you initialize aerosol during PREP\_IDEAL\_CASE as for ORILAM (chemical aerosols), DUST and SEA SALT.
+use the following namelist variables:
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LORILAM      & logical       & FALSE    \\
+LDUST        & logical       & FALSE    \\
+LSALT        & logical       & FALSE    \\
+LINITPM      & logical       & FALSE    \\
+XINIRADIUSI  & real          & 0.05     \\
+XINIRADIUSJ  & real          & 0.2      \\
+XINISIGI     & real          & 1.8      \\
+XINISIGJ     & real          & 2.0      \\
+XN0IMIN      & real          & 10.      \\
+XN0JMIN      & real          & 1.       \\
+CRGUNIT      & character     & "NUMB"   \\
+NMODE\_DST   & integer       & 3       \\
+XN0MIN       & real          & 1.e3 , 1.e1 , 1.e-2 \\
+XINIRADIUS   & real          & 0.044, 0.3215, 1.575 \\
+XINISIG      & real          & 2.0, 1.78, 1.85 \\
+CRGUNITD     & character     & "NUMB"   \\
+NMODE\_SLT   & integer       & 3       \\
+XN0MIN\_SLT  & real          & 1.e4 , 1.e2 , 1.e-1 \\
+XINIRADIUS\_SLT & real       & 0.14, 1.125,  7.64\\
+XINISIG\_SLT    & real       & 1.9, 2., 2. \\
+CRGUNITS     & character     & "MASS"   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LORILAM\index{LORILAM!\innam{NAM\_AERO\_PRE}}:
+Flag to activate  chemical aerosol initialization (only if LCH\_INIT\_FIELD=T in NAM\_CH\_MNHCn\_PRE).
+\item LDUST\index{LDUST!\innam{NAM\_AERO\_PRE}}: 
+Flag to activate  passive dust initialization (3 modes).
+\item LSALT\index{LSALT!\innam{NAM\_AERO\_PRE}}: 
+Flag to activate  passive sea salt initialization (3 modes).
+\item LINITPM\index{LINITPM!\innam{NAM\_AERO\_PRE}}:
+Flag to activate  primary aerosol initialization (Black and Organic carbon) from concentration of CO (only if LORILAM=T in NAM\_CH\_MNHCn\_PRE).
+\item XINIRADIUSI\index{XINIRADIUSI!\innam{NAM\_AERO\_PRE}}:
+Initial mean radius of aitken mode in $\mu m$  (only if LORILAM=T \\
+in NAM\_AERO\_PRE).
+\item XINIRADIUSJ\index{XINIRADIUSJ!\innam{NAM\_AERO\_PRE}}:
+Initial mean radius of accumulation mode in $\mu m$ (only if LORILAM=T in NAM\_AERO\_PRE).
+\item XINISIGI\index{XINISIGI!\innam{NAM\_AERO\_PRE}}:
+Initial standard deviation of aitken  mode (only if LORILAM=T in NAM\_AERO\_PRE).
+\item XINISIGJ\index{XINISIGJ!\innam{NAM\_AERO\_PRE}}:
+Initial standard deviation of accumulation  mode (only if LORILAM=T in NAM\_AERO\_PRE).
+\item XN0IMIN\index{XN0IMIN!\innam{NAM\_AERO\_PRE}}:
+Minimum number concentration of aitken mode (only if LORILAM=T in NAM\_AERO\_PRE).
+\item XN0JMIN\index{XN0JMIN!\innam{NAM\_AERO\_PRE}}:
+Minimum number concentration of accumulation mode (only if LORILAM=T in NAM\_AERO\_PRE).
+\item CRGUNIT\index{CRGUNIT!\innam{NAM\_AERO\_PRE}}:
+Definition of XINIRADIUSI or XINIRADIUSJ: mean radius is in mass or in number; possible values are MASS or NUMB (only if LORILAM=T in NAM\_AERO\_PRE).
+\item NMODE\_DST\index{NMODE\_DST!\innam{NAM\_AERO\_PRE}}:
+Number of DUST mode (between 1 and 3 and only if LDUST=T in NAM\_AERO\_PRE).
+\item XN0MIN\index{XN0MIN!\innam{NAM\_AERO\_PRE}}:
+Minimum number concentration of the NMODE\_DST in particles by m3 (only if LDUST=T in NAM\_AERO\_PRE).
+\item XINIRADIUS\index{XINIRADIUS!\innam{NAM\_AERO\_PRE}}:
+Initial mean radius of the NMODE\_DST modes in $\mu m$ (only if LDUST=T in NAM\_AERO\_PRE). 
+\item XINISIG\index{XINISIG!\innam{NAM\_AERO\_PRE}}:
+Initial standard deviation of the NMODE\_DST modes (only if LDUST=T in NAM\_AERO\_PRE). 
+\item CRGUNITD\index{CRGUNITD!\innam{NAM\_AERO\_PRE}}:
+Definition of XINIRADIUS : mean radius is in mass or in number; possible values are MASS or NUMB (only if LDUST=T in NAM\_AERO\_PRE).
+\item NMODE\_SLT\index{NMODE\_SLT!\innam{NAM\_AERO\_PRE}}:
+Number of SALT mode in $\mu m$ (between 1 and 3 and only if LSALT=T in NAM\_AERO\_PRE).
+\item XN0MIN\_SLT\index{XN0MIN\_SLT!\innam{NAM\_AERO\_PRE}}:
+Minimum number concentration of the NMODE\_SLT in particles by m3 (only if LSALT=T in NAM\_AERO\_PRE).
+\item XINIRADIUS\_SLT\index{XINIRADIUS\_SLT!\innam{NAM\_AERO\_PRE}}:
+Initial mean radius of the NMODE\_SLT modes (only if LSALT=T in NAM\_AERO\_PRE).
+\item XINISIG\_SLT\index{XINISIG\_SLT!\innam{NAM\_AERO\_PRE}}:
+Initial standard deviation of the NMODE\_SLT modes (only if LSALT=T in NAM\_AERO\_PRE).
+\item CRGUNITS\index{CRGUNITS!\innam{NAM\_AERO\_PRE}}:
+Definition of XINIRADIUS\_SLT : mean radius is in mass or in number; possible values are MASS or NUMB (only if LSALT=T in NAM\_AERO\_PRE).
+\end{itemize}
+
+
+\subsection{Namelist NAM\_BLANK (available variables)} \label{s:namblank}
+\index{NAM\_BLANK !namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+XDUMMY1 .. XDUMMY8 & real                 & 0.       \\
+NDUMMY1 .. NDUMMY8 & integer              & 0        \\
+LDUMMY1 .. LDUMMY8 & logical              & TRUE     \\
+CDUMMY1 .. CDUMMY8 & 80 characters        & ''       \\
+XDUMMY             & array(real)          & 20* 0.   \\
+NDUMMY             & array(integer)       & 20* 0    \\
+LDUMMY             & array(logical)       & 20* TRUE \\
+CDUMMY             & array(80 characters) & 20* ''   \\
+\hline
+\end{tabular}
+\end{center}
+
+Eight dummy, real, integer, logical and character*80 variables and
+arrays of dummy, real, integer, logical and character*80 for test
+and debugging  purposes are defined and passed through the namelist
+read operations. None of the MesoNH routines uses any of these
+variables. When a developper choses to introduce temporarily a
+parameter to some subroutine, he has to introduce a USE MODD\_BLANK
+statement into that subroutine. Then he can use any of the variables
+defined here and change them easily via the namelist input.
+
+
+
+\subsection{Namelist NAM\_CH\_MNHCn\_PRE (init. chemistry scalar variables)}
+
+If you initialize MNH-C using PREP\_IDEAL\_CASE,
+use the following namelist variables:
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LCH\_INIT\_FIELD  & logical       & FALSE      \\
+CCHEM\_INPUT\_FILE & 80 characters & MNHC.input \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item LCH\_INIT\_FIELD\index{LCH\_INIT\_FIELD!\innam{NAM\_CH\_MNHCn\_PRE}}: 
+Flag to activate initialization subroutine CH\_INIT\_FIELD.
+
+\item CCHEM\_INPUT\_FILE\index{CCHEM\_INPUT\_FILE!\innam{NAM\_CH\_MNHCn\_PRE}}:
+ name of the general purpose input file for initialization.
+ 
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_CONFIO}
+See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
+
+
+\subsection{Namelist NAM\_CONF\_PRE  (configuration variables)}
+\index{NAM\_CONF\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LCARTESIAN & logical     & TRUE  \\
+LPACK      & logical     & TRUE  \\
+CEQNSYS    & 3 characters& 'DUR'   \\
+NVERB      & integer     & 5     \\
+CIDEAL     & 4 characters& 'CSTN'  \\
+CZS        & 4 characters& FLAT  \\
+LBOUSS     & logical     & FALSE \\
+LPERTURB   & logical     & FALSE \\
+LFORCING   & logical     & FALSE \\
+LSHIFT     & logical     & FALSE \\
+L2D\_ADV\_FRC  & logical     & FALSE \\
+L2D\_REL\_FRC  & logical     & FALSE \\
+NHALO      & integer        & 1      \\
+JPHEXT     & integer        & 1      \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item  LCARTESIAN \index{LCARTESIAN!\innam{NAM\_CONF\_PRE}}
+: Flag for cartesian geometry 
+\begin{itemize}
+\item .TRUE. for cartesian geometry
+\item .FALSE. for conformal projection
+\end{itemize}
+
+\item LPACK \index{LPACK!\innam{NAM\_CONF\_PRE}}: Flag to compress FM file
+for 1D or 2D version.
+
+\item CEQNSYS \index{CEQNSYS!\innam{NAM\_CONF\_PRE}}: Equation system 
+resolved by the MESONH model
+\begin{itemize}
+\item 'LHE' Lipps and HEmler anelastic system
+\item 'DUR' approximated form of the DURran version of the anelastic sytem
+\item 'MAE' classical Modified Anelastic Equations but with not any approximation 
+in the momentum equation
+\end{itemize}
+
+\item  NVERB \index{NVERB!\innam{NAM\_CONF\_PRE}} : verbosity level
+\begin{itemize}
+\item  0 for minimum of prints
+\item  5 for intermediate level of prints
+\item  10 for maximum of prints.
+\end{itemize}
+If $CSURF$="EXTE" in
+namelist NAM\_GRn\_PRE  \index{CSURF!\innam{NAM\_GRn\_PRE}}, NVERB=10
+prints two \LaTeX \ files containing the initialisation of
+surface scheme variables for each type of surface cover
+(in french or in english).
+
+\item CIDEAL  \index{CIDEAL!\innam{NAM\_CONF\_PRE}}: kind of idealized fields 
+\begin{itemize}
+\item 'CSTN' : Constant moist Brunt Vaisala frequency case 
+\item 'RSOU' : radiosounding case
+\end{itemize}
+
+
+\item CZS  \index{CZS!\innam{NAM\_CONF\_PRE}} :  orography selector 
+The formulae are given below in the description of the namelist  
+NAM\_GRIDH\_PRE.
+\begin{itemize}
+\item 'FLAT' : constant XHMAX orography (zero by default)
+\item 'SINE' : sine-shaped orography 
+\item 'BELL' : bell-shaped orography
+\item 'AGNE' : 	orography with h*a**2/(x**2+a**2) shape
+
+\item 'DATA': discretized orography. The data describing the orography 
+are given in the free format part. 
+Only the orography corresponding
+to the computational domain must be provided in free format. For 3D orography,
+data are read like if it was a map (the first line is the Northern border and
+the first data is the North-West corner) with one line per Y-axis increment.
+\end{itemize}
+
+\item LBOUSS  \index{LBOUSS!\innam{NAM\_CONF\_PRE}}: Flag for a Boussinesq version. 
+\begin{itemize}
+\item .TRUE. The reference anelastic state is  $\theta _{ref} =
+cte = \theta _{ref} (z=0) $ and $ \rho _{ref} = cte = \rho _{ref}  (z=0) $. 
+In this case, the stratification is taken into account in the Meso-NH model in
+the flottability term. The typical length, on which this stratification
+varies, is much greater than the domain heigth and the   $\theta _{ref}$
+variation can be therefore neglected.
+\item .FALSE. The reference anelastic state varies with the altitude.
+\end{itemize}
+
+\item LPERTURB  \index{LPERTURB!\innam{NAM\_CONF\_PRE}}: Flag to add a perturbation on the initially horizontally homogeneous fields.
+This perturbation is not balanced. 
+
+3 perturbation types are implemented in the routine {\it set\_perturb.f90} :
+\begin{itemize}
+\item 
+a spherical perturbation  on the dry potential temperature  and the moisture 
+fields (typical for convection initialization).
+\item 
+a  perturbation on the horizontal components of the wind derived
+from a streamfunction (typical for large scale studies).
+ This prevents the wind from becoming divergent. 
+\item 
+a  perturbation on the dry potential temperature field at the first mass level
+near the ground, corresponding to a white noise (uniform amplitude in the
+spectral space) (typical for Large Eddy Simulations initialization)  
+\end{itemize}
+When set to .TRUE., the parameters for the exact definition of the perturbation can
+be set in the namelist NAM\_PERT\_PRE or sometimes can be
+modified directly in the subroutine {\it set\_perturb.f90}
+
+\item LFORCING  \index{LFORCING!\innam{NAM\_CONF\_PRE}}: Flag to 
+specify forcing sources.
+When .TRUE., the precise definition of the forcing is set in the free-format 
+part of PRE\_IDEA1.nam (see \ref{ss:forced}).
+
+\item LSHIFT  \index{LSHIFT!\innam{NAM\_CONF\_PRE}}: flag to shift altitudes in boundary layer. If LGEOSBAL=TRUE, LSHIFT will be set to FALSE.
+
+\item L2D\_ADV\_FRC  \index{L2D\_ADV\_FRC!\innam{NAM\_CONF\_PRE}}: flag to activate advecting forcing (2D simulation only). When .TRUE., the precise definition of the advecting forcing is set in the free-format 
+part of PRE\_IDEA1.nam (see \ref{ss:adv_forcing}).
+
+\item L2D\_REL\_FRC  \index{L2D\_REL\_FRC!\innam{NAM\_CONF\_PRE}}: flag to activate relaxation forcing (2D simulation only). When .TRUE., the precise definition of the relaxation forcing is set in the free-format 
+part of PRE\_IDEA1.nam (see \ref{ss:rel_forcing}).
+
+ \item
+NHALO: Size of the halo for parallel distribution.
+This variable is related to computer performance but has no
+impact on simulation results.\\
+\index{NHALO!\innam{NAM\_CONF\_PRE}}
+
+\item
+JPHEXT:  Horizontal External points number\\
+JPHEXT must be equal to 3 for cyclic cases with WENO5.
+\index{JPHEXT!\innam{NAM\_CONF\_PRE}}
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_CONFn (configuration variables for
+modeln)}
+\index{NAM\_CONFn!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LUSERV    & logical & TRUE  \\
+LUSERC    & logical & FALSE  \\
+LUSERI    & logical & FALSE  \\
+NSV\_USER  & integer & 0   \\  
+\hline
+\end{tabular}
+\end{center}
+
+(see \thechapter.\thesection \ for more details for these cases)
+\begin{itemize}
+
+\item  LUSERV  \index{LUSERV!\innam{NAM\_CONFn}} : Flag to write
+$r_{v}$ (vapor mixing ratio) in initial file. It is reset to .TRUE.
+when CIDEAL ='RSOU' or 'CSTN'. This has been done in order to avoid
+to treat the dry case as a particular case but as a moist case with
+humidity equal to 0.
+
+\item  LUSERC  \index{LUSERC!\innam{NAM\_CONFn}} : Flag to write
+$r_{c}$ (cloud mixing ratio) in initial file. This case is only
+allowed when CIDEAL ='RSOU' (radiosounding case) and KIND='PUVTHDMR'
+or KIND='ZUVTHLMR'
+
+\item  LUSERI  \index{LUSERI!\innam{NAM\_CONFn}} : Flag to write
+$r_{i}$ (ice mixing ratio) in initial file. This case is only
+allowed when CIDEAL ='RSOU' (radiosounding case) and KIND='PUVTHDMR'
+
+\item NSV\_USER \index{NSV\_USER!\innam{NAM\_CONFn}}: number of
+scalar variables Note that if NSV\_USER is different from 0, the
+Scalar Variables are initialized to 0  by the program
+
+\end{itemize}
+
+\subsection{Namelist NAM\_CONFZ (configuration variables for
+splitting along z)\label{s:namconfz}}
+\index{NAM\_CONFZ!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NZ\_VERB & integer & 0 \\
+NZ\_PROC & integer & 0 \\
+NB\_PROCIO\_R & integer & 1 \\
+NB\_PROCIO\_W & integer & 1 \\
+MPI\_BUFFER\_SIZE & integer & 40 \\
+LMNH\_MPI\_BSEND  & logical & TRUE \\
+LMNH\_MPI\_ALLTOALLV\_REMAP & logical & FALSE \\
+NZ\_SPLITTING & integer & 10 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize} 
+\index{NZ\_VERB!\innam{NAM\_CONFZ}}
+\item NZ\_VERB: level of message for NZ solver and I/O  
+              
+\index{NZ\_PROC!\innam{NAM\_CONFZ}}
+\item NZ\_PROC: number of processors to use in the Z splitting. The default value (0) yields an automatic calculation of the number.
+             
+\index{NB\_PROCIO\_R!\innam{NAM\_CONFZ}}
+\item NB\_PROCIO\_R: number of processors to use for parallel I/O when reading file. The default value (1) yields a reading from 1 file only. If more than 1 file, the 3D field are written as several 2D slides.
+
+\index{NB\_PROCIO\_W!\innam{NAM\_CONFZ}}
+\item NB\_PROCIO\_W: Number of processors to use for parallel I/O when writing file. The default value (1) yields a writing into 1 file only. If more than 1 file, the 3D field are written as several 2D slides.
+              
+\index{MPI\_BUFFER\_SIZE!\innam{NAM\_CONFZ}}
+\item MPI\_BUFFER\_SIZE: default size for MPI\_BSEND buffer in $10^6$ bytes. MPI\_BUFFER\_SIZE corresponds approximately to the size of the domain, that is, NX*NY*NZ for I/O in 1 file, and NX*NY for I/O in N 2D-slide files.
+
+\index{LMNH\_MPI\_BSEND!\innam{NAM\_CONFZ}}
+\item LMNH\_MPI\_BSEND:
+during HALO exchange and FFT transposition, switch to use bufferized either MPI\_BSEND routine or asynchrone MPI\_ISEND routine. Depending on the computer and size of the problem, one or the other option could run faster. MPI\_ISEND also uses less memory so MPI BUFFER SIZE should be decreased. 
+
+\index{LMNH\_MPI\_ALLTOALLV\_REMAP!\innam{NAM\_CONFZ}}
+\item LMNH\_MPI\_ALLTOALLV\_REMAP: 
+\begin{itemize} 
+\item FALSE: FFT remap with send/recv $<=>$ NZ\_SPLITTING=10
+\item TRUE: FFT remap with mpi\_alltoallv $<=>$ NZ\_SPLITTING=14 (BG/MPICH optimization) 
+\end{itemize}
+
+\index{NZ\_SPLITTING!\innam{NAM\_CONFZ}}
+\item NZ\_SPLITTING: setting by namelist for debugging by expert user only. 
+The non-expert user will use LMNH\_MPI\_ALLTOALLV\_REMAP=T/F only:
+IZ=1=flat\_inv; IZ=2=flat\_invz; IZ=1+2=the two; +8=P1/P2.
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_DIMn\_PRE (contains  dimensions) }
+\index{NAM\_DIMn\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NIMAX & integer & 10 \\
+NJMAX & integer & 10 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize} 
+\index{NIMAX!\innam{NAM\_DIMn\_PRE}}
+\item NIMAX : number of mass points in x-direction of the 
+initial file is $NIMAX +2 JPHEXT$ ( $JPHEXT$ corresponds to the number of
+marginal points in the horizontal directions and is fixed to 1 for the present 
+Meso-NH version ). NIMAX must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+
+\index{NJMAX!\innam{NAM\_DIMn\_PRE}}
+\item NJMAX : number of mass points in y-direction of the 
+physical domain. The total size of the array written in the initial
+file is $NJMAX +2 JPHEXT$. NJMAX must be equal to $2^m \times 3^n \times 5^p$ with $(m,n,p) \ge 0$
+
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_DYNn\_PRE (pressure solver)} 
+\index{NAM\_DYNn\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CPRESOPT    &  5 characters  & 'CRESI'  \\
+NITR        &   integer      &  4      \\
+XRELAX      &    real        &  1.   \\
+LRES        & logical        & .FALSE. \\
+XRES        & real           & 1.E-07  \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}
+
+\item
+CPRESOPT \index{CPRESOPT!\innam{NAM\_DYNn\_PRE}}:  gives the type of pressure solver used for
+the elliptic equation ('RICHA', 'CGRAD', 'CRESI', 'ZRESI').
+ This equation is solved in order to ensure the anelastic 
+constraint for the initial wind field. Note that the solver is applied even for
+the FLAT case when the Earth spericity is taken into account.
+
+\item
+NITR  \index{NITR!\innam{NAM\_DYNn\_PRE}}: number of  iterations used for the resolution of the elliptic equation (solver = "CPRESOPT").
+
+\item
+XRELAX \index{XRELAX!\innam{NAM\_DYNn\_PRE}} : relaxation factor used by the Richardson method (CPRESOPT = "RICHA").
+
+\item LRES : flag to change the residual divergence limit
+\index{LRES\innam{NAM\_DYNn\_PRE}}
+
+\item XRES : Value of the residual divergence limit
+\index{XRES\innam{NAM\_DYNn\_PRE}}
+
+\end{itemize}  
+
+
+\subsection{Namelist NAM\_GRID\_PRE (grid definition)}
+\index{NAM\_GRID\_PRE!namelist description}
+
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+XLON0   & real & 0. \\
+XLAT0   & real & 60. \\
+XBETA   & real & 0. \\
+XRPK    & real & 1. \\
+XLONORI & real & 350.    \\
+XLATORI & real & 37.    \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent Namelist not used if a PGD is used.
+
+\begin{itemize}          
+\item  XLON0 \index{XLON0!\innam{NAM\_GRID\_PRE}}: reference
+longitude for conformal projection and cartesian plane 
+(if LCARTESIAN =.TRUE. this
+value can be usefull to compute local solar time)
+
+\item XLAT0 \index{XLAT0!\innam{NAM\_GRID\_PRE}}: reference
+latitude for conformal projection and cartesian plane
+
+\item XBETA \index{XBETA!\innam{NAM\_GRID\_PRE}}: rotation angle
+for conformal projection and cartesian plane
+
+\item XRPK \index{XRPK!\innam{NAM\_GRID\_PRE}}: 
+ cone factor for the projection (only if LCARTESIAN =.FALSE.):
+\begin{itemize}
+\item XRPK=1: polar stereographic projection from south pole
+\item 1$>$XRPK$>$0: Lambert projection from south pole
+\item XRPK=0: Mercator projection from earth center
+\item -1$<$XRPK$<$0: Lambert projection from north pole
+\item XRPK=-1: polar stereographic projection from north pole
+\end{itemize}
+
+\item XLONORI \index{XLONORI!\innam{NAM\_GRID\_PRE}}: Longitude (in degrees) 
+of the origine point (not used if LCARTESIAN =.TRUE.). This point is the mass
+point of conformal coordinates (x=0,y=0) of the Meso-NH grids (See annexe \ref{a:grid} for more details on the Meso-NH grids).
+
+\item XLATORI \index{XLATORI!\innam{NAM\_GRID\_PRE}} : Latitude (in degrees)
+ of the origine point (not used if LCARTESIAN =.TRUE.)
+
+\end{itemize}
+
+
+  
+\subsection{Namelist NAM\_GRIDH\_PRE (horizontal grid definition)}
+\index{NAM\_GRIDH\_PRE!namelist description}
+
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+XLATCEN   & real & XUNDEF    \\
+XLONCEN   & real & XUNDEF     \\
+XDELTAX   & real & 5000.  \\
+XDELTAY   & real & 5000.  \\
+XHMAX     & real &  300. / 0.  \\
+NEXPX     & integer&  3      \\
+NEXPY     & integer&  1      \\
+XAX       & real &  10000.   \\
+XAY       & real &  10000.   \\
+NIZS      & integer & 5    \\
+NJZS      & integer & 5  \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}          
+\item XLATCEN \index{XLATCEN!\innam{NAM\_GRIDH\_PRE}} : latitude  of the center of the domain for initialization. This  point is vertical vorticity point (See annexe \ref{a:grid} for more details on the Meso-NH grids)
+
+\item XLONCEN \index{XLONCEN!\innam{NAM\_GRIDH\_PRE}} :  longitude of the center of the domain for initialization. This  point is vertical vorticity point (See annexe \ref{a:grid} for more details on the Meso-NH grids)
+
+\item XDELTAX \index{XDELTAX!\innam{NAM\_GRIDH\_PRE}} : mesh length (in meters)
+ in x-direction on the conformal or cartesian plane. It is  not
+used if you read informations in a Meso-NH constant file (PGD\_FILE). 
+
+\item XDELTAY \index{XDELTAY!\innam{NAM\_GRIDH\_PRE}} : mesh length (in meters)
+ in y-direction on the conformal or cartesian plane. It is  not
+used if you read informations in a Meso-NH constant file (PGD\_FILE).
+
+\item  XHMAX\footnote{default is 300. for mountain and 0 for flat orography}  
+\index{XHMAX!\innam{NAM\_GRIDH\_PRE}}: Maximum height (in meters)
+ $h_{max}$ for orography (case CZS $\neq$ 'FLAT') or ground level for
+flat orography
+
+\item   NEXPX  \index{NEXPX!\innam{NAM\_GRIDH\_PRE}}: Exponent $exp_{x}$ for 
+ orography in case of CZS='SINE'
+
+\item   NEXPY  \index{NEXPX!\innam{NAM\_GRIDH\_PRE}} : Exponent $exp_{y}$ 
+for  orography in case of CZS='SINE'
+
+\item   XAX  \index{XAX!\innam{NAM\_GRIDH\_PRE}}:  Widths (in meters)
+ $a_{x}$ along x 
+ for orography in case CZS='BELL'
+$$ z_s \left( \hat{x} , \hat{y} \right) = { h_{max} \over  \left(
+  1 +
+ \left(  { \hat{x} - NIZS * XDELTAX \over XAX } \right) ^2 + 
+ \left(  { \hat{y} - NJZS * XDELTAX \over XAY } \right) ^2 
+                                                      \right) ^{1.5 } } $$ 
+in the three-dimensional case.
+$$ z_s \left( \hat{x}  \right) = {  h_{max} \over  
+1 + \left(  { \hat{x} - NIZS * XDELTAX \over XAX } \right) ^2 } $$
+in the two-dimensional case.
+
+\item   XAY \index{XAY!\innam{NAM\_GRIDH\_PRE}} :  Width  (in meters)
+$a_{y}$ along y  for orography in case CZS='BELL'
+
+\item  NIZS \index{NIZS!\innam{NAM\_GRIDH\_PRE}}:  Localization in x-direction in the physical domain of the mountain center in 
+the  case CZS ='BELL'. ($x_{s} = NIZS * XDELTAX$) It refers to a vertical
+velocity point at the ground ( NIZS, NJZS )(See annexe \ref{a:grid} for more details on the Meso-NH grids)
+
+\item   NJZS \index{NJZS!\innam{NAM\_GRIDH\_PRE}}: Localization in y-direction in the physical domain of the mountain center in 
+ the     case CZS ='BELL'. ($y_{s} = NJZS * XDELTAY$)
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_GRn\_PRE (surface scheme choice)}
+\index{NAM\_GRn\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+\hline
+CSURF    & 4 characters   &  "NONE"  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item
+CSURF\index{CSURF!\innam{NAM\_GRn\_PRE}} : ground selector.
+
+\begin{itemize}
+\item 'NONE' no surface scheme will be activated during the future MesoNH
+simulation, we therefore do not need any surface parameters. All the namelists of the externalized surface will be ignored.
+
+\item 'EXTE' the externalized surface is used. See the SURFEX documentation for more details.
+\end{itemize}  
+
+\end{itemize}  
+
+
+\subsection{Namelist NAM\_LBCn\_PRE (lateral boundary conditions)} 
+\index{NAM\_LBCn\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CLBCX    & array(2 characters)  &  2*"CYCL"  \\
+CLBCY    & array(2 characters)  &  2*"CYCL"  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item
+CLBCX  \index{CLBCX!\innam{NAM\_LBCn\_PRE}}: represent the type of lateral boundary
+condition at the left and right boundaries along x (CLBCX(1) and CLBCX(2)
+respectively). Possible values are "CYCL", "OPEN", "WALL" for cyclic, open and
+rigid wall boundary conditions respectively. It should be note that CLBCX(1) or CLBCY(1)
+refers to the lowest index values ( IIB , IJB for X and Y directions) and
+CLBCX(2) or CLBCY(2) to the highest index values ( IIE  and IJE). Please note
+that :  
+$$CLBCo(1) ="CYCL" \Rightarrow CLBCo(2) ="CYCL" $$
+  {\bf  The same boundary conditions must be used for the MESO-NH run itself} (see EXSEG1.nam namelist)
+Note also that CYCLIC conditions are not possible  
+with a PGD file (CPGD\_FILE different to '  ' in NAM\_REAL\_PGD).
+\item
+CLBCY  \index{CLBCY!\innam{NAM\_LBCn\_PRE}}: same as CLBCX but for the left and right boundaries along y (CLBCY(1) and CLBCY(2) respectively). They are strings of 4 characters.
+\end{itemize}  
+
+
+\subsection{Namelist NAM\_LUNITn (logical unit names) }
+\index{NAM\_LUNITn!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CINIFILE     & 28 characters & 'INIFILE'\\
+CINIFILEPGD  & 28 characters & ' '\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item CINIFILE \index{CINIFILE!\innam{NAM\_LUNITn}} : name of the initial FM-file  produced by PREP\_IDEAL\_CASE, it will then 
+be used as initial file in a MESONH numerical simulation.
+\item CINIFILEPGD \index{CINIFILEPGD!\innam{NAM\_LUNITn}} : name of the PGD file if CSURF$\neq$'NONE'. If you use an input PGD file for the step PREP\_IDEAL\_CASE (CPGD\_FILE in NAM\_REAL\_PGD), you must have CINIFILEPGD=CPGD\_FILE. If there is no input PGD, CINIFILEPGD is the name of the PGD file produced by PREP\_IDEAL\_CASE.
+\end{itemize} 
+
+\subsection{Namelist NAM\_NCOUT}
+See section \ref{s:namncout} page \pageref{s:namncout} for details.
+
+\subsection{Namelist NAM\_PERT\_PRE (set analytical perturbations) }
+\index{NAM\_PERT\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CPERT\_KIND         & characters & 'TH'  \\
+XAMPLITH            & real       & 1.5   \\
+XAMPLIRV            & real       & 0.0   \\
+XAMPLIUV            & real       & 1.0834   \\
+XAMPLIWH            & real       & 0.1   \\
+NKWH                & integer    & 2    \\
+LSET\_RHU           & logical    & TRUE \\
+XCENTERZ            & real       & 2000. \\
+XRADX               & real       & 10000. \\
+XRADY               & real       & 10000. \\
+XRADZ               & real       & 2000. \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\index{CPERT\_KIND !\innam{NAM\_PERT\_PRE}}
+\item CPERT\_KIND: Defines the type of the perturbation
+\begin{itemize}
+\item 'TH' : thermodynamical fields perturbation ($\theta$ and $r_v$)
+\item 'UV' : horizontal wind fields perturbation ($U$ and $V$)
+\item 'WH' :  white noise applied to $\theta$
+\item 'WW' :  white noise applied to wind components
+\end{itemize}
+
+\index{XAMPLITH!\innam{NAM\_PERT\_PRE}}
+\item XAMPLITH: maximum perturbation for $\theta$
+
+\index{XAMPLIRV!\innam{NAM\_PERT\_PRE}}
+\item XAMPLIRV: maximum perturbation  for $r_v$
+
+\index{XAMPLIUV!\innam{NAM\_PERT\_PRE}}
+\item XAMPLIUV: maximum perturbation for $U$ and $V$
+
+\index{XAMPLIWH!\innam{NAM\_PERT\_PRE}}
+\item XAMPLIWH: maximum perturbation for the normalized white noise (temperature or wind)
+
+\index{NKWH!\innam{NAM\_PERT\_PRE}}
+\item NKWH: Upper level of the layer starting from the ground where the white noise is applied
+
+\index{LSET\_RHU !\innam{NAM\_PERT\_PRE}}
+\item LSET\_RHU: Conservation of the relative humidity
+\begin{itemize}
+\item TRUE the relative humidity is conserved in the $\theta$ perturbation
+\item FALSE the $r_v$ perturbation is computed with the XAMPLIRV amplitude
+\end{itemize}
+
+\index{XCENTERZ!\innam{NAM\_PERT\_PRE}}
+\item XCENTERZ: Height of the maximum of the $\theta$ perturbation (m)
+
+\index{XRADX!\innam{NAM\_PERT\_PRE}}
+\item XRADX: radius of the perturbation along X (m)
+
+\index{XRADY!\innam{NAM\_PERT\_PRE}}
+\item XRADY: radius of the perturbation along Y (m)
+
+\index{XRADZ!\innam{NAM\_PERT\_PRE}}
+\item XRADZ: radius of the perturbation along Z (m)
+
+\end{itemize}
+
+
+\subsection{Namelist NAM\_REAL\_PGD (PGD file flags) }
+\index{NAM\_REAL\_PGD!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CPGD\_FILE          & characters & '   ' \\
+LREAD\_ZS           & logical    & FALSE \\ 
+LREAD\_GROUND\_PARAM & logical    & FALSE \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}
+\index{CPGD\_FILE !\innam{NAM\_REAL\_PGD}}
+\item CPGD\_FILE : name of the physiographic data file containing the ground data
+                   fields. The file must be generated by the PRE\_PGD program.
+{\bf For a purely ideal case, the CPGD\_FILE variable may be deleted from the
+namelist or set to its default value '   '.}
+\index{CPGD\_FILE!\innam{NAM\_REAL\_PGD}}
+{\bf The horizontal grid will be read in the PGD file and therefore, the mesh
+increments XDELTAX and XDELTAY are no more used}.
+
+\item LREAD\_GROUND\_PARAM : Flag to use or not the surface cover types (COVERnnn)
+                             and all other physiographic fields (except orographic ones)
+                             read in the PGD file.
+\begin{itemize}
+\item .TRUE. to read the data in the PGD file 
+\item .FALSE. to use XUNIF\_COVER idealized homogeneous values given in the
+namelist NAM\_COVER (from the externalized surface) and scratch the PGD\_FILE  data
+\end{itemize}
+\index{LREAD\_GROUND\_PARAM!\innam{NAM\_REAL\_PGD}}
+
+
+\item LREAD\_ZS : Flag to use or not the orography parameters 
+                  read in the PGD file.
+\begin{itemize}
+\item .TRUE. to use the data read in the PGD\_FILE 
+\item .FALSE. to use an idealized orography given in the
+namelist NAM\_GRIDH\_PRE and scratch the PGD\_FILE  data
+\end{itemize}
+\index{LREAD\_ZS!\innam{NAM\_REAL\_PGD}}
+
+\end{itemize}
+
+
+
+\subsection{Namelist NAM\_SLEVE (smoothed orography for Sleve coordinate) }
+\index{NAM\_SLEVE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NSLEVE  & integer & 12   \\  
+XSMOOTH\_ZS & real & XUNDEF  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item NSLEVE \index{NSLEVE!\innam{NAM\_SLEVE}}:
+ number of iteration for computation of smooth orography.
+\item XSMOOTH\_ZS \index{XSMOOTH\_ZS!\innam{NAM\_SLEVE}}:
+ optional uniform smooth orography.
+\end{itemize}
+
+
+  
+
+
+            
+\subsection{Namelist NAM\_VER\_GRID (contains vertical grid definition)}
+\index{NAM\_VER\_GRID!namelist description}
+
+There are three ways to compute the vertical grid, as in PREP\_REAL\_CASE:
+\begin{enumerate}
+\item
+constant grid mesh: only the number of levels NKMAX and the grid mesh sizes 
+ZDZGRD and ZDZTOP are used. ZDZGRD and ZDZTOP must have the same value. The type of grid 
+YZGRID\_TYPE is set to 'FUNCTN'.
+\item
+two layers are defined, with constant stretching in each layer. The grid
+mesh size is given near the ground and at top of the model. It is possible
+that the top grid size is never reached, if the number of points is not enough
+for the prescribed stretchings. The type of grid 
+YZGRID\_TYPE is also set to 'FUNCTN'.
+\item
+the levels are given by the user. The type of grid YZGRID\_TYPE is set to
+'MANUAL' in the namelist, and only the number of levels NKMAX is also used in it. 
+\end{enumerate}
+
+The variables of this namelist are:
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value\\
+\hline
+\hline
+LTHINSHELL     & logical    & .FALSE.    \\
+NKMAX          & integer    & 10         \\
+YZGRID\_TYPE   & 6 characters & 'FUNCTN' \\
+ZDZGRD         & real & 300.  \\
+ZDZTOP         & real & 300.  \\
+ZZMAX\_STRGRD  & real & 0.    \\
+ZSTRGRD        & real & 0.    \\
+ZSTRTOP        & real & 0.    \\
+LSLEVE         & logical & FALSE   \\
+XLEN1          & real & 7500.   \\
+XLEN2          & real & 2500.   \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item LTHINSHELL : Flag for the thinshell approximation (logical)
+\index{LTHINSHELL!\innam{NAM\_VER\_GRID}}
+\item NKMAX : number of points in z-direction of the required 
+              physical domain. The total size of the array written in initial
+file will be $NKMAX +2 JPVEXT$ ($JPVEXT$ is fixed to 1 for the present version
+ of Meso-NH) 
+\index{NKMAX!\innam{NAM\_VER\_GRID}}
+
+\item  YZGRID\_TYPE : type of vertical grid definition:
+\index{YZGRID\_TYPE!\innam{NAM\_VER\_GRID}}
+\begin{itemize}
+\item 'FUNCTN': the vertical grid is given by a regular logarithmic function, 
+whose variation is determined by the values of free parameters ZDZGRD, ZDZTOP,
+ZSTRGRD, ZSTRTOP, ZZMAX\_STRGRD described below.
+\item 'MANUAL': the levels are explicitly given in the free-formatted
+part with the keyword \texttt{ZHAT} by entering the heights of the different levels from  K=2 to K= KMAX + 2 (see \ref{ZHAT}).
+\end{itemize}  
+ 
+\item  ZDZGRD : mesh length in z-direction near the ground
+\index{ZDZGRD!\innam{NAM\_VER\_GRID}}
+
+\item  ZDZTOP : mesh length in z-direction near the top of the model
+\index{ZDZTOP!\innam{NAM\_VER\_GRID}}
+
+\item  ZZMAX\_STRGRD : Altitude separating the two constant stretching layers
+\index{ZZMAX\_STRGRD!\innam{NAM\_VER\_GRID}}
+
+\item  ZSTRGRD : Constant imposed stretching (in \%) in the lower layer
+(below ZZMAX\_STRGRD)
+\index{ZSTRGRD!\innam{NAM\_VER\_GRID}}
+
+\item  ZSTRTOP : Constant imposed stretching (in \%) in the upper layer
+(above ZZMAX\_STRGRD)
+\index{ZSTRTOP!\innam{NAM\_VER\_GRID}}
+
+\item  LSLEVE \index{LSLEVE!\innam{NAM\_VER\_GRID}} : flag for Sleve 
+vertical coordinate.
+\item  XLEN1 \index{XLEN1!\innam{NAM\_VER\_GRID}} : decay scale for
+smooth topography (in meters)
+\item  XLEN2 \index{XLEN2!\innam{NAM\_VER\_GRID}} : decay scale for
+smale-scale topography deviation (in meters)
+
+\end{itemize}
+
+            
+\subsection{Namelist NAM\_VPROF\_PRE (variables for CIDEAL ='CSTN' or 'RSOU')}
+\index{NAM\_VPROF\_PRE!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LGEOSBAL    &  logical   & FALSE   \\
+CFUNU       & 3 characters  & ZZZ  \\
+CFUNV       & 3 characters  & ZZZ  \\
+CTYPELOC     &  6 characters & IJGRID \\
+XLATLOC  &  real   & 45.  \\
+XLONLOC  &  real   &  0.  \\
+XXHATLOC  &  real   &  20000.  \\
+XYHATLOC  &  real   &  20000.  \\
+NILOC     &  integer & 4    \\
+NJLOC     &  integer & 4    \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}
+
+\item LGEOSBAL \index{LGEOSBAL!\innam{NAM\_VPROFn\_PRE}} : Flag to fulfill the geostrophic balance or not
+\begin{itemize}
+\item .TRUE. the geostrophic balance is satisfied by the initial fields
+\item .FALSE. the geostrophic balance is not satisfied by the initial fields
+\end{itemize}
+
+
+\item CFUNU  \index{CFUNU!\innam{NAM\_VPROFn\_PRE}}: String of 3 characters, describing the type of function, which 
+gives the  x component of the wind. Possible configurations are listed below
+
+\begin{itemize}
+
+\item 
+'ZZZ'    :  U = U(z). 
+The  U(z) values are taken from the
+Radio-Sounding or analitycal profile given in the free-formatted part of the 
+PRE\_IDEA1.nam file.
+
+\item 
+'Y*Z'    : U= F(Y)*U(Z).  
+The U(z) values are build in the same way as the
+'ZZZ' case and the function F(Y) is a simple function of Y, which must be
+adapted by modifying its definition directly in the routine FUNUY. The default
+ function is :
+$$  FUNUY(\hat{y}) = { 1 \over \cosh \left( 
+   { \hat{y} - \hat{y_0} \over zwidth } \right) } $$
+
+\item
+ 'Y,Z'    : U= G(Y,Z).  
+The function  G must also be adapted  by modifying its definition directly in the
+ routine FUNUYZ. The default function is :
+$$  FUNUYZ(\hat{y},z) = { 1 \over \cosh \left( 
+  \left( { \hat{y} - \hat{y_0} \over zwidthy } \right) ^2 +
+  \left( { z - z_0 \over zwidthz } \right) ^2 
+ \right) } $$
+Notice that in this case the U(z) values given by the profile are not used. 
+\end{itemize}
+
+\item CFUNV  \index{CFUNV!\innam{NAM\_VPROFn\_PRE}}: String of 3 characters, describing the type of function, which 
+gives the  y component of the wind. Possible configurations are listed below
+
+\begin{itemize}
+
+\item 
+'ZZZ'    :  V = V(z). 
+The  V(z) values are taken from the
+Radio-Sounding or analitycal profile given in the free-formatted part of the 
+PRE\_IDEA1.nam file.
+
+\item 
+'X*Z'    : V= F(X)*V(Z).  
+The V(z) values are build in the same way as the
+'ZZZ' case and the function F(X) is a simple function of X, which must be
+adapted by modifying its definition directly in the routine FUNVX. The default
+ function is :
+$$  FUNVX(\hat{x}) = { 1 \over \cosh \left( 
+   { \hat{x} - \hat{x_0} \over zwidth } \right) } $$
+
+\item
+ 'X,Z'    : V= G(X,Z).  
+The function  G must also be adapted  by modifying its definition directly in the
+ routine FUNVXZ. The default function is :
+$$  FUNVXZ(\hat{x},z) = { 1 \over \cosh \left( 
+  \left( { \hat{x} - \hat{x_0} \over zwidthx } \right) ^2 +
+  \left( { z - z_0 \over zwidthz } \right) ^2 
+ \right) } $$
+Notice that in this case the V(z) values given by the profile are not used.
+\end{itemize}
+
+
+\item 
+CTYPELOC  \index{CTYPELOC!\innam{NAM\_VPROFn\_PRE}}: Type of informations  used to give the
+                    localization of vertical profile (string of 6 characters)
+\begin{itemize}
+\item
+  'IJGRID'  for (i,j) point  on index space
+\item
+ 'XYHATM' for (x,y) coordinates on
+conformal plane or cartesian plane
+\item
+ 'LATLON' for (latitude,longitude) on   spherical earth  
+\end{itemize}
+
+
+\item XLATLOC \index{XLATLOC!\innam{NAM\_VPROFn\_PRE}}: Latitude (in degrees) of the vertical
+                profile localization  (used in case  CTYPELOC='LATLON') 
+
+
+\item
+ XLONLOC\index{XLONLOC!\innam{NAM\_VPROFn\_PRE}} : Longitude (in degrees) of the vertical
+                profile localization  (used in case  CTYPELOC='LATLON') 
+
+\item
+   XXHATLOC \index{XXHATLOC!\innam{NAM\_VPROFn\_PRE}}: position (in meters) x of the vertical profile
+                    localization  (used in cases 
+                                         CTYPELOC='XYHATM') 
+
+
+\item
+ XYHATLOC \index{XYHATLOC!\innam{NAM\_VPROFn\_PRE}}:  position (in meters) y of the vertical profile
+                    localization  (used in cases 
+                                         CTYPELOC='XYHATM') 
+
+\item
+ NILOC \index{NILOC!\innam{NAM\_VPROFn\_PRE}}: position i  in the physical domain  of the vertical profile localization   (used in cases 
+                                         CTYPELOC='IJGRID') 
+If you use a 1D model, then NILOC is reset to 1 by the program.
+ 
+                                         
+\item
+ NJLOC \index{NJLOC!\innam{NAM\_VPROFn\_PRE}}:  position    j  in the physical domain of the vertical profile localization   (used in cases 
+                                         CTYPELOC='IJGRID') 
+If you use a 1D or a 2D  model, then NJLOC is reset to 1 by the program.
+
+\end{itemize}              
+
+
+
+
+\section{Namelists for the externalized surface}
+\subsection{Principles}
+
+Further definition of surface parameters is not done by MESONH itself, but by the externalized surface included in it.
+Three cases are encountered:
+\begin{enumerate}
+
+\item You do not have any PGD input file or externalized surface. You have a fixed surface state (e.g., the surface temperature does not evolve) so you just need to set
+CSURF="NONE" in namelist NAM\_GRn\_PRE (default value).
+\item You want to use the externalized surface (CSURF="EXTE" in namelist NAM\_GRn\_PRE) but you do not have any input PGD file or you do not want to use the surface fields included in it (LREAD\_GROUND\_PARAM = .FALSE.). Then, you must  define both the physiographic and prognostic fields, and you must fill the following namelists (see SURFEX documentation for details):
+
+\begin{itemize}
+\item NAM\_PGD\_SCHEMES
+\item NAM\_COVER
+\item NAM\_ISBA (if you chose to use the ISBA scheme).
+\item NAM\_CH\_EMIS\_PGD
+\item NAM\_DUMMY\_PGD
+\item NAM\_PREP\_SURF\_ATM
+\item NAM\_PREP\_SEAFLUX (if you chose to use the SEAFLX scheme)
+\item NAM\_PREP\_WATFLUX (if you chose to use the WATFLX scheme)
+\item NAM\_PREP\_TEB (if you chose to use the TEB urban scheme)
+\item NAM\_PREP\_ISBA (if you chose to use the ISBA scheme)
+\end{itemize}
+
+You can choose to :
+\begin{enumerate}
+\item Use one or all the surface schemes. So you need to fill NAM\_PGD\_SCHEMES\index{NAM\_PGD\_SCHEMES!surfex namelist} CSEA='SEAFLUX' or/and
+CNATURE='ISBA' or/and CWATER='WATFLUX' or/and CTOWN='TEB' and to set
+NAM\_COVER\index{NAM\_COVER!surfex namelist} XUNIF\_COVER(i) where index "i" corresponds to the cover type, among those defined in
+routine mode\_cover.f90 in SURFEX. Notice that no coherence
+check is performed between CSEA, CNATURE, CWATER, CTOWN on one side and
+the XUNIF\_COVER type you choose on the other side.
+An example of namelist is given in the following part (Example 1).
+
+\item Prescribe your own surface fluxes 
+and surface state. Before MASDEV49 version, you had to fill them in the dedicated routine init\_ideal\_flux.f90
+in SURFEX and to recompile the routine. From MASDEV49, you just have to fill them in the SURFEX namelist of 
+EXSEG1.nam (only for the run) : NAM\_IDEAL\_FLUX\index{NAM\_IDEAL\_FLUX!surfex namelist} (see SURFEX user's guide).
+You need to fill also NAM\_PGD\_SCHEMES CSEA='FLUX' or/and
+CNATURE='FLUX' or/and CWATER='FLUX' or/and CTOWN='FLUX' /
+according to the surface type you consider and to set
+NAM\_COVER XUNIF\_COVER(i).\\
+NAM\_PGD\_SCHEMES CSEA='FLUX' and NAM\_COVER XUNIF\_COVER(1)=1. is often met.
+An example of namelist is given in the following part (Example 2).
+\end{enumerate}
+ 
+\item You want to use all the informations contained in a PGD file. Only the prognostic variables must be defined, and the following namelists must be filled:
+
+\begin{itemize}
+\item NAM\_PREP\_SURF\_ATM\index{NAM\_PREP\_SURF\_ATM!surfex namelist}
+\item NAM\_PREP\_SEAFLUX\index{NAM\_PREP\_SEAFLUX!surfex namelist} (if you chose to use the SEAFLX scheme)
+\item NAM\_PREP\_WATFLUX\index{NAM\_PREP\_WATFLUX!surfex namelist} (if you chose to use the WATFLX scheme)
+\item NAM\_PREP\_TEB\index{NAM\_PREP\_TEB!surfex namelist} (if you chose to use the TEB urban scheme)
+\item NAM\_PREP\_ISBA\index{NAM\_PREP\_ISBA!surfex namelist} (if you chose to use the ISBA scheme)
+\end{itemize}
+An example of namelist is given in the following (Example 3).
+
+\end{enumerate}
+
+Note that orography either comes from :
+\begin{itemize}
+\item the input PGD file (if any and if LREAD\_ZS =.TRUE.). In this case, the atmospheric orography is also set equal to the one in this input PGD file.
+\item or from the orography you have defined from the MESONH namelists (in this case, the surface orography is forced to be equal to the atmosphere orography).
+\end{itemize}
+
+\subsection{Examples  :}
+\begin{verbatim}
+
+Example 1 : You do not want to use a PGD file but you want to use a surface scheme, 
+without prescribed fluxes :
+&NAM_REAL_PGD /
+&NAM_DIMn_PRE NIMAX=20, NJMAX=20 /
+&NAM_VER_GRID NKMAX=36,YZGRID_TYPE='MANUAL'  /
+&NAM_CONF_PRE LCARTESIAN=.TRUE., NVERB=10,
+              CIDEAL='RSOU',  CZS='FLAT', LFORCING=.FALSE., LPACK=.FALSE.,
+              LBOUSS=.FALSE., CEQNSYS='DUR',
+              LPERTURB=.FALSE.  /
+&NAM_PERT_PRE /
+&NAM_CONFn LUSERV=.TRUE. /
+&NAM_GRID_PRE XLAT0=35.762 / 
+&NAM_GRIDH_PRE XDELTAX=500.,XDELTAY=500.  /
+&NAM_LUNITn CINIFILE='IDEA_ISBA' , CINIFILEPGD='IDEA_ISBA_PGD' /
+&NAM_PREP_ISBA XHUG_SURF=0., XHUG_ROOT=0.2, XHUG_DEEP=0.2,
+               XTG_SURF=293., XTG_ROOT=293., XTG_DEEP=293. / 
+&NAM_POST_PRE /
+&NAM_DYNn_PRE  /
+&NAM_LBCn_PRE / 
+&NAM_VPROF_PRE LGEOSBAL = .FALSE., CTYPELOC='IJGRID', NILOC=2, NJLOC=2 /
+&NAM_GRn_PRE CSURF='EXTE'/
+&NAM_CH_MNHCn_PRE /
+&NAM_BLANK /
+&NAM_PGD_SCHEMES CNATURE='ISBA' /
+&NAM_ISBA XUNIF_CLAY = 0.3, XUNIF_SAND = 0.3 /
+&NAM_COVER XUNIF_COVER(208)=1. /   
+
+
+Example 2 : You do not want to use a PGD file and you want to prescribed your own fluxes 
+(case ARM) :
+&NAM_REAL_PGD /
+&NAM_DIMn_PRE NIMAX=1, NJMAX=1 /
+&NAM_CONF_PRE LCARTESIAN=.TRUE., NVERB=10,
+              CIDEAL='RSOU',  CZS='FLAT', LFORCING=.TRUE., LPACK=.FALSE.,
+              LBOUSS=.FALSE., CEQNSYS='DUR', LPERTURB=.FALSE.  /
+&NAM_PERT_PRE /
+&NAM_CONFn LUSERV=.TRUE. /
+&NAM_GRID_PRE XLAT0=35.762 / 
+&NAM_GRIDH_PRE XDELTAX=40000., XDELTAY=40000. /
+&NAM_VER_GRID  LTHINSHELL=.TRUE., NKMAX=100, ZDZGRD=40., ZDZTOP=40.,
+               ZZMAX_STRGRD=1000. , ZSTRGRD=0., ZSTRTOP=0. /
+&NAM_LUNITn CINIFILE='eurocs',CINIFILEPGD='eurocs_PGD' /
+&NAM_POST_PRE /
+&NAM_DYNn_PRE  /
+&NAM_LBCn_PRE CLBCX=2*"CYCL", CLBCY=2*"CYCL" / 
+&NAM_VPROF_PRE /
+&NAM_GRn_PRE CSURF='EXTE'/
+&NAM_CH_MNHCn_PRE /
+&NAM_BLANK /
+&NAM_PGD_SCHEMES CSEA='FLUX  ' /
+&NAM_COVER XUNIF_COVER(1)=1. /
+
+Example 3 : You want to use a PGD file and surface schemes :
+&NAM_DIMn_PRE NIMAX=40, NJMAX=40 /
+&NAM_VER_GRID NKMAX=36, YZGRID_TYPE='MANUAL' /
+&NAM_CONF_PRE LCARTESIAN=.FALSE., CIDEAL='RSOU',LBOUSS=.FALSE., LPERTURB=.FALSE. ,
+	      CEQNSYS='DUR',NVERB=10 /
+&NAM_GRn_PRE CSURF='EXTE' /
+&NAM_REAL_PGD CPGD_FILE='PGD_CORSE', LREAD_ZS=.TRUE., 
+              LREAD_GROUND_PARAM=.TRUE. /
+&NAM_PGD_SCHEMES CNATURE='ISBA', CSEA='NONE',CWATER='WATFLX',CTOWN='TEB' /
+&NAM_PREP_SURF_ATM NYEAR=2007, NMONTH=07, NDAY=26, XTIME=54000. /
+&NAM_PREP_WATFLUX XTS_WATER_UNIF = 293. /
+&NAM_PREP_ISBA XHUG_SURF=0.2, XHUG_ROOT=0.2, XHUG_DEEP=0.2, XTG_SURF=293.,
+               XTG_ROOT=293., XTG_DEEP=293. / 
+&NAM_PREP_TEB XWS_ROAD=0., XWS_ROOF=0., XTS_ROAD=309.,
+              XTS_ROOF= 298., XTS_WALL=298.,XTI_BLD=298., XTI_ROAD=298. /
+&NAM_CONFn /              
+&NAM_GRIDH_PRE XDELTAX=250.,XDELTAY=250.  / 
+&NAM_LUNITn CINIFILE='IDEA_CORSE',CINIFILEPGD='PGD_CORSE' /   
+&NAM_DYNn_PRE CPRESOPT= 'RICHA' NITR=10 XRELAX=1. /
+&NAM_LBCn_PRE CLBCX= 2*'OPEN' CLBCY= 2*'OPEN' /
+&NAM_VPROF_PRE CTYPELOC='IJGRID', NILOC=20, NJLOC=20,LGEOSBAL=.FALSE. /
+\end{verbatim}
+            
+
+
+\section{ Free-format part }
+
+{\bf Each section of the free format part must be introduced by its corresponding
+keyword (writen on a separated line)}
+
+
+There is always a moist variable written in PRE\_IDEA1.nam file, even in idealized dry
+cases, for which  the moist variable should be equal to zero in the PRE\_IDEA1.nam file.
+The produced initial file will always contain a moist variable  in 'CSTN'
+and 'RSOU' cases.
+ 
+
+\subsection{Optional Vertical grid : }
+\label{ZHAT}
+keyword: {\bf ZHAT}
+
+If the vertical grid generation selector CZGRID\_TYPE is equal to 'MANUAL',  
+you must enter at the end of your namelist file, the heights of the vertical
+velocity levels. You must start from the ground level (K=2) to the model top
+(K=KMAX +2), thus you only have to enter  KMAX + 1 values, because the level below the
+ground (i.e. K=1) is at the same distance from the ground ( K=2 ) as the first
+level above the ground ( K=3 ). Note also that the K= KMAX + 2 level represents
+the model top. In this case the free parameters (ZDZGRD, ZDZTOP, ZSTRGRD, ...)
+are not used
+
+
+\subsection{Radiosounding case :}
+
+keyword: {\bf RSOU}
+
+The radiosounding data are written in 
+the free-format part of PRE\_IDEA1.nam file, where 
+the  altitude variable is  :
+
+
+\begin{itemize}
+\item the pressure in case KIND='STANDARD' or '{\bf P}UVTHVMR' or 
+'{\bf P}UVTHVHU' or '{\bf P}UVTHDHU' or '{\bf P}UVTHDMR' (real, in Pascal)
+\item the height in case '{\bf Z}UVTHVMR' or 
+'{\bf Z}UVTHVHU'or '{\bf Z}UVTHDMR' or '{\bf Z}UVTHLMR' (real, in meters)
+\end{itemize}
+
+
+The first wind  variable is  :
+
+
+\begin{itemize}
+\item the wind direction in case KIND='STANDARD' (real,in degrees)
+\item the zonal wind in cases KIND='P{\bf UV}THVMR' or 'P{\bf UV}THDMR' or 
+'Z{\bf UV}THDMR' or 'Z{\bf UV}THLMR'or 'Z{\bf UV}THVHU' or 'P{\bf UV}THDHU' or 'Z{\bf UV}THVMR' or
+'P{\bf UV}THVHU' (real, in m/s)
+\end{itemize}
+
+
+The second wind  variable is  :
+
+
+\begin{itemize}
+\item the wind force in case KIND='STANDARD' (real, in m/s)
+\item the meridian wind in cases KIND='P{\bf UV}THVMR' or 'P{\bf UV}THDMR' or 
+'Z{\bf UV}THDMR' or 'Z{\bf UV}THLMR' or 'Z{\bf UV}THVHU' or 'P{\bf UV}THDHU' or 'Z{\bf UV}THVMR' or
+'P{\bf UV}THVHU' (real, in m/s)
+\end{itemize}
+
+
+The temperature variable is  :
+
+
+\begin{itemize}
+\item the temperature in case KIND='STANDARD' (real, in Kelvin)
+\item the virtual potential
+temperature in cases KIND='PUV{\bf THV}MR' or 'PUV{\bf THV}HU' or
+'ZUV{\bf THV}MR' or 'ZUV{\bf THV}HU' (real,in Kelvin)
+\item  the dry potential temperature in cases
+KIND='PUV{\bf THD}MR' or 'PUV{\bf THD}HU' or \\
+'ZUV{\bf THD}MR' (real, in Kelvin)
+\item the liquid potential temperature in case KIND='ZUV{\bf THL}MR'(real, in Kelvin)
+\end{itemize}
+
+
+The moist variable is  :
+
+\begin{itemize}
+\item the dew point temperature in case KIND='STANDARD' (real, in Kelvin) 
+\item the vapor mixing ratio
+ in cases KIND='PUVTHV{\bf MR}' or 'ZUVTHD{\bf MR}' or 
+'ZUVTHV{\bf MR}' or 'PUVTHD{\bf MR}' (real, in Kg/Kg) 
+\item the total water  mixing ratio  in case KIND= 'ZUVTHLMR (real, in Kg/Kg)
+\item  the relative humidity in cases KIND= 'ZUVTHV{\bf HU}', or 'PUVTHD{\bf HU}' or 'PUVTHV{\bf HU}' (real, in
+percents)
+\end{itemize}
+
+Additional cloud variables
+
+For the moment, this configuration works only for  KIND='PUVTHDMR' or 'ZUVTHDMR'
+and  L1D=.TRUE.. It is planned to compute radiation
+diagnostics with the {\bf DIAG} program (see chapter \ref{ch:diag}).
+
+\begin{itemize}
+\item
+cloud mixing ratio if LUSERC=T or LUSERI=T (real, in Kg/Kg) 
+\item
+ice  mixing ratio if  LUSERI=T (real, in Kg/Kg) 
+\end{itemize}
+
+\vspace{0.5cm}
+
+{\bf You should make sure that the levels are dense enough so that the Laplace
+relation, which gives the thickness between successive levels, can be applied.}
+The radiosounding informations are written in the file  in the following order :
+
+
+\begin{itemize}
+\item YEAR (integer, exemple : 1994), MONTH (integer, exemple : 4), DAY
+(integer, exemple : 22), TIME (real, in seconds, exemple : 36000 for 10 h)
+
+\item KIND of data used for the radiosounding (string of 8 charcaters)
+Nine kind of data are possible : 'STANDARD', 'PUVTHVMR', 'PUVTHVHU',
+'ZUVTHVMR', 'ZUVTHVHU', 'PUVTHDMR', 'PUVTHDHU', 'ZUVTHDMR', 'ZUVTHLMR'.
+
+Except for the STANDARD kind :  \begin{itemize}
+\item  the first letter of KIND represents the kind of altitude
+variable (P for pressure and Z for height), 
+\item the second and third letters represent  the kind of wind
+variables (U for zonal wind, V for meridian  wind), 
+\item the fourth, fifth and sixth letters represent  the kind of
+temperature variable (THV for virtual potential temperature, THD
+for dry potential temperature and THL for liquid potential
+temperature), 
+\item the seventh and eighth letters represent  the kind of moist
+variable (HU for relative humidity and MR for vapor mixing ratio). 
+\end{itemize}
+
+(In case of STANDARD kind, the altitude
+variable is the pressure, the wind variables are direction and wind force,
+the temperature variable is the temperature and the moist variable is the due
+point temperature. )
+
+\item HEIGHT of GROUND LEVEL (real, in meters)
+\item PRESSURE at GROUND LEVEL (real,in Pascal)
+\item a TEMPERATURE variable  at GROUND LEVEL (real, in Kelvin) 
+\item a MOIST variable  at GROUND LEVEL
+
+\item NUMBER of WIND data LEVELS (integer)
+
+\item level 1 :  ALTITUDE variable ,  first WIND variable,  second WIND variable
+at wind level 1 (the lowest wind-level).
+
+\item level 2 :  ALTITUDE variable, first WIND variable,  second WIND variable.
+
+\hspace{5cm}  \vdots
+
+\hspace{5cm}  \vdots
+
+
+\item  uppermost wind level : ALTITUDE variable,  first WIND variable, 
+second WIND variable.
+
+\item NUMBER of mass data LEVELS (integer) {\bf Note  that this number includes
+the ground level (i.e. the first level).} That is why the following list starts
+at level 2. 
+
+\item level 2 :  ALTITUDE variable, TEMPERATURE variable,  MOIST
+variable, additional cloud variable(s)  (the mass level 1 is at
+ground).
+
+\item level 3 : ALTITUDE variable,  TEMPERATURE variable,  MOIST
+variable, additional cloud variable(s) .
+
+\hspace{5cm}  \vdots
+
+\hspace{5cm}  \vdots
+
+\item uppermost mass level:  ALTITUDE variable, TEMPERATURE
+variable, MOIST variable, additional cloud variable(s) 
+\end{itemize}
+
+{\bf You should make sure that the highest level of the radiosounding is located above the highest vertical level of the model.}
+
+
+\vspace{0.5cm}
+
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+RSOU
+1990 10 3 72000.
+'STANDARD'
+200.
+100240.
+287.5
+276.
+2
+85000. 20. 10.
+70000. 30. 10.
+3
+90000. 280. 275.
+60000. 271. 269.
+\end{verbatim}
+
+
+\subsection{Constant moist Brunt-Vaisala case :}
+
+keyword: {\bf CSTN}
+
+Data of the vertical profile are written in 
+the free-format part of PRE\_IDEA1.nam file in the following order :
+
+\begin{itemize}
+\item YEAR (integer, example : 1994), MONTH (integer, example : 4), DAY
+(integer, example : 22), TIME (real, in seconds, example : 36000. for 10 h)
+
+\item NUMBER of LEVELS (integer)
+\item VIRTUAL POTENTIAL TEMPERATURE  at GROUND LEVEL 
+({\it i.e} at the first level) (real,in Kelvin)
+\item PRESSURE  at GROUND LEVEL ({\it i.e} at the first level) (real, in Pascal)
+\item HEIGHT  at all levels. {\bf the first level is the  ground level}
+\item ZONAL WIND COMPONENT at all  levels (the first level is the  ground level)
+\item MERIDIAN WIND COMPONENT at all  levels (the first level is the  ground level)
+\item RELATIVE HUMIDITY at all  levels (the first level is the  ground level)
+\item MOIST BRUNT VAISALA FREQUENCY at all layers (the number of layers is the
+number of levels - 1)
+\end{itemize}
+
+In this case, the level number can even be equal to 1, because the profile
+informations are linearly interpolated on the model grid without orography
+(wind components, $\theta _v$ and humidity) before the application of the Laplace
+relation to deduce the pressure and the vapor mixing ratio. Thus, the
+layers' thicknesses are never too large to invalidate the Laplace relation.
+
+\vspace{0.5cm}
+
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+CSTN
+2006 06 06 21600.
+5
+287.5
+100240.
+200. 1000. 1500. 3000. 4000. 
+10. 20. 25. 30. 35.
+2. 10. 12.5 11.5 15.
+80. 84. 85. 79. 87.
+0.01 0.014 0.015 0.016
+\end{verbatim}
+
+
+\subsection{The forced version} \label{ss:forced}
+
+keyword: {\bf ZFRC} or {\bf PFRC}
+
+For idealized simulations a forced mode can be useful to impose the effects of
+a simplified large scale environment to the model solution. This functionality
+works (LFORCING=.TRUE. in module MODD\_CONF) when CIDEAL='RSOU' or 'CSTN'
+(see 5.2.10 and 5.3) and only in the case LCARTESIAN =.TRUE. and
+LGEOSBAL =.FALSE. for inclusion of a geostrophic wind forcing.
+All forcing fields are  issued from spatial interpolation of chronological series of 1D data (provided by the user onto the model grid). They are prepared during the
+{\bf prep\_ideal\_case} sequence and are stored in the LFI files for further use
+in case of RESTART model run.
+
+The forcing fields can be time dependent. Application of the forcing begins as
+soon as the date and time of the first set of forcing field given by the
+user, is lower or equal to the current date and time of the model run. The
+forcing action of the last forcing field is remanant, this is a way to impose
+a stationnary forcing. When the current date and time of the model run is
+bounded by two successive forcing fields, a simple linear interpolation in time
+is made.
+
+Note that an available Newtonian relaxation forcing type on $[u, v]$ and/or
+$[\theta$, $r_v]$ is exclusive from the other physical forcings.
+
+The forcing informations and soundings have to be added at the end of the
+free-format part already written for CIDEAL='CSTN' or 'RSOU'. First, the
+type of forcing and the number of time dependent forcing are given:
+
+\begin{itemize}
+\item keyword forcing type (character*4)
+\begin{itemize}
+\item ZFRC means that the altitude of the forcing data are in height scale
+(meters).
+\item PFRC means that the altitude of the forcing data are in pressure scale
+(Pascal).
+\end{itemize}
+
+\item number of time dependent forcing (integer)
+\end{itemize}
+
+The 1D forcing data are different from the one used to initialize the model
+because specific data have to be entered. The data used to define each forcing
+are given sequentially in the following order (one item per line):
+
+\begin{itemize}
+\item date and time of the forcing in the format:
+
+year (integer),
+
+month (integer),
+
+day (integer) and
+
+time of the day (real, s).
+\item ground height (real, m)
+\item ground pressure (real, Pa) 
+\item $\theta_d$ (real, K) at ground level (Nota: it is used later in
+the code to compute - if asked - a time varying sea surface temperature).
+\item $r_v$ (real, kg/kg) at ground level
+\item number of level (integer)
+\item height of level1 (real, m) if ZFRC or pressure at level1 (real, Pa) if
+PFRC,
+
+$u_{frc}$ component at level1 (real, m/s),
+
+$v_{frc}$ component at level1 (real, m/s),
+
+$\theta_{frc}$ at level1 (real, K),
+
+$r_{v\ frc}$ at level1 (real, kg/kg),
+
+$w_{frc}$ at level1 (real, m/s),
+
+$(\partial\theta / \partial t)_{frc}$ at level1 (real, K/s) and
+
+$(\partial r_v/ \partial t)_{frc}$ at level1 (real, 1/s).
+
+$(\partial\theta/ \partial x)_{frc}$ at level1 (real, K/m).
+
+$(\partial\theta/ \partial y)_{frc}$ at level1 (real, K/m).
+
+\item idem at level2
+\item   ...
+\item idem at levelN
+\end{itemize}
+
+If PFRC is the forcing type, an additional sounding is given in order to
+convert the pressure levels into height levels with enough accuracy. Data
+are organized as follows:
+
+\begin{itemize}
+\item number of level (integer)
+\item pressure at level1 (real, Pa),
+
+$\theta$ at level1 (real, K) and
+
+$r_{v}$ at level1 (real, kg/kg).
+\end{itemize}
+
+This operation is repeated until the previous number of sounding is reached.
+
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+ZFRC
+   1
+1983 07 01 0.
+0
+1000000
+284.5
+ .008
+ 6
+   5.   -7.0   0.0  281.10   0.00540     -0.00000   0.0  0.0
+  15.   -7.0   0.0  281.10   0.00540     -0.00000   0.0  0.0
+1095.   -7.0   0.0  280.75   0.00540     -0.00300   0.0  0.0
+1145.   -7.0   0.0  290.60   0.00190     -0.00300   0.0  0.0
+3000.   -7.0   0.0  304.15   0.00190     -0.00300   0.0  0.0
+9000.   -7.0   0.0  346.15   0.00190     -0.00300   0.0  0.0
+\end{verbatim}
+
+\subsection{The advective forcing} \label{ss:adv_forcing}
+
+keyword: {\bf ZFRC\_ADV} 
+
+For 2D idealized simulation, an advective forcing can be used to impose effects to the model solution. This functionnality works (L2D\_ADV\_FRC=.TRUE. in MODD\_CONF) only in 2D cases. The advecting forcings mimic the latidudinal humidity and temperature advection not taken into account in a 2D model.
+         
+The forcing informations and soundings have to be added at the end of the
+free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 
+\begin{itemize}
+\item ZFRC\_ADV : keyword for advective forcing
+\item number of forcing files
+\item type of forcing : ZADV2D for Z levels or PADV2D for  pressure levels
+\item number vertical levels for the file
+\item Date of first forcing : YYYY MM DD T (secondes)
+\item name of the file with horizontal mean profile of theta, rv
+\item name of the advective forcing file
+\end{itemize}
+
+                                   
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+ZFRC_ADV
+1
+ZADV2D
+52
+1997 07 15 00000.
+"mean_atm_07.dat"
+"frc_ideal_7_70km.dat"
+\end{verbatim}
+
+\subsection{The relaxation forcing} \label{ss:rel_forcing}
+
+keyword: {\bf ZFRC\_REL} 
+
+For 2D idealized simulation, a relaxation forcing can be used to impose effects to the model solution. This functionnality works (L2D\_REL\_FRC=.TRUE. in MODD\_CONF) only in 2D cases.  The relaxation forcing allows the relax the model fields towards a 2D climatology for temperature and humidity.
+         
+The forcing informations and soundings have to be added at the end of the
+free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 
+\begin{itemize}
+\item ZFRC\_REL : keyword for advective forcing
+\item number of forcing files
+\item type of forcing : ZREL2D for Z levels or PREL2D for  pressure levels
+\item number vertical levels for the file
+\item Date of first forcing : YYYY MM DD T (secondes)
+\item name of the file with horizontal mean profile of theta, rv
+\item name of the advective forcing file
+\end{itemize}
+
+                                   
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+ZFRC_REL
+1
+ZREL2D
+52
+1997 07 15 00000.
+"mean_atm_07.dat"
+"frc_ideal_7_70km.dat"
+\end{verbatim}
+
+\subsection{Discretized orography}
+
+keyword: {\bf ZSDATA}
+
+Only the orography corresponding to the computational domain must be
+provided in the free format part. For 3D orography, data are read like if it
+was a map (the first line is the Northern border and the first data
+is the North-West corner) with one line per Y-axis increment.
+
+\underbar{Example of free part of PRE\_IDEA1.nam}
+\begin{verbatim}
+ZSDATA
+30.    30.    35.     50.     30.     30.
+30.    59.5  133.3   100.2   136.7   100.
+35.    89.5  183.3   200.2   299.7   170.5
+50.    112.5 193.0   210.2   206.7   120.
+40.    82.5  153.0   180.5   156.7   100.3
+\end{verbatim}
+
+
+\section{Example of PRE\_IDEA1.nam : }
+The selected case is the following:
+\begin{itemize}
+\item 2D mountain 
+\item  one moist  layer atmosphere
+\end{itemize}
+
+\underline{FILE PRE\_IDEA1.nam}
+
+\begin{verbatim}
+&NAM_DIMn_PRE  NIMAX=128, NJMAX=1 /
+&NAM_VER_GRID  NKMAX=32, YZGRID_TYPE = 'FUNCTN', ZDZGRD=500., ZDZTOP=500., 
+               ZZMAX_STRGRD=1000.    , ZSTRGRD=0., ZSTRTOP= 0., 
+&NAM_CONFn     LUSERV=.TRUE., NSV_USER = 0 /
+&NAM_GRID_PRE  XLAT0 = 48.25 , XLON0 = 0.,
+               XRPK  = 0.    , XBETA = 0.,
+               XLONORI = 48.25, XLATORI = 0. /
+&NAM_CONF_PRE  LCARTESIAN=.TRUE., LBOUSS=.FALSE., 
+               CIDEAL='CSTN', CZS='BELL', 
+               LPERTURB= .FALSE., NVERB=1 /
+&NAM_GRIDH_PRE XDELTAX=5.E2 , XDELTAY=5.E2, 
+               XHMAX=500., XAX=10.E3, XAY=10.E3, NIZS=64, NJZS=2, 
+               NEXPX = 1, NEXPY=1 /
+&NAM_LUNITn    CINIFILE='HYD2D',CINIFILEPGD='HYD2D_PGD' /
+&NAM_DYNn_PRE  CPRESOPT ='RICHA', NITR=4, XRELAX=1.0 /
+&NAM_LBCn_PRE  CLBCX(1)='OPEN', CLBCX(2)='OPEN', 
+               CLBCY(1)='OPEN', CLBCY(2)='OPEN' /
+&NAM_VPROF_PRE CTYPELOC='IJGRID', NILOC=10, NJLOC=2,  
+               CFUNU='ZZZ', CFUNV='ZZZ',
+               LGEOSBAL=.FALSE. /
+&NAM_GRn_PRE   CSURF='EXTE' /
+&NAM_CH_MNHCn_PRE LUSECHEM = F /
+CSTN
+2
+285.
+100000.
+0. 20000.
+10. 10.
+0. 0.
+40. 40.
+0.01
+\end{verbatim}
+
+  
+This file contains the  informations necessary to generate the initial 
+conditions for a quasi-hydrostatic flow, in the weakly
+non-linear regime, with a regular vertical grid.
+
