@@ -810,8 +810,8 @@ NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index
 NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
 NNEGATH  (if CCLOUD $\neq$ 'NONE') & negative            & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
 NREVATH (if rain is activated)  & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\\hline
-NCONDTH  & vapor condensation  or     & integer  &  0 \index{NCONDTH!\innam{NAM\_BU\_RTH}}\\
-         & cloud water  evaporation  &          &    \\\hline
+NCONDTH (if CCLOUD='C2R2'  & vapor condensation  or     & integer  &  0 \index{NCONDTH!\innam{NAM\_BU\_RTH}}\\
+'KHKO','KESS' or 'REVE')& cloud water  evaporation  &          &    \\\hline
 NHENUTH   & heterogeneous  & integer  &  0 \index{NHENUTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3','ICE4','KHKO','C2R2') &nucleation &   &  \\\hline
 NHONTH   & homogeneous  & integer  &  0 \index{NHONTH!\innam{NAM\_BU\_RTH}}\\
