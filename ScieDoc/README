@@ -2,8 +2,11 @@
 # For everybody
 #######################
 # Download
-git clone git@mesonh.aero.obs-mip.fr:/gitrepos/MNH-DOC.git 
+git clone anongit@anongit_mesonh:/gitrepos/MNH-DOC.git
 
+after done the previous steps described in http://mesonh.aero.obs-mip.fr/mesonh53/GitSources
+
+# git clone git@mesonh.aero.obs-mip.fr:/gitrepos/MNH-DOC.git 
 #######################
 # For contributors
 #######################
@@ -19,9 +22,19 @@ git checkout  MNH-53-branch
 # Change source
 git diff
 git add 3-6-MixedMicrophysics.tex
-git commit -m 'Jean-Pierre 14/10/2016: updating version name'
+git commit -m 'Jean-Pierre 17/07/2017: updating version name'
 
 # Upload changes
-git tag V4.10.0
+git tag V5.3.0
 git push
 git push --tag
+
+#graaphics
+gitk
+
+git pull
+
+git branch -vv -a
+git branch -f MNH-54-branch origin/MNH-54-branch
+git branch -v
+git cherry-pick -x 71693a7

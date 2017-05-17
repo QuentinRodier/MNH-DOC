@@ -4,8 +4,9 @@
 
 %% Chargement des extensions
 \RequirePackage[a4paper]{geometry}
-\RequirePackage[dvips]{graphicx}
+\RequirePackage{graphicx}
 \RequirePackage{epsfig}
+\RequirePackage{multicol}
 \RequirePackage{longtable}
 \RequirePackage{times}
 \RequirePackage{natbib}
@@ -38,7 +39,7 @@
 
 %% Header and footer
 %\renewcommand\partmark[1]{\markboth{#1}{#1}}
-\newcommand{\mnhversion}{Meso-NH Masdev5.2 -- 18 October 2016}
+\newcommand{\mnhversion}{Meso-NH Masdev5.3 -- 17 May 2017}
 \newcommand{\partoto}{\title}
 \pagestyle{fancy} 
 \renewcommand{\footrulewidth}{0.4pt} 
@@ -59,9 +60,10 @@
   \newpage
   \null
   \begin{figure}[h]
-    \includegraphics[width=4cm]{EPS/LogoMeteoFrance.eps}
-    \hspace*{2cm} \includegraphics[width=5cm]{EPS/LogoMesoNH.eps}
-    \hspace*{2.5cm} \includegraphics[width=2.0cm]{EPS/logo-cnrs.eps}
+    \includegraphics[width=16cm]{EPS/LogoAll.eps}
+    %\includegraphics[width=4cm]{EPS/LogoMeteoFrance.eps}
+    %\hspace*{2cm} \includegraphics[width=5cm]{EPS/LogoMesoNH.eps}
+    %\hspace*{2.5cm} \includegraphics[width=2.0cm]{EPS/logo-cnrs.eps}
   \end{figure}
   \begin{center}%
     \vskip 4em%
@@ -83,8 +85,8 @@
 
 This volume contains contributions from P. Bechtold, S. Belair,
 Ph. Bougeault, J.M. Carri\`ere, J. Cuxart, V. Ducrocq,
-C. Fischer, M. Georgelin, P. H\'ereil, J.P. Lafore, C. Liousse, C. Mari,
-I. Mallet, P. J. Mascart, V. Masson, J.P. Pinty, E. Richard, K. Suhre,
+C. Fischer, M. Georgelin, P. H\'ereil, J.-P. Lafore, C. Liousse, C. Mari,
+I. Mallet, P. J. Mascart, V. Masson, J.-P. Pinty, E. Richard, K. Suhre,
 J. Stein, P. Tulet, and J. Vil\`a-Guerau de Arellano.
 As editors, we would like to express our deep appreciation for
 the dedicated work of all contributors. The Meso-NH project is the
@@ -96,16 +98,16 @@ not cited here, but have given their best to create this unique tool.\\
 \vspace{2cm}
 Since the 2002 edition, in addition to the contributors cited above, 
 thanks have to be extended to
-C. Augros, D. Barbary, C. Barthe, Y. Bouteloup, C. Bovalo, O. Caumont, J.-P. Chaboureau,
-M. Chong, F. Couvreux, O. Geoffroy, O. Nuissier, C. Lac, P. Le Moigne, 
-M. Leriche, T. Mari\'c, G. Molini\'e, J. Pergaud, D. Ricard, F. Solmon,
-G. Tanguy, O. Thouron, M. Tomasini and B. Tsenova.\\
+C. Augros, F. Auguste, D. Barbary, C. Barthe, Y. Bouteloup, C. Bovalo, O. Caumont, J.-P. Chaboureau,
+M. Chong, F. Couvreux, G. Delautier, J. Escobar, O. Geoffroy, O. Nuissier, C. Lac, P. Le Moigne, 
+M. Leriche, T. Lunet, T. Mari\'c, G. Molini\'e, J. Pergaud, D. Ricard, F. Solmon,
+O. Thouron, M. Tomasini, B. Tsenova and F. Visentin.\\
 
 {\em Jean-Pierre Chaboureau}
 
-\vspace{11cm}
+\vspace{10.5cm}
 
-Copyright \copyright\quad 1995, 1999, 2000, 2001, 2002, 2008, 2009, 2011, 2013, 2014, 2015, 2016
+Copyright \copyright\quad 1995, 1999, 2000, 2001, 2002, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2017
 by CNRS, M\'et\'eo France and Universit\'e Paul Sabatier. All Rights Reserved. Printed in France.}
 \makeatother
 
