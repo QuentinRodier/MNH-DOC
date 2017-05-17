@@ -1,8 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CONTRIBUTION TO THE MESONH BOOK1: "ADVECTION SCHEMES FOR SCALAR VARIABLES"
-% Author : J. Vila-Guerau de Arellano and J. P. Lafore
-% Original : Juin, 1995
-% Update   : Janvier, 1998
+% Author: J. Vila-Guerau de Arellano and J. P. Lafore
+% Original: Juin, 1995
+% Update  : Janvier, 1998
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %\begin{document}
@@ -24,600 +24,404 @@
 
 
 \section{Introduction}
+Due to the computational C-grid, two kinds of advection schemes are available in Meso-NH, one for momentum and the other for scalar variables.
 
-This chapter describes the advection schemes available in Meso-NH.
- They are of two kinds, those for momentum and those for scalar variables. 
-The two available advection schemes for momentum are flux-form conservative 
-schemes centered in time. The three available advection schemes for scalar 
-variables are positive definite schemes.  The first one, namely the 
-flux-corrected transport scheme (FCT), is a centered scheme (spatially 
-and temporally) in which the advective fluxes are corrected (if necessary)
-by a limiter factor to insure positiveness.
-The second one, namely the Multidimensional Positive Definite Advection 
-Transport  Algorithm (MPDATA), is based on the upstream scheme. 
-An iterative method  based on the anti diffusive velocities is applied 
-to correct the excessive  numerical diffusion of such scheme. 
-FCT and MPDATA are second-order accurate on space and time.
-The third one, the so-called piecewise parabolic method 
-(PPM), is a finite-volume method.
+For the momentum variables, the available schemes are the centered schemes (4$^{th}$ or 2$^{nd}$ order) and the Weighted Essentially Non Oscillatory (WENO) schemes (5$^{th}$ or 3$^{rd}$ order).
 
-The FCT, MPDATA, and PPM schemes are recommended to be used to simulate
-the advective transport of quantities such as microphysical variables
-and atmospheric chemistry variables. Both schemes can be applied to describe
-the advection of the following quantities: temperature, water substances,
-turbulent kinetic energy, and scalars (chemical species). 
-In Meso-NH the three schemes can be simultaneously apply to
-different variables. However, in order to gain consistency, the above 
-mentioned variables have been classified in two groups: meteorological 
-variables (temperature, water substances, turbulent kinetic energy) and
-scalar variables.
+For the scalar variables, the available scheme is the the Piecewise Parabolic Method (PPM) scheme.
+Note that the scalar variables have been classified into two groups: the meteorological variables
+(temperature, water substances, turbulent kinetic energy) and the other scalar variables (aerosol particles, gas concentrations, ...).
 
-Two 2D-horizontal tests have been carried out to evaluate the FCT and MPDATA
-schemes. A scalar with a cone distribution was advected in a rotating 
-constant velocity field (Test 1) and in a deformational velocity field 
-(Test 2). The evaluation of the tests includes the
-performance of the advection schemes as well as the computational costs.
+For the temporal schemes, the momentum variables are integrated with Explicit Runge-Kutta (ERK) methods for WENO schemes, and Leap-Frog (LF) or ERK temporal algorithm for the centered spatial schemes. 
+All the rest of the model uses the Forward-In-Time (FIT) temporal integration, including the PPM transport scheme for the scalar variables. To increase the maximum Courant-Friedrichs-Lewy (CFL) number, an additional time-splitting is introduced for the PPM and WENO schemes.
+
+These schemes are presented in more detail below. A comparison between spatial and temporal schemes for momentum, in terms of maximum CFL number and wall clock time to solution, completes the presentation and allows some recommendations.
 
 \section{Advection schemes for momentum}
 
-Two flux-form conservative schemes are available in the model. Both of them are centered in time but they differ by their truncature order, 2$^{\rm nd}$ for the CEN2ND scheme and 4$^{\rm th}$ for the CEN4TH scheme.
-
-The schemes integrate the non-linear advection terms of the momentum equation:
+\subsection{General approach}
+The transport scheme of momentum considers the equations of wind in their flux form to ensure conservation of momentum:
 
 \begin{eqnarray}
-\label{condm}
 \dfrac{\partial}{\partial t}(\tilde{\rho}u) \, &=&
  \, - \, \dfrac{\partial }{\partial \overline{x}} (\,\tilde{\rho} U^{c} \; u)
  \, - \, \dfrac{\partial }{\partial \overline{y}} (\,\tilde{\rho} V^{c} \; u)
- \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; u),\\
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; u), 
+\label{eq:mommesonh1}\\
 \dfrac{\partial}{\partial t}(\tilde{\rho}v) \, &=&
  \, - \, \dfrac{\partial }{\partial \overline{x}} (\,\tilde{\rho} U^{c} \; v)
  \, - \, \dfrac{\partial }{\partial \overline{y}} (\,\tilde{\rho} V^{c} \; v)
- \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; v),\\
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; v),
+ \label{eq:mommesonh2}\\
 \dfrac{\partial}{\partial t}(\tilde{\rho}w) \, &=&
  \, - \, \dfrac{\partial }{\partial \overline{x}} (\,\tilde{\rho} U^{c} \; w)
  \, - \, \dfrac{\partial }{\partial \overline{y}} (\,\tilde{\rho} V^{c} \; w)
- \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; w),
+ \, - \, \dfrac{\partial }{\partial \overline{z}} (\,\tilde{\rho} W^{c} \; w).
+\label{eq:mommesonh3}
 \end{eqnarray}
 
-In (\ref{condm}), all the fluxes are evaluated at time level "t". The different estimates of $u$, $v$ and $w$ in the rhs make the difference between the CEN2ND and CEN4TH schemes. In CEN2ND, the discretization of decentered $u$, $v$ and $w$ components results from a simple average along the direction of differentiation (see Chapter 4). This leads to a second order estimate of the fluxes. In CEN4TH, the decentering of $u$, $v$ and $w$ is given by a fourth-order scheme. For instance, the first term in (\ref{condm}) writes
+Due to the conform horizontal projection and terrain-following vertical coordinates such as Gal-Chen and Somerville (1975), or Sch\"ar et al. (2002), the contravariant components of the wind $U_c$, $V_c$ and $W_c$ are introduced, corresponding to the components of the wind orthogonal to the coordinate lines (Fig.~\ref{fig:contrav}). 
+This means that the advection scheme transports the directional momentum (the \textquotedblleft advected \textquotedblright field) by the contravariant components of the wind field (the \textquotedblleft advector \textquotedblright field).
 
-\begin{eqnarray}
-\label{diffm}
-- \frac{\displaystyle\partial }{\displaystyle\partial \overline{x}} (\tilde{\rho} U^{c} \;   u )
- & \Longrightarrow & - \delta_{x} \left[
-\overline{  \left(
-\overline{\tilde{\rho}}^{x} U^{c} \;  \right)}^{x}
-\overline{  u  }^{x}
- \right] \qquad \qquad {\rm (CEN2ND \; scheme)}, \\
-- \frac{\displaystyle\partial }{\displaystyle\partial \overline{x}} (\tilde{\rho} U^{c} \;   u )
- & \Longrightarrow & - \delta_{x} \left[
-\overline{  \left(
-\overline{\tilde{\rho}}^{x} U^{c} \;  \right)}^{x}
-\overline{\overline{  u  }}^{x} 
- \right] \qquad \qquad {\rm (CEN4TH \; scheme)},
-\end{eqnarray}
+\begin{figure}[ht]
+\centering
+	\includegraphics[width=19pc]{\EPSDIR/dessin_contravariant.eps}
+	 \caption{Representation of the wind ($u$, $w$) and its contravariant components ($U_c$, $W_c$) on the C-grid in the 2D vertical plane ($x$, $z$).}
+ \label{fig:contrav}
+\end{figure}
 
-with the definition of the operators:
-$\overline{\alpha}^{x}(i,j,k)=(\alpha(i+1,j,k)+\alpha(i,j,k))/2$
-and,
-$\overline{\overline{\alpha}}^{x}(i,j,k)=7(\alpha(i+1,j,k)+\alpha(i,j,k))/12-(\alpha(i+2,j,k)+\alpha(i-1,j,k))/12$. Of course the CEN4TH scheme reverts to the CEN2ND one at the edge of the computational domain.
-
-The CEN4TH scheme is restricted to $\mathcal{C}\leq0.73$ ($\mathcal{C}$ is the Courant number of the flow) which is less than $\mathcal{C}\leq1.0$ obtained in the CEN2ND case, in each direction. However, the CEN4TH scheme has better damping properties and less phase or wave speed errors than CEN2ND. So it should be preferred.
-
-\section{Flux-Corrected Transport (FCT)}
-
-\subsection{Description}
-
-The advective part of the governing equation of a scalar quantity $\psi$
-(temperature, water substances, TKE, dissipation of TKE and scalar (chemical species))
-can be written
-
+To simplify, we consider only the $x$-momentum equation, and its $x$-derivative term:
 \begin{equation}
-\label{cond1}
-\dfrac{\partial}{\partial t}(\tilde{\rho}\psi) \, =
- \, - \, \dfrac{\partial }{\partial \overline{x}} (F_1)
- \, - \, \dfrac{\partial }{\partial \overline{y}} (F_2)
- \, - \, \dfrac{\partial }{\partial \overline{z}} (F_3),
+ \frac{\partial (\tilde{\rho} U^{c} u)}{\partial \overline{x}} = \frac{\partial (F_C(\tilde{\rho} U^{c})F(u))}{\partial \overline{x}}.
+ \label{eq:flux-form}
 \end{equation}
 
-\noindent where
+ $F_C(\tilde{\rho} U^{c})$ contains the topologic terms, which integrate terrain transformations. The second flux $F(u)$ is calculated on the mesh point without considering any terrain transformation, using the advection method. All the other derivative terms are built with a similar methodology.
+ 
+Because of the Arakawa C-grid, the advector (contravariant components) and the transported wind field ($u$, $v$ and $w$) present different directions. 
+The discrete form of the contravariant metric terms is of 4$^{th}$ order on the vertical direction, in agreement with Klemp et al. (2003), and of 2$^{nd}$ order on the horizontal directions. 
 
-\begin{eqnarray}
-\label{cond2}
-F_1\,=\,\tilde{\rho} U^{c} \;  \psi \\
-F_2\,=\,\tilde{\rho} V^{c} \;  \psi \\
-F_3\,=\,\tilde{\rho} W^{c} \;  \psi,
-\end{eqnarray}
-
-\noindent and $U^{c},V^{c}$ and $W^{c}$ are the respective velocities.
-
-At Meso-NH, the advection of a quantity is solved with a second order centered advection
-scheme. The solution of equation (\ref{cond1}) is
-
+Defining $i$ as the spatial index in the $x$-direction and $\Delta x$ the mesh step size, the derivative is written so:
 \begin{equation}
-\dfrac{\tilde{\rho} \psi^{t+\Delta t}} {2 \Delta t} \, = \,
-\dfrac{\tilde{\rho} \psi^{t-\Delta t}} {2 \Delta t} \,
- \, - \, \sum_{I=1}^{3} \,  \dfrac{\partial }{\partial \overline{x}_I}
-F_{I}^{t}
+\begin{split}
+ \frac{\partial (\tilde{\rho} U^{c} u)_i}{\partial \overline{x}} =& \frac{F_C(\tilde{\rho} U^{c})_{i+1/2} F(u)_{i+1/2}}{\Delta x} 
+ - \frac{F_C(\tilde{\rho} U^{c})_{i-1/2} F(u)_{i-1/2}}{\Delta x}.
+ \label{eq:flux-form-num}
+\end{split}
 \end{equation}
 
-\noindent where $2\Delta t$ is the leapfrog time step and $F_I$ are the three fluxes defined
-in (\ref{cond2}) and calculated at the instant $t$.
-
-The numerical solution of the advective part might produce oscillations and
-negative values. This occurs if
-the flux calculated is overestimated with respect the analytical value, i.e. the
-monotonicity condition is not fulfilled at the lower limit. In order to obtain a
-positive definite advection scheme, a limiter factor for the advective flux is
-defined below. The development of the expression of the limiter factor follows
-the approach suggested by Smolarkiwecickz and Grabowski (1990). In the previous
-study, a non-oscillatory option was developed to correct the oscillations produced by
-the MPDATA scheme.
-
-Assuming that the Courant number (CFL) is
-smaller than one, the scalar variable computed at $t+\Delta t$ must satisfy the
-following condition
-
+Then, a chosen discretization is applied to the flux terms $F$, following its definition using the flux formulation:
 \begin{equation}
-\label{cond3}
-\psi_{MIN}^{t-\Delta t}\,\leq \,
-\psi^{t+\Delta t} \, = \,
-\dfrac{-2 \Delta t}{\tilde{\rho}\,\Delta \overline{x}_{I}}\, (F^{OUT}-F^{IN}) \,+\,
-\psi^{t-\Delta t},
+	\frac{\partial u_i}{\partial x} = \frac{F(u)_{i+1/2}-F(u)_{i-1/2}}{\Delta x}.
+	\label{eq:discr_op}
+\end{equation}
+Two different methods, each with two distinct orders, can be used to discretize $F$: a WENO discretization of 5$^{th}$ or 3$^{rd}$ order (WENO5 and WENO3, respectively), or a centered discretization of 4$^{th}$ or 2$^{nd}$ order (CEN4TH and CEN2ND, respectively).
+
+\subsection{Discretization with the WENO schemes}
+The WENO schemes owe their success to the use of a dynamic set of stencils, where a nonlinear convex combination of lower order polynomials adapts either to a higher order approximation at smooth parts of the solution, or to an upwind spatial discretization that avoids interpolation across discontinuities and provides the necessary dissipation for shock capturing (Jiang and Shu, 1995; Shu, 1998). They allow a better representation of the solution in presence of high 
+    gradients. Pressel et al. (2015) have shown the advantages of the WENO schemes from 3$^{rd}$ through 11$^{th}$ order for the transport of scalars and momentum over central difference schemes.
+
+The first step consists on separating the velocity flux terms into positive and negative fluxes, using Lax-Friedrich flux splitting as in Shu (1998):
+\begin{equation}
+F_{\mbox{WENO}}(u)_{i+1/2} = f^{+}_{i+1/2} + f^{-}_{i+1/2}.
+\label{eq:flux-splitting}
+\end{equation}
+In the following development, only the reconstruction of the positive fluxes is described. The reader can refer to Wang and Spiteri (2007), Shu (1998) and Castro et al. (2011) for a more detailed description. The velocity fluxes are built using a stencil given by a Lagrangian interpolation using the velocity average on each cell.
+
+~\\
+For WENO5, the stencil is given by:
+\begin{equation}
+\begin{split}
+ f^+_{i+1/2} =& \; \gamma_0 \left( \dfrac{2}{6} \bar{u}_{i-2} - \dfrac{7}{6} \bar{u}_{i-1} + \dfrac{11}{6} \bar{u}_{i} 
+ \right) \\
+ &+ \gamma_1 \left(-\dfrac{1}{6} \bar{u}_{i-1} + \dfrac{5}{6} \bar{u}_{i}   + \dfrac{2}{6} \bar{u}_{i+1} \right) \\ 
+ &+ \gamma_2 \left( \dfrac{2}{6} \bar{u}_{i}   + \dfrac{5}{6} \bar{u}_{i+1} - \dfrac{1}{6} \bar{u}_{i+2} \right)     
+\end{split}    
 \end{equation}
 
-\noindent where $\psi_{MIN}$ is the local minimum of the quantity and $F^{OUT}$ and $F^{IN}$ are
-the total
-outgoing flux and incoming flux, respectively. A sufficient condition for (\ref{cond3}) is
+with the average value for the velocity defined by:
 
 \begin{equation}
-\label{cond4}
-\psi^{t-\Delta t}  \, - \,
-\psi_{MIN}^{t-\Delta t}\,\geq \,
-\dfrac{2 \Delta t}{\tilde{\rho}\,\Delta \overline{x}_{I}}\, F^{OUT}
+ \bar{u}_i = \dfrac{1}{\Delta x_i} \int_{x_{i-1/2}}^{x_{i+1/2}} u(\xi)d\xi.
 \end{equation}
 
-The previous condition (\ref{cond4}) can be written as a flux limiter ratio ($\beta^{OUT}$)
-
+The strength of the WENO5 method relies on the choice of the WENO stencil weights $\gamma_j$. These allow to keep a non-oscillatory solution even in presence of shock or high gradient in the velocity field. They are given by:
 \begin{equation}
-\beta^{OUT}=
- \dfrac{ \psi^{t-\Delta t}- \psi_{MIN}^{t-\Delta t} }
-{ \dfrac{2 \Delta t}{\tilde{\rho}\,\Delta \overline{x}_{I}} {F}^{OUT}}.
+ \gamma_j = \dfrac{\alpha_j}{\alpha_0+\alpha_1+\alpha_2}
 \end{equation}
-
-If $\beta^{OUT} \geq 1$, the flux is calculated correctly.
-If $\beta^{OUT}<1$, the outgoing flux is overestimated and therefore the flux limiter
-ratio must be applied.
-The corrected flux are
-
+where the non-normalized stencil weights are:
 \begin{equation}
-\label{cond5}
-{F}_{I} = min(1,\beta^{OUT}_{I-1})[\,F_{I}]^{+}\,+\,
-min(1,\beta^{OUT}_{I})[\,F_{I}]^{-}
+\begin{split}
+ \alpha_0 = \dfrac{1}{10} \left( \dfrac{1}{\epsilon + \beta_0} \right) ^2 , \;
+ \alpha_1 = \dfrac{6}{10} \left( \dfrac{1}{\epsilon + \beta_1} \right) ^2 , \\
+ \alpha_2 = \dfrac{3}{10} \left( \dfrac{1}{\epsilon + \beta_2} \right) ^2.
+\end{split} 
 \end{equation}
 
-\noindent where $[\,.\,]^{+}\,\equiv\, max(0,.)$ and $[\,.\,]^{-}\,\equiv\,min(0,.)$.
+The $\epsilon$ term is here to prevent the denominator to be null (it is set to $10^{-15}$ in the model). The $\beta_j$ terms, also called indicators of smoothness, are the heart of essentially non-oscillatory (ENO) methods, from which the WENO schemes are extended. They are defined as:
+\begin{align}
+ \beta_0 &= \dfrac{13}{12} \left( \bar{u}_{i-2} - 2\bar{u}_{i-1} + \bar{u}_{i} \right)^2 + \dfrac{1}{4} \left( \bar{u}_{i-2} - 4\bar{u}_{i-1} + 3\bar{u}_{i} \right)^2 \nonumber \\
+ \beta_1 &= \dfrac{13}{12} \left( \bar{u}_{i-1} - 2\bar{u}_{i} + \bar{u}_{i+1} \right)^2 + \dfrac{1}{4} \left( \bar{u}_{i-1} - \bar{u}_{i+1} \right)^2 \\
+ \beta_2 &= \dfrac{13}{12} \left( \bar{u}_{i} - 2\bar{u}_{i+1} + \bar{u}_{i+2} \right)^2 + \dfrac{1}{4} \left( 3\bar{u}_{i} - 4\bar{u}_{i+1} + \bar{u}_{i+2} \right)^2. \nonumber
+\end{align}
 
-\subsection{Discretization}
+WENO5 reverts to WENO3 at the edges of the computational domain for open boundary conditions only.
 
-For the centered advection scheme (ADVECSCALAR routine in Meso-NH) the advective
-flux are discretized according to
-
-\begin{eqnarray}
-F_1\,=\,
-\overline{\tilde{\rho}}^{x}U^{c} \overline{\psi}^{x} \\
-F_2\,=\,
-\overline{\tilde{\rho}}^{y}V^{c} \overline{\psi}^{y} \\
-F_3\,=\,
-\overline{\tilde{\rho}}^{z}W^{c} \overline{\psi}^{z}.
-\end{eqnarray}
-
-The outgoing flux for the grid cell ($F^{OUT}$) (located at mass point) is
-
-\begin{eqnarray}
-F^{OUT}_{i,j,k}\,=\,[F^1_{i+1,j,k}]^+\,-\,[F^1_{i,j,k}]^-
-\nonumber \\
-\,+\,[F^2_{i,j+1,k}]^+\,-\,[F^2_{i,j,k}]^-
-\nonumber \\
-\,+\,[F^3_{i,j,k+1}]^+\,-\,[F^3_{i,j,k}]^-.
-\end{eqnarray}
-
-Only on the above expression and in order to clarify the notation, the fluxes
-components ($F_1,F_2,F_3$) have been written as ($F^1,F^2,F^3$).
-
-An absolute minimum ($\psi_{MIN}$) must be prescribed to calculate the limiter factor.
-This minimum can be, for instance, a
-background value or as a default the value equal to zero.
-Alternatively, one can prescribed a local minimum ($\psi_{MIN}^{t-\Delta {t}}$)
-which is defined
-
+~\\
+For WENO3, the stencil is given by:
 \begin{equation}
-\psi_{MIN}^{t-\Delta {t}}=
-min[\psi^{t-\Delta {t}}_{i,j,k},
-\psi^{t-\Delta {t}}_{i-1,j,k}, \psi^{t-\Delta {t}}_{i+1,j,k},
-\psi^{t-\Delta {t}}_{i,j-1,k}, \psi^{t-\Delta {t}}_{i,j+1,k},
-\psi^{t-\Delta {t}}_{i,j,k-1}, \psi^{t-\Delta {t}}_{i,j,k+1}].
+ f^+_{i+1/2} = \gamma_0 \left(-\dfrac{1}{2} \bar{u}_{i-1} + \dfrac{3}{2} \bar{u}_{i} \right) +
+	         \gamma_1 \left(\dfrac{1}{2} \bar{u}_{i} + \dfrac{1}{2} \bar{u}_{i+1} \right).     
 \end{equation}
-
-If one knows $F^{OUT}$ and $\psi^{MIN}$, the $\beta^{OUT}-$ratio
-can be calculated
-
+The stencil weights are:
 \begin{equation}
-\beta^{OUT}=
- \dfrac{ \psi^{t-\Delta {t}}- \psi_{MIN}^{t-\Delta {t}}   }
-{\dfrac{ {2 \Delta t} \, {F}^{OUT}}{\tilde{\rho}} +\varepsilon },
+ \gamma_j = \dfrac{\alpha_i}{\alpha_0+\alpha_1}
 \end{equation}
-
-\noindent where $\varepsilon$ is a small value, for example $10^{-15}$. Finally,
-the discretization of the three components of the corrected flux yields
-
-\begin{eqnarray}
-{F_1} = min(1,\beta_{i-1,j,k}^{OUT})\,[\,F_1]^{+}\,+\,
-min(1,\beta^{OUT}_{i,j,k})\,[\,F_1]^{-}\\
-{F_2} = min(1,\beta_{i,j-1,k}^{OUT})\,[\,F_2]^{+}\,+\,
-min(1,\beta^{OUT}_{i,j,k})\,[\,F_2]^{-}\\
-{F_3} = min(1,\beta^{OUT}_{i,j,k-1})\,[\,F_3]^{+}\,+\,
-min(1,\beta^{OUT}_{i,j,k})\,[\,F_3]^{-}.
-\end{eqnarray}
-
-Once the advective fluxes are calculated and corrected, the advection of the
-scalar can be calculated (r.h.s) of equation (\ref{cond1}). Its discretize form
-form is
-
+where the non-normalized stencil weights are:
 \begin{equation}
--\,\delta_{x}F_1\,-\,\delta_{y}F_2\,-\,\delta_{z}F_3.
+ \alpha_0 = \dfrac{1}{3} \left( \dfrac{1}{\epsilon + \beta_0} \right) ^2 , \;
+ \alpha_1 = \dfrac{2}{3} \left( \dfrac{1}{\epsilon + \beta_1} \right) ^2 
 \end{equation}
-
-\subsection{Boundary conditions}
-
-The following boundary conditions are prescribed for the limiter factor $\beta^{OUT}$
-
-- Cyclic boundary conditions
-
+and for the smoothness indicators:
 \begin{equation}
-\beta^{OUT}_{b-1}=\beta^{OUT}_{e}
+ \beta_0 = \left(-\bar{u}_{i-1} + \bar{u}_{i} \right)^2  , \;
+ \beta_1 = \left(-\bar{u}_{i} + \bar{u}_{i+1} \right)^2.
 \end{equation}
 
-- Open boundary conditions
+The computational cost of WENO3 is much lower than WENO5, but WENO3 is known to be strongly more diffusive (Tan et al., 2005). The use of explicit numerical diffusion applied to wind fields with WENO schemes is
+prohibited. WENO5 requires a halo of 3 points between adjacent processors (NHALO=3).
 
+\subsection{Discretization with centered schemes}
+
+For centered schemes, no flux decomposition is required. The fluxes are directly computed using a 4$^{th}$-order reconstruction for CEN4TH:
 \begin{equation}
-\beta^{OUT}_{b-1}=1.
+F_{\mbox{CEN4TH}}(u)_{i+1/2} = \frac{7(u_{i+1}+u_{i})-(u_{i+2}+u_{i-1})}{12}
 \end{equation}
 
-\section{Multidimensional Positive Definite Advection Transport Algorithm (MPDATA)}
-
-The MPDATA can be summarized as follows.
-First, the advection of a quantity is solved by means of an upstream scheme
-(Rood 1987). This is the first iteration in the MPDATA scheme.
-Second, the excessive numerical diffusion produced by such scheme is
-corrected reapplying the scheme, but now one substitutes the velocity field by
-introducing an
-anti-diffusive velocity field. The anti-diffusive velocity is derived analytically
-based on the truncation error analysis of the upstream scheme.
-A non-oscillatory option can be applied to the MPDATA scheme to assure monotonicity.
-Such procedure may be repeated an optional number
-of times. For two iterations, the  MPDATA is a second-order-accurate in time
-and space for any
-advective velocity field.
-The properties
-of this scheme are: stability, consistency and conservation of positive
-definitiveness.
-
-For more detailed information, the user is addressed to the following articles:
-Smolarkiewicz (1983) (an introduction to the scheme in 1-D form), Smolarkiewicz
-(1984) (extension of the scheme to a fully multidimensional form), Smolarkiewicz
-and Clark (1986) (application to the scheme to a time-dependent velocity field
-and generalized form of the scheme
-to the anelastic continuity equation) and Smolarkiewicz and
-Grabowski (1990) (non-oscillatory option in order to preserve monotonicity).
-
-The formulation and notation presented in this manual closely follow (when
-it is possible) the one
-presented in the last two papers above mentioned. However, the MPDATA scheme
-has been adapted to the following Meso-NH requirements: leap-frog time stepping and
-code optimization.
-
-\subsection{Description}
-
-The advection equation of a quantity $\psi$ written on the computational
-grid, takes the following form:
-
+or a 2$^{nd}$ order for CEN2ND:
 \begin{equation}
-\dfrac{\partial}{\partial t}(\tilde{\rho}\psi) \, =
- \, - \, \dfrac{\partial }{\partial \overline{x}} (\tilde{\rho} U^{c} \;  \psi)
- \, - \, \dfrac{\partial }{\partial \overline{y}} (\tilde{\rho} V^{c} \;  \psi)
- \, - \, \dfrac{\partial }{\partial \overline{z}} (\tilde{\rho} W^{c} \;  \psi)
+F_{\mbox{CEN2ND}}(u)_{i+1/2} = \frac{u_{i+1}+u_{i}}{2}
 \end{equation}
 
-\noindent For compactness it may be written:
+CEN4TH reverts to CEN2ND at the edges of the computational domain for open boundary conditions only.
 
+The centered schemes must be also combined with numerical diffusion operator of 4$^{th}$ order in the model, in order to damp numerical energy accumulation in the shortest wavelengths. 
+The 4$^{th}$ order centered scheme presents a good accuracy (the effective resolution is of order of 5--6 $\Delta x$; Ricard et al., 2013) and it is easy to implement.
+
+\subsection{Temporal schemes for momentum}
+
+Once the space derivatives are estimated, a temporal discretization is used to integrate the fluxes in time from the current state to the next one. 
+A common strategy to improve computational efficiency is to use explicit numerical schemes integrating the high-frequency modes with a small time step and lower-frequency modes with a larger time step.
+Wicker and Skamarock (2002) were among the first to use a $3^{rd}$-order explicit Runge-Kutta (ERK) scheme. Higher order time-stepping combinations have been studying since them, especially combined with WENO spatial discretization (e.g. Wang and Spiteri, 2007).
+
+For the WENO schemes employed in Meso-NH, some ERK methods of high order are implemented.
+An explicit splitting method can be added to improve a bit more the stability properties as presented below.
+For centered momentum schemes, only the Leap-Frog (LF) scheme and one specific centered ERK method are available.
+
+\subsubsection{Explicit RK method}
+
+Explicit Runge-Kutta (ERK) methods can be applied to the momentum transport, together with FIT time integration for the rest of the model (contravariant flux $F_C(\tilde{\rho}U^c)$ among others). The general temporal proceeding for one advection term in Eq.~\eqref{eq:mommesonh1}  will then be described.
+
+Using the anelastic hypothesis ($\frac{\partial \rho}{\partial t} = 0$), we consider the tendency of a variable defined by its time-variation induced by the spatial term in the advection equation, noted $T_u$:
+$$ T_u = \tilde{\rho} \frac{\partial u}{\partial t} $$,
+which is written in the discrete form using the FIT formulation (with $n$ as the temporal index) as:
 \begin{equation}
-\dfrac{\partial}{\partial t}(\tilde{\rho}\psi) \, =
- \, - \, \sum_{I=1}^{3} \, \dfrac{\partial }{\partial \overline{x}_I}
- (u_I \; \psi) \, =
- \, - \, \sum_{I=1}^{3} \, \dfrac{\partial F_I }{\partial \overline{x}_I}
+T_u^{n+1} = \tilde{\rho} \frac{u^{n+1}-u^{n}}{\Delta t}
+\label{eq:tendency}
 \end{equation}
 
-\noindent
- where $u_I = \tilde{\rho} U_{I}^{c}$ is the Ith component of the non-divergent
-contravariant velocity and $F_I = u_I \psi = \tilde{\rho} U_{I}^{c} \psi$
-is a flux of $\psi$ in that direction.
-
- The basic MPDATA
-iteratively solves the advection equation (at the $l$th iteration) in the
-following way
-
+The contravariant flux $F_C(U^c)$ (the \textquotedblleft advector \textquotedblright\ field) is kept constant along the time step, to satisfy the continuity equation. The ERK method is applied on the following equation:
 \begin{equation}
-\dfrac{\tilde{\rho} \psi^{(*)^{l}}} {2 \Delta t} \, = \,
-\dfrac{\tilde{\rho} \psi^{(*)^{l-1}}} {2 \Delta t} \,
- \, - \, \sum_{I=1}^{3} \,  \dfrac{\partial }{\partial \overline{x}_I}
-F_I (\psi^{(*)^{l-1}} , \tilde{u}_I^{l} )
+\tilde{\rho} \frac{\partial u}{\partial t} = M(u) + S
+\label{eq:semi-discr}
 \end{equation}
+where $M(u)$ is the discrete term defined in Eq.~\eqref{eq:mommesonh1}, and $S$ represents the other terms of the momentum equation. As the solver pressure is called between the call to the momentum advection and the end of the time-step, the pressure contribution of the previous time step is added to the processes computed since the beginning of the current time step. 
 
-\noindent
-where $2\Delta t$ is the leapfrog time step and $l=1,...,L$.
- L is the total number of iterations.
-$F_I$ is the donor-cell advective flux evaluated by means of the
-upstream scheme.
-% Note that when L=1 the algorithm
-%results in the first-order accurate upstream scheme.
+\noindent We consider a general s-stage ERK method defined by its Butcher coefficients:
+\begin{displaymath}
+\begin{array}{c|cccccc}
+c_{1} &   &   &   &   &  & \\ 
+c_{2} & a_{21} &   &   &   &   & \\
+c_{3} & a_{31} & a_{32} &   &   &   & \\
+c_{4} & a_{41} & a_{42} & a_{43} &   &   & \\ 
+\vdots & \vdots & \vdots & \vdots & \ddots &    &  \\
+c_{s} & a_{s1} & a_{s2} & a_{s3} & \ldots & a_{s,s-1} &  \\
+\hline
+      & b_{1} & b_{2} & b_{3} & \ldots & b_{s-1} & b_{s} 
+\end{array}
+\end{displaymath}
+The advection tendency follows:
 
-\begin{itemize}
+\begin{align} 
+u^{n}_{1} &=  u^{n} \nonumber \\ 
+u^{n}_{k} &=  u^{n} \; + \; \Delta{t} \; \sum_{j=1}^{k-1} \; a_{k,j} \; \frac{M(u^n_j)+S}{\rho^n} \label{eq:erk}\\ 
+T_u^{n+1} &= \sum_{k=1}^{s} \; b_{k} \; \left( M(u^{n}_{k}) + S \right). \nonumber
+\end{align}
 
-\item {\em The initial and final values} are given by
 
+Adding the advection tendency to get $u^{n+1}$ using Eq.~\eqref{eq:tendency} leads to the classical Runge-Kutta method applied to the momentum equation. The different explicit RK methods considered in Meso-NH are:
+\begin{multicols}{2}
+    \begin{center}
+        ERK with order 1 and 2 steps (RK21) \\
+        \begin{tabular}{c|cc}
+            0    & & \\
+            3/4  & 3/4 & \\
+            \hline
+            & 0 & 1 \\		
+        \end{tabular}
+    \end{center}
+%    \columnbreak
+    \begin{center}
+        SSP-RK with order 3 and 3 steps (RK33) \\
+        \begin{tabular}{c|ccc}
+            0   & & & \\
+            1   & 1 & & \\
+            1/2 & 1/4  & 1/4 &  \\
+            \hline
+            & 1/6 & 1/6 & 2/3 \\		
+        \end{tabular}
+    \end{center}
+\end{multicols}
+
+\begin{multicols}{2}
+\begin{center}
+    ERK with order 3 and 5 steps (RK53) \\
+    \begin{tabular}{c|ccccc}
+        0    & & & & & \\
+        1/7  & 1/7 & & & & \\
+        3/16 &  0  & 3/16 &   & & \\
+        1/3  &  0  &  0   & 1/3 & & \\
+        2/3  &  0  &  0   & 0   & 2/3 & \\
+        \hline
+        & 1/4 & 0 & 0 & 0 & 3/4 \\		
+    \end{tabular}
+\end{center}
+
+\begin{center}
+    ERK order 4 (RKC4) \\
+    \begin{tabular}{c|cccc}
+        0   & & & & \\
+        1/2 & 1/2 & & & \\
+        1/2 &  0  & 1/2 &   & \\
+        1   &  0  &  0  & 1 & \\
+        \hline
+        & 1/6 & 1/3 & 1/3 & 1/6 \\		
+    \end{tabular}
+\end{center}
+\end{multicols}
+
+
+RK33 requires more memory storage 
+than the RKC4 and RK53 methods, as RK33 has a plain Butcher matrix. In contrast, RKC4 and RK53 have a diagonal Butcher matrix, so they only need to store 
+one field in memory at each stage to compute the next one, justifying the classification of low-storage ERK methods.
+ 
+\noindent WENO3 and WENO5 can be used with all the ERK schemes presented above.
+
+\noindent CEN4TH can only be used with RKC4, or without RK time splitting with the classical Leap-Frog scheme. CEN2ND can only be used with the Leap-Frog scheme.
+
+\subsubsection{Additional time splitting method}
+
+To increase a bit more the maximum CFL number, an additional time-splitting can be activated for the wind advection with WENO. Considering one time step $[t_n,t_{n+1}]$, we divide it into $L$ regular sub-steps $[t_l,t_{l+1}]$ with $t_n=t_0 < ... < t_l < t_{l+1} < ... < t_L=t_{n+1}$. 
+
+Once one value $u^l$ is known ($u^0$ at first), the next value $u^{l+1}$ is computed using Eq.~\eqref{eq:tendency} with $\Delta t = t_{l+1} - t_l$, that is:
 \begin{equation}
-\psi^{(*)^{0}}\equiv \psi^{t-\Delta t} \, \, \, and \, \, \, \, \, \, \, \,
-\psi^{t+\Delta t}\equiv \psi^{(*)^{L}}
+T_u^{l+1} = \rho \frac{u^{l+1}-u^{l}}{\Delta t}
 \end{equation}
-
-\item {\em For the first iteration $(l=1)$} the scalar field is advected using
-the velocity at the central time $t$, resulting in the the first-order accurate
-upstream scheme.
-
+with $u^{l+1}$ computed using all stages of the ERK method as described in Eq.~\eqref{eq:erk}. This process is repeated $L$ times to compute the $L$ tendencies (Fig.~\ref{fig:time}). At the end, we obtain the tendency on the original final time $t_{n+1}$ by calculating the following average:
 \begin{equation}
-\tilde{u}_I^{1}\equiv {u}_{I}^{t}
+T_u = \frac{1}{L}\sum_{l=1}^{L} T_u^l.
 \end{equation}
 
-\item {\em The next iterations $(l>1)$} increase the accuracy and
-reduce the strong diffusive character of the upstream scheme. This
-is done by introducing an
-{\em anti-diffusive velocities} $\tilde{u}_I^{l}$
-
-If $\psi > 0$
-\begin{eqnarray}
-\tilde{u}_{I}^{l}  =
-0.5 \left[ |{\tilde{u}_I^{l-1}}| \Delta \overline{x}_I
-       -{2 \Delta t}\dfrac{(\tilde{u}_I^{l-1})^{2}} {\tilde{\rho}}  \right]
-\dfrac{1}{\psi^{(*)^{l-1}}}
-\dfrac{\partial \psi^{(*)^{l-1}}}{\partial \overline{x}_I} \,
-\nonumber \\
-\nonumber \\
-- \sum_{J=1,J\neq I}^{3}  0.5({2 \Delta t})
-\dfrac{ \tilde{u}_I^{l-1}\tilde{u}_J^{l-1} } {\tilde{\rho} \psi^{(*)^{l-1}}}
-\dfrac{\partial \psi^{(*)^{l-1}}}{\partial \overline{x}_J}
-\end{eqnarray}
-If $\psi = 0$
-\begin{equation}
-\tilde{u}_I^{l}  = 0.
-\end{equation}
-
- Note that the anti-diffusive velocities
-$\tilde{u}_I^{l}$ ($l>1$) are dependent on the $\psi$ variable, contrary to
-the first iteration ($l=1$) for which all variables are advected by
-the same wind field ${u}_{I}$. This feature has
-important impact on the code, as it suggests to perform the iterative cycle
-of correction ($l=2,...,$ $ L$) variable by variable, in order to save memory.
-
-\end{itemize}
-
-\subsection{Discretization}
-
-\begin{itemize}
-
-\item {\em Fluxes } are estimated by the following upstream algorithm
-
-\begin{eqnarray}
-\label{flux1}
-F_1(\psi^{(*)^{l-1}}, \,\tilde{u}^{l}) = [\,\tilde{u}^{l}]^{+}
-\psi^{(*)^{l-1}}_{i-1,j,k}\,
-\, + \ [\,\tilde{u}^{l}]^{-}
-\psi^{(*)^{l-1}}_{i,j,k}\\
-\label{flux2}
-F_2(\psi^{(*)^{l-1}}, \,\tilde{v}^{l}) = [\,\tilde{v}^{l}]^{+}
-\psi^{(*)^{l-1}}_{i,j-1,k}\,
-\, + \ [\,\tilde{v}^{l}]^{-}
-\psi^{(*)^{l-1}}_{i,j,k}\\
-\label{flux3}
-F_3(\psi^{(*)^{l-1}}, \tilde{w}^{l}) = [\tilde{w}^{l}]^{+}
-\psi^{(*)^{l-1}}_{i,j,k-1}\,
-\, + \ [\tilde{w}^{l}]^{-}
-\psi^{(*)^{l-1}}_{i,j,k}
-\end{eqnarray}
-
-\noindent with triplets $(i,j,k)$ corresponding to the variables position
-on the computational grid.
-
-\item {\em The "anti-diffusive" velocities $(l>1)$}. In order to insure
-that $\dfrac{1}{\psi} \dfrac{\partial \psi}{\partial \overline{x}_J}$
-converges when $\psi$ tends to zero, the anti-diffusive velocities are
-discretized as
-
-\begin{eqnarray}
-\tilde{u}^{l}  =  0.5(2\Delta t) \left[{
-\left[ \overline{\tilde{\rho}}^{x} \dfrac{sign(\,\tilde{u}^{l-1})}{2\Delta t}
-                                      - \,\tilde{u}^{l-1}  \right] \, A \,
-\, - \, {\,\tilde{u}^{l-1}}\,
-\left[\overline{ \overline{B}^y \,\,+ \, \overline{C}^z }^{x} \right]}\right] \\
-\tilde{v}^{l}  =  0.5(2\Delta t) \left[{
-\left[ \overline{\tilde{\rho}}^{y} \dfrac{sign(\,\tilde{v}^{l-1})}{2\Delta t}
-                                      - \,\tilde{v}^{l-1}  \right] \, B \,
-\, - \, {\,\tilde{v}^{l-1}}\,
-\left[\overline{ \overline{A}^x \,\,+ \, \overline{C}^z }^{y} \right]}\right] \\
-\tilde{w}^{l}  =  0.5(2\Delta t) \left[{
-\left[ \overline{\tilde{\rho}}^{z} \dfrac{sign(  \tilde{w}^{l-1})}{2\Delta t}
-                                      -   \tilde{w}^{l-1}  \right] \, C \,
-\, - \, {  \tilde{w}^{l-1}}\,
-\left[\overline{ \overline{A}^x \,\,+ \, \overline{B}^y }^{z} \right]}\right]
-\end{eqnarray}
+The main interest of such an additional time splitting is to call the rest of the model (pressure solver, physics, chemistry, ...) less frequently.
 
 
-\noindent where
 
-\begin{eqnarray}
-\label{equA}
-A =
- \dfrac{ \, \tilde{u}^{l-1} \delta_{x} \psi^{(*)^{l-1}}   }
-{ \overline{\tilde{\rho} \psi^{(*)^{l-1}}}^x +\varepsilon }   \\
-\label{equB}
-B =
- \dfrac{ \, \tilde{v}^{l-1} \delta_{y} \psi^{(*)^{l-1}}   }
-{ \overline{\tilde{\rho} \psi^{(*)^{l-1}}}^y +\varepsilon }   \\
-\label{equC}
-C =
- \dfrac{    \tilde{w}^{l-1} \delta_{z} \psi^{(*)^{l-1}}   }
-{ \overline{\tilde{\rho} \psi^{(*)^{l-1}}}^z +\varepsilon }
-\end{eqnarray}
+%Hence, to summarize the time-marching in Meso-NH, three time steps are effective 
+When WENO schemes are applied to momentum transport (Fig.~\ref{fig:time}), the larger time step is applied to all the model components including the physics and the pressure solver, with the FIT temporal scheme. The advection of all variables is conducted with a constant advection momentum vector.
+A smaller time step is used for wind advection applying the ERK method on the subinterval. 
 
-\noindent where $\varepsilon$ is a small value, for example $10^{-15}$, to
-ensure $\tilde{u}^{l}=\tilde{v}^{l}=\tilde{w}^{l}=0$ when
-$\delta_{x} \psi^{(*)^{l-1}}=\delta_{y} \psi^{(*)^{l-1}}=
-\delta_{z} \psi^{(*)^{l-1}}=0$ or $\overline{\tilde{\rho} \psi^{(*)^{l-1}}}^x=
-\overline{\tilde{\rho} \psi^{(*)^{l-1}}}^y=
-\overline{\tilde{\rho} \psi^{(*)^{l-1}}}^z=0$.
-
-It is important here to note that the discretization proposed for Meso-NH
-differs from the discretization suggested by Smolarkiewicz and Clark (1986). As a
-result, we have not observed the formation of oscillation on the tests carried
-out with the MPDATA scheme. Consequently, the non-oscillatory option, has not been
-included in the MPDATA scheme.
-
-\item {\em The $CFL<1$ condition } limits the values of the anti-diffusive velocities
-in the following way
-
-\begin{equation}
-\mid\tilde{u}^{l}\mid\leq \dfrac{\tilde{\rho}}{2 \Delta t} \, \, \, , \, \, \, \, \, \, \, \,
-\mid\tilde{v}^{l}\mid\leq \dfrac{\tilde{\rho}}{2 \Delta t} \, \, \, and \, \, \, \, \, \, \,
-\mid\tilde{w}^{l}\mid\leq \dfrac{\tilde{\rho}}{2 \Delta t}
-\end{equation}
-
-\end{itemize}
-
-\subsection{Boundary conditions}
-
-\begin{itemize}
-\item{\em {First iteration ($l=1$)}}
-
- The scalar values $\psi$ are taken at the $t-\Delta t$ instant ($n-1$),
-whose boundary values are prepared by routine BOUNDARIES depending on the
-boundary condition type:
-
-- Cyclic if prescribed.
-
-- At lateral boundaries for the "wall" type and at upper and lower boundaries
-\begin{equation}
-  \dfrac{\partial \psi }{\partial n } = 0 \;\;\;\;\;\; either \;\;\;\;
-\psi^{n-1}_{b+1} = \psi^{n-1}_{b}
-\end{equation}
-
-- And for open lateral b.c.
-\begin{equation}
-  \dfrac{\partial \psi - \psi_{LS} }{\partial n } = 0 \;\;\;\;\;\; either \;\;\;\;
-\psi^{n-1}_{b+1} = \psi^{n-1}_{b-1}
- + {\psi_{LS}}^{n-1}_{b+1} -{\psi_{LS}}^{n-1}_{b-1}
-\end{equation}
-
-\noindent These boundary conditions tested for the numerical diffusion, are also
-well suitable for the upstream scheme. Vertically the contravariant velocities
-being zero, the b.c. has no impact.
-
-\item{\em {Next iterations ($l>1$)}}
-
- There is no reason to apply the anti-diffusive procedure at boundaries, as it
-is already the case for the 2nd-order advection scheme. Indeed a diffusive
-scheme allows to reduce spurious reflections that may occur at boundaries.
-We therefore impose at all boundaries a zero anti-diffusive velocity:
-
-\begin{equation}
-\tilde{u}^{l}_{{I }_b} = 0
-\end{equation}
-
-\noindent except for cyclic boundaries. In that later case cyclic boundaries
-must applies to both $\tilde{u}_I^{l}$ and $\psi^{(*)^{l-1}}$.
-
-\item{\em {Fluxes determination}}
-
- The fluxes expressions (Eq. \ref{flux1}, \ref{flux2} and \ref{flux3}) are well defined except at the first
-point, but which does not correspond to a physical point. We can fill up this
-point by the dummy value -999.
-
-\end{itemize}
-
-\section{Evaluation of FCT and MPDATA advection schemes}
-
-Two 2D-horizontal tests were carried out to validate FCT and MPDATA. Test 1 is the
-advection of a cone in a rotating field with constant velocity. A full description
-of the test can be found in Smolarkiewicz (1984). The initial maximum
-concentration $(C_{max})$ was 4. The solution after six full rotations are summarized in Table 1.
-The computing time is calculated relative to the computer time used by the centered
-second-order
-scheme. Note that the leapfrog scheme produces negative values.
+\noindent With the centered momentum transport schemes, there is no additional time splitting.
+Therefore, when CEN4TH is applied to momentum transport with the RKC4 time marching, there is no sub-step $l$ for momentum. When it is applied with the Leap-Frog scheme, there is neither ERK time-splitting nor sub-step $l$.
 
 
-\begin{table}[htpb]
-  \centering
-  \caption{Results of Test 1}
-  \begin{tabular}{p{3cm}p{3cm}p{3cm}p{3cm}p{3cm}}
-    \hline
-    Advection scheme  &  $C_{max}$  &  $C_{min}$  & $C_{max}$(Smol84)  &  Computing time  \\
-    \hline
-    \hline
-    Centered      &   2.65  &  -0.32 &  -    & 1.      \\
-    FCT          &   2.64  &   0.   &  -    & 3.4     \\
-    MPDATA(L=2)  &   2.015 &   0.   & 2.16  & 7.       \\
-    MPDATA(L=3)  &   2.85  &   0.   & 3.17  &11.8      \\
-    \hline
-  \end{tabular}
+
+\begin{figure}[t]
+ \centering
+    \includegraphics[width=19pc]{\EPSDIR/timescheme.eps}
+    \caption{Representation of the time-marching in Meso-NH with WENO schemes for the transport of momentum and scalar variables.}
+    \label{fig:time}
+\end{figure}
+
+
+\subsubsection{Comparison on the 2D hydrostatic mountain wave}
+
+A classical evaluation of the momentum advection schemes involves the steady-state solution of linear 2D hydrostatic flow over a single-peaked mountain with constant inflow, as in Durran and Klemp (1983) and Xue and Thorpe (1991). The profile of the symmetric Witch of Agnesi mountain is used as: 
+$$ h(x) = h_{\max}\frac{a^2}{x^2 + a^2}$$ with $h_{\max}=1~m$ the height and $a=10$~km the half-width of the mountain. The initial state of the atmosphere consists of a constant mean flow with $U=20$~m~s$^{-1}$, a ground potential temperature of $\theta=250$~K, and a Brunt-Väisälä frequency $N=0.02$~s$^{-1}$. The resolution is  $\Delta x = 500$~m and $\Delta z = 250$~m, and the domain extends horizontally over 800~km and vertically over 30~km. A Rayleigh damping layer is applied above 22~km. Figure~\ref{fig:whydro} shows that the numerical (dashed grey) values of vertical velocity and the analytical (colored contours) ones compare well. The simulation is shown here only for WENO5 as the differences with the various advection schemes are too tiny to be visible.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=19pc]{\EPSDIR/AGN_H_W5OPE.eps}
+    \caption{Case of linear hydrostatic mountain. Vertical cross-section of vertical velocity (m~s$^{-1}$) after 10~h. Colored isovalues correspond to the analytical solution, and dashed grey lines to the numerical one, given here for WENO5 and RK53, with CFL$=0.4$.}
+    \label{fig:whydro}
+\end{figure}
+
+But there are some significant differences in terms of maximum CFL number and wall clock time to solution.
+A stability study, including the additional time-splitting for WENO schemes, is presented in Table~\ref{tab:cflH}. It should be noted that this case does not call any physics: only the dynamical sources are involved.
+
+First, the additional time-splitting for WENO schemes is only presented with $L=2$ as $L=3$ does not improve the maximum CFL number.
+
+Without any additional time-splitting for WENO schemes, the CFL numbers are maximum for CEN4TH/RKC4, and WENO5/WENO3 combined with RKC4/RK53. In contrast, the lowest CFL number is given by CEN4TH/LF.
+RK33 gives a maximum CFL number lower than RK53 and RKC4 with the WENO schemes (it requires more memory storage as explained above). 
+
+\noindent The computational cost is significantly lower with CEN4TH/RKC4, while WENO5 requires strong computational effort. WENO3/RKC4 costs almost the same than CEN4TH/RKC4 at equal CFL number. Lastly, RKC4 and RK53 produce equivalent maximum CFL numbers with WENO schemes, but RKC4 is slightly cheaper with 4 stages instead of 5 for RK53.
+
+With additional time-splitting for the WENO schemes, the maximum CFL number is significantly increased with RKC4/RK53 methods, up to 1.8 with WENO5 and 2.5 with WENO3. The impact is not obvious on the wall clock time to solution, because this case only involves dynamical processes. But it will be more significant on cases with physics, and even more with chemistry.
+
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ l c c c c c c}
+\hline\hline
+       &  LF  &  RK33 & RK53 & RKC4 \\
+\hline
+CEN4TH & 0.4 &  &  &  1.5 \\
+& \it{1} &  &  & \it{0.42} \\
+\hline
+WENO-3 &  &  &  &  \\
+L=1 &  & 1.0 & 1.3 & 1.3 \\
+&  & \it{0.74} & \it{0.63} & \it{0.58} \\
+L=2 &  & 2.1 & 2.5 & 2.5 \\
+&  & \it{0.52} & \it{0.57} & \it{0.54} \\
+\hline
+WENO-5 &  &  &  &  \\
+L=1 &  & 1.0 & 1.4 & 1.4 \\
+&  & \it{2.15} & \it{1.95} & \it{1.76} \\
+L=2 &  & 1.7 & 1.8 & 1.8 \\
+&  & \it{1.99} & \it{2.51} & \it{2.21} \\
+\hline
+
+\end{tabular}
+\caption{Case of linear hydrostatic flow for CEN4TH and for WENO schemes combined with ERK methods and additional time-splitting ($L$ is the split number): maximum CFL number and computational cost for the maximum CFL number in italics to run 15000 s, considering the computational cost of CEN4TH/LF as the unit.}
+\label{tab:cflH}
 \end{table}
 
-Test 2 is the advection of the same cone but now in a deformational flow field. The
-description and the analytical solution of the test were done by Staniforth et al. (1987).
-FCT and MPDATA performed very well in spite of it being an extremely stressful test.
 
-From the evaluation and inter-comparison of the two tests
-the following conclusions can be drawn:
+\subsubsection{Recommendations}
 
+
+
+Other tests have shown that:
 \begin{itemize}
+\item CEN4TH/RKC4 presents the best effective resolution, and the less diffusive behaviour, followed by CEN4TH/LF and then WENO5/RK53-RKC4. This is crucial for LES of clouds: the entrainment of environmental at the cloud edges is higher with CEN4TH/RKC4 as the implicit diffusion is lower. 
+ \item WENO3 is excessively damping and is prohibited for LES as the effective resolution is of the order of $12 \Delta x$.
+ \item WENO5/RK53-RKC4 is well adapted to sharp gradients area, i.e. in complex shock-obstacle interactions with immersed boundary method. 
+ \item CEN4TH/LF is much more expensive than CEN4TH/RKC4
+\end{itemize}
 
-\item{The results obtained with MPDATA are in close agreement with the ones obtained
-by Smolarkiewicz (1984). However, and due to the different discretization, MPDATA
-at Meso-NH is a little bit more diffusive. On the other hand, we have not found oscillations
-on the scalar field distribution.}
-
-\item{FCT is less diffusive than MPDATA. Carrying out more iterations with MPDATA the
-numerical diffusion can be corrected but at expense of an increase of the computer time.}
-
-\item{FCT is less computer expensive than MPDATA}
-
-\item{MPDATA conserves better the original distribution of the scalar, i.e. more symmetric}
-
+Therefore the recommendations could be:
+\begin{itemize}
+ \item CEN4TH/RKC4 is recommended for LES.
+ \item WENO5/RKC4 is recommended for simulations with expensive chemistry/physics, typically mesoscale simulations, or for simulations with sharp-gradient area.
 \end{itemize}
 
 
 
-\section{The PPM advection scheme}
+
+
+
+\section{Advection schemes for scalar variables: the PPM}
 
 \subsection{Introduction}
 
-  The PPM advection scheme is based on the \textbf{P}iecewise
-  \textbf{P}arabolic \textbf{M}ethod, a numerical technique developed in
+  The PPM advection scheme is based on the piecewise
+  parabolic method (PPM), a numerical technique developed in
   astrophysics for modeling fluid flows (Colella et al.\ 1984, Carpenter
-  et al.\ 1990). The PPM differs substantially from conventional
-  grid-point methods like the second and fourth order centered advection
-  schemes already implemented in the MesoNH. It is a finite-volume
+  et al.\ 1990). The PPM scheme differs substantially from conventional
+  grid-point methods like the 2$^{nd}$- and 4$^{th}$-order centered advection
+  schemes. It is a finite-volume
   method in which some assumption is made about the structure of the
-  approximate solution between the grid points.  In the PPM case,
+  approximate solution between the grid points. In the PPM case,
   piecewise continuous parabolas are fitted in each grid-cell. This
   design enables the scheme to handle sharp gradients and
   discontinuities very accurately. Although the constructed piecewise
@@ -627,33 +431,27 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   ensure the scheme is monotonic. Monotonic schemes do not amplify
   extrema in the initial values and are, thus, also positive
   definite. Application of the PPM schemes to 3D problems requires
-  density-corrected directional splitting and essentially
-  forward-in-time (FIT) time-marching, so variables advected by the PPM
-  schemes follow a modified path through the main Meso-NH loop.
+  density-corrected directional splitting and FIT time-marching.
 
   Three different versions of the PPM advection scheme have been
-  implemented in MesoNH: the unrestricted PPM\_00, the monotonic
-  version, PPM\_01, based on the original scheme (Colella at al.\ 1984)
-  with monotonicity constraints modified by Lin and Rood (1996). The
-  third version, PPM\_02, is another monotonic scheme with a flux
-  limiter developed by Skamarock (2006). The PPM\_02 permits extension
-  to stable semi-Lagrangian integrations using Courant numbers larger
-  than one. The PPM schemes are intended for advection of meteorological
+  implemented in Meso-NH: the unrestricted scheme PPM\_00 and two monotonic
+  versions, PPM\_01 and PPM\_02. PPM\_01 is based on the original scheme (Colella at al.\ 1984)
+  with monotonicity constraints modified by Lin and Rood (1996) while
+  PPM\_02 uses the flux limiter developed by Skamarock (2006).
+  PPM\_02 permits extension to stable semi-Lagrangian integrations
+  using CFL numbers larger than one. 
+  The PPM schemes are intended for advection of meteorological
   variables (e.g.\ temperature, water species, TKE) and passive
   scalars. All three versions have excellent mass-conservation properties
   and were found to be an order of magnitude more accurate than the
-  existing FCT or centered 4\ts{th} order (CEN4TH) schemes in idealized
-  2D tests. However, the numerical diffusion associated with the
+  centered 4\ts{th} order (CEN4TH) scheme previously applied to scalar variables in idealized
+  2D tests. However, the implicit numerical diffusion associated with the
   monotonicity preserving methods in PPM\_01 and PPM\_02 can damp
-  smooth, well resolved extrema. Therefore the use of numerical diffusion
+  smooth, well resolved extrema. Therefore the use of explicit numerical diffusion
   applied to scalar fields should be prohibited when using the PPM schemes.
   Also, the flux limiters and the
-  specific time marching require considerable computational effort
-  making the monotonic PPM schemes significantly more expensive than,
-  e.g., FCT. Nevertheless, the PPM schemes in combination with the
-  CEN4TH advection of momentum overall produce significantly more
-  accurate solutions and the advection is still relatively small
-  fraction of the total computational time.
+  specific time marching require computational effort
+  making the monotonic PPM schemes significantly more expensive than a classical centered scheme. 
 
   \subsection{Description}
 
@@ -661,12 +459,12 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   as:  
   \begin{equation}
     \label{advection}
-    \frac{\pl}{\pl t}(\rho \phi) =
-    - \frac{\pl}{\pl x}(\rho U \phi)
-    - \frac{\pl}{\pl y}(\rho V \phi)
-    - \frac{\pl}{\pl z}(\rho W \phi)    
+    \frac{\pl}{\pl t}(\tilde{\rho} \phi) =
+    - \frac{\pl}{\pl x}(\tilde{\rho} U_c \phi)
+    - \frac{\pl}{\pl y}(\tilde{\rho} V_c \phi)
+    - \frac{\pl}{\pl z}(\tilde{\rho} W_c \phi)    
   \end{equation}
-  where $U$, $V$ and $W$ are Cartesian wind components. To solve this
+  where in the same way as for the transport of wind, the contravariant components of the wind field are the \textquotedblleft advector \textquotedblright field $(U_c,V_c,W_c)$. To simplify the notation, we will consider in the following part $(u,v,w)$ instead of $(U_c,V_c,W_c)$, as if we were in a Cartesian framework. To solve this
   equation on a discrete grid using the PPM finite-volume method, an
   approximate solution for the scalar field $\phi$ is constructed
   between the grid points. The grid-point value $\phi_{i}$ of a scalar
@@ -680,11 +478,11 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   known, we can calculate fluxes at the grid-cell edges, and the net
   scalar transport in each cell is equal to the flux divergences.
 
-  A solution (in one dimension) to (\ref{advection}) can be calculated
-  from forward-in-time (FIT) discretization:
+  A solution (in one dimension) to Eq.~(\ref{advection}) can be calculated
+  from the FIT discretization:
   \begin{equation}
     \label{1DFIT}
-    (\rho \phi)_{i}^{t+\Delta t} = (\rho \phi)_{i}^{t} -
+    (\tilde{\rho} \phi)_{i}^{t+\Delta t} = (\tilde{\rho} \phi)_{i}^{t} -
     \mathcal{F}_{x,i}(\phi^{t})    
   \end{equation}
   where the operator $\mathcal{F}_{x,i}$ denotes the discrete flux
@@ -692,14 +490,14 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   \begin{equation}
     \label{FIT}
     \mathcal{F}_{x,i}(\phi^{t}) = \frac{\Delta t}{\Delta x_{i}} \left[
-      (\rho U)_{i+1/2} f(\phi^{t})_{i+1/2} - (\rho U)_{i-1/2}
+      (\tilde{\rho} u)_{i+1/2} f(\phi^{t})_{i+1/2} - (\tilde{\rho} u)_{i-1/2}
       f(\phi^{t})_{i-1/2} \right] 
   \end{equation}
-  where $F_{i\pm1/2}=(\rho U)_{i\pm1/2} f(\phi^{t})_{i\pm1/2}$ are the
+  where $F_{i\pm1/2}=(\tilde{\rho} u)_{i\pm1/2} f(\phi^{t})_{i\pm1/2}$ are the
   scalar fluxes at the grid-cell edges. These fluxes can be determined
   by integrating over the parabolas in each cell. The parabola in the
   grid-cell $i$ (dropping the superscript $t$) is constructed from the
-  cell average ($\phi_{i}$) and left and right edge values ($\phi_{L,i}$
+  cell average ($\phi_{i}$) and left- and right-edge values ($\phi_{L,i}$
   and $\phi_{R,i}$) in the following way:
   \begin{equation}
     \label{par}
@@ -730,15 +528,15 @@ numerical diffusion can be corrected but at expense of an increase of the comput
     \label{endpar}
     \delta(\phi_{i}) = \frac{1}{2} \left( \phi_{i+1} - \phi_{i-1} \right).
   \end{equation}  
-  And finally, the scalar fluxes at the edges of grid-cells
+  Finally, the scalar fluxes at the edges of grid-cells
   ($f(\phi)_{i\pm1/2}$) are calculated as the average value of the scalar
   over the advective distance in each grid cell:  
   \begin{equation}
-    f(\phi)_{i+1/2} = \frac{1}{\Delta t U_{i+1/2}}
-    \int_{x_{i+1/2}-\Delta tU_{i+1/2}}^{x_{i+1/2}} \phi_{i}(x) \dif x,
-    \quad \mathrm{for} \quad U_{i+1/2} > 0
+    f(\phi)_{i+1/2} = \frac{1}{\Delta t u_{i+1/2}}
+    \int_{x_{i+1/2}-\Delta tu_{i+1/2}}^{x_{i+1/2}} \phi_{i}(x) \dif x,
+    \quad \mathrm{for} \quad u_{i+1/2} > 0
   \end{equation}
-  Substituting equations (\ref{par}) through (\ref{endpar}) we get:
+  Substituting Eqs.~(\ref{par}) through (\ref{endpar}) we get:
   \begin{equation}
     \label{flux+}
     f(\phi)_{i+1/2}^{+} = \phi_{R,i} -
@@ -752,15 +550,15 @@ numerical diffusion can be corrected but at expense of an increase of the comput
      \frac{1}{2} Cr_{i+1/2} \left[ \Delta(\phi)_{i+1} + 
      \left(1 + \frac{2}{3} Cr_{i+1/2} \right) \phi_{6,i+1} \right]
   \end{equation}
-  for $Cr_{i+1/2} < 0$. Here $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x$
-  is the Courant number. 
+  for $Cr_{i+1/2} < 0$. Here $Cr_{i+1/2} = u_{i+1/2}\Delta t/\Delta x$
+  is the CFL number. 
 
-  \subsubsection{The unrestricted scheme, PPM\_00}
+  \subsubsection{The PPM\_00 unrestricted scheme}
 
   The PPM advective fluxes $f_{i\pm1/2}$ can be expressed in a more
-  concise way for more efficient calculation. Combining the equations
-  (\ref{par}) through (\ref{endpar}) with the expressions for the fluxes
-  (\ref{flux+}) and (\ref{flux-}), we get:
+  concise way for more efficient calculation. Combining Eqs~(\ref{par})
+  through (\ref{endpar}) with the expressions for the fluxes
+  [Eqs.~(\ref{flux+}),(\ref{flux-})], we get:
   \begin{eqnarray}
     \label{sflux+}
     f(\phi)_{i+1/2}^{+} &=& \phi_{i+1/2} - Cr_{i+1/2}(\phi_{1+1/2} -
@@ -768,7 +566,7 @@ numerical diffusion can be corrected but at expense of an increase of the comput
     & & - Cr_{i+1/2}(1-Cr_{i+1/2})(\phi_{i-1/2} - 2\phi_{i} +
     \phi_{i+1/2})    
   \end{eqnarray}
-  for $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x \geq 0$,
+  for $Cr_{i+1/2} = u_{i+1/2}\Delta t/\Delta x \geq 0$,
   \begin{eqnarray}
     \label{sflux-}
     f(\phi)_{i+1/2}^{-} &=& \phi_{i+1/2} + Cr_{i+1/2}(\phi_{1+1/2} -
@@ -776,8 +574,8 @@ numerical diffusion can be corrected but at expense of an increase of the comput
     & & + Cr_{i+1/2}(1+Cr_{i+1/2})(\phi_{i+1/2} - 2\phi_{i+1} +
      \phi_{i+3/2}) 
   \end{eqnarray}
-  for $Cr_{i+1/2} = U_{i+1/2}\Delta t/\Delta x < 0$. The values at the
-  grid-cell edges (from equations (\ref{edgevalues1}) and
+  for $Cr_{i+1/2} = u_{i+1/2}\Delta t/\Delta x < 0$. The values at the
+  grid-cell edges (from Eqs.~(\ref{edgevalues1}) and
   (\ref{edgevalues2})) can be expressed as:
   \begin{equation}
     \label{sedgevalues}
@@ -792,7 +590,7 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   gradients and produce non-physical values -- overshoots
   (e.g. concentrations higher than 100 \%) or undershoots (e.g. negative
   concentrations) somewhere inside the grid-cell. In those cases the
-  calculated advective forcing (given by cell-edge fluxes (\ref{flux+})
+  calculated advective forcing (given by cell-edge fluxes (Eqs.~\ref{flux+})
   and (\ref{flux-})) would likely result in non-physical values in the
   scalar field after the advection step. To avoid the introduction of
   new extrema (overshoots or undershoots) in the domain, monotonicity
@@ -803,7 +601,7 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   In the original PPM scheme (Colella 1984) the monotonicity is ensured
   by modifying the parameters of the parabolas. Lin and Rood (1996) have
   proposed simplified monotonicity constraints that require fewer
-  floating point operations. The parabola parameters $\delta(\phi_{i})$,
+  floating-point operations. The parabola parameters $\delta(\phi_{i})$,
   $\Delta(\phi)_{i}$, $\phi_{6,i}$, $\phi_{L,i}$ and $\phi_{R,i}$ are
   modified in the following way. The average slope $\delta(\phi_{i})$ in
   the $i^{\mathrm{th}}$ grid-cell is replaced by the modified version
@@ -836,11 +634,11 @@ numerical diffusion can be corrected but at expense of an increase of the comput
        $\hat{\phi}_{6,i} = 3(\phi_{R,i} - \phi_{i}), \qquad \hat{\phi}_{L,i} =
        \phi_{R,i} - \hat{\phi}_{6,i}, \qquad \hat{\phi}_{R,i} =
        \phi_{R,i}$
-    \item \texttt{END}
+    \item \texttt{END IF}
   \end{description}
   The parameters of the monotonized parabolas (labeled with
   $\hat{\,}\,$) are used to calculate the advective fluxes defined in
-  equations (\ref{flux+}) and (\ref{flux-}).
+  Eqs.~(\ref{flux+}) and (\ref{flux-}).
 
   \subsubsection{The PPM\_02 monotonic scheme}  
 
@@ -851,9 +649,9 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   monotonicity-preserving upwind flux
   \begin{equation}
     F^{\mathrm{up}}_{i+1/2} = \left\{ \begin{array}{ll}
-    (\rho U)_{i+1/2} \phi^{t}_{i}, & \mathrm{for} \quad (\rho U)_{i+1/2}
+    (\tilde{\rho} u)_{i+1/2} \phi^{t}_{i}, & \mathrm{for} \quad (\tilde{\rho} u)_{i+1/2}
     \ge 0 \\
-    (\rho U)_{i+1/2} \phi^{t}_{i+1}, & \mathrm{otherwise} 
+    (\tilde{\rho} u)_{i+1/2} \phi^{t}_{i+1}, & \mathrm{otherwise} 
     \end{array}\right.
   \end{equation}
   and a higher order correction such that
@@ -862,14 +660,14 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   \end{equation}
   where $0 \le r_{i+1/2} \le 1$ and $F^{\mathrm{cor}}_{i+1/2} =
   F^{\mathrm{ppm}}_{i+1/2} - F^{\mathrm{up}}_{i+1/2}$ is the difference
-  between the PPM flux (calculated using the expressions \ref{sflux+} or
-  \ref{sflux-}) and the upstream flux. The resulting flux
+  between the PPM flux (calculated using Eqs.~(\ref{sflux+}) or
+  (\ref{sflux-})) and the upstream flux. The resulting flux
   $F^{m}_{i+1/2}$ will produce a monotonic solution in the advection step.
 
   To evaluate $r_{i+1/2}$ we first calculate an approximate
   ``transported and diffused'' solution using the upwind flux
   \begin{equation}
-    (\rho \phi)^{td}_{i} = (\rho \phi)^{t}_{i} - \frac{\Delta t}{\Delta
+    (\tilde{\rho} \phi)^{td}_{i} = (\tilde{\rho} \phi)^{t}_{i} - \frac{\Delta t}{\Delta
       x_{i}} \left (F^{up}_{i+1/2} - F^{up}_{i-1/2} \right )
   \end{equation}
   The sum of the correction fluxes directed out of the cell $i$ is
@@ -886,224 +684,182 @@ numerical diffusion can be corrected but at expense of an increase of the comput
   The re-normalization factor for monotonicity preservation is defined
   as:
   \begin{equation}
-    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[(\rho
-          \phi)_{i}^{td} - \hat{\rho}_{i}\phi_{i}^{\min} ]
+    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[(\tilde{\rho}
+          \phi)_{i}^{td} - \hat{\tilde{\rho}}_{i}\phi_{i}^{\min} ]
           \Delta x_{i}}{\Delta t F^{\mathrm{out}}_{i} + \varepsilon}, \,
-        \frac{[\hat{\rho}_{i+1} \phi^{\max}_{i+1} - (\rho
+        \frac{[\hat{\tilde{\rho}}_{i+1} \phi^{\max}_{i+1} - (\tilde{\rho}
           \phi)_{i+1}^{td}] \Delta x_{i+1}}{\Delta t
           F^{\mathrm{in}}_{i+1} + \varepsilon} \right ) \right ]
   \end{equation}
   for $F^{\mathrm{cor}}_{i+1/2} \ge 0$,
   \begin{equation}
-    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[\hat{\rho}_{i}
-          \phi^{\max}_{i} - (\rho \phi)_{i}^{td}] \Delta x_{i}}{\Delta t
-          F^{\mathrm{in}}_{i} + \varepsilon}, \, \frac{[(\rho
-          \phi)_{i+1}^{td} - \hat{\rho}_{i+1}\phi_{i+1}^{\min}
+    r_{i+1/2} = \max \left [0, \, \min \left(1, \, \frac{[\hat{\tilde{\rho}}_{i}
+          \phi^{\max}_{i} - (\tilde{\rho} \phi)_{i}^{td}] \Delta x_{i}}{\Delta t
+          F^{\mathrm{in}}_{i} + \varepsilon}, \, \frac{[(\tilde{\rho}
+          \phi)_{i+1}^{td} - \hat{\tilde{\rho}}_{i+1}\phi_{i+1}^{\min}
           ] \Delta x_{i+1}}{\Delta t F^{\mathrm{out}}_{i+1} +
           \varepsilon}  \right ) \right ]
   \end{equation}
   for $F^{\mathrm{cor}}_{i+1/2} < 0$. Here $\varepsilon$ is a small
-  parameter chosen to avoid division by zero, and $\hat{\rho}$ is the
+  parameter chosen to avoid division by zero, and $\hat{\tilde{\rho}}$ is the
   density as updated in the current advection step. More details about
   the density correction associated with directional splitting in 3D
   applications will be discussed later. In the final step the cell
   averages are updated to time $t+\Delta t$
   \begin{equation}
-    (\rho \phi)^{t+\Delta t}_{i} = (\rho \phi)^{td}_{i} -
+    (\tilde{\rho} \phi)^{t+\Delta t}_{i} = (\tilde{\rho} \phi)^{td}_{i} -
     \frac{\Delta t}{\Delta x_{i}} \left
       (r_{i+1/2}F^{\mathrm{cor}}_{i+1/2} -
       r_{i-1/2}F^{\mathrm{cor}}_{i-1/2} \right ).
   \end{equation}
 
-  The PPM\_{02} scheme described here is fully monotonic and can be
-  modified to use semi-Lagrangian approximation to the flux divergence
-  that extends the domain of dependence beyond the adjacent upstream
-  grid-cell and allows stable computation for Courant numbers greater
+  The PPM\_{02} scheme described here is fully monotonic. It can be
+  modified to use semi-Lagrangian approximation to the flux divergence.
+  This would extend the domain of dependence beyond the adjacent upstream
+  grid-cell and allow stable computation for CFL numbers greater
   than unity. More details about the semi-Lagrangian extension can be
   found in e.g. Skamarock (2006) and Blossey and Durran (2008). For
-  Eulerian integration with Courant number less than unity, the PPM\_01
+  Eulerian integration with CFL number less than unity, the PPM\_01 scheme
   is more computationally efficient.
 
   \subsubsection{Time marching and extension to three dimensions}
 
-  To extend the 1D scalar advection scheme (\ref{1DFIT}) to multiple
+  To extend the 1D scalar advection scheme [Eq.~(\ref{1DFIT})] to multiple
   dimensions, we follow the formulation of Easter (1993) where the mass
-  conservation $\pl\rho/\pl t + \nabla \cdot (\rho \bvec{V})=0$ is
+  conservation $\pl\tilde{\rho}/\pl t + \nabla \cdot (\tilde{\rho} \bvec{V})=0$ is
   simultaneously integrated with the discrete version of the scalar
-  transport (\ref{1DFIT}). This sort of density correction procedure is
-  necessary with the PPM schemes because the mass flux ($\rho U$) must
+  transport [Eq.~(\ref{1DFIT})]. This sort of density correction procedure is
+  necessary with the PPM schemes because the mass flux ($\tilde{\rho} U$) must
   be saved and updated for scalar advection at each grid-cell
-  interface. The density correction is restricted to advection step at
+  interface. The density correction is restricted to advection step at time $t+\Delta t$
   and the model overall still uses the selected anelastic
   approximation. The mass conservation is discretized within a 3D
   formulation as:
   \begin{equation}
    \label{mass}
-    \rho^{t+\Delta t} = \rho^{t} - \mathcal{F}_{x}(I) -
+    \tilde{\rho}^{t+\Delta t} = \tilde{\rho}^{t} - \mathcal{F}_{x}(I) -
     \mathcal{F}_{y}(I) - \mathcal{F}_{z}(I),
   \end{equation}
   where the vector $I \equiv 1$ and $\mathcal{F}_{x,y,z}$ denotes the
-  discrete flux divergence in $x$, $y$ and $x$ direction, which is
+  discrete flux divergence in $x$, $y$ and $x$ directions, which is
   calculated using the non-monotonic PPM\_00 scheme. The full 3D
   algorithm for simultaneous transport of the scalar and mass
   conservation is:
   \begin{eqnarray}
    \label{easter}
-   (\rho\phi)^{*} &=& (\rho \phi)^{t} - \mathcal{F}_{x}(\phi^{t}) \\
+   (\tilde{\rho}\phi)^{*} &=& (\tilde{\rho} \phi)^{t} - \mathcal{F}_{x}(\phi^{t}) \\
    \nonumber
-   \rho^{*} &=& \rho^{t} - \mathcal{F}_{x}(I) \\ \nonumber
-   \phi^{*} &=& (\rho\phi)^{*} / \rho^{*} \\ \nonumber
-   (\rho\phi)^{**} &=& (\rho \phi)^{*} - \mathcal{F}_{y}(\phi^{*}) \\
+   \tilde{\rho}^{*} &=& \tilde{\rho}^{t} - \mathcal{F}_{x}(I) \\ \nonumber
+   \phi^{*} &=& (\tilde{\rho}\phi)^{*} / \tilde{\rho}^{*} \\ \nonumber
+   (\tilde{\rho}\phi)^{**} &=& (\tilde{\rho} \phi)^{*} - \mathcal{F}_{y}(\phi^{*}) \\
    \nonumber
-   \rho^{**} &=& \rho^{*} - \mathcal{F}_{y}(I) \\ \nonumber
-   \phi^{**} &=& (\rho\phi)^{**} / \rho^{**} \\ \nonumber
-   (\rho\phi)^{t+\Delta t} &=& (\rho \phi)^{**} -
+   \tilde{\rho}^{**} &=& \tilde{\rho}^{*} - \mathcal{F}_{y}(I) \\ \nonumber
+   \phi^{**} &=& (\tilde{\rho}\phi)^{**} / \tilde{\rho}^{**} \\ \nonumber
+   (\tilde{\rho}\phi)^{t+\Delta t} &=& (\tilde{\rho} \phi)^{**} -
    \mathcal{F}_{z}(\phi^{**}) \\ \nonumber
-   \rho^{t+\Delta t} &=& \rho^{**} - \mathcal{F}_{z}(I) \\ \nonumber
-   \phi^{t+\Delta t} &=& (\rho\phi)^{t+\Delta t} / \rho^{t+\Delta t}.
+   \tilde{\rho}^{t+\Delta t} &=& \tilde{\rho}^{**} - \mathcal{F}_{z}(I) \\ \nonumber
+   \phi^{t+\Delta t} &=& (\tilde{\rho}\phi)^{t+\Delta t} / \tilde{\rho}^{t+\Delta t}.
   \end{eqnarray}
   Here the flux-divergence operators $\mathcal{F}_{x,y,z}$ can be
   estimated using any of the described PPM schemes (PPM\_00, PPM\_01 or
   PPM\_02), however the density corrections are always calculated using
-  the non-monotonic scheme. The PPM\_00 is the most computationally
+  the non-monotonic scheme. The PPM\_00 scheme is the most computationally
   efficient and accuracy of the correction is sufficient even for the
   advection of scalars with the monotonic schemes. 
 
-  It can easily be seen that (\ref{easter}) collapses to (\ref{mass}) for
+  It can easily be seen that Eq.~(\ref{easter}) collapses to Eq.~(\ref{mass}) for
   $\phi = I$ and it is consistent (if $\phi$ is constant at initial time
-  it remains constant). To achieve second-order accuracy of the
-  time-split scheme (\ref{easter}) a form of Strang splitting (Strang
+  it remains constant). To achieve 2$^{nd}$-order accuracy of the
+  time-split scheme [Eq.~(\ref{easter})] a form of Strang splitting (Strang
   1968) is used. It consists of alternating the order of flux divergence
   operators between $x \rightarrow y \rightarrow z$ to $z \rightarrow y
   \rightarrow x$ at each time step.
 
-  The PPM is finite-volume method and the cell-edge fluxes estimated at
+  PPM is a finite-volume method and the cell-edge fluxes estimated at
   the current model time $t$ can only be used to calculate the scalar
   values at time $t+\Delta t$ and hence it intrinsically works with
-  forward-in-time time-marching. Since the advection of a scalar
-  variable is integrated from time $t$ to $t+\Delta t$, the wind-speed
-  components used for calculating the fluxes (e.g. in equation
-  (\ref{FIT})) should be given at time $t+\Delta t/2$ as an average
-  $U^{t+\Delta t/2} = 1/2(U^{t}+U^{t+\Delta t})$. Wind components at
-  time $t+\Delta t$ are not available when the scalar advection is
-  performed so linearly extrapolated values are used: $U^{t+\Delta t/2}
-  \approx 1/2(3U^{t} - U^{t-\Delta t})$.
+  FIT time-marching. 
+  
+    \subsubsection{Additional time splitting method}
 
-\subsection{Discretization}
+To increase a bit more the maximum CFL number, an additional time-splitting can be activated  for the scalar advection ($LSPLIT\_CFL$), in order to increase the time step of the rest of the model and to follow a CFL strictly less than 1 for PPM (a threshold of $XSPLIT\_CFL=0.8$ is proposed) (Fig.~\ref{fig:time}). This smaller time step for PPM can evolve during the run as a function of the CFL number.
 
-Before calling a PPM advection routine (\texttt{PPM\_MET} or
-\texttt{PPM\_SCALAR}), extrapolated wind components are calculated:
-\begin{eqnarray}
- \tilde{U} &=& 1/2(3 U^{t} - U^{t-\Delta t})\\
- \tilde{V} &=& 1/2(3 V^{t} - V^{t-\Delta t})\\
- \tilde{W} &=& 1/2(3 W^{t} - W^{t-\Delta t})
-\end{eqnarray}
-The extrapolated wind components are used to calculate the contravariant
-winds ($\tilde{U}^{c}, \tilde{V}^{c}, \tilde{W}^{c}$) and respective
-Courant numbers: 
-\begin{equation}
-Cr_{x} = \tilde{U}^{c} \Delta t, \quad Cr_{y} = \tilde{V}^{c} \Delta t,
-\quad Cr_{z} = \tilde{W}^{c} \Delta t
-\end{equation}
-The Courant numbers are then used to calculate the density corrections
-for all three steps in 3D directional splitting described in
-(\ref{easter}). 
 
-The scalar variable values at the grid-cell edges are calculated as in
-equation (\ref{sedgevalues}). The scalar fluxes are determined from the
-equations (\ref{sflux+}) and (\ref{sflux-}), depending on the sign of the
-local Courant number:
-\begin{equation}
-f(\phi)_{x,i} = f(\phi)^{+}_{x,i} \left [ \frac{1}{2} +
-  \frac{1}{2}\mathrm{sign}(Cr_{x,i}) \right ] + 
-f(\phi)^{-}_{x,i} \left [ \frac{1}{2} -
-  \frac{1}{2}\mathrm{sign}(Cr_{x,i}) \right ] 
-\end{equation}
-and similarly for the $y$ and $z$ directions. Here the index $i$
-indicates a momentum grid point. The scalar fluxes $f(\phi)^{-}$ and
-$f(\phi)^{+}$ are calculated depending on which PPM scheme is used
-(PPM\_00, PPM\_01 or PPM\_02). The flux divergences are calculated using
-Schuman operators ($\delta_{x}, \delta_{y}, \delta_{z}$):
-\begin{eqnarray}
-\mathcal{F}_{x} &=& \delta_{x}\left [\ol{\trho}^{x} Cr_{x} f(\phi)_{x}
-\right] \\
-\mathcal{F}_{y} &=& \delta_{y}\left [\ol{\trho}^{y} Cr_{y} f(\phi)_{y}
-\right] \\
-\mathcal{F}_{z} &=& \delta_{z}\left [\ol{\trho}^{z} Cr_{z} f(\phi)_{z}
-\right]
-\end{eqnarray}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Christine Lac 25 mars 2010
-% Avec la correction en masdev482 du schema FIT pour PPM, le paragraphe ci-dessous est a supprimer
-% At the end of an advection step, following the directional splitting
-% described in (\ref{easter}), we get the updated scalar variable
-% $\phi^{t+\Delta t}$. 
-% As the set of the model is based for the moment on the leap-frog scheme except 
-% for the PPM advection, the temporal discretization is given by :
-% \begin{eqnarray}
-%    (\rho\phi)^{t+\Delta t} &=& (\rho\phi)^{t-\Delta t} - \frac{1}{2} \left [\mathcal{F}_{x,y,z}(\phi^{t-\Delta t}) + \mathcal{F}_{x,y,z}(\phi^{t}) \right ]
-%   \end{eqnarray}
-
-% \noindent where $\mathcal{F}_{x,y,z}$ is the flux-divergence PPM operator and $\mathcal{F}_{x,y,z}(\phi^{t-\Delta t})$ is storaged from the previous time step.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% The advective forcing that is passed back to the
-%model is calculated as:
-%\begin{equation}
-%\phi_{\mathrm{src}} = \trho (\phi^{t+\Delta t} - \phi^{t})/\Delta t
-%\end{equation}
+\bibliographystyle{ametsoc2014}
+\bibliography{biblio.bib}
 
 \section{References}
 \decrefname
-Blossey, P. N. and Durran, D. R., 2008: Selective Monotonicity
+Blossey, P. N. and D. R. Durran, 2008: Selective Monotonicity
    Preservation in Scalar Advection, 
-   {\it J. Comput. Phys.},  {\bf 227}, 5160–5183. 
+   {\it J. Comput. Phys.},  {\bf 227}, 5160–-5183. 
 \decrefname
-Carpenter, Richard L., Droegemeier, Kelvin K.,
-   Woodward, Paul R.\ and Hane, Carl E., 1990: Application of the
+Carpenter, R. L., K. K. Droegemeier,
+   P. R. Woodward, and C. E. Hane, 1990: Application of the
    Piecewise Parabolic Method (PPM) to Meteorological Modeling,
   {\it Mon. Wea. Rev.},  {\bf 118}, 586--612.
 \decrefname
-Colella, Phillip and Woodward, Paul R., 1984: The
+Castro, M., B. Costa, and W. S., Don, 2011: High order weighted
+   essentially non-oscillatory WENO-Z schemes for hyperbolic conservation laws,
+   {\it J. Comput. Phys.},  {\bf 230}, 1766–-1792. 
+\decrefname
+Colella, P. and P. R. Woodward, 1984: The
    Piecewise Parabolic Method (PPM) for Gas-Dynamical Simulations,
    {\it J. Comput. Phys.},  {\bf 54}, 174--201.
 \decrefname
- Easter, R. C., 1993: Two Modified Versions of Bott's Positive-Definite
-   Numerical Advection Scheme, {\it Mon. Wea. Rev.},  {\bf 121}, 297-304.
+Durran, D. R., and J. B. Klemp, 1983: A compressible model for
+   the simulation of moist mountain waves,
+   {\it Mon. Wea. Rev.},  {\bf 111 (12)}, 2341-–2361.
 \decrefname
-Lin, S. and Rood, R. B., 1996: Multidimensional Flux-Form
+Easter, R. C., 1993: Two Modified Versions of Bott's Positive-Definite
+   Numerical Advection Scheme, {\it Mon. Wea. Rev.},  {\bf 121}, 297--304.
+\decrefname
+Gal-Chen, T., and R. C. Somerville, 1975: On the use of a coordinate transformation for the
+solution of the Navier-Stokes equations. {\it J. Comput. Phys.},  {\bf 17 (2)}, 209-–228.
+\decrefname
+Klemp, J. B., W. C. Skamarock, and O. Fuhrer, 2003: Numerical consistency of metric terms in
+terrain-following coordinates. {\it Mon. Wea. Rev.}, {\bf 131 (7)}, 1229-–1239.
+\decrefname
+Jiang, G.-S., and C.-W. Shu, 1995: Efficient implementation of weighted ENO schemes. Tech. rep.,
+DTIC Document.
+\decrefname
+Lin, S. and R. B. Rood, 1996: Multidimensional Flux-Form
    Semi-Lagrangian Transport Schemes, 
-{\it Mon. Wea. Rev.},  {\bf 124}, 2046-2070.
+   {\it Mon. Wea. Rev.}, {\bf 124}, 2046--2070.
 \decrefname
-Rood, R.B., 1987: Numerical advection algorithms and their role in
-atmospheric transport and chemistry models.
-{\it Rev. Geophys.},  {\bf 25}, 71-100.
+Pressel, K. G., C. M. Kaul, T. Schneider, Z. Tan, and S. Mishra, 2015:
+   Large-eddy simulation in an anelastic framework with closed water and entropy
+   balances. {\it J. Adv. Model. Earth Syst.}, {\bf 7 (3)}, 1425-–1456.
+\decrefname
+Ricard, D., C. Lac, S. Riette, R. Legrand, and A. Mary, 2013: Kinetic energy spectra characteristics
+of two convection-permitting limited-area models AROME and Meso-NH. {\it Quart. J. Roy. Meteor. Soc.}, {\bf
+139 (674)}, 1327-–1341.
+\decrefname
+Rood, R. B., 1987: Numerical advection algorithms and their role in
+   atmospheric transport and chemistry models.
+   {\it Rev. Geophys.}, {\bf 25}, 71--100.
+\decrefname
+Sch\"ar, C., D. Leuenberger, O. Fuhrer, D. L\"uthi, and C. Girard, 2002: A new terrain-following
+vertical coordinate formulation for atmospheric prediction models. {\it Mon. Wea. Rev.}, {\bf
+130 (10)}, 2459-–2480.
+\decrefname
+Shu, C.-W., 1998: Essentially non-oscillatory and weighted essentially non-oscillatory schemes
+for hyperbolic conservation laws, in Advanced Numerical Approximation of Nonlinear Hyperbolic Equations: Lectures given at the 2nd Session of the Centro Internazionale Matematico Estivo (C.I.M.E.) held in Cetraro, Italy, June 23--28, 1997 (ed. A. Quarteroni), Springer, Berlin, Heidelberg, Germany.
 \decrefname
 Skamarock, W. C., 2006: Positive-Definite and Monotonic Limiters for
-Unrestricted-Time-Step Transport Schemes,
-{\it Mon. Wea. Rev.}, {\bf 134}, 2241--2250.
-\decrefname
-Smolarkiewicz, P. K., 1983: A simple positive definite advection scheme with
-small implicit diffusion.
-{\it Mon. Wea. Rev.},  {\bf 11}, 479-486.
-\decrefname
-Smolarkiewicz, P. K., 1984: 
-A fully multidimensional positive definite advection
-transport algorithm with implicit diffusion.
-{\it J. Comput. Phys.},  {\bf 54}, 325-362.
-\decrefname
-Smolarkiewicz, P. K. and Clark T. L., 1986: 
-The multidimensional positive definite advection
-transport algorithm: further developments and applications.
-{\it J. Comput. Phys.},  {\bf 67}, 396-438.
-\decrefname
-Smolarkiewicz, P. K. and Grabowski W.W., 1990: The multidimensional
-positive definite advection transport algorithm: nonoscillatory option.
-{\it J. Comput. Phys.},  {\bf 86}, 355-375.
-\decrefname
-Staniforth A., Cote J. and Pudykiewicz J., 1987: Comments on "Smolarkiewicz's
-deformational flow". {\it Mon. Wea. Rev.},  {\bf 115}, 894-900.
+   Unrestricted-Time-Step Transport Schemes,
+   {\it Mon. Wea. Rev.}, {\bf 134}, 2241--2250.
 \decrefname
 Strang, G., 1968: On the Construction and Composition of Difference Schemes, 
-{\it SIAM J. Numer. Anal.}, {\bf 5}, 506-517.
-%\end{document}
+   {\it SIAM J. Numer. Anal.}, {\bf 5}, 506--517.
+\decrefname
+Tan, K.-A., R. Morison, and L. Leslie, 2005: A comparison of high-order explicit and non
+oscillatory finite difference advection schemes for climate and weather models. {\it Meteor.
+ Atmos. Phys.}, {\bf 89 (1-4)}, 251-–267.
+\decrefname
+Wang, R., and R. J. Spiteri, 2007: Linear instability of the fifth-order WENO method. {\it SIAM J. Numer. Anal.}, {\bf 45 (5)}, 1871-–1901.
+\decrefname
+Wicker, L. J and W. C. Skamarock, 2002: Time-splitting methods for elastic models using forward time schemes. {\it Mon. Wea. Rev.},  {\bf 130}, 2088--2097.
+\decrefname
+Xue, M., and A. J. Thorpe, 1991: A mesoscale numerical model using the nonhydrostatic pressure
+based sigma-coordinate equations: Model experiments with dry mountain flows. {\it Mon. Wea. Rev.},  {\bf 119 (5)}, 1168-–1185.
