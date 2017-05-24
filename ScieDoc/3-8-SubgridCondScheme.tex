@@ -59,7 +59,7 @@ than the air velocity. {\it For the time beeing, we
 consider that the turbulent fluctuations of rain are
 negligible, and the turbulence scheme will only take into account
 the vapour vapor and the cloud liquid water}.
-The right-hand side of Eq.(\ref{eqn:rnpev}) involving only source terms that
+The right-hand side of Eq.~(\ref{eqn:rnpev}) involving only source terms that
 have slow characteristic time scales, $r_{np}$ can be considered as
 quasi-conservative.  In the future,
 the inclusion of ice ($r_i$), snow ($r_s$), or graupels ($r_g$) in Meso-NH
@@ -157,7 +157,7 @@ r_c = \mbox{Max} \left(0,\dfrac {r_{np}-r_{vs}(\theta_l)} {1+M} \right).
 \end{equation}
 
 The mean cloud water mixing ratio in the grid cell is then obtained by
-averaging (\ref{rcdef}). For historical reasons, we use the notation
+averaging Eq.~(\ref{rcdef}). For historical reasons, we use the notation
 \begin{equation}\label{eqn:s}
 s = \dfrac {r_{np}-r_{vs}(\theta_l)} {2(1+M)}.
 \end{equation}
@@ -231,7 +231,7 @@ Once the turbulent fluxes of cloud liquid water are known,
  going back to turbulent
 fluxes in non-conservative variables is straightforward, because they are
 linear combinations of turbulent fluxes in conservative variables.  From
-(\ref{defrnp}, \ref{defthetal}), we obtain readily
+Eqs. (\ref{defrnp}) and (\ref{defthetal}), we obtain readily
 \begin{eqnarray}
 \overline{{u'_{i}}{{\theta}'}} &=&\overline{{u'_{i}}{{\theta}'_{l}}}  +
 \dfrac{L_{v}}{{C_{p}}_{h}}{{\Pi}_{ref}}^{-1} \overline{{u'_{i}}{r'_{c}}}, \\
@@ -253,7 +253,7 @@ Bechtold 1995).
 
 Using this theory, N, $\dfrac{\overline{r_{c}}}{2{\sigma}_{s}}$, and
 $\dfrac{\overline{{s'}{r'_{c}}}}{2{{\sigma}_{s}}^2}$ are then computed from
-equations \ref{eqn:N}, \ref{eqn:rc}, and \ref{eqn:s'rc'} and expressed as:
+Eqs. (\ref{eqn:N}), (\ref{eqn:rc}), and (\ref{eqn:s'rc'}) and expressed as:
 \begin{eqnarray}
 \label{eqn:NF0} N = F_0(Q_1,A_s), \\
 \label{eqn:rcF1} \dfrac{\overline{r_c}}{2\sigma_s}=F_1(Q_1,A_s),\\
@@ -361,7 +361,7 @@ $\overline{{u'_{i}}{{\theta}'_{v}}}$ can be written
 B \overline{{u'_{i}}{r'_{np}}} + C \overline{{u'_{i}}{r'_{c}}}~.
 \end{equation}
 
-A more compact expression may be obtained by use of (\ref{equirc}):
+A more compact expression may be obtained by use of eq.~(\ref{equirc}):
 %PM/02/07/2001 Modif P. Marquet
 %\begin{equation} \label{ErEtheta}
 %\overline{{w'}{{\theta}'_{v}}} = E_{\theta} \overline{{w'}{{\theta}'_{l}}} +
@@ -437,7 +437,7 @@ the variances are all located at mass points. The application of the
 theory is therefore straightforward.
 
 On the other hand, the fluxes are located at $u_i$ points. Thus,
-application of (\ref{equirc}) requires an average of
+application of Eq.~(\ref{equirc}) requires an average of
 $A_{r}$ and $A_{\theta}$ in the direction $i$.
 This reads:
 \begin{equation}
@@ -445,7 +445,7 @@ This reads:
 {\overline{A_{\theta}}}^{x_{i}} \overline{{u'_{i}}{{\theta}'_{l}}}.
 \end{equation}
 
-The buoyancy flux ....
+%The buoyancy flux ....
 
 
 \subsection{Practical implementation}
@@ -474,20 +474,20 @@ saved from the previous time step.
 
 \item
 In routine TURB, the conservative variables and their sources are computed
-from the input variables, through (\ref{defrnp}, \ref{defthetal}).
+from the input variables, through Eqs. (\ref{defrnp}) and (\ref{defthetal}).
 
 \item
 The computation of turbulent fluxes follows as described in the previous
 chapter. However, when the buoyancy flux is needed, the formulation of the
-$E_{\theta}$ and $E_{moist}$ coefficients uses the formulation (\ref{ErEtheta})
+$E_{\theta}$ and $E_{moist}$ coefficients uses eq.~(\ref{ErEtheta})
 instead of the formulation given in the previous chapter. Note that the
 two formulations coincides in the total absence of cloud. This computation
 is based on the value of $\lambda_3 \overline{s'r_c'}/2\sigma_s^2$.
 
 \item
 The fluxes of cloud water $\overline{u_i'r_c'}$ are diagnosed
-through (\ref{equirc}).
-This uses also (\ref{ArAtheta}). Note that only $\lambda_3 F_2$ is transmitted
+through Eq.~(\ref{equirc}).
+This uses also Eq.~(\ref{ArAtheta}). Note that only $\lambda_3 F_2$ is transmitted
 to the routine to save ressources. This trick is possible because in the
 present version of the scheme, $\lambda_1$ and $\lambda_2$ are not used
 in the 1DIM case, and equal to $\lambda_3$ in the 3DIM case.
@@ -514,19 +514,19 @@ We shall call
 these $\theta^*$, $r_v^*$, and $r_c^*$. It also receives $\sigma_s^t$.
 
 \item FAST\_TERMS computes the final value of the conservative variables
-by applying (\ref{defrnp}, \ref{defthetal}) to $\theta^*$, $r_v^*$,
+by applying Eqs. (\ref{defrnp}) and (\ref{defthetal}) to $\theta^*$, $r_v^*$,
 and $r_c^*$.
 This does not involve any approximation, since the conservative variables
 are conserved by definition in the saturation adjustment.
 
-\item It computes $Q_1$ by applying (\ref{eqq1}) with the final values of
+\item It computes $Q_1$ by applying Eq.~(\ref{eqq1}) with the final values of
 the conservative variables, and $\sigma_s^t$. This step thus assimilates
 $\sigma_s^t$ to $\sigma_s^{t+1}$. This is done in order to save computer
 ressources. The alternative would be to carry a large number of additionnal
 variables, or to redo part of the turbulence computation. This is a price
 to pay for clarity and efficiency of the code.
 
-\item The adjusted value $r_c^{**}$ is obtained from (\ref{eqn:rcF1}), again
+\item The adjusted value $r_c^{**}$ is obtained from Eq.~(\ref{eqn:rcF1}), again
 assimilating $\sigma_s^t$ to $\sigma_s^{t+1}$. At the same time,
 $\lambda_3 \overline{s'r_c'} / 2 \sigma_s^2$ is
 computed and saved for the next time step.
@@ -644,7 +644,7 @@ using $r_c=(1-\chi)\,r_l$, and $r_i=\chi\,r_l$.
 
 \subsection{Parameterization of $\sigma_s$}
 
-The practical application of the cloud relations (\ref{eqN}) and (\ref{eqrl})
+The practical application of the cloud relations [Eqs. (\ref{eqN}) and (\ref{eqrl})]
 in meteorological models requires the knowledge of the second-order moment
 $\sigma_s$. This quantity is provided by the M\'eso-nh turbulence scheme and used
 as that in the warm-phase sub-grid condensation scheme.
@@ -690,7 +690,7 @@ where $c$ and $e$ denote cloud and environmental values, respectively.
 However, as noted by the authors and Siebesma (personal communication) the top-hat
 approximation reasonably represents  the convective fluxes but not the variances, and is also sensible
 to the decomposition chosen, i.e. cloud/environment or updraft/downdraft.
-Therefore, instead of (\ref{var1}) we seek a simple expression as a function of
+Therefore, instead of Eq.~(\ref{var1}) we seek a simple expression as a function of
 the convective mass flux (a quantity that is readily available from the mass flux convection
 parameterization):
 \begin{equation}
@@ -700,7 +700,7 @@ parameterization):
 
 \noindent where $M=\overline{\rho}\,\, N\,w$ is the convective
 mass flux (kg s$^{-1}$ m$^{-2}$), $w^*$ a convective scale velocity and 
-$\rho^*$ a tropospheric density scale. Finally, (\ref{var2}) is further simplified to
+$\rho^*$ a tropospheric density scale. Finally, Eq.~(\ref{var2}) is further simplified to
 \begin{equation}
 \sigma_s^{conv}\approx  M\,\,{(s^c -s^e)\over w^* \rho^*} \approx \alpha\,\,M\,f(z/z^*)\label{var3}
 \end{equation}
@@ -715,7 +715,7 @@ Finally, the  value of the proportionality coefficient $\alpha$ can be obtained 
 $(\sigma_s^2-\sigma_{s  turb}^2-\sigma_{s  conv}^2)^2$, where $\sigma_s^2$ are the  values
 derived from convective data sets
 and where $\sigma_{s turb}$ and $\sigma_{s conv}$ are replaced by
-the expressions (\ref{eqsp}) and (\ref{var3}), respectively.  A value $\alpha=3\times 10^{-3}$ is obtained
+Eqs. (\ref{eqsp}) and (\ref{var3}), respectively.  A value $\alpha=3\times 10^{-3}$ is obtained
 using the cloud mass flux from the CRM.
 
 
@@ -802,7 +802,7 @@ with $\overline{{u'_{i}}{r'_{i}}} =    f_{ice} \overline{{u'_{i}} r'_{(c+i)}}$.
 \subsection{Buoyancy flux}
 
 The last point of concern is the computation of the buoyancy term in presence of
-ice in the TKE equation. The expression of $\theta_{v}$ in \ref{eqn:thetav} is
+ice in the TKE equation. The expression of $\theta_{v}$ in Eq.~(\ref{eqn:thetav}) is
 slightly modified when switching from $\theta_l$ to $\theta_{il}$ and when
 using the new expression for $r_{np}$
 \begin{eqnarray}\label{eqn:newthetav}
@@ -837,7 +837,7 @@ The fluctuations of $\theta_v$ now depend on both ${r_{c}}$ and ${r_{i}}$
 \end{eqnarray}
 After recasting the above expression as
 ${\theta}'_{v}=A^{il}{\theta}'_{il}+B{r'_{np}}+C^l{r'_{c}}+C^i{r'_{i}}$
-(see \ref{ErEtheta}), a good approximation of $\overline{u'_{i}\theta'_{v}}$ 
+(see Eq.(\ref{ErEtheta})), a good approximation of $\overline{u'_{i}\theta'_{v}}$ 
 is deduced
 \begin{equation} \label{newErEtheta}
 \overline{{u'_{i}}{{\theta}'_{v}}} \approx 

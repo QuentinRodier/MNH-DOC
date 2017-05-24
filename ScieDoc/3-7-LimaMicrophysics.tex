@@ -1,0 +1,1660 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONTRIBUTION TO THE MESONH SCIENTIFIC DOCUMENTATION PART 3 (PHYSICS)
+% Author: Benoit Vie
+% Original: May 17, 2017
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The 2-moment mixed-phase microphysical scheme LIMA}
+\minitoc
+
+
+\section{General considerations}
+This chapter described the LIMA (Liquid Ice Multiple Aerosols) quasi two-moment microphysical scheme.
+In short, LIMA relies on the prognostic evolution of an aerosol population, and the careful description of the nucleating properties that enable cloud droplets and pristine ice crystals to form from aerosols \citep{Vie2016}. 
+
+\subsection{Thermodynamics basics}
+
+\paragraph{Latent heat}
+\begin{align}
+ \label{latent-heat-vaporization}
+ L_v(T) &= L_v(273.15) + (c_{pv} - c_{pw}) (T-273.15) \\
+ \label{latent-heat-sublimation}
+ L_s(T) &= L_s(273.15) + (c_{pv} - c_{pi}) (T-273.15)
+\end{align}
+
+\paragraph{Saturation vapor pressure}
+~\\
+Liquid water saturation:
+\begin{equation}
+ \label{saturation-pressure-water}
+ e_{sw}(T) = \exp(\alpha_w - \frac{\beta_w}{T} - \gamma_w\mathrm{ln}(T))
+\end{equation}
+with
+\begin{align}
+ \alpha_w &= \mathrm{ln}(e_{sw}(273.15)) + \frac{\beta_w}{273.15} + \gamma_w\mathrm{ln}(273.15) \\
+ \beta_w &= \frac{L_v(273.15)}{R_v} \gamma_w ~ 273.15 \\
+ \gamma_w &= \frac{c_{pw} - c_{pv}}{R_v}
+\end{align}
+
+Ice saturation:
+\begin{equation}
+ \label{saturation-pressure-ice}
+ e_{si}(T) = \exp(\alpha_i - \frac{\beta_i}{T} - \gamma_i\mathrm{ln}(T))
+\end{equation}
+with
+\begin{align}
+ \alpha_i &= \mathrm{ln}(e_{si}(273.15)) + \frac{\beta_i}{273.15} + \gamma_i\mathrm{ln}(273.15) \\
+ \beta_i &= \frac{L_s(273.15)}{R_v} \gamma_i ~ 273.15 \\
+ \gamma_i &= \frac{c_{pi} - c_{pv}}{R_v}
+\end{align}
+
+\paragraph{Saturation mixing ratio}
+~\\
+For a perfect gas, $PV=nRT$, so $m=PVM/RT$. The water vapor mass mixing ratio is the ratio of water vapor mass by dry air mass. Writing $e$ the water vapor partial pressure, and $P-e$ the dry air partial pressure, we have:
+\begin{equation}
+ r_v = \frac{m_v}{m_d} = \frac{e}{P-e} \frac{M_v}{M_d}
+\end{equation}
+
+So we can express the saturation water vapor mixing ratio with respect to liquid water:
+\begin{equation}
+ \label{saturation-mr-water}
+ r_{sw}(T) = \frac{M_v e_{sw}(T)}{M_d (P - e_{sw}(T))}
+\end{equation}
+
+Similarly for ice saturation:
+\begin{equation}
+ \label{saturation-mr-ice}
+ r_{si}(T) = \frac{M_v e_{si}(T)}{M_d (P - e_{si}(T))}
+\end{equation}
+
+\subsection{Representation of aerosols}
+
+The number concentration $N$ is expressed in kg$^{-1}$. Aerosols are represented in LIMA by a superposition of an unlimited number of aerosol modes. Each mode and has its own activation properties, and can therefore be used as CCN to create cloud droplets, IFN to nucleate ice crystals, or as ``coated IFN''. This last type of aerosols acts as IFN coated with hydrophilic material. They have the ability to first form cloud droplets as standard CCN, and then have the ability to freeze these droplets by immersion nucleation when they are lifted to negative temperature regions.
+
+All aerosol modes have a lognormal particle size distribution.
+
+Each CCN mode has its own activation properties (currently to be chosen between two sets of parameters, for maritime or continental aerosols) and size distribution parameters (mean diameter and spectral width).
+
+Four types of IFN are distinguished in the nucleation parameterization by \citet{Phillips2008} which was included in LIMA: small dust particles, large dust particles, black carbon, and organics. In LIMA, each IFN mode is composed of a given (fixed during the model initialization) fraction of each IFN type.
+
+\paragraph{Free and activated areosols}
+~\\
+For CCN modes, two prognostic variables are used to track the aerosols, $N^{free}$ for the free aerosols and $N^{acti}$ for the aerosols in cloud droplets. We therefore retrieve the complete population by summing $N = N^{free} + N^{acti}$.
+
+Similarly for IFN, we track both $N^{free}$ the number of free IFN and $N^{nucl}$ the number of IFN in ice crystals.
+
+For ``coated IFN'', three prognostic variables are necessary: $N^{free}$ to track the number of free aerosols, $N^{acti}$ for the aerosols in cloud droplets and $N^{nucl}$ for the aerosols in ice crystals.
+
+\paragraph{Size distribution}
+~\\
+Each aerosol mode $m$ follows a lognormal particle size distribution with $r_m=D_m/2$ and $\sigma_m$:
+\begin{equation}
+ n_m(D) \mathrm{d}D = N_m \frac{1}{\sqrt{2\pi}~D~ln(\sigma_m)}e^{-\left(\frac{ln(D/D_m)}{\sqrt{2}ln(\sigma_m)}\right)^2} \mathrm{d}D
+\end{equation}
+with $n_m(D)$ (resp. $N_m$) the number concentration (kg$^{-1}$~m$^{-1}$, resp. kg$^{-1}$) for aerosols with a diameter between $D$ et $D+\mathrm d D$ (resp. total number concentration).
+
+\paragraph{Moments of the size distribution}
+~\\
+The $p$ order moment $M(p)$ of the size distribution is:
+\begin{equation}
+ M(p) = D_m^p \exp\left( \frac{p^2 ln(\sigma_m)^2}{2} \right)
+\end{equation}
+
+
+\subsection{Representation of hydrometeors}
+\label{hydrometeors}
+
+Hydrometeors are classified in 6 different species as in the ICE4 scheme: cloud droplets, rain drops, pristine ice crystals, snow/aggregates, graupel, and hail. A 2-moment representation was adopted in LIMA for cloud droplets, rain drops and pristine ice crystals. Thus, for these three hydrometeor species, two prognostic variables are used: the mass mixing ratio $r$ (kg~kg$^{-1}$) and the number concentration $N$ (kg$^{-1}$). For precipitating ice species (snow/aggregates, graupel, hail), the 1-moment representation from ICE4 was kept, and the only prognostic variable is the mass mixing ratio $r$.
+
+\subsubsection{Size distribution}
+
+The size distribution of all hydrometeors in LIMA follows a generalized gamma law:
+\begin{equation}
+ \label{gamma-gen}
+ n(D) \mathrm d D= N \frac{\alpha}{\Gamma(\nu)} (\lambda D)^{\alpha\nu} D^{-1} e^{-(\lambda D)^{\alpha}} \mathrm d D
+\end{equation}
+with $n(D)$ (resp. $N$) the number concentration (kg$^{-1}$~m$^{-1}$, resp. kg$^{-1}$) for particles with a diameter between $D$ et $D+\mathrm d D$ (resp. total number concentration).
+
+Values for parameters $\alpha$ et $\nu$ are usually (they can be chosen in the EXSEG1 namelist at runtime, e.g.\ XALPHAR et XNUR, those indicated in Table \ref{hydrometeors-parameters}. $\lambda$ depends on the local mass mixing ratio and number concentration.
+
+When $\alpha = 1$ and $\nu = 1$, the size distribution becomes:
+\begin{equation}
+ n(D) \mathrm d D= N \lambda e^{-\lambda D} \mathrm d D
+\end{equation}
+
+\paragraph{Moments of the size distribution}
+~\\
+The $p$ order moment $M(p)$ of the size distribution is:
+\begin{equation}
+ M(p) = \frac{1}{\lambda^p} \frac{\Gamma(\nu+p/\alpha)}{\Gamma(\nu)}
+\end{equation}
+
+The mean diameter and variance are:
+\begin{align}
+ \bar{D} &= \frac{1}{\lambda} \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \\
+ \sigma^2 &= \frac{1}{\lambda^2} \left( \frac{\Gamma(\nu+2/\alpha)}{\Gamma(\nu)} - \left(\frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)}\right)^2 \right)
+\end{align}
+
+However, for cloud droplets and rain drops (assumed spherical), the mean volume diameter and its associated variance are more often used:
+\begin{align}
+ \bar{D} &= M(3)^{\frac{1}{3}} = \frac{1}{\lambda} \left(\frac{\Gamma(\nu+3/\alpha)}{\Gamma(\nu)}\right)^{\frac{1}{3}} \\
+ \sigma^2 &= \frac{1}{\lambda^2} \left( \frac{\Gamma(\nu+6/\alpha)}{\Gamma(\nu)} - \left(\frac{\Gamma(\nu+3/\alpha)}{\Gamma(\nu)}\right)^2 \right)^{\frac{1}{3}}
+\end{align}
+
+\paragraph{Diagnostic number concentrations for snow/aggregates, graupel and hail}
+~\\
+A 1-moment representation of snow, graupel and hail was chosen in LIMA. The number concentrations are estimated using the parameterized relationship
+\begin{equation}
+ N = C \lambda^x
+\end{equation}
+where $C$ and $x$ are linked, as in the ICE3 scheme, by $\mathrm{log}_{10}(C) = -3.55 x + 3.89$ \citep{Caniaux1993}, and their values can be found in Table~\ref{hydrometeors-parameters}.
+
+\paragraph{Relationships between $r$, $N$, $D_m$ and $\lambda$}
+~\\
+Combining the particle size distribution and the mass-diameter relationship, we get:
+\begin{align}
+ r &= \int_D m(D) n(D) \mathrm d D \\
+ r &= a N \int_D D^b \frac{\alpha}{\Gamma(\nu)} (\lambda D)^{\alpha\nu} D^{-1} e^{-(\lambda D)^{\alpha}} \mathrm d D \\
+ r &= a N M(b) \\
+ r &= a N \frac{1}{\lambda^b} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}
+\end{align}
+
+Therefore, we can determine $\lambda$:
+\begin{align}
+ \lambda &= \left( a \frac{N}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{b}} \quad \mathrm{for~2-moment~species} \\
+ \lambda &= \left( a \frac{C}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{b-x}} \quad \mathrm{for~1-moment~species}
+\end{align}
+
+For spherical droplets and drops ($b=3$), we get the mean volume diameter $D_m$ and $\lambda$ as:
+\begin{align}
+ \bar{D} &= \left( \frac{r}{a N} \right)^{\frac{1}{3}} \\
+ \lambda &= \left( a \frac{N}{r} \frac{\Gamma(\nu+3/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{3}}
+\end{align}
+where the equation for $\lambda$ can be simplified if $\alpha=1$ and $\nu=1$:
+\begin{equation}
+  \lambda = \left( a \frac{N}{r} \Gamma(4) \right)^{\frac{1}{3}}
+\end{equation}
+
+\paragraph{The $\Gamma$ function}
+~\\
+\begin{align}
+ \Gamma(x) &= \int_0^\infty t^{x-1} e^{-t} \mathrm{d}t \\
+ \Gamma(x+1) &= x\Gamma(x) \\
+ \Gamma(n+1) &= n! \quad (n \in \mathbb{N}) \\
+ \Gamma(1/2) &= \sqrt{\pi} \\
+ \Gamma(1) &= 1
+\end{align}
+
+\subsubsection{Mass-diameter relationship}
+
+For all hydrometeors, the mass-diameter relationship takes the form $m(D)=aD^b$. Values for $a$ et $b$ are found in Table \ref{hydrometeors-parameters}. For icy hydrometeors, they account for the shape and density of ice particles. For cloud droplets and rain drops (assumed spherical), they are equivalent to:
+\begin{equation}
+ \label{mD}
+ m(D) = \frac{4}{3} \pi \left(\frac{D}{2}\right)^3 \rho_{w}
+\end{equation}
+
+\subsubsection{Terminal fall speed}
+
+For all hydrometeors, the terminal fall speed also depends on the diameter through the following equation, where values for $c$ et $d$ are again found in Table \ref{hydrometeors-parameters}:
+\begin{equation}
+ v(D)=\left(\frac{\rho_{0}}{\rho_{d}}\right)^{0.4} cD^d
+\end{equation}
+
+The air density correction term comes from \citet{Foote1969} and is based on the air density $\rho_{0}$ = 1.2041 kg~m$^{-3}$ at P = 1013.25~hPa and T = 293.15~K.
+
+Values for $c$ and $d$ come from:
+\begin{itemize}
+ \item \citet[][Eq.\ (10-138)]{Pruppacher1997} for cloud droplets, with P = 1013.25~hPa and T = 293.15~K.
+ \item \citet[][Eq.\ (2.22)]{Liu1969} for rain drops. They fitted data from the Smithsonian Meteorological Tables \citep{List1958} valid at P = 1013.25~hPa and T = 293.15~K.
+ \item \citet[][Table B.2, for sizes between 0 and 200 $\mu$m]{Starr1985}, who modified relationships from \citet{Heymsfield1972}, valid at 400~hPa. The value for $c$ is corrected to use $D$ in m, and multiplied by $(0.58/\rho_{0})^{0.4}$ (assuming that the air density at 400~hPa is 0.58~kg~m$^{-3}$) so that the previous equation can be used.
+ \item \citet[][]{Locatelli1974} for snow (their parameters for aggregates of densely rimed radiating assemblages of dendrites) and graupel (their second set of values for lump graupel), converted for $D$ in m. They do not specify the air pressure or temperature. Considering their experimental set-up, we assume P = 900~hPa (altitudes between 750 and 1500~m) and T = 273.15~K, and therefore multiply $c$ by $(1.15/\rho_{0})^{0.4}$.
+ \item \citet[][]{Bohm1989} for hail, valid at $\rho_d$ = 1.1 kg~m$^{-3}$. The value of $c$  was changed to use $D$ in m and adapt to the previous equation again.
+\end{itemize}
+
+\begin{table}
+\caption{Set of parameters used to characterize each hydrometeor category}
+\begin{center}\label{hydrometeors-parameters}
+\begin{tabular}{|c||c|c|c|c|c|c|c|c|}
+\hline 
+            & $r_c$ & $r_r$ & \multicolumn{3}{|c|}{$r_i$} & $r_s$ & $r_g$ & $r_h$ \\
+            &       &       & plates & columns & rosettes &       &       &       \\
+\hline \hline
+$\alpha$    & 3 & 1 & \multicolumn{3}{|c|}{3} & 1 & 1 & 1 \\
+$\nu$       & 1 & 2 & \multicolumn{3}{|c|}{3} & 1 & 1 & 8 \\
+\hline
+$a$         & $\rho_w \pi / 6$ & $\rho_w \pi / 6$ & 0.82 & $2.14~10^{-3}$ & 44 & 0.02 & 19.6 & 470 \\
+$b$         & 3 & 3 & 2.5 & 1.7 & 3 & 1.9 & 2.8 & 3 \\
+\hline
+$c$         & $2.98~10^7$ & 842 & 747 & $1.96~10^5$ & $4~10^5$ & 5 & 122 & 201 \\
+$d$         & 2 & 0.8 & 1 & 1.585 & 1.663 & 0.27 & 0.66 & 0.64 \\
+\hline
+$C$         & - & - & \multicolumn{3}{|c|}{-} & 5 & $5~10^5$ & $4~10^4$ \\
+$x$         & - & - & \multicolumn{3}{|c|}{-} & 1 & -0.5 & -1 \\
+\hline
+$\bar{f}_0$ & 1 & 0.78 & \multicolumn{3}{|c|}{1} & 0.86 & 0.86 & 0.86 \\
+$\bar{f}_1$ & 0 & 0.308 & \multicolumn{3}{|c|}{0} & 0.28 & 0.28 & 0.28 \\
+$\bar{f}_2$ & 0.108 & 0 & \multicolumn{3}{|c|}{0.14} & 0 & 0 & 0 \\
+\hline
+$C_1$       & 0.5 & 0.5 & $1/\pi$ & 0.8 & 0.5 & $1/\pi$ & 0.5 & 0.5 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\section{CCN activation to form cloud droplets}
+
+CCN activation in LIMA follows the parameterization from the C2R2 scheme, and was extended to treat the competition between several CCN modes. It is based on the same method to determine first a diagnostic maximum supersaturation (which depends mostly on the aerosol population, the vertical lifting and the cooling rate). The number of activated CCN in each mode is then computed using the activation spectrum of each mode.
+
+\subsection{Activation spectrum}
+
+For each hydrophilic aerosol mode (considered chemically homogeneous), the activation spectrum is parameterized after \citet{Cohard1998} as a function of the supersaturation $S_w$  (with $S_w=0.01$ for a 1\% supersaturation):
+\begin{equation}
+\label{SpectreCPB98}
+ N_m^{CCN} = C_m S_w^{k_m} F(\mu_m,\frac{k_m}{2},\frac{k_m}{2}+1,-\beta_m S_w^2)
+\end{equation}
+where $C_m$, $k_m$, $\mu_m$ and $\beta_m$ depend on the aerosol population, and $F$ is the hypergeometric function \citep{Gradshteyn1965}\footnote{Note that in \citet{Cohard1998} $S_\%=100 S_w$ is used instead of $S_w$. Values for $\beta_m$ and $C_m$ are therefore adapted in LIMA: $\beta_m = 100^2 \beta_m$ and $C_m = 100^{k_m} C_m$}. Some properties of this activation spectrum are presented in the appendices of \citet{Cohard2000spectre}, such as:
+\begin{align}
+  \label{limiteCCN}
+ \lim_{S_w \to \infty} N_m^{CCN} &= \frac{C_m}{\beta_m^{k_m/2}}\frac{\Gamma(k_m/2+1)\Gamma(\mu_m-k_m/2)}{\Gamma(\mu_m)} ~~;~~ k_m<2\mu_m \\
+ \frac{\partial N_m^{CCN}}{\partial S_w} &= k_m C_m S_w^{k_m-1} (1+\beta_m S_w^2)^{-\mu_m}
+\end{align}
+
+$k_m$, $\beta_m$ and $\mu_m$ parameters are determined following \citet{Cohard2000spectre}:
+\begin{align}
+ \frac{k_m}{k_0} &= \left(\frac{ln(\sigma_m)}{ln(\sigma_0)}\right)^{\alpha_k^\sigma} \\
+% 
+ \frac{\beta_m}{\beta_0} &= \left(\frac{r_m}{r_0}\right)^{\alpha_\beta^r}  exp\left\{\alpha_\beta^\sigma \left[\frac{ln(\sigma_m)}{ln(\sigma_0)}-1\right]\right\}  \left(\frac{\epsilon_m}{\epsilon_{0}}\right)^{\alpha_\beta^{\epsilon_m}}  \left(\frac{T_m}{T_0}\right)^{\alpha_\beta^T} \\
+% 
+ \frac{\mu_m}{\mu_0} &= \left(\frac{ln(\sigma_m)}{ln(\sigma_0)}\right)^{\alpha_\mu^\sigma}
+\end{align}
+where $r_m$ and $\sigma_m$ are the parameters defing the aerosol particle size distribution. Reference values $k_0$, $\beta_0$, $\mu_0$, $r_0$, $\sigma_0$, $T_0$ and $\epsilon_{m0}$ are given in Tables~1 and 2 from \citet{Cohard2000spectre} for marine and continental aerosols. \citet{Cohard2000spectre} also explain how to compute the $\alpha_\bullet^\bullet$ parameters.
+
+$C_m$ can then be determined using Eq.\ (\ref{limiteCCN}) considering that all available aerosols are activated when the supersaturation tends to infinity.
+
+\paragraph{Implementation in LIMA}
+~\\
+In \emph{init\_aerosol\_properties.f90}, parameters $k_m$, $\beta_m$ and $\mu_m$ are computed for each CCN mode, in the variables XKHEN\_MULTI, XMUHEN\_MULTI and XBETAHEN\_MULTI (when the HINI\_CCN variable is set to AER). Since the number concentration of aerosols is a prognostic variable, $C_m$ cannot be computed during the initialization. However, the variable XLIMIT\_FACTOR is computed and $C_m$ at each grid point and time step will simply be derived as $C_m=N_m/\mathrm{XLIMIT\_FACTOR}$.
+
+\subsection{Diagnostic maximum supersaturation}
+
+This parameterization is adapted from \citet{Cohard1998}. The evolution of $S$ is described by Eq.~(\ref{S_evol}), where the three terms represent the effects of (1) the vertical lifting, (2) the cloud droplets growth by vapor condensation, and (3) the cooling rate. This equation is derived from \citet[][their Eqs.\ (13)-(29)]{Pruppacher1997}, using the assumption $1+S_w \approx 1$, and is therefore valid only at, or close to, saturation.
+\begin{equation}
+  \label{S_evol}
+  \frac{\textnormal{d} S}{\textnormal{d} t} = \underbrace{\psi_1 \omega}_{(1)} - \underbrace{\psi_2 \frac{\textnormal{d} q_c}{\textnormal{d} t}}_{(2)}+\underbrace{\psi_3 \frac{\textnormal{d} T}{\textnormal{d} t}}_{(3)}
+\end{equation}
+where $\psi_1$, $\psi_2$ and $\psi_3$ are thermodynamical functions depending on $T$ and $P$ \citep{Cohard1998}:
+\begin{align}
+ \psi_1(T,P) &= \frac{g}{TR_d} \left( \frac{M_vL_v}{M_dc_{pd}T}-1 \right) \\
+ %
+ \psi_2(T,P) &= \frac{M_dP}{M_v e_{sw}(T)} + \frac{M_v L_v^2}{M_d R_d T^2 c_{pd}} = \frac{M_dP}{M_v e_{sw}(T)} + \frac{L_v^2}{T^2 c_{pd} R_v} \\
+ %
+ \psi_3(T,P) &= - \frac{M_v L_v}{M_d R_d T^2}
+\end{align}
+
+The following resolving method is similar to the solution from \citet{Pruppacher1997} and \citet{Cohard1998}, who did not account for the cooling rate [Eq.~(\ref{S_evol}), term 3].
+
+Following \citet[][their Eqs.\ (13)-(34)]{Pruppacher1997}, the cloud droplet growth at a supersaturation $S_w$ follows:
+\begin{equation}
+ \frac{\mathrm{d}m}{\mathrm{d}t} = 2 \pi \rho_w \left(\frac{2}{\rho_w}A_w^{-1}\right)^{3/2} S_w \left[ \int_{\tau}^t S_w(t')\mathrm{d}t' \right]^{1/2}
+\end{equation}
+where $\tau$ is the time at which the considered droplet was activated, and $A_w$ a thermodynamical function:
+\begin{equation}
+ A_w = \frac{R_vT}{D_v e_{sw}(T)} + \frac{L_v}{k_aT}\left(\frac{L_v}{R_vT}-1\right) \simeq \frac{R_vT}{D_v e_{sw}(T)} + \frac{L_v^2}{k_aR_vT^2}
+\end{equation}
+
+Writing $n_m^{CCN}(S_w)\mathrm{d}S_w$ the number of activated droplets for one CCN mode $m$, and for a supersaturation between $S_w$ and $S_w+\mathrm{d}S_w$, we have:
+\begin{equation}
+ \int_0^{S_w} n_m^{CCN}(S')\mathrm{d}S' = N_m^{CCN}(S_w) = C_m S_w^{k_m} F(\mu_m,\frac{k_m}{2},\frac{k_m}{2}+1,-\beta_m S_w^2)
+\end{equation}
+and then
+\begin{equation}
+ n_m^{CCN}(S_w) = k_m C_m S_w^{k_m-1} (1+\beta_m S_w^2)^{-\mu_m} 
+\end{equation}
+
+When several CCN modes are present, we get:
+\begin{equation}
+ n^{CCN}(S_w) = \sum_{m~modes} k_m C_m S_w^{k_m-1} (1+\beta_m S_w^2)^{-\mu_m}
+\end{equation}
+
+Integrating over all the cloud droplets, the cloud water mass mixing ratio change is:
+\begin{equation}
+ \frac{\mathrm{d}q_c}{\mathrm{d}t} = 2 \pi \frac{\rho_w}{\rho_d} \left(\frac{2}{\rho_w} A_w^{-1}\right)^{3/2} S_w ~~ \int_0^{S_w} n^{CCN}(S') \left[ \int_{\tau(S')}^t S_w(t')\mathrm{d}t' \right]^{1/2} \mathrm{d}S'
+\end{equation}
+
+This equation cannot be solved analytically, but the temporal integral of supersaturation admits a lower bound, which helps us determine an upper bound $S_{max}$ for the supersaturation. Twomey proposed \citep[their Eqs.\ (13)-(37)]{Pruppacher1997} the following lower bound:
+\begin{equation}
+ \int_{\tau(S')}^t S_w(t')\mathrm{d}t' > \frac{S_w^2-S'^2}{2(\psi_1 \omega)}
+\end{equation}
+which becomes, when accounting for the cooling rate:
+\begin{equation}
+ \int_{\tau(S')}^t S_w(t')\mathrm{d}t' > \frac{S_w^2-S'^2}{2(\psi_1 \omega + \psi_3 \mathrm{d}T/\mathrm{d}t)}
+\end{equation}
+
+Thus:
+\begin{equation}
+ \frac{\mathrm{d}r_c}{\mathrm{d}t} > \frac{2 \pi \rho_w \left(\frac{2}{\rho_w} A_w^{-1}\right)^{3/2} S_w}{\rho_d ~ [2(\psi_1 \omega + \psi_3 \mathrm{d}T/\mathrm{d}t)]^{1/2}} \sum_{m~modes} \bigg[ k_m C_m \underbrace{\int_0^{S_w}  S'^{k_m-1} (1+\beta_m S'^2)^{-\mu_m} (S_w^2-S'^2)^{1/2} \mathrm{d}S'}_{I} \bigg]
+\end{equation}
+
+Using the variable change $x=(S'/S)^2$, \citet{Cohard1998} get:
+\begin{equation}
+ I = \frac{S_w^{k_m+1}}{2} \underbrace{B\left(\frac{k_m}{2},\frac{3}{2}\right)}_{B_m} \underbrace{F\left(\mu_m,\frac{k_m}{2},\frac{k_m+3}{2},-\beta_mS_w^2\right)}_{F_{3/2,m,S_w}}
+\end{equation}
+and
+\begin{equation}
+  \label{borne_rc}
+ \frac{\mathrm{d}r_c}{\mathrm{d}t} > \frac{2 \pi \rho_w \rho_w^{-3/2} A_w^{-3/2} }{\rho_d ~ (\psi_1 \omega + \psi_3 \mathrm{d}T/\mathrm{d}t)^{1/2}} \sum_{m~modes} \bigg[ C_m k_m S_w^{k_m+2} B_m F_{3/2,m,S_w} \bigg]
+\end{equation}
+
+For the maximum supersaturation, we have $\mathrm{d}S/\mathrm{d}t=0$. Using Eqs.\ (\ref{S_evol}) and (\ref{borne_rc}) gives:
+\begin{equation}
+ \label{eq-smax}
+ \sum_{m~modes} \bigg[ C_m k_m S_w^{k_m+2} B_m F_{3/2,m,S_w} \bigg] < \frac{\rho_d ~ (\psi_1 \omega + \psi_3 \mathrm{d}T/\mathrm{d}t)^{3/2}}{2 \pi \rho_w \rho_w^{-3/2} A_w^{-3/2} \psi_2}
+\end{equation}
+The diagnostic maximum supersaturation $S_{max}$ is the supersaturation for which the equality is reached, all other factors being determined by the aerosol population and atmospheric conditions.
+
+
+\paragraph{Implementation in LIMA}
+~\\
+As presented in the previous section, $k_m$, $\beta_m$ and $\mu m$, as well as the XLIMIT\_FACTOR parameter necessary to compute $C_m$, are initialized for each CCN mode in \emph{init\_aerosol\_properties.f90}. 
+
+~\newline
+
+In ini\_lima\_warm.f90:
+\begin{itemize}
+ \item For each aerosol mode, the function $F\left(\mu_m,\frac{k_m}{2},\frac{k_m+3}{2},-\beta_mS_w^2\right)$ of supersaturation $S_w$, used in Eq.\ (\ref{eq-smax}), is tabulated between two values ZSMIN et ZSMAX, with a logarithmic scale in $S_w$, in the XHYPF32 variable.
+ \item For each aerosol mode, the function $F\left(\mu_m,\frac{k_m}{2},\frac{k_m}{2}+1,-\beta_mS_w^2\right)$ of supersaturation $S_w$, used in Eq.\ (\ref{SpectreCPB98}), is tabulated between the same two values ZSMIN et ZSMAX, with the same logarithmic scale in $S_w$, in the XHYPF12 variable.
+ \item Functions $\psi_1$ and $\psi_3$ of $T$ are also tabulated, for $T$ from -40\textdegree C to +40\textdegree C, in the XPSI1 and XPSI3 variables.
+ \item Eventually, the XAHENG$=(2 \pi \rho_w \rho_w^{-3/2} A_w^{-3/2} )^{-1}$ function is also tabulated on the same temperature domain.
+\end{itemize}
+
+~\newline
+
+Eq.\ (\ref{eq-smax}) is solved in \emph{lima\_warm\_nucl.f90}:
+\begin{itemize}
+ \item $C_m$ for each CCN mode with $C_m = N_m/XLIMIT\_FACTOR$ (PTSTEP and ZRHODREF account for the unit change from $N_m$ to get $C_m$ in m$^{-3}$). $C_m$ is computed from the total aerosol population $N^{free}_m+N^{acti}_m$.
+ \item $\psi_2$ is computed in ZZW1.
+ \item Using a linear interpolation from the tabulated functions XPSI1, XPSI3 and XAHENG, we get ZZW3$= \frac{\rho_d}{\rho_w} \frac{(\psi_1 \omega + \psi_3 \mathrm{d}T/\mathrm{d}t)^{3/2}}{2 \pi \rho_w \rho_w^{-3/2} A_w^{-3/2} \psi_2}$
+ \item Functions FUNCSMAX and SINGL\_FUNCSMAX compute the difference of the two terms in Eq.\ (\ref{eq-smax}).
+ \item The maximum supersaturation $S_{max}$ is then determined by looking for a zero of this function for a supersaturation between ZS1 and ZS2 (ZS1 and ZS2 are chosen within the ZSMIN to ZSMAX range used to tabulate XHYPF32$=F_{3/2,m,S_w}$) using the Ridder algorithm \citep{Press1992}. 
+\end{itemize}
+
+\subsection{Number of activated cloud droplets}
+
+According to the K\"{o}hler theory, for a given maximum supersaturation $S_{max}$, aerosols activated are exactly those with a critical supersaturation lower than $S_{max}$. Thus, to determine the number of aerosols really activated at time $t$, we first compute the number of activable aerosols for $S_{max}$ and the total aerosol population $N^{free}_m+N^{acti}_m$, using Eq.\ (\ref{SpectreCPB98}). The number of aerosols really activated is then the difference between the number of activable aerosols and the number of aerosols previously activated during the simulation $N^{acti}_m$:
+\begin{align}
+  \Delta N_m^{acti}(t) &= Max(0,N_m^{CCN}(S_{max})-N^{acti}_m(t-\Delta t)) \\
+  N^{free}_m(t) &= N^{free}(t-\Delta t)-\Delta N_m^{acti}(t) \\ 
+  N^{acti}_m(t) &= N^{acti}(t-\Delta t)+\Delta N_m^{acti}(t) 
+\end{align}
+
+\paragraph{Implementation in LIMA}
+~\\
+Computations are also led in \emph{lima\_warm\_nucl.f90}. ZTMP is the number of activable aerosols for each mode (using the tabulated function XHYPF12). The $N^{free}_m$ and $N^{acti}_m$ number concenterations for each mode are the updated.
+
+A final test restrains the activation to regions where the total number of activable cloud droplets is higher than 25~cm$^{-3}$.
+
+
+
+
+\section{Pristine ice nucleation}
+
+Three ways to initiate pristine ice are parameterized in LIMA. The homogeneous nucleation of rain drops, cloud droplets and CCN is active only at very cold temperatures, below -35\textdegree C. Two parameterizations of the heterogeneous nucleation are available. The first one is based upon \citet{Meyers1992} and depends only on the atmospheric conditions. The second follows the empirical parameterization by \citet{Phillips2008}, and explicitly predicts the number of ice crystals formed from the nucleation of a prognostic IFN population.
+
+The third way to create ice crystals in LIMA is the secondary production of ice by the Hallet-Mossop process when aggregates or graupel freeze cloud droplets. It is presented in the mixed phase collection processes presentation.
+
+\subsection{Homogeneous ice nucleation}
+
+Computations are carried in lima\_cold\_hom\_nucl.f90.
+
+\subsubsection{Rain drops homogeneous freezing}
+
+All raindrops are instantly transformed into graupel when they reach temperatures below -35\textdegree C.
+
+\subsubsection{Cloud droplets homogeneous freezing}
+
+The cloud droplet homogeneous freezing rate $J$ (number of ice embryos formed per cubic cm of water per second, cm$^{-3}$~s$^{-1}$) is taken from \citet{Eadie1971}, and was since used in many studies \citep[e.g.][]{Heymsfield1993,DeMott1994,Milbrandt2005b}:
+\begin{align}
+ \ln_{10}(J) &= \alpha_1 + \alpha_2 T + \alpha_3 T^2 +  \alpha_4 T^3 + \alpha_5 T^4 \\
+ J &= \mathrm{exp} \Big[ \alpha_1 \mathrm{ln}(10) + \alpha_2 \mathrm{ln}(10)~T + \alpha_3 \mathrm{ln}(10)~T^2 +  \alpha_4 \mathrm{ln}(10)~T^3 + \alpha_5 \mathrm{ln}(10)~T^4 \Big]
+\end{align}
+with
+\begin{align}
+ \alpha_1 &= -606.3952 \\
+ \alpha_2 &= -52.6611 \\
+ \alpha_3 &= -1.7439 \\
+ \alpha_4 &= -0.0265 \\
+ \alpha_5 &= -1.536~10^{-4}\\
+\end{align}
+
+The probability for a raindrop of volume $V$ not to freeze in a time $\Delta t$ is given by:
+\begin{equation}
+ P = \mathrm{exp} [ -J~V~\Delta t ]
+\end{equation}
+
+\paragraph{Computations if $\alpha_c = 3$}
+~\\
+In this case the number of droplets that are not frozen can be derived:
+\begin{align}
+ N_c(t+\Delta t) &= \int_0^\infty \mathrm{exp}[ -J~\frac{\pi}{6}D^3~\Delta t ] n(D)dD \\
+ &= \int_0^\infty e^{-J~\frac{\pi}{6}D^{\alpha_c}~\Delta t} N_c \frac{\alpha_c}{\Gamma(\nu_c)} \lambda_c^{\alpha_c \nu_c} D^{\alpha_c \nu_c - 1} e^{-(\lambda_c D)^{\alpha_c}} dD \quad \textrm{using~} \alpha_c = 3 \\
+ &= \int_0^\infty N_c \frac{\alpha_c}{\Gamma(\nu_c)} \lambda_c^{\alpha_c \nu_c} D^{\alpha_c \nu_c - 1} e^{-D^{\alpha_c}(\lambda_c^{\alpha_c} + J \Delta t \pi / 6)} dD \\
+ &= \int_0^\infty X^{-\alpha_c \nu_c} \lambda_c^{\alpha_c \nu_c} ~ ~ ~ N_c \frac{\alpha_c}{\Gamma(\nu_c)} X^{\alpha_c \nu_c} D^{\alpha_c \nu_c - 1} e^{-D^{\alpha_c} X^{\alpha_c}} dD \quad \textrm{with~} X = \left( \lambda_c^{\alpha_c} + \frac{J \Delta t \pi}{6} \right)^{1/\alpha_c} \\
+ &= X^{-\alpha_c \nu_c} \lambda_c^{\alpha_c \nu_c} N_c \\
+ &= \left( \frac{\lambda_c^{\alpha_c}}{\lambda_c^{\alpha_c} + \frac{J \Delta t \pi}{6}} \right)^{\nu_c} N_c\\
+ &= \left( \frac{1}{1+\frac{1}{\lambda_c}\frac{J \Delta t \pi}{6}} \right)^{\nu_c} N_c
+\end{align}
+Similarly, for the mass of droplets that are not frozen, we get:
+\begin{align}
+ r_c(t+\Delta t) &= \left( \frac{1}{1+\frac{1}{\lambda_c}\frac{J \Delta t \pi}{6}} \right)^{\nu_c} N_c a \frac{1}{\lambda_c^3} \frac{\Gamma(\nu_c+3/\alpha_c)}{\Gamma(\nu_c)} \\
+ &= \left( \frac{1}{1+\frac{1}{\lambda_c}\frac{J \Delta t \pi}{6}} \right)^{\nu_c} r_c
+\end{align}
+
+\paragraph{Computation if $\alpha_c \neq 3$}
+~\\
+In this case, an approximation is necessary, either by carrying the computations for the mean-volume diameter only, such as in \citet{Milbrandt2005b}, or by taking $1-\mathrm{exp}(-J V_c \Delta t) \approx J V_c \Delta t$ as in the ICE3 scheme. This case is not coded yet.
+
+\subsubsection{CCN homogeneous freezing}
+
+The homogeneous freezing of CCN particles follows \citet{Karcher2002}. Equations\ (12)-(28) from \citet{Pruppacher1997} become, with our notations, using the supersaturation $S_i = r_v / r_{si}$ \footnote{\citet{Pruppacher1997} use $s_{v,w}=r_v / r_{si} -1$.} and without the approximation $p-e = p$:
+\begin{equation}
+ \frac{\mathrm{d}S_i}{\mathrm{d}t} = \frac{p}{\epsilon e_{sat,i}} \frac{\mathrm{d}r_v}{\mathrm{d}t} - S_i \left( \frac{L_s \epsilon}{R_d T^2} \frac{\mathrm{d}T}{\mathrm{d}t} + \frac{g}{R_d T} w \right) 
+\end{equation}
+Using Eq.\ (12-26) and (12-29) from \citet{Pruppacher1997} with $\mu=0$ (entrainment effects are neglected):
+\begin{equation}
+ \frac{\mathrm{d}S_i}{\mathrm{d}t} = \left( \frac{L_s \epsilon g}{R_d T^2 c_{pd}} - \frac{g}{R_d T} \right) S_i w - \left( \frac{p}{\epsilon e_{sat,i}} + \frac{\epsilon L_s^2}{R_d T^2 c_{pd}} S_i\right) \frac{\mathrm{d}r_i}{\mathrm{d}t}
+\end{equation}
+Replacing $\epsilon = M_v / M_d$ and using the $M_d$, $M_v$, $R$, $R_d$, $R_v$ relationships, this equation takes the same form as Eq.\ (1) from \citet{Karcher2002}. They use $R_i$ (the number of water molecules deposited at the surface of ice crystals per unit of time and air volume, m$^{-3}$~s$^{-1}$), where we use the ice mass mixing ratio $r_i$ instead ($\mathrm{d}r_i/\mathrm{d}t = R_i m_w / \rho_d$), and therefore multiply $a_2$ and $a_3$ by $\rho_d / m_w$:
+\begin{align}
+ \frac{\mathrm{d}S_i}{\mathrm{d}t} &=  a_1 S_i w - (a_2 + a_3 S_i) \frac{\mathrm{d}r_i}{\mathrm{d}t} \\
+ a_1 &= \frac{M_v L_s g}{R c_{pd} T^2} - \frac{M_d g}{R T} \\
+ a_2 &= \frac{p}{\epsilon e_{sat,i}} \approx r_{si}^{-1}\\
+ a_3 &= \frac{L_s^2}{R_v c_{pd} T^2}
+\end{align}
+Homogeneous freezing occurs when the supersaturation exceeds a critical value, depending on temperature, which they fitted with the following equation:
+\begin{equation}
+ S_{cr} = 2.583 - \frac{T}{207.83}
+\end{equation}
+The characteristic time of homogeneous nucleation is:
+\begin{equation}
+ \tau = c(T) \left( \left|\frac{\partial \ln(J)}{\partial T}\right| \right)_{S_i=S_{cr}} \frac{\mathrm{d}T}{\mathrm{d}t}
+\end{equation}
+where \citet{Karcher2002} obtained the following fits:
+\begin{align}
+ c(T) &= \mathrm{max}[100,100(22.6*0.1T)] \\
+ \left. \frac{\partial \ln(J)}{\partial T}\right|_{S_i=S_{cr}} &= 4.37-0.03T
+\end{align}
+
+To compute the solution of homogeneous freezing, we need to evaluate the ratio $b_2 /2 \pi b_1$ where $b_1$ and $b_2$ are defined in their Eq.\ (7), for the peak supersaturation supposed to be $S_i^{max}=S_{cr}$. Using $m_w n_{sat} / \rho_d = r_{v,sat}$ ($n_{sat}$ is in m$^{-3}$) and $D_v(T,P) = 0.211 (T/T_0)^{1.94} (P_0/P)$ \citep[Eq.\ (13-3) from][with $D_v$ expressed in cm$^2$~s$^{-1}$]{Pruppacher1997}:
+\begin{equation}
+ \frac{b_2}{2 \pi b_1} = \frac{\rho_i}{\rho_d ~ 2 \pi~0.211~10^{-4} ~ (P_0/P) (T/T_0)^{1.94} ~ r_{si} (S_{cr}-1)}
+\end{equation}
+
+We use Eq.\ (11a) from \citet{Karcher2002} to compute the number of frozen CCN ($N_i$, kg$^{-1}$), dividing their right side by $\rho_d$ because their $n_i$ is expressed in m$^{-3}$, and multiplying by $\rho_d / m_w$ to convert our $a_2$ and $a_3$ parameters into:
+\begin{align}
+ N_i &= \frac{1}{\rho_d} \frac{m_w}{\rho_i} \left( \frac{b_2}{2 \pi b_1} \right)^{3/2} \frac{a_1}{(a_2 + a_3 ~ S_{cr})(m_w/\rho_d)} \frac{w}{\sqrt{\tau}} \\
+ &= \frac{1}{\rho_i} \left( \frac{b_2}{2 \pi b_1} \right)^{3/2} \frac{a_1}{a_2 + a_3 ~ S_{cr}} \frac{w}{\sqrt{\tau}}
+\end{align}
+
+Eventually, we determine the ice mass mixing ratio formed following their Eq.\ (11c), with the same transformations as for the previous one:
+\begin{align}
+ r_i &= \frac{1}{\rho_d} \frac{\pi}{6} m_w \frac{a_1}{(a_2 + a_3 ~ S_{cr})(m_w/\rho_d)} w \tau \\
+ &= \frac{\pi}{6} \frac{a_1}{a_2 + a_3 ~ S_{cr}} w \tau \\
+ &= \frac{\pi}{6} N_i~\rho_i \left(\frac{b_2}{2 \pi b_1}\right)^{-3/2} \tau^{3/2} 
+\end{align}
+
+\paragraph{Remarks on this parameterization}
+~\\
+\begin{itemize}
+ \item As stated by \citet{Karcher2002}, this parameterization does not explicitely depend on the number of available aerosols, and the resulting number of ice particles formed is simply limited to the maximum number of available CCN.
+ \item We assume in LIMA that only the fast growth case occurs (see their paragraph 27, p~5).
+ \item They stated (paragraph 28, p~5) that $T_{cr}$ (the temperature at which the critical supersaturation $S_{cr}$ is reached) should be used in the computations. In LIMA, computations are currently carried with $T$.
+\end{itemize}
+
+\paragraph{Implementation in LIMA}
+~\\
+The following computations are carried once:
+\begin{align}
+ \mathrm{ZZY} &= S_{cr} \\
+ \mathrm{ZPSI1} &= a_1 ~ S_{cr} \\
+ \mathrm{ZPSI2} &= a_2 + a_3 ~ S_{cr} \\
+ \mathrm{ZTAU} &= \tau \quad \quad \mathrm{(using~} \mathrm{d}T/\mathrm{d}t = \mathrm{ZTHS}~\left(P/P_{00}\right)^{R_d/c_{pd}} \mathrm{)} \\
+ \mathrm{ZBFACT} &= \frac{b_2}{2 \pi b_1} \quad \mathrm{(using~} S_i/r_v = r_{v,sat}^{-1} \mathrm{)} \\
+ \mathrm{ZZX} &= \frac{1}{\Delta t} N_i \quad \mathrm{limited~between~0~and~ZNFS} \\
+ \mathrm{ZZW} &= \frac{1}{\Delta t} r_i \quad \mathrm{limited~to~ZRVS}
+\end{align}
+
+CCN homogeneous freezing is supposed to act equally on each CCN mode, and the number of frozen CCN is depleted from each mode in proportion of the initial number of available CCN in each mode.
+
+\subsection{Heterogeneous pristine ice nucleation following \citet{Meyers1992}}
+
+The ice nucleation parameterization by \citet{Meyers1992} links the number concentration of ice crystals to the supersaturation only.
+
+\subsubsection{Heterogeneous nucleation by deposition}
+
+Using data from continuous flow chambers, \citet[][Eq.\ (2.4)]{Meyers1992} expressed the number of ice forming nuclei as a function of the supersaturation with respect to ice (using the decimal form of $S_{i}$, so that $S_i=0.01$ for a 1\% supersaturation):
+\begin{equation}
+ N_{IN}(S_{i}) [L^{-1}] = \exp[12.96~10^{-2}~100~S_{i} - 0.639]
+\end{equation}
+
+This parameterization is easily implemented in LIMA.
+
+First, some variables are initialized in \emph{ini\_lima\_cold\_mixed.f90}:
+\begin{itemize}
+ \item $\mathrm{XNUC\_DEP} = 1000 ~ \mathrm{XFACTNUC\_DEP} ~ \mathrm{ZFACT\_NUCL}$, where the $1000$ factor is used to convert from the previous formula to concentrations in m$^{-3}$, XFACTNUC\_DEP (default value 1) can be changed in namelist to modulate the ice nucleation process, and $ZFACT\_NUCL = 1$.
+\end{itemize}
+
+Then, in \emph{lima\_meyers.f90}, ZZY is computed where $T<5$\textdegree C and $S_i > 0$. The decimal formulation of $S_i$ is used in LIMA ($S_i = 0.01$ for a 1\% supersaturation), and the number concentrations are in kg$^{-1}$, so the pristine ice number concentration tendency is:
+\begin{equation}
+ \mathrm{ZZY [kg^{-1}s^{-1}]}= \frac{\mathrm{XNUC\_DEP}}{\rho_d \Delta t} \exp[12.96~10^{-2} ~ 100 ~ S_i - 0.639]
+\end{equation}
+
+To compute the mass mixing ratio created by this process, we first need to determine the number of ice crystals actually nucleated at this time step by subtracting the number of already nucleated ice crystals. The mass mixing ratio tendency is then deduced assuming that an ice embryo has a mass of $\mathrm{XMNU0} = 6.88$~10$^{-13}$~kg.
+
+\subsubsection{Heterogeneous nucleation by contact}
+
+\citet[][Eq.\ (2.6)]{Meyers1992} also expressed the number of ice crystals nucleated by contact freezing of cloud droplets as a function of temperature:
+\begin{equation}
+ N_{IN}(T) \mathrm{[L^{-1}]} = \exp[-2.80 - 0.262 (T-T_0)]
+\end{equation}
+
+This number is computed in the same way as the nucleation by deposition in LIMA, and the number concentration of crystals is limited by the number of available cloud droplets.
+
+To compute the mass mixing ratio created by this process, we first need to determine the number of ice crystals actually nucleated at this time step by subtracting the number of already nucleated ice crystals. The mass mixing ratio tendency is then deduced assuming that the cloud droplets mass is evenly distributed among cloud droplets, so:
+\begin{equation}
+ ZZW = r_{i,contact} = \frac{r_c}{N_c} N_{i,contact}
+\end{equation}
+
+\subsection{IFN nucleation following the parameterization by \citet{Phillips2008}}
+
+Instead of the parameterization by \citet{Meyers1992}, which does not link the pristine ice number concentration to the available aerosols, the parameterization proposed by \citet{Phillips2008,Phillips2013} can be used in LIMA. This implementation is described in \citet{Berthet2010these,Vie2016}.
+
+\subsubsection{Reference activity spectrum}
+
+Based on observations of ice nucleation in the continuous flow diffusion chamber (CFDC), \citet{Phillips2008} proposed a parameterization of the ice nucleation reference activity spectrum, taking the same form as the one proposed by \citet{Meyers1992}, but distinguishing three temperature regimes. Note that, as specified by \citet{Phillips2008}, $S_i$ is artificially prevented from exceeding water saturation in the computation of $N_{i,ref}$. For temperatures colder than -35\textdegree C, they got [their Eq.\ (2)]:
+\begin{equation}
+ N_{i,ref} (T,S_i) = \frac{1000}{\rho_{CFDC}} ~ \gamma ~ (\exp[12.96 (S_i-0.1)])^{0.3}
+\end{equation}
+For temperatures warmer than -25\textdegree C, they got ([heir Eq.\ (3)]:
+\begin{equation}
+ N_{i,ref} (T,S_i) = 0.058707 ~ \frac{1000}{\rho_{CFDC}} ~ \gamma ~ \exp[12.96 ~ S_i - 0.639]
+\end{equation}
+The reference activity spectrum for temperatures between -25\textdegree C and -35\textdegree C is a bit more complicated and involves intermediate computations [their Eqs.\ (4)-(7) and appendix A]:
+\begin{align}
+ N_{max}(T,S_i) &= \frac{1000}{\rho_{CFDC}} ~ \gamma ~ (\exp[12.96 (S_i^w-0.1)])^{0.3} \quad \quad \quad \quad \text{for T between -30\textdegree C and -35\textdegree C} \\
+ N_{max}(T,S_i) &= 0.058707 ~ \frac{1000}{\rho_{CFDC}} ~ \gamma ~ \exp[12.96 ~ S_i^w - 0.639] \quad \text{ for T between -25\textdegree C and -30\textdegree C} \\
+ \hat{n}(T,S_i) &= \min\bigg( 0.058707 ~ \frac{1000}{\rho_{CFDC}} ~ \gamma ~ \exp[12.96 ~ S_i - 0.639] ~ ~ ; ~ ~ n_{max}(T,S_i) \bigg) \\
+ \tilde{n}(T,S_i) &= \min\bigg( \frac{1000}{\rho_{CFDC}} ~ \gamma ~ (\exp[12.96 (S_i-0.1)])^{0.3} ~ ~ ; ~ ~ n_{max}(T,S_i) \bigg) \\
+ \bar{n}(T,S_i) &= \hat{n}(T,S_i) \left( \frac{\tilde{n}(T,S_i)}{\hat{n}(T,S_i)} \right)^{\delta_1^0(T,-35,-25)} \\
+ N_{i,ref} (T,S_i) &= \min\Big( \bar{n}(T,S_i) ~ ; ~ N_{max}(T,S_i) \Big)
+\end{align}
+
+\subsubsection{Integration of the number of activable IFN}
+
+The reference activity spectrum is used to predict the fraction of each IFN species $X$ which can be nucleated into ice crystals for given thermodynamical conditions, as \citep[Eq.\ (9) from][]{Phillips2008}:
+\begin{equation}
+ N_X^{IFN} = \int_{0.1~10^{-6}}^\infty \big[ 1 - \exp(- \mu_X(D,S_i,T)) \big] \frac{\mathrm{d}N_X}{\mathrm{d}D} \mathrm{d}D
+\end{equation}
+where the integration starts at 0.1~$\mu$m because we assume that smaller aerosols cannot form ice crystals.
+
+The expression for $\mu_X$, and the parameters necessary to compute it, are found in \citet[][Eqs.\ (10)-(12) and Table 1]{Phillips2008}. Writing
+\begin{equation}
+ A(S_i,T) = H_X(S_i,T) \xi(T) \frac{\alpha_X N_{i,ref} (T,S_i)}{\Omega_{X,1,*}}
+\end{equation}
+we have
+\begin{align}
+ \mu_X(D,S_i,T) &= A(S_i,T) \frac{\mathrm{d}\Omega_X}{\mathrm{d}N_X} \\
+ &\approx A(S_i,T) \pi D^2
+\end{align}
+
+Two methods are used to perform the integration, depending on the temperature.
+
+\paragraph{For temperatures warmer than -35\textdegree C}
+~\\
+For temperatures warmer than -35\textdegree C, we assume that the number of ice crystals formed remains small, therefore $\mu_x << 1$ and we can write:
+\begin{align}
+ N_X^{IFN} &\approx \int_{0.1~10^{-6}}^\infty \mu_X(D,S_i,T) \frac{\mathrm{d}N_X}{\mathrm{d}D} \mathrm{d}D \\
+ &\approx \int_{0.1~10^{-6}}^\infty \mu_X(D,S_i,T) n_X(D) \mathrm{d}D \\
+ &\approx A(S_i,T) \pi N_X \int_{0.1~10^{-6}}^{\infty} D^2 n_X(D) \mathrm{d}D
+\end{align}
+We need to compute the integral in the previous equation:
+\begin{align}
+ \int_{0.1~10^{-6}}^{\infty} D^2 n_X(D) \mathrm{d}D &= \int_{0.1~10^{-6}}^{\infty} \frac{D^2}{\sqrt{2\pi} ~ D ~ \ln(\sigma_X)} e^{-\left( \frac{\ln(D/D_X)}{\sqrt2 \ln(\sigma_X)} \right)^2 } \mathrm{d}D
+\end{align}
+We proceed to the variable change:
+\begin{align*}
+ x &= \frac{\ln(D/D_X)}{\sqrt2 \ln(\sigma_X)} \\
+ D &= D_X e^{x \sqrt2 \ln(\sigma_X)} \\
+ \mathrm{d}D &= \sqrt2 \ln(\sigma_X) D_X e^{x \sqrt2 \ln(\sigma_X)} \mathrm{d}x
+\end{align*}
+which gives:
+\begin{align}
+ \int_{0.1~10^{-6}}^{\infty} D^2 n_X(D) \mathrm{d}D &= \int_{B}^{\infty} \frac{D_X^2}{\sqrt{\pi}} e^{2 \sqrt2 x \ln(\sigma_X) - x^2} \mathrm{d}x \quad \mathrm{with} \quad B = \frac{\ln(0.1~10^{-6} / D_X)}{\sqrt{2} \ln(\sigma_X)} \\
+ &= \frac{D_X^2}{\sqrt{\pi}} e^{2 \ln(\sigma_X)^2} \int_{B}^{\infty} e^{-(x - \sqrt2 \ln(\sigma_X))^2} \mathrm{d}x
+\end{align}
+We proceed to a second variable change:
+\begin{align*}
+ u &= x - \sqrt2 \ln(\sigma_X) \\
+ x &= u - \sqrt2 \ln(\sigma_X) \\
+ \mathrm{d}x &= \mathrm{d}u
+\end{align*}
+Which gives, using $\int_{-\infty}^{\infty} \exp(-x^2)\mathrm{d}x = \sqrt{\pi}$ and the definition of the error function $ \mathrm{erf}(x) = \frac{2}{\sqrt \pi} \int_0^x e^{-t^2} \mathrm{d}t $:
+\begin{align}
+ \int_{0.1~10^{-6}}^{\infty} D^2 n_X(D) \mathrm{d}D &= \frac{D_X^2}{\sqrt{\pi}} e^{2 \ln(\sigma_X)^2} \int_{B-\sqrt2 \ln(\sigma_X)}^{\infty} e^{-u^2} \mathrm{d}u \\
+ &= \frac{D_X^2}{2} e^{2 \ln(\sigma_X)^2} \left[ 1-\mathrm{erf}(B-\sqrt2 \ln(\sigma_X)) \right]
+\end{align}
+and eventually (with $\mathrm{erf}(-x) = - \mathrm{erf}(x)$)
+\begin{align}
+ N_X^{IFN} &\approx A(S_i,T) \pi N_X \int_{0.1~10^{-6}}^{\infty} D^2 n_X(D) \mathrm{d}D \\
+ &\approx A(S_i,T) \pi N_X \frac{D_X^2}{2} e^{2 ~ \ln(\sigma_X)^2} \left[ 1 + \mathrm{erf}(\sqrt2 \ln(\sigma_X) - B) \right]
+\end{align}
+
+\paragraph{For temperatures colder than -35\textdegree C}
+~\\
+For temperatures colder than -35\textdegree C, we resort to another integration method.
+\begin{align}
+ N_X^{IFN} &= \int_{0}^\infty \big[ 1 - \exp(- A(S_i,T) \pi D^2) \big] n_X(D) \mathrm{d}D - \int_{0}^{0.1~10^{-6}} \big[ 1 - \exp(- A(S_i,T) \pi D^2) \big] n_X(D) \mathrm{d}D \\
+ &= T1 - T2 
+\end{align}
+
+To integrate $T1$, we develop the expression for $n_X(D)$ and use the same variable change as for the integration for temperatures warmer than -35\textdegree C:
+\begin{equation}
+ T1 = N_X \bigg[ 1 - \frac{1}{\sqrt \pi} \int_{-\infty}^\infty e^{-x^2} \exp\big[ - A(S_i,T) \pi D_X^2 e^{2\sqrt{2}\ln(\sigma_X)x} \big] \mathrm{d}x \bigg]
+\end{equation}
+We use the Gauss-Hermitte quadrature to compute $T1$:
+\begin{equation}
+ \int_{-\infty}^\infty e^{-x^2} f(x)\mathrm{d}x \approx \sum_i w_i f(x_i)
+\end{equation}
+
+To integrate $T2$, we assume that the approximation $\exp(x)=1+x+O(x^2)$ is acceptable in the range of diameters from 0 to 0.1$\mu$m, so that we can perform the same integration as for temperatures warmer than -35\textdegree C, and get
+\begin{equation}
+ T2 = N_X A(S_i,T) \pi \frac{D_X^2}{2} e^{2 \ln(\sigma_X)^2} \bigg[ 1 - \mathrm{erf}(\sqrt{2} \ln(\sigma_X) - B) \bigg]
+\end{equation}
+
+\paragraph{Update of the ice and aerosols number concentrations}
+~\\
+The singular hypothesis allows to treat the IFN nucleation in the same fashion as the CCN activation. Therefore, the number concentration of nucleated IFN at a given timestep is obtained by subtracting the number of IFN already activated from the number of activable IFN.
+
+\subsubsection{Implementation in LIMA}
+
+Four different IFN particle types are considered in LIMA, following \citet{Phillips2008} (small dust, large dust, black carbon, organics) or \citet{Phillips2013} (small dust, large dust, black carbon, biogenics), therefore most variables are vectors of four values, corresponding to each IFN type considered.
+
+The choice between the two versions of this sheme is made in namelist by setting the NPHILLIPS variable to 8 or 13.
+
+Some variables are initialized in \emph{ini\_lima\_cold\_mixed.f90}:
+
+Computations begin in \emph{lima\_phillips.f90}:
+\begin{align}
+ \mathrm{ZSI} &= S_i \\
+ \mathrm{ZZY} &= e_{sw} \\
+ \mathrm{ZSW} &= S_w \\
+ \mathrm{ZSI\_W} &=  S_i^w \\
+ \mathrm{ZSI0} &= S_{i,0}^X \quad \text{from \citet[][Table 1]{Phillips2008}} 
+\end{align}
+
+Then, \emph{lima\_phillips\_ref\_spectrum.f90} returns the reference activity spectrum presented above in the ZZY variable.
+
+Then, for each IFN species, \emph{lima\_phillips\_integ.f90} computes the fraction of aerosols that can be nucleated into ice crystals, using the integration method presented in the appendix of \citet{Vie2016}:
+\begin{align}
+ \mathrm{XB} &= B = \frac{\ln(0.1~10^{-6} / D_X)}{\sqrt{2} \ln(\sigma_X)} \\
+ \mathrm{ZFACTOR} &= f_C \quad \quad \quad \quad \quad \quad \text{ Eq.\ (12) from \citet{Phillips2008}} \\
+ \mathrm{ZSUBSAT} &= H_X(S_i,T) \quad \quad \quad \text{Eq.\ (11) from \citet{Phillips2008}} \\
+ \mathrm{ZEMBRYO} &= A = H_X(S_i,T) \xi(T) \frac{\alpha_X N_{i,ref} (T,S_i)}{\Omega_{X,1}} \quad \text{Eq.\ (10) from \citet{Phillips2008}} \\
+\end{align}
+and outputs for each IFN species the fraction of activable IFN $\mathrm{Z\_FRAC\_ACT}(X) = N_X^{IFN} / N_X$, computed as detailed above depending on the temperature. To compute the value of $\mathrm{erf}(x)$, we use the incomplete gamma function:
+{
+\begin{align*}
+ \Gamma_{inc}(a,x) &= \frac{1}{\Gamma(a)} \int_0^x t^{a-1} e^{-t} \mathrm{d}t\\
+ \Gamma_{inc}(\frac{1}{2},x^2) &= \mathrm{erf}(x) \quad \textrm{for $x > 0$}
+\end{align*}
+
+Back in \emph{lima\_phillips.f90}, we compute, for each IFN mode (which is composed of a mix of the four IFN chemical types for which the fraction of activable particles were computed previously), the number of activable IFN, and get the number of really activated IFN by subtracting the number of already activated aerosols.
+
+As for the parameterization by \citet{Meyers1992}, to get the mass mixing ratio of pristine ice crystals formed, we assume that a single new ice crystal has a mass of $\mathrm{XMNU0} = 6.88~10^{-13}$~kg.
+
+\subsubsection{Immersion freezing of cloud droplets by coated IFN}
+
+Coated IFN in LIMA are a special kind of hydrophilic aerosols. They are treated as acting first as CCN, and produce tagged cloud droplets which are the reservoir for ice nucleation by immersion freezing. Practically, the same parameterization as for insoluble IFN is used, but the integration is performed using $N_{acti}+N_{nucl}$, the number of coated IFN that were used to produce cloud droplets or ice crystals.
+To perform this integration, we assume a lognormal size distribution with constant parameters ($D_X$, $\sigma_X$), and a pure chemical composition, that are not necessarilly those of the initial aerosols.
+
+
+
+
+\section{Warm-phase collection/coalescence processes and rain initiation}
+
+Cloud droplets and rain drops evolution by coalescence processes is described by the equation:
+\begin{equation}
+ \frac{\partial n(x,t)}{\partial t} = \frac{1}{2} \int_0^x K(y,x-y)n(y,t)n(x-y,t)dy - n(x,t) \int_0^\infty K(x,y)n(y,t)dy
+\end{equation}
+where $n(x,t)$ is the number concentration of drops with a volume $x$ (m$^{-3}$), and $K(x,y)$ (m$^3$~s$^{-1}$) is the ``collection kernel'' of a drop with volume $x$ by a drop with volume $y$, and includes the stochastic aspect of collection. The first term of the coalescence equation represents the creation of drops with a volume $x$ from two drops with volumes $y$ and $x-y$. The second term represents the loss of volume $x$ drops by coalescence with a drop of volume $y$, to form a drop with volume $x+y$.
+
+The coalescence equation treats the droplets and drops populations as a whole. However, following \citet{Cohard2000c2r2}, assuming that there is little overlap between the cloud droplets (mostly with a diameter $D_c < 82~\mu$m) and rain drops (mostly with a diameter $D_r > 82~\mu$m)), we can split this equation into distinct processes:
+\begin{itemize}
+ \item The auto-collection of cloud droplets
+ \item The auto-collection of rain drops
+ \item The accretion of cloud droplets by rain drops
+\end{itemize}
+
+When only cloud droplets are present (before rain is initiated), the auto-collection of cloud droplets is the only active process, and it is necessary to treat separately the autoconversion of cloud droplets into rain drops to represent the formation of the first small rain drops (from 90 to 200 $\mu$m). The autoconversion parameterization follows \citet{Berry1974}. This parameterization includes all the coalescence processes during the initial evolution of the cloud droplets population into a bimodal population with both cloud droplets and rain drops. The coalescence parameterization presented hereafter is therefore only activated after rain has been created with a mixing ratio $r_r$ at least equal to $1.2 L$ (Sect.\ \ref{droplets-autoconversion}), or when the mean volume diameter of rain is larger than $r_H$ from \citet{Berry1974} (Sect.\ \ref{droplets-autoconversion}). In \emph{lima\_warm\_coal.f90}, the GENABLE\_ACCR\_SCBU variable is used to check where coalescence processes are activated:
+\begin{lstlisting}[frame=single]
+ GENABLE_ACCR_SCBU(:) = 
+ 	ZRRT(:)>1.2*ZZW2(:)/ZRHODREF(:)
+ 	.OR.
+	ZZW4(:)>=MAX(XACCR2,XACCR3/(XACCR4/ZLBDC(:)-XACCR5))
+\end{lstlisting}
+where ZZW2$=L$ (kg~m$^{-3}$), ZZW4$=\bar{D}_r$ the mean volume diameter of rain drops, XACCR2$=5~\mu$m, and XACCR3/(XACCR4/ZLBDC(:)-XACCR5)$=D_h$ corresponds to $r_H$ from \citet{Berry1974}.
+
+\paragraph{``Collection kernels'' in LIMA}
+~\\
+In LIMA, the ``collection kernels'' from \citet{Long1974} are used:
+\begin{align}
+ K(x,y) = \left\{
+  \begin{array}{l l}
+    K_2 (x^2 + y^2) & \quad \text{if } D_r \leq 100~\mu\text{m} \\
+    K_1 (x + y)     & \quad \text{if } D_r >  100~\mu\text{m}
+  \end{array} \right.
+\end{align}
+with $K_2 = 9.44~10^{9}$~cm$^{-3}$~s$^{-1}$ and $K_1 = 5.78~10^{3}$~s$^{-1}$, $x$ and $y$ the drops volumes in cm$^3$, and with $K$ in cm$^3$~s$^{-1}$. In LIMA, pfor drops with diameters $D_1$ and $D_2$ (m), and with $K$ in m$^3$~s$^{-1}$, we get:
+\begin{align}
+ K(D_1,D_2) = \left\{
+  \begin{array}{l l}
+    K_2 (D_1^6 + D_2^6) & \quad \text{if } D_1 \leq 100~\mu\text{m} \\
+    K_1 (D_1^3 + D_2^3) & \quad \text{if } D_1 >  100~\mu\text{m}
+  \end{array} \right.
+\end{align}
+with $K_2 = 2.59~10^{15}$~m$^{-3}$~s$^{-1}$ and $K_1 = 3.03~10^{3}$~s$^{-1}$.
+
+\subsection{Autoconversion of cloud droplets in rain drops}
+\label{droplets-autoconversion}
+
+The autoconversion of cloud droplets into raindrops is parameterized after \citet{Berry1974} and \citet{Cohard2000c2r2} \citep[see also][]{Gilmore2008}. \citet{Berry1974} simulated the evolution by collection of a~unimodal population of cloud droplets into a~bimodal distribution of cloud droplets and raindrops. They repeated this study for different initial distribution spreads and mean radii and proposed simple expressions to compute the rain formation rate. Using their notations, a~raindrop mixing ratio $L_2'$ develops in a~time $T_2$ (note that there is a~mistake in their Eq.~(16) for $T_2$, which is correctly expressed in their Fig.~8). By converting their expressions into LIMA units, the autoconversion rate is obtained as $L/\tau$, where $L$ (kg~m$^{-3}$) and $\tau$ (s) depend on the mean-volume droplet diameter $\bar{D}_{\mathrm{c}}$ (m), the corresponding standard deviation $\sigma_{\mathrm{c}}$ (m), and the cloud droplet mixing ratio $r_{\mathrm{c}}$ (kg~kg$^{-1}$). The $10^{20}$ and $10^{6}$ factors, and the presence of $\rho_d$, account for unit conversion. The $1/16$ and $0.5$ factors account for the change between particle radius in \citet{Berry1974} and diameter in LIMA.
+\begin{align}
+& L = 2.7~10^{-2} \left( \frac{1}{16} 10^{20} \sigma_{\mathrm{c}}^3 \bar{D}_{\mathrm{c}} - 0.4 \right) \rho_d r_{\mathrm{c}} \\
+& \tau = 3.7 \left( 0.5 \times 10^6 \sigma_{\mathrm{c}} - 7.5 \right)^{-1} \frac{1}{\rho_d~r_{\mathrm{c}}}
+\end{align}
+
+As explained in \citet{Cohard2000c2r2}, the raindrop number concentration production rate proposed by \citet{Berry1974} is kept only for the initial formation of small raindrops. In LIMA, when the raindrop mean-volume radius exceeds the hump radius defined by \citet{Berry1974}, it is assumed that the autoconversion does not modify the mean-volume diameter, and therefore the raindrop number concentration production rate (kg$^{-1}$~s$^{-1}$) is reduced to ${N_{\mathrm{r}}}/{r_{\mathrm{r}}}\times {L}/{\tau}$.
+
+\paragraph{Implementation in LIMA}
+~\\
+The computation of $\bar{D}_{\mathrm{c}}$ and $\sigma_{\mathrm{c}}$ is presented in sect.\ \ref{hydrometeors}. In \emph{lima\_warm\_coal.f90}:
+\begin{align}
+\mathrm{ZZW2} &= L \\
+\mathrm{ZZW3} &= \frac{L}{\tau} \frac{1}{\rho_d}
+\end{align}
+Division by $\rho_d$ in $\mathrm{ZZW3}$ accounts for units change, because $L$ is in kg~m$^{-3}$ instead of kg~kg$^{-1}$. Thus $\mathrm{ZZW3}$ is the mass mixing ratio of cloud droplets transformed into raindrops. Then:
+\begin{equation}
+\mathrm{ZZW1} = \min \left( \frac{1}{80 \mu\text{m}} ; \frac{1}{D_{\mathrm{h}}} ; \frac{1}{\bar{D}_{\mathrm{r}}} \right)
+\end{equation}
+Where $D_{\mathrm{h}}$ (m) corresponds to $r_{\mathrm{H}}$ (cm) from \citet{Berry1974} (there is a mistake in their Eq.~(20) for $r_{\mathrm{H}}$, which is correctly expressed in their Fig.~8):
+\begin{equation}
+D_{\mathrm{h}} = 1.26~10^{-3} \left( 0.5 \times 10^6 \sigma_{\mathrm{c}} - 3.5 \right)^{-1}
+\end{equation}
+The diameter computed by $\mathrm{ZZW1}$ is then used with the mass mixing ratio $\mathrm{ZZW3}$ to predict the number of rain drops formed.
+
+\subsection{Accretion}
+
+When the accretion of cloud droplets by rain drops is considered indenpendantly from the auto-collection processes, and we want to determine the mass and number of cloud droplets collected by this process, only the second term from the equation collection is used.
+
+The choice of $K(D_1,D_2)$ is based on the rain drops mean volume diameter ($\bar{D}_r=$ ZZW4 in \emph{lima\_warm\_coal.f90}). The equations governing the evolution of $r_c$, $r_r$ and $N_c$ are presented in \citet{Cohard2000c2r2}. The number of cloud droplets captured (-CCACCR) for $D_r > 100~\mu$m is presented here as an example, where $M_r$ and $M_c$ are the moments of the rain drops and cloud droplets size distributions, and $\rho_d$ arises from the units conversion (kg$^{-1}$ to m$^{-3}$):
+\begin{align}
+ -CCACCR &= \int_0^\infty \left. \frac{\partial n_c(D_2)}{\partial t}\right|_{ACC} dD_2 \\
+ &= \rho_d \int_0^\infty n_c(D_2) \left( \int_0^\infty K(D_1,D_2)n_r(D_1)dD_1 \right) dD_2 \\
+ &= \rho_d \int_0^\infty n_c(D_2) \left( \int_0^\infty \left( K_1 D_1^3 n_r(D_1) + K_1 D_2^3 n_r(D_1) \right) dD_1 \right) dD_2 \\
+ &= \rho_d K_1 \int_0^\infty \left( n_c(D_2) \left( N_r M_r(3) + D_2^3 N_r \right) \right) dD_2 \\
+ &= \rho_d K_1 N_r N_c \left( M_r(3) + M_c(3) \right) \\
+ &= \rho_d K_1 N_r N_c \left( \frac{1}{\lambda_r^3} \frac{\Gamma(\nu_r+3/\alpha_r)}{\Gamma(\nu_r)} + \frac{1}{\lambda_c^3} \frac{\Gamma(\nu_c+3/\alpha_c)}{\Gamma(\nu_c)} \right)
+\end{align}
+
+We get the mass of collected cloud droplets similarly:
+\begin{align}
+ -RCACCR &= \int_0^\infty \frac{\pi}{6} D_2^3 \rho_w \left. \frac{\partial n_c(D_2)}{\partial t}\right|_{ACC} ~dD_2 \\
+ &= \frac{\pi}{6} \rho_w \rho_d \int_0^\infty D_2^3 ~ n_c(D_2) \left( \int_0^\infty K(D_1,D_2)n_r(D_1)dD_1 \right) dD_2 \\
+ &= \frac{\pi}{6} \rho_w \rho_d K_1 N_c N_r \left( \frac{1}{\lambda_c^6} \frac{\Gamma(\nu_c+6/\alpha_c)}{\Gamma(\nu_c)} + \frac{1}{\lambda_c^3} \frac{\Gamma(\nu_c+3/\alpha_c)}{\Gamma(\nu_c)} \frac{1}{\lambda_r^3} \frac{\Gamma(\nu_r+3/\alpha_r)}{\Gamma(\nu_r)} \right)
+\end{align}
+
+And for $D_r \leq 100~\mu m$:
+\begin{align}
+ -CCACCR &= \rho_d K_2 N_r N_c \left( \frac{1}{\lambda_r^6} \frac{\Gamma(\nu_r+6/\alpha_r)}{\Gamma(\nu_r)} + \frac{1}{\lambda_c^6} \frac{\Gamma(\nu_c+6/\alpha_c)}{\Gamma(\nu_c)} \right) \\
+ -RCACCR &= \frac{\pi}{6} \rho_w \rho_d K_2 N_c N_r \left( \frac{1}{\lambda_c^9} \frac{\Gamma(\nu_c+9/\alpha_c)}{\Gamma(\nu_c)} + \frac{1}{\lambda_c^3} \frac{\Gamma(\nu_c+3/\alpha_c)}{\Gamma(\nu_c)} \frac{1}{\lambda_r^6} \frac{\Gamma(\nu_r+6/\alpha_r)}{\Gamma(\nu_r)} \right)
+\end{align}
+
+\subsection{Auto-collections in LIMA}
+
+In LIMA, the onset of rain by cloud droplets coalescence is parameterized by the autoconversion. The cloud droplets auto-collection is therefore supposed to produce only cloud droplets. It is also clear that the rain drops auto-collection has no impact on the cloud droplets. In both cases, the hydrometeors mass is conserved, so the RCSCOC and RRSCOR term are zero \citep[see the demonstration in appendix A of][]{Cohard2000c2r2}. The coalescence equation thus becomes \citep[appendix A of][]{Cohard2000c2r2}:
+\begin{equation}
+ -CCSCOC = \frac{1}{2} \int_0^\infty n(x,t) \left( \int_0^\infty K(y,x) n(y,t) dy \right) dx
+\end{equation}
+
+\subsubsection{Auto-collection of cloud droplets}
+
+The diameter of cloud droplets is always smaller than 82 $\mu$m, so we always use $K(x,y) = K_2 (x^2 + y^2)$. As for the accretion above, the evolution of the cloud droplets number concentration by auto-collection is:
+\begin{equation}
+ -CCSCOC = \rho_d K_2 N_c^2 \frac{1}{\lambda_c^6} \frac{\Gamma(\nu_c+6/\alpha_c)}{\Gamma(\nu_c)}
+\end{equation}
+
+\subsubsection{Auto-collection of rain drops}
+
+For rain drops, we have one equation if $D_r \leq 100~\mu$m:
+\begin{equation}
+ -CRSCOR = \rho_d K_2 N_r^2 \frac{1}{\lambda_r^6} \frac{\Gamma(\nu_r+6/\alpha_r)}{\Gamma(\nu_r)}
+\end{equation}
+
+and one if $D_r > 100~\mu$m:
+\begin{equation}
+ -CRSCOR = \rho_d K_1 N_r^2 \frac{1}{\lambda_r^3} \frac{\Gamma(\nu_r+3/\alpha_r)}{\Gamma(\nu_r)}
+\end{equation}
+
+\subsection{Rain drops break-up}
+
+\subsubsection{Collisional break-up of rain drops}
+
+The ``collisional breakup'' is an important process impacting the large rain drops number concentration. It is implemented in LIMA through the definition of an auto-collection efficiency $E_c$ \citep[as introduced by][]{Ziegler1985,Verlinde1990}, which limits the growth of large rain drops by this process. $E_c$ in LIMA is inspired by \citet[][their Eq.\ (4.22)]{Verlinde1993}
+\begin{align}
+ E_c = \left\{
+  \begin{array}{l l}
+    1 & \quad \text{if } \bar{D}_r < 600~\mu\text{m} \\
+    \exp \left( -2.5~10^3 (\bar{D}_r - 6~10^{-4}) \right) & \quad \text{if } 600~\mu\text{m } \leq \bar{D}_r < 2000~\mu\text{m}\\
+    0 & \quad \text{if } \bar{D}_r \ge 2000~\mu\text{m}
+  \end{array} \right. 
+\end{align}
+
+\subsubsection{``Spontaneous break-up'' of rain in LIMA}
+
+A ``spontaneous break-up'' process, independant from the rain drops collisions, is introduced to limit the rain drop size. As explained by \citet{Cohard2000c2r2test}, this mechanism is necessary to prevent the creation of unrealistically huge rain drops which can reslut from the differential evolution of the mass mixing ratio $r_r$ (kg kg$^{-1}$) and the number concentration $N_r$ ($\#$~kg$^{-1}$) (e.g. by transport and sedimentation processes).
+
+The ``spontaneous break-up'' is parameterized as a function of the mean volume diameter $\bar{D}_r$.
+
+When $\bar{D}_r$ is larger than 5000 $\mu$m, $N_r$ is corrected to bring $\bar{D}_r$ back to the maximum value $D_{max} = 5000~\mu$m:
+\begin{equation}
+ N_{r,new} = N_{r,old} \left( \frac{\bar{D}_r}{D_{max}} \right)^3
+\end{equation}
+
+When $\bar{D}_r$ is between 3000 and 5000 $\mu$m, $N_r$ is corrected to bring $\bar{D}_r$ back to a value computed as follows, and limited to the maximum value of 5000 $\mu$m:
+\begin{equation}
+ \left(\frac{D_{old}}{D_{new}}\right)^3 = 1 + \left( \left(\frac{5~10^{-3}}{4~10^{-3}}\right)^3 - 1 \right) \left( \frac{D_{old}-3~10^{-3}}{5~10^{-3}-3~10^{-3}} \right)^2
+\end{equation}
+
+
+
+
+\section{Water vapor exchanges}
+
+\subsection{Growth of a liquid / ice particle by vapor condensation / deposition}
+
+The parameterization of condensation / evaporation and deposition / sublimation processes in LIMA is based upon the equations governing the growth of a single water drop or ice crystal as presented in \citet{Pruppacher1997}. Their Eq.\ (13-28) expresses the rate of change of the radius of a stationary liquid drop. Neglecting the small curvature and solute terms (that is setting $y=0$), and adding a ventilation factor $\bar{f}$ to account for the movement of the liquid drop in the air [their Eq.\ (13-53)], we get (using the particle diameter $D$ instead of the radius):
+\begin{equation}
+\label{size-evol-liquid}
+ D \frac{\mathrm{d}D}{\mathrm{d}t} = 4 S_w \overline{f} \rho_w^{-1} A_w^{-1}
+\end{equation}
+where $S_w = \frac{r_v}{r_{sw}} -1$ is the supersaturation over liquid water, $\rho_w$ the density of liquid water, and $A_w$ a thermodynamical function:
+\begin{align}
+ A_w &= \frac{R_v T}{e_{sw} D_v} + \frac{L_v}{k_a T} \left( \frac{L_v}{R_v T} - 1 \right) \\
+\label{Aw}
+ &\approx \frac{R_v T}{e_{sw} D_v} + \frac{L_v^2}{k_a R_v T^2}
+\end{align}
+
+We have a similar equation for ice particles:
+\begin{equation}
+\label{size-evol-ice}
+ D \frac{\mathrm{d}D}{\mathrm{d}t} = 4 S_i \overline{f} \rho_i^{-1} A_i^{-1}
+\end{equation}
+with
+\begin{align}
+ A_i &= \frac{R_v T}{e_{si} D_v} + \frac{L_s}{k_a T} \left( \frac{L_s}{R_v T} - 1 \right) \\
+\label{Ai}
+ &\approx \frac{R_v T}{e_{si} D_v} + \frac{L_s^2}{k_a R_v T^2}
+\end{align}
+
+These equations can also be expressed as the rate of change of a drop / crystal mass:
+\begin{equation}
+\label{mass-evol-liquid}
+ \frac{\mathrm{d}m}{\mathrm{d}t} = 4\pi ~ \frac{1}{2} ~ D ~ S_w ~ A_w^{-1} ~ \bar{f} 
+\end{equation}
+for liquid drops, and as follows for ice particles [their Eqs.\ (13-75), (13-76), (13-91)]:
+\begin{equation}
+\label{mass-evol-ice}
+ \frac{\mathrm{d}m}{\mathrm{d}t} = 4\pi ~ C_1 ~ D ~ S_i ~ A_i^{-1} ~ \bar{f} 
+\end{equation}
+
+In the previous equations, we use the following approximations for the diffusivity of water vapor in air $D_v$ and the heat conductivity of air $k_a$:
+\begin{align}
+\label{Dv}
+ D_v[\mathrm{m^2~s^{-1}}] &= 0.211~10^{-4} \left(\frac{T}{T_0}\right)^{1.94}\frac{P_0}{P} \quad \text{\citep[][their Eq.\ (13-3)]{Pruppacher1997}} \\
+\label{ka}
+ k_a[\mathrm{kg~m~s^{-3}~K^{-1}}] &= 2.38~10^{-2} + 0.071~10^{-3} (T-T_0) \quad \text{\citep[][their Eq.\ (13-18a)]{Pruppacher1997}} \\
+\end{align}
+
+And the ventilation coefficient $\bar{f}$ is parameterized as a function of $\chi=N_{Sc,v}^{1/3}N_{Re}^{1/2}$, where $N_{Sc,v} \approx 0.63$ is the Schmidt number for water vapor and $N_{Re}$ the Reynolds number of the flow around a particle of diameter $D$:
+\begin{equation}
+\label{f}
+ \bar{f} \approx \bar{f_0} + \bar{f_1} \chi + \bar{f_2} \chi^2
+\end{equation}
+with
+\begin{equation}
+ N_{Re} = \frac{v(D)D}{\nu(T)} = \frac{v(D)D\rho_d}{\eta(T)}
+\end{equation}
+where $\nu(T)$ is the kinematic viscosity of air, and $\eta(T)=\rho_d \nu(T)$ the dynamic viscosity of air can be approximated by \citep[][their Eq.\ (10-141), converting with $1~poise = 0.1$~Pa~s]{Pruppacher1997}:
+\begin{equation}
+ \eta(T) [Pa~s] = 1.718~10^{-5} + 0.0049~10^{-5} (T-T_0)
+\end{equation}
+
+They propose various sets of values for $\bar{f_0}$, $\bar{f_1}$ and $\bar{f_2}$ depending on the particle type (liquid/ice) and size [their Eqs.\ (13-60), (13-61), (13-88) and (13-89)]:
+\begin{align}
+ &\left.
+  \begin{array}{l l}
+    \bar{f_0} = 1 \\
+    \bar{f_1} = 0 \\
+    \bar{f_2} = 0.108
+  \end{array} \right\}
+  \begin{array}{l l}
+    \text{for the condensation of vapor on cloud droplets}
+  \end{array} \\
+%
+  &\left.
+  \begin{array}{l l}
+    \bar{f_0} = 0.78 \\
+    \bar{f_1} = 0.308 \\
+    \bar{f_2} = 0
+  \end{array} \right\}
+  \begin{array}{l l}
+    \text{for the evaporation of rain drops}
+  \end{array} \\
+%
+  &\left.
+  \begin{array}{l l}
+    \bar{f_0} = 1 \\
+    \bar{f_1} = 0 \\
+    \bar{f_2} = 0.14~
+  \end{array} \right\}
+  \begin{array}{l l}
+    \text{for the deposition of vapor on ice crystals} \\
+    \text{and the Bergeron-Findeisen process}
+  \end{array} \\
+%
+  &\left.
+  \begin{array}{l l}
+    \bar{f_0} = 0.86~ \\
+    \bar{f_1} = 0.28 \\
+    \bar{f_2} = 0 
+  \end{array} \right\}
+  \begin{array}{l l}
+    \text{for the deposition of vapor on snow, graupel and hail} \\
+    \text{and the growth of ice crystals into snow}
+  \end{array} \\
+\end{align}
+
+Writing
+\begin{equation}
+ c' = N_{Sc,v}^{1/3} \left(\frac{\rho_0}{\rho_d}\right)^{0.2} \left(\frac{c \rho_d}{\eta}\right)^{1/2} 
+\end{equation}
+and using the terminal fall speed-diameter relationship, we get the mass mixing ratio rate of change for a given hydrometeor type from the integration of Eqs.\ (\ref{mass-evol-liquid}) and (\ref{mass-evol-ice}) (note that $c'/\sqrt{c}$ does not depend on the hydrometeor):
+\begin{align}
+ \frac{\mathrm{d}r}{\mathrm{d}t} &= \int_0^\infty \frac{\mathrm{d}m}{\mathrm{d}t}(D) n(D) \mathrm{d}D \\
+ &= \int_0^\infty 4\pi ~ C_1 ~ D ~ S_i ~ A_i^{-1} ~ \Bigg(\bar{f_0} + \bar{f_1} N_{Sc,v}^{1/3} \left(\frac{v(D)D\rho_d}{\eta}\right)^{1/2} + \bar{f_2} N_{Sc,v}^{2/3} \frac{v(D)D\rho_d}{\eta} \Bigg) n(D) \mathrm{d}D \\
+ &= 4\pi ~ C_1 ~ S_i ~ A_i^{-1} \int_0^\infty \Bigg(\bar{f_0} D + \bar{f_1} c' D^{1+\frac{d+1}{2}} + \bar{f_2} c'^2 D^{1+d+1} \Bigg) n(D) \mathrm{d}D \\
+ \label{mixing-ratio-evol}
+ &= N ~ 4\pi ~ C_1 ~ S_i ~ A_i^{-1} \Bigg( \bar{f_0} M(1) + \bar{f_1} c' M(\frac{d+3}{2}) + \bar{f_2} c'^2 M(d+2) \Bigg)
+\end{align}
+where $M(p)$ is the p-order moment of the particle size distribution, and the same equation for liquid drops.
+
+\subsection{Rain evaporation}
+
+We get the change in mass from Eq.\ (\ref{size-evol-liquid}) and:
+\begin{equation}
+ \frac{\mathrm{d}m}{\mathrm{d}t} = \frac{\pi}{6} \rho_w 3 D^2 \frac{\mathrm{d}D}{\mathrm{d}t}
+\end{equation}
+
+The mass evolution of the rain drops population is therefore:
+\begin{align}
+ RREVAV &= \int_0^\infty \frac{\pi}{6} \rho_w 3 D^2 \frac{\mathrm{d}D}{\mathrm{d}t} n(D) dD \\
+ &= \frac{\pi}{2} \rho_w \int_0^\infty D^2 \frac{4 S_w \overline{f} \rho_w^{-1} A_w^{-1}}{D} n(D) dD \\ 
+ &= 2 \pi \rho_w S_w \rho_w^{-1} A_w^{-1} \int_0^\infty D \overline{f} n(D) dD \\ 
+ &= 2 \pi \rho_w S_w \rho_w^{-1} A_w^{-1} \int_0^\infty \left( \bar{f_0} D + \bar{f_1} D \left(\frac{\rho_0}{\rho_a}\right)^{0.2} \left(\frac{c}{\nu_{cin}}\right)^{0.5} D^{\frac{d+1}{2}}\right) n(D) dD \\ 
+ &= 2 \pi \rho_w S_w \rho_w^{-1} A_w^{-1} N_r \left( \bar{f_0} \frac{1}{\lambda} \frac{\Gamma(\nu + 1 / \alpha)}{\Gamma(\nu)}+ \bar{f_1} \left(\frac{\rho_0}{\rho_a}\right)^{0.2} \left(\frac{c}{\nu_{cin}}\right)^{0.5} \frac{1}{\lambda^\frac{d+3}{2}} \frac{\Gamma(\nu + (d+3)/2\alpha)}{\Gamma(\nu)} \right)\\ 
+\end{align}
+
+In \emph{lima\_warm\_evap.f90}, computations are led from the mass mixing ratio $r_r$ instead of the number concentration $N_r$, using:
+\begin{equation}
+ N_r = \frac{r \lambda^3}{a} \frac{\Gamma(\nu)}{\Gamma(\nu+3/\alpha)}
+\end{equation}
+with $a=\rho_w \pi / 6$, which gives:
+\begin{align}
+ RREVAV = 12 S_w \rho_w^{-1} A_w^{-1} r_r \frac{\Gamma(\nu)}{\Gamma(\nu+3/\alpha)} & \left( \bar{f_0} \lambda^2 \frac{\Gamma(\nu + 1 / \alpha)}{\Gamma(\nu)} + \right. \nonumber \\
+ &\left. \bar{f_1} \left(\frac{\rho_0}{\rho_a}\right)^{0.2} \left(\frac{c}{\nu_{cin}}\right)^{0.5} \lambda^{3-\frac{d+3}{2}} \frac{\Gamma(\nu + (d+3)/2\alpha)}{\Gamma(\nu)} \right)
+\end{align}
+
+The evaporation of rain drops does not impact their number concentration, except in the case when the mean volume diameter $\bar{D}_r$ becomes lower than 82 $\mu$m, and then all the rain is transformed into cloud droplets.
+
+\subsection{Deposition of water vapor on ice}
+
+In LIMA, the following processes are represented:
+\begin{itemize}
+ \item Deposition of vapor on snow / sublimation of snow
+ \item Deposition of vapor on graupel / sublimation of graupel
+ \item Conversion of pristine ice into snow
+ \item Conversion of snow into pristine ice
+ \item Bergeron-Findeisen process
+\end{itemize}
+The depostion of vapor on ice crystals is treated during the adjustment step. The deposition of vapour on hail is currently neglected.
+
+For 2-moment species (only pristine ice crystals currently), the deposition of water vapour (or the sublimation) does not affect the number concentration, except in the special cases of ice crystals growing into snowflakes (this process is described hereafter) and removing of crystals by sublimation.
+
+\subsubsection{Deposition on snow}
+
+In \emph{ini\_lima\_cold\_mixed.f90}, the following variables are initialized:
+\begin{align}
+ \mathrm{XSCFAC} &= N_{sc,v}^{1/3} \rho_0^{0.2} \\
+ \mathrm{X0DEPS} &= 4 \pi ~ C ~ C_1 ~ \bar{f_0} ~ \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \\
+ \mathrm{XEX0DEPS} &= x-1 \\
+ \mathrm{X1DEPS} &= 4 \pi ~ C ~ C_1 ~ \bar{f_1} ~ \sqrt{c} ~ \frac{\Gamma(\nu+(d+3)/2\alpha)}{\Gamma(\nu)} \\
+ \mathrm{XEX1DEPS} &= x-\frac{d+3}{2} \\
+\end{align}
+
+In \emph{lima\_cold\_slow\_processes.f90}, the following computations are conducted:
+\begin{align}
+ \mathrm{ZSSI} &= S_i \\
+ \mathrm{ZKA} &= k_a \\
+ \mathrm{ZDV} &= D_v \\
+ \mathrm{ZAI} &= A_i \\
+ \mathrm{ZCJ} &= c'/\sqrt{c} \\
+ \mathrm{ZZW} = \dot{r}_s &= \frac{\mathrm{ZSSI}}{\mathrm{ZAI}} [\mathrm{X0DEPS} ~ \lambda^{\mathrm{XEX0DEPS}} + \mathrm{X1DEPS} ~ \mathrm{ZCJ} ~ \lambda^{\mathrm{XEX1DEPS}}]  \\
+ &= S_i~A_i^{-1} \bigg[ 4 \pi C C_1 \bar{f_0} \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \lambda^{x-1} + 4 \pi C C_1 \bar{f_1} \frac{c'}{\sqrt{c}} \sqrt{c} \frac{\Gamma(\nu+(d+3)/2\alpha)}{\Gamma(\nu)} \lambda^{x-\frac{d+3}{2}} \bigg] \\
+ &= C \lambda^x ~ 4 \pi C_1 ~ S_i ~ A_i^{-1} \bigg[ \bar{f_0} M(1) + \bar{f_1} c' M(\frac{d+3}{2}) \bigg]
+ \end{align}
+which corresponds to Eq.\ (\ref{mixing-ratio-evol}) (for snow, $\bar{f_2}=0$). The next line computes
+\begin{equation}
+ \min(r_v,\dot{r}_s)~(0.5+0.5~\mathrm{sign}(\dot{r}_s)) - \min(r_s,|\dot{r}_s|)~(0.5-0.5~\mathrm{sign}(\dot{r}_s))
+\end{equation}
+This limits the deposition rate $\dot{r}_s$ to the available water vapour source $r_v$ when deposition occurs ($\dot{r}_s > 0$), and the sublimation rate to the available snow source $r_s$ when sublimation occurs ($\dot{r}_s < 0$).
+
+\subsubsection{Deposition on graupel}
+
+The deposition of vapor on graupel is similar to the deposition on snow.
+
+\subsection{Ice $\rightarrow$ snow conversion}
+
+Knowing both $N_i$ (kg$^{-1}$) and $r_i$ (kg~kg$^{-1}$), the pristine ice to snow conversion by deposition of water vapor can be refined, following the parameterization proposed by \citet{Harrington1995}.
+
+The implementation of this process in LIMA is based on Eqs.\ (19) and (20) from \citet{Harrington1995}, describing the evolution of ice crystals number concentration and mass mixing ratio (expressed in m$^{-3}$ and kg~m$^{-3}$):
+\begin{equation}
+\label{Harrington19}
+ N_{i->s} = \frac{dD}{dt}\bigg|_{D=D_b}n(D_b)
+\end{equation}
+and
+\begin{equation}
+\label{Harrington20}
+ \dot{r}_s = \frac{1}{\rho_d}m(D_b)\frac{dD}{dt}\bigg|_{D=D_b}n(D_b) ~ + ~ \frac{1}{\rho_d}\int^\infty_{D_b}\frac{dm}{dt}n(D)dD
+\end{equation}
+
+Equation (\ref{Harrington20}) [their Eq.\ (20)] accounts for both the conversion into snow of pristine ice crystals growing over a threshold diameter $D_b$ (first term), and the depositional growth of crystals already larger than $D_b$ (second term). In LIMA, the deposition of vapor on ice crystals is treated during the adjustment step, and deposition on snow is handled separately, so the second term is ignored, which leads to the simplified equation system (removing $\rho_d$ because units in LIMA for $N_i$ and $r_i$ are kg$^{-1}$ and kg~kg$^{-1}$):
+\begin{align}
+  N_{i->s} &= \frac{dD}{dt}\bigg|_{D=D_b}n(D_b) \\
+ \dot{r}_s &= m(D_b)\frac{dD}{dt}\bigg|_{D=D_b}n(D_b)
+\end{align}
+
+In LIMA, the threshold diameter is fixed at $D_b = 125~\mu$m.
+
+Using the mass-diameter relationship $m=a D^b$, we have:
+\begin{equation}
+ \frac{dD}{dt}=\frac{dD}{dm}\frac{dm}{dt}=\frac{1}{\alpha\beta D^{\beta -1}}\frac{dm}{dt}
+\end{equation}
+
+Using Eq.\ (\ref{mass-evol-ice}) $\mathrm{d}m/\mathrm{d}t$, we get:
+\begin{align}
+ N_{i->s} &= \frac{1}{\alpha\beta D_b^{\beta -1}} 4\pi ~ C_1 ~ S_i ~ A_i^{-1} ~ ( \bar{f_0} D_b + \bar{f_1} c' D_b^{1+\frac{d+1}{2}} ) n(D_b) \\
+ &= \frac{4\pi}{\alpha\beta} ~ C_1 ~ S_i ~ A_i^{-1} ~ ( \bar{f_0} D_b^{2-\beta} + \bar{f_1} c' D_b^{1+\frac{d+1}{2}+1-\beta} ) n(D_b)     \\
+ \dot{r}_s &= m(D_b)N_{i->s} \\
+ &= \frac{4\pi}{\beta} ~ C_1 ~ S_i ~ A_i^{-1} ~ ( \bar{f_0} D_b^{2} + \bar{f_1} c' D_b^{1+\frac{d+1}{2}+1} ) n(D_b)    \label{rpoint-harrington}
+\end{align}
+with
+\begin{equation}
+ n(D_b) = N_i \frac{\alpha_i}{\Gamma(\nu_i)} (\lambda_iD_b)^{\alpha_i\nu_i} D_b^{-1} e^{-(\lambda_iD_b)^{\alpha_i}}
+\end{equation}
+
+\paragraph{Implementation in LIMA}
+~\\
+In \emph{ini\_lima\_cold\_mixed.f90}, the following variables are initialized:
+\begin{align}
+ \mathrm{XSCFAC} &= N_{sc,v}^{1/3} \rho_0^{0.2} \\
+ \mathrm{XDICNVS\_LIM} &= D_b = 125 ~ \mu m \\
+ \mathrm{XC0DEPIS} &= \frac{4\pi}{\alpha\beta} ~ C_1 ~ \bar{f_0} ~ \frac{\alpha_i}{\Gamma(\nu_i)} ~ D_b^{1-\beta}   \\
+ \mathrm{XC1DEPIS} &= \frac{4\pi}{\alpha\beta} ~ C_1 ~ \bar{f_1} ~ \sqrt{c} ~ \frac{\alpha_i}{\Gamma(\nu_i)} ~ D_b^{1-\beta+\frac{d+1}{2}}   \\
+ \mathrm{XR0DEPIS} &= \mathrm{XC0DEPIS} ~ \alpha D_b^\beta \\
+          &= \frac{4\pi}{\beta} ~ C_1 ~ \bar{f_0} ~ \frac{\alpha_i}{\Gamma(\nu_i)} ~ D_b   \\
+ \mathrm{XR1DEPIS} &= \mathrm{XC1DEPIS} ~ \alpha D_b^\beta \\
+          &= \frac{4\pi}{\beta} ~ C_1 ~ \bar{f_1} ~ \sqrt{c} ~ \frac{\alpha_i}{\Gamma(\nu_i)} ~ D_b^{1+\frac{d+1}{2}}   \\
+\end{align}
+
+In \emph{lima\_cold\_slow\_processes.f90}, the following computations are conducted:
+\begin{align}
+ \mathrm{ZSSI} &= S_i \\
+ \mathrm{ZKA} &= k_a \\
+ \mathrm{ZDV} &= D_v \\
+ \mathrm{ZAI} &= A_i \\
+ \mathrm{ZCJ} &= c'/\sqrt{c} \\
+ \mathrm{ZZX} &= S_i ~ A_i^{-1} ~ N_i (\lambda_iD_b)^{\alpha_i\nu_i} e^{-(\lambda_iD_b)^{\alpha_i}} \\
+ &= S_i ~ A_i^{-1} ~ n(D_b) ~ \frac{\Gamma(\nu_i)}{\alpha_i} D_b \\
+ \mathrm{ZZW} = \dot{r}_s &= \mathrm{ZZX} ~ [\mathrm{XR0DEPIS} + \mathrm{XR1DEPIS} * \mathrm{ZCJ}]  \\
+ &= S_i~A_i^{-1} n(D_b) \frac{\Gamma(\nu_i)}{\alpha_i} D_b ~ \bigg[ \frac{4\pi}{\beta} C_1 \frac{\alpha_i}{\Gamma(\nu_i)} ( \bar{f_0} ~ D_b + \bar{f_1} \sqrt{c} D_b^{1+\frac{d+1}{2}} \frac{c'}{\sqrt{c}} ) \bigg] \\
+ &= \frac{4\pi}{\beta} ~ C_1 ~ S_i~A_i^{-1} ( \bar{f_0} ~ D_b^2 + \bar{f_1} c' D_b^{2+\frac{d+1}{2}}) n(D_b)
+ \end{align}
+Which corresponds to Eq.\ (\ref{rpoint-harrington}). Computations for $N_{i->s}$ are similar.
+
+\subsection{Snow $\rightarrow$ ice conversion}
+
+When the air is undersaturated with respect to ice, the same computations are led to determine the mass of snow converted into ice by sublimation, based on the same threshold diameter $D_b = 125~\mu$m.
+
+\subsection{Bergeron-Findeisen process}
+
+Since the vapor saturation pressure over ice is always lower than that over liquid water ($e_{si} < e_{sw}$), there is a systematic evaporation of cloud droplets and deposition on the ice crystals. The present parameterization assumes that the mass transfer rate is determined by the vapor deposition rate on ice crystals, and that it is equivalent to the droplet evaporation rate, so that the process is neutral for the ambient water vapor. The computation is therefore based on Eq.\ (\ref{mixing-ratio-evol}).
+
+In \emph{ini\_lima\_cold\_mixed.f90}, the following variables are initialized:
+\begin{align}
+ \mathrm{XSCFAC} &= N_{sc,v}^{1/3} \rho_0^{0.2} \\
+ \mathrm{X0DEPI} &= 4 \pi ~ C_1 ~ \bar{f_0} ~ \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \\
+ \mathrm{X2DEPI} &= 4 \pi ~ C_1 ~ \bar{f_2} ~ c ~ \frac{\Gamma(\nu+(d+2)/\alpha)}{\Gamma(\nu)} \\
+\end{align}
+
+In \emph{lima\_mixed\_slow\_processes.f90}, the following computations are conducted:
+\begin{align}
+ \mathrm{ZZW} &= S_i \\
+ \mathrm{ZAI} &= A_i \quad \text{(in the routine arguments)} \\
+ \mathrm{ZCJ} &= c'/\sqrt{c} \quad \text{(in the routine arguments)} \\
+ \mathrm{ZZW} = \dot{r}_i &= \frac{\mathrm{ZZW}}{\mathrm{ZAI}} \mathrm{ZCIT} \bigg[\mathrm{X0DEPI} ~ \frac{1}{\lambda} + \mathrm{X2DEPI} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\
+ &= N_i 4 \pi C_1 S_i~A_i^{-1} \bigg[ \bar{f_0} M(1) + \bar{f_2} c'^2 M(d+2) \bigg]
+ \end{align}
+which corresponds to Eq.\ (\ref{mixing-ratio-evol}) (for pristine ice, $\bar{f_1}=0$).
+
+\subsection{Adjustment}
+
+The adjustment step updates the mass mixing ratios of pristine ice crystals and cloud droplets accounting for deposition/condensation or sublimation/evaporation depending on the saturation. LIMA does not allow supersaturations with respect to liquid water, but the saturatio with respect to ice can evolve freely depending on the explicit deposition of water vapour on ice crystals. Three cases are distinguished in LIMA:
+\begin{itemize}
+ \item When only cloud droplets are present, an immediate adjustment to saturation with respect to liquid water is performed. 
+ \item When only ice crystals are present, the deposition rate is explicitely predicted if $S_i>0$, and an implicit immediate adjustment to saturation is performed if $S_i<0$.
+ \item When both cloud droplets and ice crystals are present, we first perform an adjustment to liquid water saturation for cloud droplets, and then compute explicit mass transfer rates following the parameterization of \citet[][Section 2b4 and appendix B]{Reisin1996}.
+\end{itemize}
+
+In contrast with all the other processes, which computations are based on the concentrations and mixing ratios from the previous timestep, the adjustment, performed at the end of the timestep integration, uses the concentration and mixing ratios rates obtained after adding all the microphysical processes sources. We will keep the same notations (e.g. $r_v$, $T$) for convenience.
+
+\subsubsection{Where $r_c>0$ and $r_i=0$}
+
+The implicit adjustment follows \citet{Langlois1973}, to reach saturated conditions with respect to liquid water, thereby changing the temperature as well due to evaporation/condensation. So we are looking for the temperature $T'$ for which we have $F(T')=0$ where $F$ is the following function relating the temperature change to the water vapor mass mixing ratio change:
+\begin{equation}
+ F(x) = (x-T) + \frac{L_v(x)}{c_{ph}} (r_{sw}(x)-r_v)
+\end{equation}
+
+To find the zero of $F$, \citet{Langlois1973} showed that the Newton-Raphson method can be used and no iterations are necessary, therefore:
+\begin{align}
+ T' &= T - \frac{F(T)}{F'(T)} [1 + \frac{F(T) F''(T)}{2 ~ F'(T)^2} ] \\
+ &= T - \Delta_1 \left( 1 + \frac{1}{2} \Delta_1 \Delta_2 \right) \quad \text{with } \Delta_1 = \frac{F(T)}{F'(T)} \text{ et } \Delta2 = \frac{F''(T)}{F'(T)}
+\end{align}
+
+The expressions for $r_{sw}(x)$ and $e_{sw}(x)$ are found in the therodynamics documentation, so we have:
+\begin{align}
+ e_{sw}'(x) &= A(x) e_{sw}(x) \quad \mathrm{with~} A(x) = \frac{\beta_w}{x^2} - \frac{\gamma_w}{x} \\
+ r_{sw}'(x) &= A(x) r_{sw}(x) (1 + \frac{M_d r_{sw}(x)}{M_v} )
+\end{align}
+
+Assuming that the variations of $L_v$ are much smaller than those of $r_{sw}$, we get:
+\begin{align}
+ F'(x) &= 1 + \frac{L_v(x)}{c_{ph}} r_{sw}'(x) \\
+ F''(x) &= \frac{L_v(x)}{c_{ph}} r_{sw}'(x) \left[ A(x) + \frac{A'(x)}{A(x)} + \frac{2 M_d A(x) r_{sw}(x)}{M_v} \right] \\
+ A'(x) &= - \frac{2 \beta_w}{x^3} + \frac{\gamma_w}{x^2}
+\end{align}
+and then
+\begin{align}
+ \Delta_1 &= \frac{L_v(T)}{c_{ph}} \frac{(r_{sw}(T)-r_v)}{1 + \frac{L_v(T)}{c_{ph}} r_{sw}'(T)} \\
+ \Delta_2 &= \frac{L_v(T)}{c_{ph}} \frac{r_{sw}'(T)}{1 + \frac{L_v(T)}{c_{ph}} r_{sw}'(T)} \left[ A(x) + \frac{A'(x)}{A(x)} + \frac{2 M_d A(x) r_{sw}(x)}{M_v} \right]
+\end{align}
+
+Eventually, the mixing ratio of condensed water vapor is deduced from the temperature difference $T - T'$ and transformed to a tendency by dividing by $\Delta t$:
+\begin{equation}
+ r_{v,cnd} = (T - T') \frac{c_{ph}}{L_v(T)} \frac{1}{\Delta t}
+\end{equation}
+
+\paragraph{Implementation in LIMA}
+~\\
+In \emph{lima\_adjust.f90}:
+\begin{align}
+ \mathrm{ZLVFACT} &= \frac{L_v(T)}{c_{ph}} \\
+ \mathrm{ZZW} &= e_{sw}(T) \\
+ \mathrm{ZRVSATW} &= r_{sw}(T) \\
+ \mathrm{ZRVSATW\_PRIME} &= r_{sw}'(T) \\
+ \mathrm{ZAWW} &= 1 + \frac{L_v(T)}{c_{ph}} r_{sw}'(T) \\
+ \mathrm{ZDELT2} &= \frac{L_v(T)}{c_{ph}} \frac{r_{sw}'(T)}{1 + \frac{L_v(T)}{c_{ph}} r_{sw}'(T)} \frac{1}{T} \left[ \frac{-2 \beta_w + \gamma_w T}{\beta_w - \gamma_w T} + \left( \frac{\beta_w}{T} - \gamma_w \right) \left( 1 + \frac{2 M_d r_{sw}(T)}{M_v} \right)\right] \\
+ &= \Delta_2 \\
+ \mathrm{ZDELT1} &= \Delta_1 \quad \text{(with $r_v = $ ZRVS * ZDT to convert a tendency into a mixing ratio)}\\
+ \mathrm{ZCND} &= \Delta_1 \left( 1 + \frac{1}{2} \Delta_1 \Delta_2 \right) \frac{c_{ph}}{L_v(T)} \frac{1}{\Delta t}
+\end{align}
+
+\subsubsection{Where $r_c>0$ and $r_i>0$}
+
+The rate of change of $r_i$ and $r_c$ is given by Eq. (\ref{mixing-ratio-evol}), where $S_i$, $A_i$, $c'=N_{Sc,v}^{1/3} \left(\frac{\rho_0}{\rho_d}\right)^{0.2} \left(\frac{c \rho_d}{\eta}\right)^{1/2} $ and the moments of the ice crystals size distribution all depend on time $t$.
+
+The adjustment procedure is based on the treatment of simultaneous deposition/condensation of water vapour on ice/droplets by \citet{Reisin1996}. For a $\Delta t$ timestep, instead of assuming a constant deposition/condensation rate, we compute the new mass mixing ratio by integrating the previous equation:
+\begin{equation}
+ r_i(t + \Delta t) - r_i(t) = \int_t^{t + \Delta t} \frac{\mathrm{d}r_i}{\mathrm{d}t} (u) \mathrm{d}u
+\end{equation}
+
+As in \citet{Reisin1996}, we use in the following $\Delta S_i = r_{si} S_i$, and assume that everything else varies slowly with time (therefore assuming that $r_{si}$ has only small variations with time, but not small enough to be neglected in their Eq.\ (B5), Appendix B). Using also $\bar{f}_1=0$ (for both ice crystals and cloud droplets):
+\begin{align}
+ r_i(t + \Delta t) - r_i(t) &= N_i ~ 4\pi ~ C_1 ~ A_i^{-1} r_{si}^{-1} ~ \Bigg( \bar{f_0} M(1) + \bar{f_2} c'^2 M(d+2) \Bigg) \int_t^{t + \Delta t} \Delta S_i(u) \mathrm{d}u \\
+ \frac{r_i(t + \Delta t) - r_i(t)}{\Delta t} &= N_i ~ 4\pi ~ C_1 ~ A_i^{-1} r_{si}^{-1} ~ \Bigg( \bar{f_0} M(1) + \bar{f_2} c'^2 M(d+2) \Bigg) \frac{1}{\Delta t} \int_t^{t + \Delta t} \Delta S_i(u) \mathrm{d}u \label{update-ri}
+\end{align}
+
+The expressions for the integrals of $\Delta S_i$ and its counterpart $\Delta S_w$ are adapted from \citet{Reisin1996} to our configuration (using our representation based on particle diameter instead of particle mass), so that their parameters $A$, $B$, $P$ and $R$ become:
+\begin{align}
+ A_w^\bullet &= 1 + \frac{L_v}{c_{ph}} \frac{\mathrm{d}r_{sw}}{\mathrm{d}T} \\
+ A_i^\bullet &= 1 + \frac{L_v}{c_{ph}} \frac{\mathrm{d}r_{si}}{\mathrm{d}T} \\
+ B_w^\bullet &= 1 + \frac{L_s}{c_{ph}} \frac{\mathrm{d}r_{sw}}{\mathrm{d}T} \\
+ B_i^\bullet &= 1 + \frac{L_s}{c_{ph}} \frac{\mathrm{d}r_{si}}{\mathrm{d}T}
+\end{align}
+\begin{align}
+ R_w &= A_w^\bullet ~ N_c ~ 4\pi ~ C_{1c} ~ A_w^{-1} r_{sw}^{-1} ~ \Bigg( \bar{f_{0c}} M_c(1) + \bar{f_{2c}} c'^2 M_c(d_c+2) \Bigg) \\
+ R_i &= B_i^\bullet ~ N_i ~ 4\pi ~ C_{1i} ~ A_i^{-1} r_{si}^{-1} ~ \Bigg( \bar{f_{0i}} M_i(1) + \bar{f_{2i}} c'^2 M_i(d_i+2) \Bigg) \\
+ P_w &= A_i^\bullet ~ N_c ~ 4\pi ~ C_{1c} ~ A_w^{-1} r_{sw}^{-1} ~ \Bigg( \bar{f_{0c}} M_c(1) + \bar{f_{2c}} c'^2 M_c(d_c+2) \Bigg) \\
+ P_i &= B_w^\bullet ~ N_i ~ 4\pi ~ C_{1i} ~ A_i^{-1} r_{si}^{-1} ~ \Bigg( \bar{f_{0i}} M_i(1) + \bar{f_{2i}} c'^2 M_i(d_i+2) \Bigg) 
+\end{align}
+
+So that we can eventually use Eqs.\ (32) and (33) from \citet{Reisin1996}:
+\begin{align}
+ \frac{1}{\Delta t} \int_t^{t + \Delta t} \Delta S_w(u) \mathrm{d}u &= \Delta S_w - \frac{R_w \Delta S_w + P_i \Delta S_i}{R_w + R_i} \left[ 1 - \frac{1 - e^{-(R_w + R_i)\Delta t}}{(R_w + R_i)\Delta t} \right] \\
+ \frac{1}{\Delta t} \int_t^{t + \Delta t} \Delta S_i(u) \mathrm{d}u &= \Delta S_i - \frac{P_w \Delta S_w + R_i \Delta S_i}{R_w + R_i} \left[ 1 - \frac{1 - e^{-(R_w + R_i)\Delta t}}{(R_w + R_i)\Delta t} \right] \label{DeltaSi}
+\end{align}
+
+\paragraph{Implementation in LIMA}
+~\\
+All computations are led in the order presented below in \emph{lima\_adjust.f90}.
+
+First, computations are performed to bring the water vapor back to saturation with respect to liquid water, assuming that both cloud droplets and ice crystals contribute to this adjustment. That is, the absolute values of the rates of change $\dot{r}_i$ and $\dot{r}_i$ are computed, from which the respective contribution of ice and cloud water is deduced. The equilibrium is sought using the same method as in the case when $r_c>0$ and $r_i=0$, and the mass of water vapor exchanged is distributed to or taken from each species according to their respective contribution. Note that during this stage, both cloud droplets and ice crystals are evaporated if $S_w<0$, and both grow by deposition if $S_w>0$, no matter what $S_i$ is.
+
+\begingroup
+\allowdisplaybreaks
+\begin{align}
+ \mathrm{ZLVFACT} &= \frac{L_v(T)}{c_{ph}} \\
+ \mathrm{ZLSFACT} &= \frac{L_s(T)}{c_{ph}} \\
+ \mathrm{ZKA} &= k_a \\
+ \mathrm{ZDV} &= D_v \\
+ \mathrm{ZCJ} &= c'/\sqrt c \\
+ \mathrm{ZZW} &= e_{sw}(T) \\
+ \mathrm{ZRVSATW} &= r_{sw}(T) \\
+ \mathrm{ZRVSATW\_PRIME} &= r_{sw}'(T) \\
+ \mathrm{ZDELTW} &= |r_v - r_{sw}(T)| = |\Delta S_w| \\
+ \mathrm{ZAW} &= A_w \\
+ \mathrm{ZZW} &= e_{si}(T) \\
+ \mathrm{ZRVSATI} &= r_{si}(T) \\
+ \mathrm{ZRVSATI\_PRIME} &= r_{si}'(T) \\
+ \mathrm{ZDELTI} &= |r_v - r_{si}(T)| = |\Delta S_i| \\
+ \mathrm{ZAI} &= A_i \\
+ \mathrm{ZZW} &= \lambda_c \\
+ \mathrm{ZITW} &= \frac{1}{\mathrm{ZRVSATW} ~ \mathrm{ZAW}} \mathrm{ZCCT} \bigg[\mathrm{X0CNDC} ~ \frac{1}{\lambda} + \mathrm{X2CNDC} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\ 
+ &= \frac{R_w}{A_w^\bullet} = \frac{P_w}{A_i^\bullet} = \frac{\dot{r}_c}{\Delta S_w} \\
+ \mathrm{ZZW} &= \lambda_i \\
+ \mathrm{ZITI} &= \frac{1}{\mathrm{ZRVSATI} ~ \mathrm{ZAI}} \mathrm{ZCIT} \bigg[\mathrm{X0DEPI} ~ \frac{1}{\lambda} + \mathrm{X2DEPI} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\ 
+ &= \frac{R_i}{B_i^\bullet} = \frac{P_i}{B_w^\bullet} = \frac{\dot{r}_i}{\Delta S_i} \\
+ \mathrm{ZAII} &= \mathrm{ZITI} ~ \mathrm{ZDELTI} = |\dot{r}_i| \\
+ \mathrm{ZFACT} &= \frac{L_v |\dot{r}_c| + L_s |\dot{r}_i|}{c_{ph} (|\dot{r}_c| + |\dot{r}_i|)} = \frac{\hat{L}}{c_{ph}} \\
+ \mathrm{ZAWW} &= 1 + r_{sw}' \frac{\hat{L}}{c_{ph}} \\
+ \mathrm{ZDELT2} &= \frac{\hat{L}}{c_{ph}} \frac{r_{sw}'}{1 + \frac{\hat{L}}{c_{ph}} r_{sw}'} \frac{1}{T} \left[ \frac{-2 \beta_w + \gamma_w T}{\beta_w - \gamma_w T} + \left( \frac{\beta_w}{T} - \gamma_w \right) \left( 1 + \frac{2 M_d r_{sw}}{M_v} \right)\right] \\
+ &= \Delta_2 \quad \text{(see the case when $r_c>0$ and $r_i=0$)}\\
+ \mathrm{ZDELT1} &= \frac{\hat{L}}{c_{ph}} \frac{(r_{sw}-r_v)}{1 + \frac{\hat{L}}{c_{ph}} r_{sw}'} \\
+ &= \Delta_1 \quad \text{(see the case when $r_c>0$ and $r_i=0$)}\\
+ \mathrm{ZZW} &= - \Delta_1 \left( 1 + \frac{1}{2} \Delta_1 \Delta_2 \right) \frac{c_{ph}}{\hat{L}} \frac{1}{\Delta t} \\
+ \mathrm{ZCND} &= \mathrm{ZZW} \frac{|\dot{r}_c|}{|\dot{r}_c| + |\dot{r}_i|} \\
+ \mathrm{ZDEP} &= \mathrm{ZZW} \frac{|\dot{r}_i|}{|\dot{r}_c| + |\dot{r}_i|}
+ \end{align}
+ At this point, all sources (ZRVS, ZRCS, ZRIS, ZTHS) are updated to start the adjustment using \citet{Reisin1996} from atmospheric conditions exactly at liquid water saturation, and the computations resume by first performing an implicit adjustment at ice saturation only where conditions are undersaturated with respect to ice (inside the WHERE(ZRVS(:)$*$ZDT$<$ZRVSATI(:)) loop). Then begins the real adjustment procedure:
+ \begin{align}
+ \mathrm{ZZT} &= T \\
+ \mathrm{ZLVFACT} &= \frac{L_v(T)}{c_{ph}} \\
+ \mathrm{ZLSFACT} &= \frac{L_s(T)}{c_{ph}} \\
+ \mathrm{ZKA} &= k_a \\
+ \mathrm{ZDV} &= D_v \\
+ \mathrm{ZCJ} &= c'/\sqrt c \\
+ \mathrm{ZZW} &= e_{sw}(T) \\
+ \mathrm{ZRVSATW} &= r_{sw}(T) \\
+ \mathrm{ZRVSATW\_PRIME} &= r_{sw}'(T) \\
+ \mathrm{ZDELTW} &= r_v - r_{sw}(T) = \Delta S_w \\
+ \mathrm{ZAW} &= A_w \\
+ \mathrm{ZZW} &= e_{si}(T) \\
+ \mathrm{ZRVSATI} &= r_{si}(T) \\
+ \mathrm{ZRVSATI\_PRIME} &= r_{si}'(T) \\
+ \mathrm{ZDELTI} &= r_v - r_{si}(T) = \Delta S_i \\
+ \mathrm{ZAI} &= A_i \\
+ \mathrm{ZZW} &= \lambda_c \\
+ \mathrm{ZITW} &= \frac{1}{\mathrm{ZRVSATW} ~ \mathrm{ZAW}} \mathrm{ZCCT} \bigg[\mathrm{X0CNDC} ~ \frac{1}{\lambda} + \mathrm{X2CNDC} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\ 
+ &= \frac{R_w}{A_w^\bullet} = \frac{P_w}{A_i^\bullet} = \frac{\dot{r}_c}{\Delta S_w} \\
+ \mathrm{ZZW} &= \lambda_i \\
+ \mathrm{ZITI} &= \frac{1}{\mathrm{ZRVSATI} ~ \mathrm{ZAI}} \mathrm{ZCIT} \bigg[\mathrm{X0DEPI} ~ \frac{1}{\lambda} + \mathrm{X2DEPI} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\ 
+ &= \frac{R_i}{B_i^\bullet} = \frac{P_i}{B_w^\bullet} = \frac{\dot{r}_i}{\Delta S_i}
+ \end{align}
+ 
+ Then, parameters $A$ and $B$ adapted from \citet{Reisin1996} are computed, so that we can get $P$ and $R$ by $\mathrm{ZAWW} * \mathrm{ZITW} = R_w$, $\mathrm{ZAIW} * \mathrm{ZITW} = P_w$, $\mathrm{ZAWI} * \mathrm{ZITI} = P_i$ and $\mathrm{ZAII} * \mathrm{ZITI} = R_i$:
+ \begin{align}
+ \mathrm{ZAWW} &= A_w^\bullet \\
+ \mathrm{ZAIW} &= A_i^\bullet \\
+ \mathrm{ZAWI} &= B_w^\bullet \\
+ \mathrm{ZAII} &= B_i^\bullet 
+ \end{align}
+ 
+ To perform the intergration:
+ \begin{align}
+ \mathrm{ZZW} &= R_w + R_i \\
+ \mathrm{ZFACT} &= \frac{1}{R_w + R_i} \left[ 1 - \frac{1 - e^{-(R_w + R_i)\Delta t}}{(R_w + R_i)\Delta t} \right] \\
+ \mathrm{ZCND} &= \mathrm{ZITW} [\Delta S_w - (R_w \Delta S_w + P_i \Delta S_i) ~ \mathrm{ZFACT}] \\
+ &= \frac{r_c(t + \Delta t) - r_c(t)}{\Delta t} \\
+ \mathrm{ZDEP} &= \mathrm{ZITI} [\Delta S_i - (P_w \Delta S_w + R_i \Delta S_i) ~ \mathrm{ZFACT}] \\
+ &= \frac{r_i(t + \Delta t) - r_i(t)}{\Delta t}
+\end{align}
+
+where ZCND and ZDEP are computed following Eqs.\ (\ref{update-ri}) and (\ref{DeltaSi}) for $r_i$, and the similar relations for $r_c$. At this point, all sources (ZRVS, ZRCS, ZRIS, ZTHS) are updated. One last step in the adjustment procedure performs an adjustment to ice saturation in regions where conditions are undersaturated with respect to ice.
+\endgroup
+ 
+\subsubsection{Where $r_c=0$ and $r_i>0$}
+
+Using the same equations as for the previous case ($r_c>0$ and $r_i>0$) but using the special condition $r_c=0$, we get the following equation for $r_i$ (from Eqs.\ (\ref{update-ri}) and (\ref{DeltaSi})):
+\begin{align}
+ \frac{r_i(t + \Delta t) - r_i(t)}{\Delta t} &= N_i ~ 4\pi ~ C_1 ~ A_i^{-1} r_{si}^{-1} ~ \Bigg( \bar{f_0} M(1) + \bar{f_2} c'^2 M(d+2) \Bigg) \frac{1}{\Delta t} \int_t^{t + \Delta t} \Delta S_i(u) \mathrm{d}u \\
+ \frac{1}{\Delta t} \int_t^{t + \Delta t} \Delta S_i(u) \mathrm{d}u &= \Delta S_i - \frac{R_i \Delta S_i}{R_i} \left[ 1 - \frac{1 - e^{-R_i\Delta t}}{R_i\Delta t} \right] \\
+ &= \Delta S_i ~ \frac{1 - e^{-R_i\Delta t}}{R_i\Delta t}
+\end{align}
+
+\paragraph{Implementation in LIMA}
+~\\
+In \emph{lima\_adjust.f90}:
+\begin{align}
+ \mathrm{ZLSFACT} &= \frac{L_s(T)}{c_{ph}} \\
+ \mathrm{ZKA} &= k_a \\
+ \mathrm{ZDV} &= D_v \\
+ \mathrm{ZCJ} &= c'/\sqrt c \\
+ \mathrm{ZZW} &= e_{si}(T) \\
+ \mathrm{ZRVSATI} &= r_{si}(T) \\
+ \mathrm{ZRVSATI\_PRIME} &= r_{si}'(T) \\
+ \mathrm{ZDELTI} &= r_v - r_{si}(T) \\
+ \mathrm{ZAI} &= A_i \\
+ \mathrm{ZZW} &= \lambda_i \\
+ \mathrm{ZITI} &= \frac{1}{\mathrm{ZRVSATI} ~ \mathrm{ZAI}} \mathrm{ZCIT} \bigg[\mathrm{X0DEPI} ~ \frac{1}{\lambda} + \mathrm{X2DEPI} ~ \mathrm{ZCJ}^2 ~ \frac{1}{\lambda^{d+2}}\bigg]  \\ 
+ \mathrm{ZAII} &= 1 + \frac{L_s(T)}{c_{ph}} r_{si}'(T) \\
+ \mathrm{ZZW} &= R_i ~ \Delta t \\
+ \mathrm{ZDEP} &= \mathrm{ZITI} ~ \Delta S_i ~ \frac{1 - e^{-R_i\Delta t}}{R_i\Delta t} \\
+ &= \frac{r_i(t + \Delta t) - r_i(t)}{\Delta t}
+\end{align}
+
+At this point, all sources (ZRVS, ZRIS, ZTHS) are updated. This explicit adjustment is followed by an implicit sublimation of ice crystals to reach ice saturation where conditions are undersaturated with respect to ice.
+
+
+
+
+\section{Mixed-phase collection processes}
+
+These processes are parameterized as in ICE3, specific LIMA documentation not written yet.
+
+
+
+
+\section{Sedimentation}
+
+\subsection{2-moment sedimentation}
+
+The vertical discretization in Meso-NH has mass points between the flux points, so $r(k)$ and $N(k)$ represent the mass mixing ratio and the number concentration in the grid cell between $k$ and $k+1$. The grid cell height is $z(k+1)-z(k)$. 
+
+The splitted sedimentation uses a shorter time step $t_{split}$ so that hydrometeors cannot fall through more than one grid cell at a time.
+
+Let's consider the grid cell between levels $k$ and $k+1$, and write $V(D)$, $m(D)$ and $n(k,D)$ the terminal fall speed (m~s$^{-1}$), mass mixing ratio (kg) and number concentration (kg$^{-1}$) of hydrometeors with a diameter $D$ at level $k$. With $i$ and $j$ the grid cell dimensions along $x$ and $y$, hydrometeors with a diameter $D$ sedimenting from the grid cell $k$ to the grid cell $k-1$ are those contained in a volume ($i, j, V(D)t_{split}$). Thus, the mass and number sedimentation for these hydrometeors is:
+\begin{align}
+ n_{sedim}(k,D) &= i~j~V(D)t_{split}~n(k,D)\rho_d(k)      \\
+ m_{sedim}(k,D) &= i~j~V(D)t_{split}~n(k,D)\rho_d(k)~m(D)
+\end{align}
+
+Then, for all hydrometeors:
+\begin{align}
+ \label{sedim-n}
+ n_{sedim}(k) &= \int_D i~j~V(D)t_{split}~n(k,D)\rho_d(k)      \\
+ \label{sedim-m}
+ m_{sedim}(k) &= \int_D i~j~V(D)t_{split}~n(k,D)\rho_d(k)~m(D)
+\end{align}
+
+The number (no units) and mass ($kg$) evolution at level $k$ is:
+\begin{align}
+ \label{bilan-n}
+ n_{ap}(k) &= n_{av}(k) - n_{sedim}(k) + n_{sedim}(k+1)  \\
+ \label{bilan-m}
+ m_{ap}(k) &= m_{av}(k) - m_{sedim}(k) + m_{sedim}(k+1)
+\end{align}
+
+$n_{ap}(k)$ and $m_{ap}(k)$ are related to the prognostic variables $N_{ap}(k)$ ($kg^{-1}$) and $r_{ap}(k)$ ($kg.kg^{-1}$):
+\begin{align}
+ n_{ap}(k) &= N_{ap}(k) ~ i ~ j ~ (z(k+1)-z(k)) ~ \rho_d(k)  \\
+ m_{ap}(k) &= r_{ap}(k) ~ i ~ j ~ (z(k+1)-z(k)) ~ \rho_d(k)
+\end{align}
+
+Substituting these expressions and Eqs.\ (\ref{sedim-n}) and (\ref{sedim-m}) in Eqs.\ (\ref{bilan-n}) and (\ref{bilan-m}), and writing $h(k)=z(k+1)-z(k)$, we get:
+\begin{align}
+ N_{ap}(k) h(k) \rho_d(k) &= N_{av}(k) h(k) \rho_d(k) %
+          - \int_D V(D)t_{split}n(k,D)\rho_d(k) \nonumber \\
+          & \qquad \qquad \qquad \qquad + \int_D V(D)t_{split}n(k+1,D)\rho_d(k+1)  \\
+ r_{ap}(k) h(k) \rho_d(k) &= r_{av}(k) h(k) \rho_d(k) %
+          - \int_D V(D)t_{split}n(k,D)\rho_d(k)m(D) \nonumber \\
+          & \qquad \qquad \qquad \qquad + \int_D V(D)t_{split}n(k+1,D)\rho_d(k+1)m(D)
+\end{align}
+Then
+\begin{align}
+ \label{evol-N}
+ N_{ap}(k)&= N_{av}(k) + \frac{tsplit}{h(k)} \left( %
+          - \int_D V(D)n(k,D) %
+          + \frac{\rho_d(k+1)}{\rho_d(k)} \int_D V(D)n(k+1,D) \right)  \\
+ \label{evol-r}
+ r_{ap}(k) &= r_{av}(k)  + \frac{tsplit}{h(k)} \left( %
+          - \int_D V(D)n(k,D)m(D) %
+          + \frac{\rho_d(k+1)}{\rho_d(k)} \int_D V(D)n(k+1,D)m(D) \right)
+\end{align}
+
+The hydrometeors size distribution follows a generalized gamma law, which parameters $\alpha$ and $\nu$ are fixed. $\lambda$ depends on $N$ et $r$, and therefore also depends on $k$. Using the expressions for $V(D)$, $m(D)$, $r$, $N$ and $\lambda$ found in the description of LIMA hydrometeors, we derive:
+\begin{equation}
+ \int_D V(D)~n(k,D) = c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} ~ \frac{N(k)}{\lambda(k)^d}  ~ \frac{\Gamma(\nu+d/\alpha)}{\Gamma(\nu)}
+\end{equation}
+and
+\begin{align}
+ \int_D V(D)~n(k,D)~m(D) &= a~\left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} c~\frac{N(k)}{\lambda(k)^{d+b}}~\frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)}   \\
+ &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} ~ a \frac{N(k)}{\lambda(k)^b} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} \\
+ \label{integ-Vnm}
+ &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} ~ r(k)
+\end{align}
+
+\paragraph{Terminal fall speed of cloud droplets correction}
+~\\
+Following \citet[][Chapter 10.3.6, Eq.\ (10-139)]{Pruppacher1997}, the terminal fall speed of small cloud droplets must be corercted by a factor first introduced by \citet{Cunningham1910}:
+\begin{equation}
+ V(D) = (1 + 1.26 \frac{\lambda_a}{D/2}) V(D)
+\end{equation}
+where
+\begin{equation}
+ \lambda_a = \lambda_{a,0} \frac{p_0}{p} \frac{T}{T_0}
+\end{equation}
+with $\lambda_{a,0} = 6.6~10^{-8}$~cm, $p_0 = 1013.25$~mb and $T_0 = 293.15$~K. In LIMA, this corrective factor is computed using the mean cloud droplet diameter:
+\begin{equation}
+ D_{c,m} = \frac{1}{\lambda_c} \frac{\Gamma(\nu_c + 1/\alpha_c)}{\Gamma(\nu_c)}
+\end{equation}
+
+\paragraph{Implementation dans LIMA}
+~\\
+In \emph{ini\_lima\_warm.f90}, the following variables are initialized:
+\begin{align}
+ \mathrm{XFSEDRC} &= c ~ \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} ~ \rho_{00}^{0.4} \\
+ \mathrm{XFSEDCC} &= c ~ \frac{\Gamma(\nu+d/\alpha)}{\Gamma(\nu)} ~ \rho_{00}^{0.4}
+\end{align}
+
+In \emph{lima\_warm\_sedim.f90}:
+\begin{align}
+ \mathrm{ZRAY}(k) &= D_{c,m} = \frac{1}{2} \frac{1}{\lambda_c} \frac{\Gamma(\nu_c + 1/\alpha_c)}{\Gamma(\nu_c)} \\
+ \mathrm{ZCC}(k) &= (1 + 1.26 \frac{\lambda_a}{D_{c,m}/2}) \quad \mathrm{Cunningham~correction~factor~(cloud~droplets~only)} \\
+ \mathrm{ZW}(k) &= \frac{t_{split}}{z(k+1)-z(k)} \\
+ \mathrm{ZLBD\bullet}(k) &= \lambda = \left(a ~ \frac{N(k)}{r(k)} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{1/b} \\
+ \mathrm{ZWSEDR}(k) &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} ~ r(k)  ~ \rho_d(k) \\
+ \mathrm{ZWSEDC}(k) &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} ~ \frac{1}{\lambda(k)^d}  ~ \frac{\Gamma(\nu+d/\alpha)}{\Gamma(\nu)} ~ N(k) ~ \rho_d(k)
+\end{align}
+
+allow to update the number concentrations and mass mixing ratios using Eqs.\ (\ref{evol-N}) et (\ref{evol-r}).
+
+\subsection{1-moment sedimentation}
+
+For 1-moment species (snow, graupel, hail), using the equations for $r$, $N$, and $\lambda$ (see the description of hydrometeors), Eq.\ (\ref{integ-Vnm}) becomes:
+\begin{align}
+ \int_D V(D)~n(k,D)~m(D) &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} ~ r(k) \\
+ &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} a C \lambda(k)^{x}\frac{1}{\lambda(k)^b} \frac{\Gamma(\nu + b/\alpha)}{\Gamma(\nu)} \\
+ &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \lambda(k)^{x-b-d} \\
+ \label{evol-r-1m}
+ &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}}
+\end{align}
+
+\paragraph{Implementation in LIMA}
+~\\
+In \emph{ini\_lima\_cold\_mixed.f90}, the following variables are initialized:
+\begin{align}
+ \mathrm{XEXSED\bullet} &= \frac{b+d-x}{b-x} \\
+ \mathrm{XFSED\bullet} &= caC \rho_{00}^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( aC \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{x-b-d}{b-x}}
+\end{align}
+
+In \emph{lima\_cold\_sedimentation.f90}:
+\begin{align}
+ \mathrm{ZW}(k) &= \frac{t_{split}}{z(k+1)-z(k)} \\
+ \mathrm{ZWSEDR}(k) &= XFSED\bullet ~ \left(\frac{1}{r(k)}\right)^{\frac{x-b-d}{b-x}} \left(\frac{1}{\rho_d(k)}\right)^{0.4} \\
+ &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{r(k)} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}} ~ \rho_d(k)
+\end{align}
+allow to update the mass mixing ratios using Eqs.\ (\ref{evol-r}) and (\ref{evol-r-1m}).
+
+
+
+
+\section{List of symbols}
+\setlongtables
+\begin{longtable}{lll}
+$A_i$ & m~s~kg$^{-1}$ & Thermodynamical function, deposition/sublimation \\
+$A_w$ & m~s~kg$^{-1}$ & Thermodynamical function, condensation/evaporation \\
+$a$ & kg~m$^{-b}$ & Parameter for the mass-diameter relationship \\
+$B$ & - & Beta function \\
+$b$ & - & Parameter for the mass-diameter relationship \\
+$C$ & ? & Parameter for the $N=C \lambda^x$ relationship \\
+$C$ & m & Impact of the ice crystal shape on deposition of vapor \\
+$C_{1}$ & - & Parameter for the relationship ($C=C_{1}D$)\\
+$C_i$ & J~kg$^{-1}~K^{-1}$ & Ice crystal heat capacity \\
+$C_m$ & kg$^{-1}$ & Aerosol mode m parameter for the activation spectrum \\
+$c$ & m$^{1-d}~s^{-1}$ & Parameter for the fall-speed-diameter relationship \\
+$c_{pd}$ & J~kg$^{-1}$~K$^{-1}$ & Heat capacity of dry air at constant pressure \\
+$c_{ph}$ & J~kg$^{-1}$~K$^{-1}$ & $=c_{pd} + r_v c_{pv} + (r_c + r_r) c_{pw} $ \\
+$c_{pi}$ & J~kg$^{-1}$~K$^{-1}$ & Heat capacity of ice at constant pressure \\
+$c_{pv}$ & J~kg$^{-1}$~K$^{-1}$ & Heat capacity of water vapor at constant pressure \\
+$c_{pw}$ & J~kg$^{-1}$~K$^{-1}$ & Heat capacity of liquid water at constant pressure \\
+$D$ & m & Diameter \\
+$\bar{D}$ & m & Mean volume diameter \\
+$D_{lim,is}$ & m & Limit diameter for snow $\leftrightarrow$ ice conversion \\
+$D_m$ & m & Aerosol mode m size distribution modal diameter \\
+$D_v$ & m$^2$~s$^{-1}$ & Diffusivity of water vapor in the air \\
+$D_X$ & m & IFN type X size distribution modal diameter \\
+$d$ & - & Parameter for the fall-speed-diameter relationship \\
+$e_{sw}$ & Pa & Saturation vapor pressure over water \\
+$e_{si}$ & Pa & Saturation vapor pressure over ice \\
+$F$ & - & Hypergeometric function (for CCN activation spectrum) \\
+$\bar{f}$ & - & Ventilation factor (deposition/condensation/sublimation/evaporation) \\
+$\bar{f}_0,~\bar{f}_1,~\bar{f}_2$ & - & (to compute the ventilation factor) \\
+$G$ & m$^2$~s$^{-1}$ & Thermodynamical function (CCN activation, rain evaporation) \\
+$g$ & m~s$^{-2}$ & Gravitational acceleration \\
+$K$ & m$^{3}$~s$^{-1}$ & Collection Kernel (droplets and drops coalescence) \\
+$K_1$ & s$^{-1}$ & (To compute K) \\
+$K_2$ & m$^{-3}$~s$^{-1}$ & (To compute K) \\
+$k_0$ & & Aerosol reference parameter for the activation spectrum \\
+$k_a$ & kg~m~s$^{-3}$~K$^{-1}$ & Heat conductivity of air \\
+$k_B$ & m$^2$~kg~s$^{-2}$~K$^{-1}$ & Boltzmann's constant \\
+$k_m$ & & Aerosol mode m parameter for the activation spectrum \\
+$L_s$ & J~kg$^{-1}$ & Latent heat of sublimation \\
+$L_v$ & J~kg$^{-1}$ & Latent heat of vaporization \\
+$M(p)$ & - & p-order moment of the particle size distribution \\
+$M_d$ & kg~mol${-1}$ & Molar mass of dry air \\
+$M_v$ & kg~mol${-1}$ & Molar mass of water vapor \\
+$m$ & kg & Mass \\
+$N_A$ & mol$^{-1}$ & Avogadro's number \\
+$N_c$ & kg$^{-1}$ & Number concentration of cloud droplets \\
+$N_i$ & k$^{-1}$ & Number concentration of pristine ice crystals \\
+$N_{i\rightarrow s}$ & kg$^{-1}$ & Number concentration of pristine ice crystals transformed into snow\\
+$N_m$ & kg$^{-1}$ & Total number concentration of aerosols (mode m)\\
+$N_m^{acti}$ & kg$^{-1}$ & Number concentration of already activated aerosols (CCN) (mode m) \\
+$N_m^{free}$ & kg$^{-1}$ & Number concentration of free aerosols (mode m) \\
+$N_m^{nucl}$ & kg$^{-1}$ & Number conc. of already nucleated aerosols (IFN or coated IFN) (mode m) \\
+$N_m^{CCN}$ & kg$^{-1}$ & Number concentration of activable CCN for aerosol mode m \\
+$N_X^{IFN}$ & kg$^{-1}$ & Number concentration of activable IFN for aerosol type X \\
+$N_r$ & kg$^{-1}$ & Number concentration of rain drops \\
+$N_{Re}$ & - & Reynolds number \\
+$N_{Sc,v}$ & - & Schmidt number for water vapor \\
+$n_i(D)$ & kg$^{-1}$~m$^{-1}$ & Number conc. of pristine ice crystals with $D < diameter < D+\mathrm{d}D$\\
+$n_m(D)$ & kg$^{-1}$~m$^{-1}$ & Number conc. of aerosols (mode m) with $D < diameter < D+\mathrm{d}D$\\
+$n_m^{CCN}(S)$ & $$kg$^{-1}$ & Number conc. of activable CCN (mode m) for a supersaturation $S$ \\
+$n^{CCN}(S)$ & k$^{-1}$ & Total number conc. of activable CCN for a supersaturation $S$ \\
+$P$ & Pa & Pressure \\
+$R$ & J~mol$^{-1}$~K$^{-1}$ & Gas constant ($=N_Ak_B$) \\
+$R_d$ & J~kg$^{-1}$~K$^{-1}$ & Specific gas constant for dry air ($=R/M_d$) \\
+$R_v$ & J~kg$^{-1}$~K$^{-1}$ & Specific gas constant for water vapor ($=R/M_v$) \\
+$r$ & m & Radius \\
+$r_0$ & m & Aerosol reference radius for the activation spectrum\\
+$r_c$ & kg~kg$^{-1}$ & Cloud droplets mixing ratio \\
+$r_g$ & kg~kg$^{-1}$ & Graupel mixing ratio \\
+$r_h$ & kg~kg$^{-1}$ & Hail mixing ratio \\
+$r_i$ & kg~kg$^{-1}$ & Ice crystals mixing ratio \\
+$r_m$ & m & Aerosol mode m size distribution modal radius \\
+$r_r$ & kg~kg$^{-1}$ & Rain mixing ratio \\
+$r_s$ & kg~kg$^{-1}$ & Snow mixing ratio \\
+$r_{sw}$ & kg~kg$^{-1}$ & Saturation vapor mixing ratio over water \\
+$r_{si}$ & kg~kg$^{-1}$ & Saturation vapor mixing ratio over ice \\
+$r_v$ & kg~kg$^{-1}$ & Water vapor mixing ratio \\
+$S_w$ & - & Supersaturation over liquid water ($S=0.01$ for a 1\% supersaturation) \\
+$S_\%$ & - & $S_w$ in percentage ($S_\%=1$ for a 1\% supersaturation) \\
+$S_i$ & - & Supersaturation over ice ($S_i=0.01$ for a 1\% supersaturation) \\
+$S_i^w$ & - & Supersaturation over ice at water saturation ($S_i=0.01$ for a 1\% supersat.) \\
+$S_w^{max}$ & - & Diagnosed maximum supersaturation ($S_{max}=0.01$ for a 1\% supersat.) \\
+$T$ & K & Temperature \\
+$T_0$ & K & Aerosol reference activation T (for the activation spectrum) \\
+$T_m$ & K & Aerosol mode m expected activation T (for the activation spectrum) \\
+$t$ & s & Time \\
+$v$ & m~s$^{-1}$ & Hydrometeor terminal fall speed \\
+$w$ & m~s$^{-1}$ & Vertical wind speed \\
+$x$ & - & Parameter for the $N=C \lambda^x$ relationship \\
+$\alpha_\bullet^\bullet$ & & Parameters to compute the aerosol activation spectrum \\
+$\alpha$ & - & Parameter for the hydrometeors size distributions \\
+$\beta_0$ & & Aerosol reference parameter for the activation spectrum \\
+$\beta_m$ & & Aerosol mode m parameter for the activation spectrum \\
+$\Gamma$ & - & Gamma function \\
+$\Delta N_m^{acti}(t)$ & kg$^{-1}$ & Number conc. aerosols activated at t (CCN) (mode m) \\
+$\Delta N_m^{nucl}(t)$ & kg$^{-1}$ & Number conc. aerosols nucleated at t (IFN or coated IFN) (mode m) \\
+$\epsilon_0$ & & Aerosol reference solubility (for the activation spectrum) \\
+$\epsilon_m$ & & Aerosol mode m solubility (for the activation spectrum) \\
+$\eta$ & Pa~s & Dynamic viscosity of air \\
+$\lambda$ & m$^{-1}$ & Parameter for the hydrometeors size distributions \\
+$\mu_0$ & & Aerosol reference parameter for the activation spectrum \\
+$\mu_m$ & & Aerosol mode m parameter for the activation spectrum \\
+$\nu$ & - & Parameter for the hydrometeors size distributions \\
+$\rho_d$ & kg~m$^{-3}$ & Air density \\
+$\rho_i$ & kg~m$^{-3}$ & Ice density \\
+$\rho_w$ & kg~m$^{-3}$ & Liquid water density \\
+$\sigma_0$ & - & Aerosol reference size distribution modal width \\
+$\sigma$ & m$^2$ & Variance of the particle size distribution \\
+$\sigma_m$ & - & Aerosol mode m size distribution modal width \\
+$\sigma_X$ & - & IFN type X size distribution modal width \\
+$\psi_1$ & m$^{-1}$& Thermodynamical function for the evolution of S \\
+$\psi_2$ & - & Thermodynamical function for the evolution of S \\
+$\psi_3$ & K$^{-1}$ & Thermodynamical function for the evolution of S \\
+$\omega$ & m~s$^{-1}$ & Vertical velocity \\
+\end{longtable}
+
+\paragraph{Unit conversion}
+~\\
+J = kg~m$^2$~s$^{-2}$ \\
+Pa = kg~m$^{-1}$~s$^{-2}$ \\
+N = kg~m~s$^{-2}$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{btSect}{3-7-LimaMicrophysics}
+	\section{References}
+	\btPrintCited
+\end{btSect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
