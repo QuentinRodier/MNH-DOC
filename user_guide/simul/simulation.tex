@@ -2104,6 +2104,7 @@ They are included in the declarative module MODD\_ELEC\_DESCRn.
 Fortran name & Fortran type & default value \\
 \hline
 XFMOUT  &  array (real) &  8*192* 999.   \\
+XTSTEP\_OUTPUT & real & XUNDEF \\
 \hline
 \end{tabular}
 \end{center}
@@ -2114,7 +2115,8 @@ XFMOUT  &  array (real) &  8*192* 999.   \\
 XFMOUT(m,i) is an array of increments in seconds from the beginning
 of the segment to the instant where the i-th fields output on FM-files
 is realized by model "m"
-
+\index{XTSTEP\_OUTPUT!\innam{NAM\_FMOUT}} 
+XTSTEP\_OUTPUT is a constant timestep (in second)  between the output files. 
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2134,6 +2136,7 @@ Fortran name & Fortran type & default value \\
 LGEOST\_UV\_FRC      & logical      & FALSE \\
 LGEOST\_TH\_FRC      & logical      & FALSE \\
 LTEND\_THRV\_FRC     & logical      & FALSE \\
+LTEND\_UV\_FRC     & logical      & FALSE \\
 LVERT\_MOTION\_FRC   & logical      & FALSE \\
 LRELAX\_THRV\_FRC    & logical      & FALSE \\
 LRELAX\_UV\_FRC      & logical      & FALSE \\
@@ -2175,6 +2178,13 @@ humidity tendency.
 \item .FALSE. not active
 \end{itemize}
 \index{LTEND\_THRV\_FRC!\innam{NAM\_FRC}}
+
+\item LTEND\_UV\_FRC : flag to simulate a large scale wind tendency.
+\begin{itemize}
+\item .TRUE.  to integrate a tendency for $u$ and $v$.
+\item .FALSE. not active
+\end{itemize}
+\index{LTEND\_UV\_FRC!\innam{NAM\_FRC}}
 
 \item LVERT\_MOTION\_FRC : flag to simulate a large scale vertical transport
 of all the prognostic fields.
