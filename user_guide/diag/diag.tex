@@ -312,11 +312,9 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 \begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
-\multirow{5}{*}{LBLTOP}\index{LBLTOP!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
-&\multirow{4}{*}{.TRUE.} &{\tt HBLTOP}: [2D] Height of boundary layer top (m)\\\cline{3-3}
-& &{\tt KBLTOP}: [2D] Index of boundary layer top\\\cline{3-3}
-& &{\tt FREE\_ATM\_GR}: [2D] Gradient of free atmosphere above BL top (K/m)\\\cline{3-3}
-& &{\tt THV\_FREE}: [3D] Thetav above BL top (K)\\ \hline
+\multirow{3}{*}{CBLTOP}\index{CBLTOP!\innam{NAM\_DIAG}}&\textbf{'NONE'} & by default : no field \\\cline{2-3}
+&'RICHA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "bulk Richardson number method"\\\cline{2-3}
+&'THETA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "parcel method"\\\hline
 \hline
 \multirow{35}{*}{LVAR\_PR}\index{LVAR\_PR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{34}{*}{.TRUE.} & {\tt ACPRR }: [2D] (if LUSERR=T) \\
