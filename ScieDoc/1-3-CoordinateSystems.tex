@@ -1,6 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % March 2008, J.-P. Chaboureau, editorial corrections
 % June 2008,  E. Richard, adding the SLEVE coordinate part
+% January 2018, J.-P. Chaboureau, fixing the SLEVE formulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Coordinate Systems}
@@ -33,7 +34,8 @@ We use a system of curvilinear coordinates $\widehat{x},\widehat{y},
 The vertical coordinate $\hat z$ is a height-based 
 terrain-following coordinate which can be alternatively selected as 
 the classical Gal-Chen and Sommerville (1975) coordinate or as the 
-SLEVE coordinate more recently proposed by Sch\"ar et al. (2002).   
+SLEVE coordinate proposed by Sch\"ar et al. (2002)
+and modified by Leuenberger et al. (2010).   
 The Gal-Chen and Sommerville coordinate is defined by 
 \begin{equation}
 \hat z = H \frac{z-z_s}{H-z_s},
@@ -62,10 +64,11 @@ respectively. In practice, the large-scale contribution is obtained from the
 full topography by an appropriate smoothing operation. The SLEVE coordinate 
 is then defined by the relationship 
 \begin{equation}\label{slevecoord}
- z=  \hat z 
-+ z_{s1} \frac {\sinh [(H-\hat z)/s_1]} {\sinh [(H/s_1)]}
-+ z_{s2} \frac {\sinh [(H-\hat z)/s_2]} {\sinh [(H/s_2)]}
+ z=  \hat z
++ z_{s1} \frac {\sinh [(H/s_1)^n-(\hat z/s_1)^n]} {\sinh [(H/s_1)^n]}
++ z_{s2} \frac {\sinh [(H/s_2)^n-(\hat z/s_2)^n]} {\sinh [(H/s_2)^n]}
 \end{equation}
+where $n$ is a real number, set to 1.15.
 The second and the third terms in the right-hand side of (\ref{slevecoord})
 govern the decay with height of large- and small-scale terrain features 
 with the scale heights $s_1$ and $s_2$, respectively.
@@ -679,6 +682,10 @@ of the Navier-Stokes equations.
 Phillips, N. A., 1966:
 The equations of motion for a shallow rotating atmosphere and the "traditional approximation".
 {\it J. Atmos. Sci}, {\bf 23}, 626-628
+\decrefname
+Leuenberger, D., M. Koller, O. Fuhrer, and C. Sch\"ar, 2010:
+A Generalization of the SLEVE Vertical Coordinate.
+{\it Mon. Wea. Rev.,}, {\bf 138,} 3683–3689, https://doi.org/10.1175/2010MWR3307.1
 \decrefname
 Sch\"ar,  C., D. Leuenberger,  O. Fuhrer,  D. L\"uthi, and C. Girard, 2003:
 A new terrain-following vertical coordinate formulation
