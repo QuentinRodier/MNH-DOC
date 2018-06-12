@@ -184,6 +184,67 @@ LSPLIT\_WENO: Flag to split WENO momentum advection
 See section \ref{s:namblank} page \pageref{s:namblank} for details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BLOWSNOW }
+\index{NAM\_BLOWSNOW!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+
+LBLOWSNOW    & logical & FALSE     \\
+NBLOWSNOW3D  & integer & 2         \\
+NBLOWSNOW\_2D& integer & 3       \\
+XALPHA\_SNOW & real    &3 \\
+XRSNOW       & real    & 4\\
+\hline
+\end{tabular}
+\end{center}
+It contains the variables and types for the BLOWSNOW scheme.
+
+\begin{itemize}
+\item LBLOWSNOW : flag to active pronostic blowing snow 
+\index{LBLOWSNOW!\innam{NAM\_BLOWSNOW}}
+\item NBLOWSNOW3D : Number of blowing snow variables as scalar in Meso-NH. The curent version of the model use two scalars:
+number concentration and mass concentration (kg/kg)
+\index{NBLOWSNOW3D!\innam{NAM\_BLOWSNOW}}
+\item NBLOWSNOW\_2D :  Number of 2D blowing snow variables advected in Meso-NH. The curent version of the model advectes three variables: total number concentration in Canopy, total mass concentration in Canopy and equivalent concentration in the saltation layer
+
+\index{NBLOWSNOW\_2D!\innam{NAM\_BLOWSNOW}}
+\item XALPHA\_SNOW : Gamma distribution shape factor
+\index{XALPHA\_SNOW!\innam{NAM\_BLOWSNOW}}
+\item XRSNOW :Ratio between diffusion coefficient for scalar variables and blowing snow variables
+\begin{itemize}
+	\item RSNOW = KSCA/KSNOW = 4. (if Redelsperger-Sommeria (1981) used in ini\_cturb)
+	\item RSNOW = KSCA/KSNOW = 2.5 ( if Cheng-Canuto-Howard (2002) used in ini\_cturb)
+\end{itemize}
+\index{XRSNOW!\innam{NAM\_BLOWSNOW}}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BLOWSNOWn }
+\index{NAM\_BLOWSNOWn!namelist description}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+
+LSNOWSUBL  & logical & FALSE     \\
+\hline
+\end{tabular}
+\end{center}
+It contains the variables and types for the BLOWSNOW scheme.
+
+\begin{itemize}
+\item  LSNOWSUBL : flag to activate blowing snow sublimation
+	\index{LSNOWSUBL!\innam{NAM\_BLOWSNOW}}
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BUDGET (budget box description)}
 \label{ss:budget}
 \index{NAM\_BUDGET!namelist description}
