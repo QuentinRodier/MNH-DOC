@@ -2772,6 +2772,8 @@ PHYS\_PARAMn by fixing the hourly value of the infrared and solar
 fluxes and can be modified for personnal application.
 \item
 CRAD = 'ECMW' the ECMWF radiation scheme code is used.
+\item 
+CRAD = 'ECRA' the ECRAD radiation scheme code is used.
 \end{itemize} 
 
 \item
@@ -2950,6 +2952,67 @@ law of the rain drops
 \item LACTTKE : TRUE to take into account TKE in the calculation of vertical velocity for activation
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_PARAM\_ECRADn} 
+\index{NAM\_PARAM\_ECRADn!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NSWSOLVER & integer& 0\\
+NLWSOLVER & integer& 0\\
+NGAS & integer& \\
+NLIQOPT & integer&3\\
+NICEOPT & integer&3 \\
+NOVLP & integer& 1\\
+NRADLP & integer& 1\\
+NRADIP & integer&1 \\
+NREG & integer& 3\\
+XCLOUD\_FRAC\_STD & real &1.0\\
+NLWSCATTERING & integer&2 \\
+NAREMACC& integer&0 \\
+\hline
+\end{tabular}
+\end{center}
+It contains the options for the ECRAD radiative scheme.
+\begin{itemize}
+\item NSWSOLVER : SW solver. The possible values are 0 for 'McICA' , 1 for 'SPARTACUS' and 2 for 'SPARTACUS' with 3D effects
+ \index{NSWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
+\item NLWSOLVER : LW solver. The possible values are 0 for 'McICA' , 1 for 'SPARTACUS' and 2 for 'SPARTACUS' with 3D effects
+ \index{NLWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
+\item NGAS : gas model 1 = 'Monochromatic', 2 = 'RRTMG-IFS', 3 = 'RRTMG-PSRAD'
+ \index{NGAS!\innam{NAM\_PARAM\_ECRADn}}
+\item NLIQOPT: optical properties of liquid particles ; 2 = Slingo ; 3 = SOCRATES
+ \index{NLIQOPT!\innam{NAM\_PARAM\_ECRADn}}
+\item NICEOPT: optical properties of liquid particles ; 3 = Fu ; 4 = Baran
+ \index{NICEOPT!\innam{NAM\_PARAM\_ECRADn}}
+\item NOVLP :  overlap assumption ; 0= 'Max-Ran' ; 1= 'Exp-Ran'; 2 = 'Exp-Exp'
+ \index{NOVLP!\innam{NAM\_PARAM\_ECRADn}}
+\item NRADLP: 0: ERA-15, 1: Zhang and Rossow, 2: Martin (1994), 3: Martin (1994) and Woods (2000)
+
+ \index{NRADLP!\innam{NAM\_PARAM\_ECRADn}}
+\item NRADIP: 0: 40 mum, 1: Liou and Ou (1994), 2: Liou and Ou (1994) improved, 3: Sun and Rikus (1999)
+ \index{NRADIP!\innam{NAM\_PARAM\_ECRADn}}
+\item NREG : Number of regions for Triple Clouds
+ \index{NREG!\innam{NAM\_PARAM\_ECRADn}}
+\item XCLOUD\_FRAC\_STD :  Cloud water content horizontal fractional standard deviation in a gridbox
+ \index{XCLOUD\_FRAC\_STD!\innam{NAM\_PARAM\_ECRADn}}
+\item NLWSCATTERING:longwave scattering
+\begin{itemize}
+\item 0: No longwave scattering
+\item 1: Longwave scattering by clouds only
+\item 2: Longwave scattering by clouds and aerosols
+\end{itemize}
+
+ \index{NLWSCATTERING!\innam{NAM\_PARAM\_ECRADn}}
+\item NAREMACC :  Use of Tegen (0) or MACC (1) aerosol classification(that is over 6 or 12 aerosols species)
+
+ \index{NAREMACC!\innam{NAM\_PARAM\_ECRADn}}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Namelist NAM\_PARAM\_ICE (option for the mixed phase cloud 
 parameterization ICE3 and ICE4)}
 \index{NAM\_PARAM\_ICE!namelist description}
