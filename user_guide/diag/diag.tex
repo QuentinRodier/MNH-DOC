@@ -163,7 +163,7 @@ Only available if CSURF='EXTE' in YINIFILE.des
 &&{\tt LW} : [2D] LW (W/m2) \\ \cline{3-3}
 \end{tabular} 
 \end{center}
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%
 \subsection{General variables}
 \begin{center}
@@ -184,14 +184,6 @@ in \&NAM\_DIAG & Values& \\ \hline
 &&{\tt RVT }: [3D] water vapor mixing ratio (kg/kg) \\\cline{3-3}
 & & \textbf{with LWIND\_ZM=.TRUE.}\index{LWIND\_ZM!\innam{NAM\_DIAG}}\\
 & & {\tt UT\_ZM VT\_ZM }[3D] :Zonal and meridian components of horizontal wind (M/S)\\ \hline
-\end{tabular}
-\end{makeimage}
-\end{center}
-
-\begin{center}
-\begin{makeimage}
-\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
- \hline
 \multirow{5}{*}{LVAR\_LS} \index{LVAR\_LS!\innam{NAM\_DIAG}} &\textbf{.FALSE.} & by default : no field\\\cline{2-3}
 &\multirow{4}{*}{.TRUE.} & {\tt LSUM, LSVM, LSWM LSTHM,LSRVM  }: [3D] large scale variables\\\cline{3-3}
 &  & {\bf with LWIND\_ZM=.TRUE. : }\index{LWIND\_ZM!\innam{NAM\_DIAG}}\\
@@ -207,18 +199,23 @@ in \&NAM\_DIAG & Values& \\ \hline
 & & {\tt GXTHFRCn}: [1D] $(\partial\theta/ \partial x)_{frc}$ (K/m)\\\cline{3-3}
 {\scriptsize (if LFORCING=T}& & {\tt GYRVFRCn}: [1D] $(\partial\theta/ \partial y)_{frc}$ (K/m)\\\cline{3-3}
 {\scriptsize in YINIFILE.des)}& &{\tt PGROUNDFRCn}: [0D] forcing ground pressure (Pa) \\ \hline
-\hline
 \multirow{6}{*}{LTPZH}\index{LTPZH!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
 &\multirow{5}{*}{.TRUE.} &{\tt TEMP}: [3D] Temperature (C) \\\cline{3-3}
 & &{\tt PRES }: [3D] Pressure (hPa)\\\cline{3-3}
 & &{\tt ALT }: [3D] height of model levels (geopotentiel in pressure level) (m)\\\cline{3-3}
 & &{\tt REHU }: [3D] Relative Humidity (\%) (if LUSERV=T) \\\cline{3-3}
 & &{\tt VPRES }: [3D]  Vapor Pressure (hPa) (if LUSERV=T)\\ \hline
-\hline
 \multirow{3}{*}{LCOREF}\index{LCOREF!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{2}{*}{.TRUE.} &{\tt COREF }: [3D] Refraction coindex (if LUSERV=T)\\\cline{3-3}
 & &{\tt  MCOREF }: [3D] modified refraction coindex (if LUSERV=T)\\ \hline
-\hline
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
+ \hline
 \multirow{5}{*}{LMOIST\_V}\index{LMOIST\_V!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{3}{*}{.TRUE.} & {\tt THETAV }: [3D] Virtual potential Temperature (K)\\\cline{3-3}
 & &{\tt POVOV }: [3D] Virtual Potential Vorticity (PVU)\\\cline{3-3}
@@ -234,8 +231,14 @@ in \&NAM\_DIAG & Values& \\ \hline
 \multirow{5}{*}{LMOIST\_ES}\index{LMOIST\_ES!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{3}{*}{.TRUE.} & {\tt THETAES }: [3D] Equivalent Saturated Potential Temperature (K)\\\cline{3-3}
 & &{\tt POVOES }: [3D] Equivalent Saturated Potential Vorticity (PVU)\\\hline
-
 \hline
+\multirow{3}{*}{LMOIST\_S1}\index{LMOIST\_S1!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} & {\tt THETAS1 }: [3D]  Moist air Entropy (1st order) potential temperature (K)\\\hline
+\hline
+\multirow{3}{*}{LMOIST\_S2}\index{LMOIST\_S2!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} & {\tt THETAS1 }: [3D]  Moist air Entropy (2nd order) potential temperature (K)\\\hline
+\multirow{2}{*}{LMOIST\_L}\index{LMOIST\_L!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&.TRUE. & {\tt THETAL }: [3D]  Liquid water potential temperature (K)\\\hline
 \multirow{7}{*}{LMEAN\_POVO}\index{LMEAN\_POVO!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{6}{*}{.TRUE.} &{\tt MEAN\_POVO }: [2D] Mean Potential Vorticity (PVU)\\\cline{3-3}
 && with \textbf{LMOIST\_V=T}\index{LMOIST\_V!\innam{NAM\_DIAG}}\\
@@ -243,14 +246,6 @@ in \&NAM\_DIAG & Values& \\ \hline
 && with \textbf{LMOIST\_E=T}\index{LMOIST\_E!\innam{NAM\_DIAG}}\\
 & &{\tt MEAN\_POVOE }: [2D] Mean Equivalent Potential Vorticity (PVU)\\ \hline
 XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged between two isobaric levels in Pa (XMEAN\_POVO(1),XMEAN\_POVO(2))\\\hline
-\end{tabular}
-\end{makeimage} 
-\end{center}
-
-\begin{center}
-\begin{makeimage}
-\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
-\hline
 \multirow{5}{*}{LVORT}\index{LVORT!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{4}{*}{.TRUE.} & {\tt ABVOR }: [3D] vertical component of Absolute Vorticity (/s)\\\cline{3-3}
 & &{\tt UM1, VM1, WM1 }: [3D] relative vorticity components  (/s)\\\cline{3-3}
@@ -260,7 +255,6 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 \multirow{3}{*}{LDIV}\index{LDIV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{2}{*}{.TRUE.} &{\tt HDIV }: [3D] Horizontal divergence (/s)\\\cline{3-3}
 & &{\tt HMDIV }: [3D] Horizontal Moisture divergence (kg/m$^3$/s)\\ \hline
-\hline
 \multirow{4}{*}{LGEO}\index{LGEO!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{3}{*}{.TRUE.} & {\tt UM88, VM88, WM88 }: [3D] Geostrophic wind components (m/s) \\\cline{3-3}
 && with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
@@ -270,6 +264,13 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 &\multirow{3}{*}{.TRUE.} & {\tt UM89, VM89, WM89 }: [3D] Ageostrophic wind components (m/s) \\\cline{3-3}
 && with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
 & &{\tt UM89\_ZM, VM89\_ZM }: [3D] Zonal and Meridian components of Ageostrophic wind (m/s)\\ \hline
+\end{tabular}
+\end{makeimage} 
+\end{center}
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{2}{*}{LMSLP}\index{LMSLP!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &.TRUE. &{\tt MSLP }: [2D] Mean Sea Level Pressure (hPa)\\\hline
@@ -282,7 +283,6 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 & &{\tt THSN }: [2D] Thickness of Snow (mm) (if LUSERS=T)\\\cline{3-3}
 & &{\tt THGR }: [2D] Thickness of Graupel (mm) (if LUSERG=T)\\\cline{3-3}
 & &{\tt THHA }: [2D] Thickness of Hail (mm) (if LUSERH=T) \\ \hline
-\hline
 \multirow{3}{*}{LBV\_FR}\index{LBV\_FR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{2}{*}{.TRUE.} &{\tt BV }: [3D] Brunt-Vaissala frequency (/s)\\\cline{3-3}
 & &{\tt  BVE }: [3D] Equivalent Brunt-Vaissala frequency (/s)\\ \hline
@@ -304,6 +304,9 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 \hline
 \multirow{2}{*}{LVAR\_MRSV}\index{LVAR\_MRSV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
 &.TRUE. &{\tt MRSVnnn }: [3D] Mixing Ratio for User Scalar Variable {\tt n }(g/kg) \\ \hline
+\multirow{3}{*}{CBLTOP}\index{CBLTOP!\innam{NAM\_DIAG}}&\textbf{'NONE'} & by default : no field \\\cline{2-3}
+&'RICHA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "bulk Richardson number method"\\\cline{2-3}
+&'THETA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "parcel method"\\\hline
 \end{tabular}
 \end{makeimage} 
 \end{center}
@@ -311,10 +314,6 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 \begin{center}
 \begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
-\hline
-\multirow{3}{*}{CBLTOP}\index{CBLTOP!\innam{NAM\_DIAG}}&\textbf{'NONE'} & by default : no field \\\cline{2-3}
-&'RICHA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "bulk Richardson number method"\\\cline{2-3}
-&'THETA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "parcel method"\\\hline
 \hline
 \multirow{35}{*}{LVAR\_PR}\index{LVAR\_PR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
 &\multirow{34}{*}{.TRUE.} & {\tt ACPRR }: [2D] (if LUSERR=T) \\
@@ -368,17 +367,17 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 &&  wind components of moisture ground flux  \\ \cline{3-3}
 & &{\tt UM91, VM91 }: [2D]   ($kg/s/m$) \\
 &&  wind components of moisture ground flux integrated on 3000 meters \\ \cline{3-3}
-& &{\tt HMCONV }: [2D]   ($kg/s/m$) \\
+& &{\tt HMCONV }: [2D]   ($kg/s/m^2$) \\
 &&  Horizontal CONVergence of moisture flux \\ \cline{3-3}
-& &{\tt HMCONV3000 }: [2D]   ($kg/s/m$) \\
+& &{\tt HMCONV3000 }: [2D]   ($kg/s/m^2$) \\
 &&  Horizontal CONVergence of moisture flux integrated on 3000 meters\\ \cline{3-3}
 & &{\tt UM92, VM92 }: [2D] (if CCLOUD=ICE3 or ICE4)   ($kg/s/m^2$) \\
 &&  wind components of hydrometeores ground flux  \\ \cline{3-3}
 & &{\tt UM93, VM93 }: [2D] (if CCLOUD=ICE3 or ICE4)   ($kg/s/m$) \\
 &&  wind components of hydrometeor ground flux   \\ \cline{3-3}
-& &{\tt HMCONV\_TT }: [2D]   ($kg/s/m$) \\
+& &{\tt HMCONV\_TT }: [2D]   ($kg/s/m^2$) \\
 &&  Horizontal CONVergence of hydrometeor flux \\ \cline{3-3}
-& &{\tt HMCONV3000\_TT }: [2D]   ($kg/s/m$) \\
+& &{\tt HMCONV3000\_TT }: [2D]   ($kg/s/m^2$) \\
 &&  Horizontal CONVergence of hydrometeor flux integrated on 3000 meters\\ \hline
 
 \hline
@@ -909,6 +908,111 @@ A comparison between model outputs and satellite observations provides an assess
 \end{tabular} 
 \end{makeimage}
 \end{center}
+\vspace{0.5cm}
+ Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available
+allowing the calculation of BT for a large number of satellites. {\bf \Large The use of RTTOV is highly recommended to compute brightness temperature.} The code is available in version 8.7 and since the Masdev5\_3 in version 11.3.\\
+
+The RTTOV package was not included into the open source version of Meso-NH because it needs a licence agrement.
+{\bf In order to use it you have to follow the instruction in A-INSTALL file to compile MESO-NH with RRTOV.}   
+
+\begin{center}
+\begin{makeimage}
+\begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
+\hline
+\multirow{5}{*}{NRTTOVinfo}\index{NRTTOVinfo!\innam{NAM\_DIAG}}&\textbf{999} & by default : no computation is made\\\cline{2-3}
+& \multirow{4}{*}{$Plt$ $Sat$ $Sen$ 0 } &{\tt PltSatSenBT} : [2D] Brightness temperature (K)\\
+(1:4,$nb$)& & 
+$
+\textrm{with}
+\left\{
+\begin{array}{l}
+Plt = \textrm{Plateforme}\\
+Sat = \textrm{Satellite}\\
+Sen = \textrm{Sensor}\\ 
+nb =  \textrm{number of instrument you want}\\
+ 1\leq nb\leq10\\
+\end{array}
+\right.
+$
+\\ 
+& & See below for more information\\\hline 
+\end{tabular}
+\end{makeimage}
+\end{center}
+
+
+\vspace{0.5cm}
+To simulate an instrument, use the code given in the following Tables reproduced from the RTTOV users guide (see \url{https://www.nwpsaf.eu/site/software/rttov}). 
+
+For example, to simulate both all the SEVIRI channels of MSG-2 and all the AMSU-B channels of NOAA-16, write in DIAG1.nam
+\begin{verbatim}
+&NAM_DIAG NRTTOVinfo(:,1)= 12 2 21 0, NRTTOVinfo(:,2)= 1 16 4 0 /
+\end{verbatim}
+For this specific choice, you need to have three files:
+{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat}.
+
+\begin{center}\begin{tabular}{|c|c|c|}
+\hline
+Platform & $Plt$ & $Sat$ range \\
+\hline
+NOAA & 1 & 1 to 18 \\
+DMSP &  2  & 8 to 16 \\
+Meteosat &  3  & 5 to 7 \\
+GOES &  4  & 8 to 12 \\
+GMS &  5  & 5 \\
+FY-2 &  6  & 2 to 3 \\
+TRMM &  7  & 1 \\
+ERS &  8  & 1 to 2 \\
+EOS &  9  & 1 to 2 \\
+\it METOP &  \it 10  & \it 1 to 3 \\
+ENVISAT  & 11  & 1 \\
+MSG  & 12  & 1 to 2 \\
+FY-1  & 13  & 3 \\
+ADEOS  & 14  & 1 to 2 \\
+MTSAT  & 15  & 1 \\
+CORIOLIS  & 16 &  1 \\  
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}\begin{tabular}{|c|c|c|c|}
+\hline
+Sensor & RTTOVid ($Sen$) & Sensor Channel \# & RTTOV-8 Channel \# \\
+\hline
+HIRS & 0 &  1 to 19 & 1 to 19 \\
+MSU & 1 &  1 to 4 & 1 to 4 \\
+SSU & 2 &  1 to 3 & 1 to 3 \\
+AMSU-A & 3 &  1 to 15 & 1 to 15 \\
+AMSU-B & 4 &  1 to 5 & 1 to 5 \\
+AVHRR & 5 &  3b to 5 & 1 to 3 \\
+SSMI & 6 &  1 to 7 & 1 to 4 \\
+VTPR1 & 7 &  1 to 8 & 1 to 8 \\
+VTPR2 & 8 &  1 to 8 & 1 to 8 \\
+TMI & 9 &  1 to 9 & 1 to 9 \\
+SSMIS & 10 &  1 to 24 & 1 to 21 \\
+AIRS & 11 &  1 to 2378 & 1 to 2378 \\
+HSB & 12 &  1 to 4 & 1 to 4 \\
+MODIS & 13 &  1 to 17 & 1 to 17 \\
+ATSR & 14 &  1 to 3 & 1 to 3 \\
+MHS & 15 &  1 to 5 & 1 to 5 \\
+IASI & 16 &  1 to 8461 & 1 to 8461 \\
+AMSR & 17 &  1 to 14 & 1 to 7 \\
+MVIRI & 20 &  1 to 2 & 1 to 2 \\
+SEVIRI & 21 &  4 to 11 & 1 to 8 \\
+GOES-Imager & 22  & 1 to 4 & 1 to 4 \\
+GOES-Sounder & 23  & 1 to 18 & 1 to 18 \\
+GMS/MTSAT
+imager & 24  & 1 to 4 & 1 to 4 \\
+FY2-VISSR  &25  & 1 to 2 & 1 to 2 \\
+FY1-MVISR  &26  & 1 to 3 & 1 to 3 \\
+CriS  & 27  & TBD & TBD \\
+CMISS & 28  & TBD & TBD \\
+VIIRS & 29  & TBD & TBD \\
+WINDSAT  & 30  & 1 to 10 & 1 to 5 \\
+\hline
+\end{tabular}
+\end{center}
+
 
 \subsection{Radar}
 \begin{center}
