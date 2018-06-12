@@ -3123,6 +3123,12 @@ XFSOLUB\_CCN & real & 1.  \\
 XACTEMP\_CCN & real  & 280. \\
 LSCAV & logical  & .FALSE.  \\
 LAERO\_MASS & logical  & .FALSE.  \\
+LACTTKE & logical  & .TRUE.  \\
+LPTSPLIT & logical  & .FALSE.  \\
+LFEEDBACKT & logical  & .TRUE.  \\
+NMAXITER & integer & 1 \\
+XMRSTEP&real& 0. \\
+XTSTEP\_TS&real&0.\\
 \hline
 \end{tabular}
 \end{center}
@@ -3241,6 +3247,18 @@ LSCAV :Switch to activate below cloud scavenging of aerosols by rain
 \item
 \index{LAERO\_MASS!\innam{NAM\_PARAM\_LIMA}}
 LAERO\_MASS : Switch to track the mass of scavenged aerosols
+\item LACTTKE :  flag to use TKE in the CCN activation formulation
+\index{LACTTKE!\innam{NAM\_PARAM\_LIMA}}
+\item LPTSPLIT : flag to Activate the time-splitting scheme
+\index{LPTSPLIT!\innam{NAM\_PARAM\_LIMA}}
+\item LFEEDBACKT : Flag to Recompute tendencies if temperature reaches 0 (for the time-splitting scheme)
+\index{LFEEDBACKT!\innam{NAM\_PARAM\_LIMA}}
+\item NMAXITER : Maximum number of iterations (for the time-splitting scheme)
+\index{NMAXITER!\innam{NAM\_PARAM\_LIMA}}
+\item XMRSTEP : Recompute tendencies if any mixing ratio changes by more than XMRSTEP (0=no limit) (for the time-splitting scheme)
+\index{XMRSTEP!\innam{NAM\_PARAM\_LIMA}}
+\item XTSTEP\_TS : Maximum length of sub-time-steps (for the time-splitting scheme)
+\index{XTSTEP\_TS!\innam{NAM\_PARAM\_LIMA}}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
