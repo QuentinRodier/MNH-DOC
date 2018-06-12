@@ -2962,7 +2962,6 @@ Fortran name & Fortran type & default value \\
 \hline
 NSWSOLVER & integer& 0\\
 NLWSOLVER & integer& 0\\
-NGAS & integer& \\
 NLIQOPT & integer&3\\
 NICEOPT & integer&3 \\
 NOVLP & integer& 1\\
@@ -2981,18 +2980,27 @@ It contains the options for the ECRAD radiative scheme.
  \index{NSWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
 \item NLWSOLVER : LW solver. The possible values are 0 for 'McICA' , 1 for 'SPARTACUS' and 2 for 'SPARTACUS' with 3D effects
  \index{NLWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
-\item NGAS : gas model 1 = 'Monochromatic', 2 = 'RRTMG-IFS', 3 = 'RRTMG-PSRAD'
- \index{NGAS!\innam{NAM\_PARAM\_ECRADn}}
 \item NLIQOPT: optical properties of liquid particles ; 2 = Slingo ; 3 = SOCRATES
  \index{NLIQOPT!\innam{NAM\_PARAM\_ECRADn}}
 \item NICEOPT: optical properties of liquid particles ; 3 = Fu ; 4 = Baran
  \index{NICEOPT!\innam{NAM\_PARAM\_ECRADn}}
 \item NOVLP :  overlap assumption ; 0= 'Max-Ran' ; 1= 'Exp-Ran'; 2 = 'Exp-Exp'
  \index{NOVLP!\innam{NAM\_PARAM\_ECRADn}}
-\item NRADLP: 0: ERA-15, 1: Zhang and Rossow, 2: Martin (1994), 3: Martin (1994) and Woods (2000)
-
+\item NRADLP: liquid effective radius calculation
+	\begin{itemize}
+		\item 0: ERA-15, 
+		\item 1: Zhang and Rossow,
+		\item 2: Martin (1994), 
+		\item 3: Martin (1994) and Woods (2000)
+	\end{itemize}
  \index{NRADLP!\innam{NAM\_PARAM\_ECRADn}}
-\item NRADIP: 0: 40 mum, 1: Liou and Ou (1994), 2: Liou and Ou (1994) improved, 3: Sun and Rikus (1999)
+\item NRADIP: ice water effective radius calculation
+	\begin{itemize}
+		\item 0: 40 mum
+		\item 1: Liou and Ou (1994)
+		\item 2: Liou and Ou (1994) improved
+		\item 3: Sun and Rikus (1999)
+	\end{itemize}
  \index{NRADIP!\innam{NAM\_PARAM\_ECRADn}}
 \item NREG : Number of regions for Triple Clouds
  \index{NREG!\innam{NAM\_PARAM\_ECRADn}}
