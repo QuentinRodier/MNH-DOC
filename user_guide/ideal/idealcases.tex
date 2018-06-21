@@ -729,9 +729,6 @@ be used as initial file in a MESONH numerical simulation.
 \item CINIFILEPGD \index{CINIFILEPGD!\innam{NAM\_LUNITn}} : name of the PGD file if CSURF$\neq$'NONE'. If you use an input PGD file for the step PREP\_IDEAL\_CASE (CPGD\_FILE in NAM\_REAL\_PGD), you must have CINIFILEPGD=CPGD\_FILE. If there is no input PGD, CINIFILEPGD is the name of the PGD file produced by PREP\_IDEAL\_CASE.
 \end{itemize} 
 
-\subsection{Namelist NAM\_NCOUT}
-See section \ref{s:namncout} page \pageref{s:namncout} for details.
-
 \subsection{Namelist NAM\_PERT\_PRE (set analytical perturbations) }
 \index{NAM\_PERT\_PRE!namelist description}
 
@@ -1629,7 +1626,7 @@ ZFRC
 
 keyword: {\bf ZFRC\_ADV} 
 
-For 2D idealized simulation, an advective forcing can be used to impose effects to the model solution. This functionnality works (L2D\_ADV\_FRC=.TRUE. in MODD\_CONF) only in 2D cases. The advecting forcings mimic the latidudinal humidity and temperature advection not taken into account in a 2D model.
+For 2D idealized simulation, an advective forcing can be used to impose effects to the model solution. This functionality works (L2D\_ADV\_FRC=.TRUE. in MODD\_CONF) only in 2D cases. The advecting forcings mimic the latidudinal humidity and temperature advection not taken into account in a 2D model.
          
 The forcing informations and soundings have to be added at the end of the
 free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 
@@ -1659,7 +1656,7 @@ ZADV2D
 
 keyword: {\bf ZFRC\_REL} 
 
-For 2D idealized simulation, a relaxation forcing can be used to impose effects to the model solution. This functionnality works (L2D\_REL\_FRC=.TRUE. in MODD\_CONF) only in 2D cases.  The relaxation forcing allows the relax the model fields towards a 2D climatology for temperature and humidity.
+For 2D idealized simulation, a relaxation forcing can be used to impose effects to the model solution. This functionality works (L2D\_REL\_FRC=.TRUE. in MODD\_CONF) only in 2D cases.  The relaxation forcing allows the relax the model fields towards a 2D climatology for temperature and humidity.
          
 The forcing informations and soundings have to be added at the end of the
 free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 

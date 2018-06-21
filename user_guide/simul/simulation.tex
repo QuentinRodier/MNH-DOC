@@ -21,7 +21,7 @@ The output files are of two types:
 \item
 synchronous files for a given instant of the run. They contain the prognostic
 fields and  eventually,
-additionnal records for supplementary diagnostic  fields at the same instant.
+additional records for supplementary diagnostic  fields at the same instant.
 The file name ends by {\tt 00n} with {\tt n}$>$0
 \item
 a diachronic file for the temporal series of prognostic or diagnostic fields.
@@ -179,6 +179,74 @@ LSPLIT\_WENO: Flag to split WENO momentum advection
 
 
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BACKUP (backup instants)}\label{s:nambackup}
+\index{NAM\_BACKUP!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+XBAK\_TIME              & real(:,:)          & 8*192* -999. \\
+NBAK\_STEP              & integer(:,:)       & 8*192* -999  \\
+XBAK\_TIME\_FREQ        & real(:)            & -999.        \\
+XBAK\_TIME\_FREQ\_FIRST & real(:)            & 0.           \\
+NBAK\_STEP\_FREQ        & integer(:)         & -999         \\
+NBAK\_STEP\_FREQ\_FIRST & integer(:)         & 1            \\
+LBAK\_BEG               & logical            & .FALSE.      \\
+LBAK\_END               & logical            & .FALSE.      \\
+CBAK\_DIR               & character(len=512) & ''           \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item
+\index{XBAK\_TIME!\innam{NAM\_BACKUP}} 
+XBAK\_TIME(m,i): array of increments in seconds from the beginning of the segment to the instant where the i-th backup is realized by the model $m$
+
+\item
+\index{NBAK\_STEP!\innam{NAM\_BACKUP}} 
+NBAK\_STEP(m,i): array of increments in timesteps from the beginning of the segment to the instant where the i-th backup is realized by the model $m$
+
+\item
+\index{XBAK\_TIME\_FREQ!\innam{NAM\_BACKUP}} 
+XBAK\_TIME\_FREQ(m): time between 2 backups for each model $m$
+
+\item
+\index{XBAK\_TIME\_FREQ\_FIRST!\innam{NAM\_BACKUP}} 
+XBAK\_TIME\_FREQ\_FIRST(m): time of the first backup for each model $m$ (if XBAK\_TIME\_FREQ(m) is set)
+
+\item
+\index{NBAK\_STEP\_FREQ!\innam{NAM\_BACKUP}} 
+NBAK\_STEP\_FREQ(m): number of timesteps between 2 backups for each model $m$
+
+\item
+\index{NBAK\_STEP\_FREQ\_FIRST!\innam{NAM\_BACKUP}} 
+NBAK\_TIME\_FREQ\_FIRST(m): timestep number of the first backup for each model $m$ (if NBAK\_STEP\_FREQ(m) is set)
+
+\item
+\index{LBAK\_BEG!\innam{NAM\_BACKUP}} 
+LBAK\_BEG: force a backup at the first timestep
+
+\item
+\index{LBAK\_END!\innam{NAM\_BACKUP}} 
+LBAK\_END: force a backup at the last timestep
+
+\item
+\index{CBAK\_DIR!\innam{NAM\_BACKUP}} 
+CBAK\_DIR: directory used to write backups and diachronic files (current directory by default).
+It overrides CIO\_DIR (see section \ref{s:namconfio} page \pageref{s:namconfio}).
+\end{itemize}
+
+Remarks:
+\begin{itemize}
+\item If a choosen time is not a multiple of the timestep, it will be rounded to the nearest one.
+\item The different ways to choose the backup time can be combined. Duplicate times will be automatically removed.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BLANK (available variables)}
 See section \ref{s:namblank} page \pageref{s:namblank} for details.
@@ -1541,7 +1609,7 @@ LINIT\_LG: Flag to reinitialize  Lagrangian variables (with LLG=.T.)
 CINIT\_LG:  with LINIT\_LG=T :
 \index{CINIT\_LG!\innam{NAM\_CONF}}
 \begin{itemize}
-\item 'FMOUT' each time an output file is written
+\item 'FMOUT' each time a backup file is written
 \item other string: only when starting a new segment (CCONF='RESTA')
 \end{itemize}
 
@@ -1591,38 +1659,87 @@ LCDF4      & logical  & FALSE  \\
 LLFIOUT    & logical  & FALSE  \\
 LLFIREAD   & logical  & FALSE  \\
 \hline
+CIO\_DIR & character(len=512) & '' \\
+\hline
+LVERB\_OUTLST      & logical & TRUE  \\
+LVERB\_STDOUT      & logical & FALSE \\
+LVERB\_ALLPRC      & logical & FALSE \\
+NGEN\_VERB         & integer & 3 \\
+NGEN\_ABORT\_LEVEL & integer & 2 \\
+NIO\_VERB          & integer & 3 \\
+NIO\_ABORT\_LEVEL  & integer & 2 \\
+\hline
 \end{tabular}
 \end{center}
 
 \begin{itemize}
 
 \item
-LCDF4 : to enable the creation of netcdf file in INPUT/OUTPUT (netcdf 4)
+LCDF4 : read and write files in netCDF-4 file format
 \index{LCDF4!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
-\item   .TRUE.  : netcdf4 files will be created
-\item   .FALSE. : no netcdf4  files only LFI files
+\item   .TRUE.  : read and write files in netCDF-4 file format (read file format can be forced to only LFI if $LLFIREAD=.TRUE.$)
+\item   .FALSE. : read and write files in LFI file format
 \end{itemize}
 
 \item
-LLFIOUT : to add LFI output when  LCDF4 = T 
+LLFIOUT : write files in LFI file format
 \index{LLFIOUT!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
-\item   .TRUE.  : LFI files AND  netcdf files will be created
-\item   .FALSE. : ONLY netcdf files will be created
+\item   .TRUE.  : write files in LFI file format (even if $LCDF4=.TRUE.$)
+\item   .FALSE. : do not write files in LFI file format
 \end{itemize}
 
 \item
-LLFIREAD : to enable LFI reading when LCDF4 = T and LLFIOUT=T  
+LLFIREAD : read files in LFI file format (even if $LCDF4=.TRUE.$)
 \index{LLFIREAD!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
-\item   .TRUE.  : lfi files will be read
-\item   .FALSE. : netcdf files will be read
+\item   .TRUE.  : read files in LFI file format. If $LCDF4=.TRUE.$, the reading will be forced with the LFI file format (no reading with netCDF-4 file format).
+\item   .FALSE. : do not read files in LFI file format
 \end{itemize}
 
+\end{itemize}
+
+{\bf Caution: if $LCDF4=.FALSE.$ and $LLFIOUT=.FALSE.$ (which are the default), LCDF4 will be forced to $.TRUE.$.}
+
+\begin{itemize}
+
+\item
+CIO\_DIR : Directory used to write outputs, backups and diachronic files (current directory by default).
+It can be overridden by CBAK\_DIR for backups and diachronic files (see section \ref{s:nambackup} page \pageref{s:nambackup})
+and by COUT\_DIR for outputs (see section \ref{s:namoutput} page \pageref{s:namoutput}).
+\index{CIO\_DIR!\innam{NAM\_CONFIO}}
+
+\item
+LVERB\_OUTLST : flag to write application messages in OUTPUT\_LISTINGn files (in current directory, $n$ is for the current model)
+\index{LVERB\_OUTLST!\innam{NAM\_CONFIO}}
+
+\item
+LVERB\_STDOUT : flag to write application messages on the standard output
+\index{LVERB\_STDOUT!\innam{NAM\_CONFIO}}
+
+\item
+NGEN\_VERB : set the verbosity level for 'generic' messages
+\begin{itemize}
+\item 0 : no messages
+\item 1 : debug messages (and higher levels)
+\item 2 : info messages (and higher levels)
+\item 3 : warning messages (and higher levels)
+\item 4 : error messages (and higher levels)
+\item 5 : fatal messages (and higher levels)
+\end{itemize}
+
+\item
+NGEN\_ABORT\_LEVEL : set the minimum level of 'generic' message to abort the application (same levels as for NGEN\_VERB)
+
+\item
+NIO\_VERB : set the verbosity level for 'IO' messages (same levels as for NGEN\_VERB)
+
+\item
+NIO\_ABORT\_LEVEL : set the minimum level of 'IO' message to abort the application (same levels as for NGEN\_VERB)
 
 \end{itemize}
 
@@ -2155,31 +2272,6 @@ They are included in the declarative module MODD\_ELEC\_DESCRn.
   \item XWANG\_B\index{XWANG\_B!\innam{NAM\_ELEC}} : b parameter of the Wang et al. (1998) formula for LNOx production (not yet implemented)
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_FMOUT (output instants)}
-\index{NAM\_FMOUT!namelist description}
-
-\begin{center}
-\begin{tabular} {|l|l|l|}
-\hline
-Fortran name & Fortran type & default value \\
-\hline
-XFMOUT  &  array (real) &  8*192* 999.   \\
-XTSTEP\_OUTPUT & real & XUNDEF \\
-\hline
-\end{tabular}
-\end{center}
-
-\begin{itemize}
-\item
-\index{XFMOUT!\innam{NAM\_FMOUT}} 
-XFMOUT(m,i) is an array of increments in seconds from the beginning
-of the segment to the instant where the i-th fields output on FM-files
-is realized by model "m"
-\index{XTSTEP\_OUTPUT!\innam{NAM\_FMOUT}} 
-XTSTEP\_OUTPUT is a constant timestep (in second)  between the output files. 
-\end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_FRC (forcing control)}
 \index{NAM\_FRC!namelist description}
@@ -2615,53 +2707,6 @@ are read from the inital MESONH file of model 1 as the Larger
 scale fields ( LSUM, LSVM, LSWM, LSTHM, LSRVM ). More details can be found in
 the scientific documentation of the model.
 \end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_NCOUT (netcdf output)\label{s:namncout}}
-\index{NAM\_NCOUT!namelist description}
-
-Namelist to control the generation of netcdf output files.
-This namelist can only be used if the comiplation was done with the key MNH\_NCWRIT. To do so, go to src directory and do the followings:
-\begin{verbatim}
-export MNH_NCWRIT=MNH_NCWRIT
-./configure
-. ../conf/profile_mesonh
-make cleanmaster (only if you have already compiled MesoNH)
-make
-\end{verbatim}
-
-The netcdf files will have the same name as the lfi files but with the extension .nc
-Note that additionnal netcdf files will be generated:
-\begin{itemize}
-\item       *sf1.nc and *sf2.nc which contain all the surface variables
-\item       *ser.nc  which contains all the series variables
-\item       *phy.nc which contains all the variables written in phys\_param.f90
-\end{itemize}
-Finally, for NCL users, you can find examples on the MesoNH website
- (http://mesonh.aero.obs-mip.fr/mesonh/, "Use
-NCL" tab,  in section "9. NCL scrtips for MNH-V4-9-1-0-NETCDF-branch" )
-Get the file ncl\_for\_netcdf\_branch.tar . It contains several examples.
-
-
-\begin{center}
-\begin{tabular} {|l|l|l|}
-\hline
-Fortran name & Fortran type & default value \\
-\hline
- LNETCDF & logical  &  FALSE  \\
- LLFIFM&  logical & TRUE \\
-\hline
-\end{tabular}
-\end{center}
-
-
-\begin{itemize}
-\item
-\index{LNETCDF!\innam{NAM\_NCOUT}} 
-LNETCDF : TRUE  netcdf output files will be generated
-\item
-\index{LLFIFM!\innam{NAM\_NCOUT}} 
-LLFIFM      : FALSE  no lfi output files will be generated. Works only in DIAG1.nam 
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_NESTING (grid nesting configuration)}
@@ -2721,6 +2766,100 @@ LNUDGING : flag to activate nudging for model n.
 \index{XTNUDGING!\innam{NAM\_NUDGINGn}}
 XTNUDGING : time scale for nudging towards Large Scale values.
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_OUTPUT (output instants)}\label{s:namoutput}
+\index{NAM\_OUTPUT!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+COUT\_VAR               & character(len=32)(:,:) & ''       \\
+\hline
+XOUT\_TIME              & real(:,:)          & 8*192* -999. \\
+NOUT\_STEP              & integer(:,:)       & 8*192* -999  \\
+XOUT\_TIME\_FREQ        & real(:)            & -999.        \\
+XOUT\_TIME\_FREQ\_FIRST & real(:)            & 0.           \\
+NOUT\_STEP\_FREQ        & integer(:)         & -999         \\
+NOUT\_STEP\_FREQ\_FIRST & integer(:)         & 1            \\
+LOUT\_BEG               & logical            & .FALSE.      \\
+LOUT\_END               & logical            & .FALSE.      \\
+\hline
+LOUT\_REDUCE\_FLOAT\_PRECISION  & logical    & .FALSE.      \\
+LOUT\_COMPRESS                  & logical    & .FALSE.      \\
+NOUT\_COMPRESS\_LEVEL           & integer    & 4            \\
+\hline
+COUT\_DIR               & character(len=512) & ''           \\
+\hline
+\end{tabular}
+\end{center}
+
+This namelist allows to write selected fields in output files.
+
+\begin{itemize}
+
+\item
+COUT\_VAR(m,p): list of the field names to output for each model $m$.
+
+\item
+\index{XOUT\_TIME!\innam{NAM\_OUTPUT}} 
+XOUT\_TIME(m,i): array of increments in seconds from the beginning of the segment to the instant where the i-th output is realized by the model $m$
+
+\item
+\index{NOUT\_STEP!\innam{NAM\_OUTPUT}} 
+NOUT\_STEP(m,i): array of increments in timesteps from the beginning of the segment to the instant where the i-th output is realized by the model $m$
+
+\item
+\index{XOUT\_TIME\_FREQ!\innam{NAM\_OUTPUT}} 
+XOUT\_TIME\_FREQ(m): time between 2 outputs for each model $m$
+
+\item
+\index{XOUT\_TIME\_FREQ\_FIRST!\innam{NAM\_OUTPUT}} 
+XOUT\_TIME\_FREQ\_FIRST(m): time of the first output for each model $m$ (if XOUT\_TIME\_FREQ(m) is set)
+
+\item
+\index{NOUT\_STEP\_FREQ!\innam{NAM\_OUTPUT}} 
+NOUT\_STEP\_FREQ(m): number of timesteps between 2 outputs for each model $m$
+
+\item
+\index{NOUT\_STEP\_FREQ\_FIRST!\innam{NAM\_OUTPUT}} 
+NOUT\_TIME\_FREQ\_FIRST(m): timestep number of the first output for each model $m$ (if NOUT\_STEP\_FREQ(m) is set)
+
+\item
+\index{LOUT\_BEG!\innam{NAM\_OUTPUT}} 
+LOUT\_BEG: force an output at the first timestep
+
+\item
+\index{LOUT\_END!\innam{NAM\_OUTPUT}} 
+LOUT\_END: force an output at the last timestep
+
+\item
+\index{LOUT\_REDUCE\_FLOAT\_PRECISION!\innam{NAM\_OUTPUT}} 
+LOUT\_REDUCE\_FLOAT\_PRECISION: force writing of floating points numbers in single precision (only for files in netCDF format, not for LFI format)
+
+\item
+\index{LOUT\_COMPRESS!\innam{NAM\_OUTPUT}} 
+LOUT\_COMPRESS: enable lossless compression of data (only for files in netCDF format, not for LFI format). This can have a negative impact on performance.
+
+\item
+\index{LOUT\_COMPRESS\_LEVEL!\innam{NAM\_OUTPUT}} 
+LOUT\_COMPRESS\_LEVEL: set the compression level (only for files in netCDF format, not for LFI format). The value must be in the 0 to 9 interval (0 for no compression, 9 for maximum compression).
+
+\item
+\index{COUT\_DIR!\innam{NAM\_OUTPUT}} 
+COUT\_DIR: directory used to write outputs and diachronic files (current directory by default).
+It overrides CIO\_DIR (see section \ref{s:namconfio} page \pageref{s:namconfio}).
+
+\end{itemize}
+
+Remarks:
+\begin{itemize}
+\item If a choosen time is not a multiple of the timestep, it will be rounded to the nearest one.
+\item The different ways to choose the output time can be combined. Duplicate times will be automatically removed.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAMn (parameterizations' names of model n)}
 \index{NAM\_PARAMn!namelist description}
@@ -2769,7 +2908,7 @@ CRAD = 'TOPA' : the solar flux is equal to the one at TOP of Atmosphere. The inf
 CRAD = 'FIXE' then the daily evolutions of the downward surface
 fluxes are prescribed. The temporal evolution is done in the routine
 PHYS\_PARAMn by fixing the hourly value of the infrared and solar
-fluxes and can be modified for personnal application.
+fluxes and can be modified for personal application.
 \item
 CRAD = 'ECMW' the ECMWF radiation scheme code is used.
 \item 
@@ -3308,7 +3447,7 @@ XALPHAC,XNUC : Droplets size distribution parameter
 XALPHAR,XNUR : Rain size distribution parameter
 \item
 \index{XFSOLUB\_CCN!\innam{NAM\_PARAM\_LIMA}}
-XFSOLUB\_CCN : Fractionnal solubility of the CCN
+XFSOLUB\_CCN : Fractional solubility of the CCN
 \item
 \index{XACTEMP\_CCN!\innam{NAM\_PARAM\_LIMA}}
 XACTEMP\_CCN : Expected temperature of CCN activation
@@ -3975,7 +4114,7 @@ XIMPL: degree of implicitness of the vertical part of the turbulence scheme.
 turbulent diffusion and  0. to a purely explicit scheme)
 \item
 \index{CTURBDIM!\innam{NAM\_TURBn}}
-CTURBDIM: turbulence dimensionnality. 
+CTURBDIM: turbulence dimensionality. 
 \begin{itemize}
 \item
 CTURBDIM= '1DIM'  Only the vertical turbulent fluxes are taken
@@ -4316,7 +4455,7 @@ The documentation of ForeFire  is available in the mesonh website : \url{http://
           CEQNSYS="DUR", NVERB = 1, CEXP = "EXPER", CSEG = "HYD2D" /
 &NAM_DYN  XSEGLEN =20000., XASSELIN = 0.2, LCORIO = F, XALKTOP = 0.005,
           XALZBOT = 12570., LNUMDIFU =.T. /
-&NAM_FMOUT XFMOUT(1,1) = 10000., XFMOUT(1,2) = 20000. /
+&NAM_BACKUP XBAK_TIME(1,1) = 10000., XBAK_TIME(1,2) = 20000. /
 &NAM_BLANK /
 \end{verbatim}
 \newpage
@@ -4345,8 +4484,8 @@ The documentation of ForeFire  is available in the mesonh website : \url{http://
             NMODEL = 2, CEXP = "16J36", CSEG = "12B18" /
 &NAM_DYN  XSEGLEN = 800., LCORIO = T, LNUMDIFU = T,XALKTOP = 0.001, XALZBOT = 14500. /
 &NAM_NESTING NDAD(2) = 1, NDTRATIO(2) = 3, XWAY(2) = 3. /
-&NAM_FMOUT XFMOUT(1,1) = 10800., XFMOUT(1,2) = 21600. ,
-           XFMOUT(2,1) = 10800., XFMOUT(2,2) = 21600. /
+&NAM_BACKUP XBAK_TIME(1,1) = 10800., XBAK_TIME(1,2) = 21600. ,
+            XBAK_TIME(2,1) = 10800., XBAK_TIME(2,2) = 21600. /
 
 &NAM_ISBAn CRUNOFF = "WSAT", CSCOND  = "NP89", CALBEDO = "DRY",
        CC1DRY     = 'DEF', CSOILFRZ   = 'DEF', CDIFSFCOND = 'DEF', 
