@@ -31,7 +31,7 @@ When a mixed microphysical scheme is activated during the simulation,
  
 
 \subsubsection{Refraction coindexes}
-Following Hill et al. (1980) the refraction coindex ({\tt COREF}) is computed as:
+Following \citet{Hill1980} the refraction coindex ({\tt COREF}) is computed as:
 \begin{equation}
   N = (77.6/T)\times(P+4810\,e/T) -6e/T
 \end{equation}
@@ -58,7 +58,7 @@ r_w &=& r_v+r_c+r_r+r_i+r_s+r_g+r_h   \nonumber
 
 \subsubsection{Equivalent potential temperature}
 The formulation of the equivalent potential temperature ({\tt THETAE})
-is taken from Bolton (1980) following its equations (16), (21) and (43):
+is taken from \citet{Bolton1980} following its equations (16), (21) and (43):
 \begin{eqnarray}
 \theta_e &=& \theta \, \exp \left[\Big(\dfrac{3376}{T_L} - 2.54\Big) 
                     \, r_v \, (1 + 0.81 r_v) \right ] \\
@@ -173,7 +173,7 @@ temperature is the one of the ground.
 
 \subsubsection{Visibility}
 The visibility ({\tt VISI}), function of the liquid water content, has not an universal formula.
-It is computed here for low level clouds according to Kunkel (1984)
+It is computed here for low level clouds according to \citet{Kunkel1984}
 and the COBEL model:
 \begin{equation}
 VISI=\frac{3.9}{144.7(\frac{\rho_{dref}r_c}{1.+r_c})^{0.88}}
@@ -189,7 +189,7 @@ fairly well from polar to saharian area. More details can be found in the
 routine {\it free\_atm\_profile.f90} itself.
 
 \subsubsection{Convective diagnostics}
-The convective instability of an atmospheric layer can be described using a series of diagnostics: CAPE (Convective Available Potential Energy), CIN (Convective Inhibition), DCAPE (Downdraft CAPE), and DCIN (Downdraft CIN). All these parameters evaluate the buoyancy of a parcel displaced a finite distance (rising in case of updraft or sinking in case of downdraft) under a reversible or pseudoadiabatic process. They are computed following the code of Emanuel (1994).
+The convective instability of an atmospheric layer can be described using a series of diagnostics: CAPE (Convective Available Potential Energy), CIN (Convective Inhibition), DCAPE (Downdraft CAPE), and DCIN (Downdraft CIN). All these parameters evaluate the buoyancy of a parcel displaced a finite distance (rising in case of updraft or sinking in case of downdraft) under a reversible or pseudoadiabatic process. They are computed following the code of \citet{Emanuel1994}.
 
 In a conditionally unstable atmosphere, the potentially unstable parcels will be generally be negatively buoyant in the lower part of the sounding before becoming positively buoyant above their Level of Free Convection (LFC). CIN defines the potential energy needed to lift a parcel to its LFC while CAPE is the amount of energy available for the convection of a parcel lifted from its LFC to its Level of Neutral Buoyancy (LNB). 
 \begin{equation}
@@ -202,7 +202,7 @@ where $T_{vp}$ and $T_{ve}$ are the virtual temperature of the lifted parcel and
 %
 \section{Conditional sampling}
 %
-A new Large-Eddy Simulation (LES) diagnostic is proposed based on different idealised tracers. This conditional sampling is based on the combination of passive tracers and thermodynamic variables in order to characterize organized structures in cloud-free and cloudy boundary layers. For a complete documentation, please refer to Couvreux et al. (2010). %\cite{cou10} 
+A new Large-Eddy Simulation (LES) diagnostic is proposed based on different idealised tracers. This conditional sampling is based on the combination of passive tracers and thermodynamic variables in order to characterize organized structures in cloud-free and cloudy boundary layers. For a complete documentation, please refer to \citet{Couvreux2010a}. %\cite{cou10} 
 A maximum of three tracers can be activated.
 
 The first scalar is emitted with a constant flux at the surface. The second one is emitted in the layer just below cloud base ($z_b$-150m -- $z_b$-50m) if ever clouds exist; the third one is emitted in the layer just above cloud top ($z_t$+50m -- $z_t$+150m) if ever clouds exist; $z_b$ and $z_t$ being respectively cloud base and cloud top.  All scalars undergo a radioactive decay with a time constant $\tau$ that can be adjusted by the user (the default value is 15 min):
@@ -228,24 +228,53 @@ This sampling is able to characterize thermals from the surface to the top of th
 
 This diagnostic is activated using the namelist NAM\_COND\_SAMP with the following keys:  LCONDSAMP a flag to activate the sampling, NCONDSAMP the number of used conditional sampling, XRADIO the period of radioactive decay, and XSCAL the scaling factor.
 %
+\section{Coarse-graining techniques}
+%
+Coarse-graining techniques calculate the average and standard deviation of
+any model field over a set of user-defined blocks. Such techniques are useful
+when developing a subgrid parameterization and are commonly applied to a set
+of two simulations that differ only in their resolution. The high-resolution
+simulation provides the average fields on a coarse grid that should be
+obtained by the low-resolution simulation run with the subgrid
+parameterization to be tested. The operator is a parallel algorithm that can
+easily be employed over large grids. The operator can also calculate a moving
+average over a user-defined block. Both the grid scale and the subgrid scale
+of any field can therefore be estimated \citep{Dauhut2016}.
+%
+\section{Three-dimensional clustering}
+%
+A clustering operator is available to identify any object or coherent
+structure and to characterize them in terms of their geometrical,
+thermodynamical, and dynamical properties. This technique was developed by
+\citet{Dauhut2016} to identify the few updrafts of ``Hector the Convector'' in
+the Northern Territory of Australia from among the more than 16\,000
+updrafts that hydrate the stratosphere. Updrafts were defined as
+three-dimensional objects made of connected grid points for which the
+vertical velocity exceeded an arbitrary threshold. Two grid points sharing a
+common face either in the horizontal or vertical direction were considered
+connected, while diagonal connections were considered only in the vertical
+direction. This technique has also been used for the attribution of dust
+emission, defined as surface objects, to wind regimes over the Sahara
+\citep{Chaboureau2016}.
+%
 \section{Kinetic energy spectra}
 %
-Observational studies (Nastrom and Gage 1985, Lindborg 1999) have shown that the kinetic energy (KE) spectra follow a k$^{-3}$ dependence in the large scales 
+Observational studies \citep{Nastrom1985,Lindborg1999} have shown that the kinetic energy (KE) spectra follow a k$^{-3}$ dependence in the large scales 
 (where k is the wavenumber) dominated by rotational modes and a transition to a shallower k$^{-5/3}$ dependence in the mesoscale and smaller scales, dominated by divergent modes. 
 
 
 Spectral analysis is a powerful tool to assess how the KE is distributed in atmospheric models according to spatial scales and their capacity to reproduce 
-observational spectra (Koshyk et al. 1999). In particular, Skamarock (2004) used spectral analysis to define the effective resolution of the WRF model, i.e. the scale from which the model departs from the theoretical slope, also given by a simulation with 
+observational spectra \citep{Koshyk1999}. In particular, \citet{Skamarock2004} used spectral analysis to define the effective resolution of the WRF model, i.e. the scale from which the model departs from the theoretical slope, also given by a simulation with 
 a finer grid spacing. Indeed, a part of small-scale energy is damped as it is affected by implicit and
 explicit diffusion, the tail of spectra showing a rapid decrease of KE. 
 
 
-An algorithm of spectra computation has been coded for Meso-NH (Ricard et al. 2013), based on Denis et al. (2002) study, which used a discrete cosine transform (DCT) 
-(Ahmed 1974) to convert grid-point fields into spectral ones. 
+An algorithm of spectra computation has been coded for Meso-NH \citep{Ricard2013}, based on \citet{Denis2002} study, which used a discrete cosine transform (DCT) 
+\citep{Ahmed1974} to convert grid-point fields into spectral ones. 
 Indeed, spectra computation from a discrete cosine transform is particularly well adapted for limited-area models
 to overcome the problem of non-periodic domain. 
 Unlike spectra computation based on FFT, the meteorological fields do not need any trend removal for ensuring periodicity (Errico et al. 1985). 
-Morever, Denis et al. (2002) have shown that there is no aliasing in the large scale.  
+Morever, \citet{Denis2002} have shown that there is no aliasing in the large scale.  
 
 We have also introduced an additional option to the original algorithm to assign each element of the variance array to two wavenumbers instead of one. 
 Indeed, each element is located into a band delimited by two ellipses corresponding to two wavenumbers (k and k+1), 
@@ -257,7 +286,7 @@ It is worth noting that the same tool can be used to compute spectra for other m
 
 \subsection*{Contribution of each element of the variance array to two wavenumbers}
 
-Using the same formulation as Denis et al. (2002), the total variance can be expressed from spectral coefficients as: 
+Using the same formulation as \citet{Denis2002}, the total variance can be expressed from spectral coefficients as: 
 \begin{eqnarray*}
  \sigma^{2}=\sum_{m=0 }^{N_{i}-1}\sum_{n=0}^{N_{j}-1} \sigma^{2}(m,n), 
 \end{eqnarray*}
@@ -273,7 +302,7 @@ An element in the variance array $\sigma^2(m,n)$ is located into a wavelength ba
 
 with $\alpha'(k)=\frac{k}{min(N_{i},N_{j})}$, k varying from 1 to min($N_{i}-1$,$N_{j}-1$).
 
-Instead of adding the contribution $\sigma^2(m,n)$ only to wavenumber k as in Denis et al. (2002), an alternative way is to distribute this contribution between the two wavenumbers k and k+1 as follows:
+Instead of adding the contribution $\sigma^2(m,n)$ only to wavenumber k as in \citet{Denis2002}, an alternative way is to distribute this contribution between the two wavenumbers k and k+1 as follows:
 
 \begin{itemize}
  \item the contribution to $\sigma^2(\alpha'(k))$ is: $a_{m,n} * \sigma^2(m,n)$
@@ -300,22 +329,22 @@ The Zenith Total Delay (ZTD) is obtained by vertically integrating the refractiv
 \begin{eqnarray}
  ZTD&=&10^{-6}\int^{\infty}_{z_r} k_{1}\frac{P}{T_v}dz+10^{-6}\int^{\infty}_{z_r}k_2^{'}\frac{e}{T}+k_3\frac{e}{T^2}dz \label{eq:ZTD} 
 \end{eqnarray}
-where $P$, $e$ are the total pressure and the partial pressure of water vapor, $T_v$ is the virtual temperature, $k_1$, $k_2$ and $k_3$ are the atmospheric refractivity constants. The set proposed by Bevis et al. (1994) is used here: $k_1 =77.60$ K hPa$^{-1}$, $k_2=69.4 $ K hPa$^{-1}$, $k_3=370100$ K$^{2}$ hPa$^{-1}$.
+where $P$, $e$ are the total pressure and the partial pressure of water vapor, $T_v$ is the virtual temperature, $k_1$, $k_2$ and $k_3$ are the atmospheric refractivity constants. The set proposed by \citet{Bevis1994} is used here: $k_1 =77.60$ K hPa$^{-1}$, $k_2=69.4 $ K hPa$^{-1}$, $k_3=370100$ K$^{2}$ hPa$^{-1}$.
 
-The first term of (\ref{eq:ZTD}) is called the zenith hydrostatic delay (ZHD), the second and third terms together are called the zenith wet delay (ZWD), which is proportional to the Integrated Water Vapor (IWV). More details can be found in Brenot et al. (2006).
+The first term of (\ref{eq:ZTD}) is called the zenith hydrostatic delay (ZHD), the second and third terms together are called the zenith wet delay (ZWD), which is proportional to the Integrated Water Vapor (IWV). More details can be found in \citet{Brenot2006}.
 %
 \section{Lidar products}
 %
-This section is taken from Chaboureau et al. (2011). The lidar attenuated backscattered (ATB) signal corrected for geometric effects and calibration constant (expressed in m$^{-1}$ sr$^{-1}$) at the altitude $z$ and the wavelength $\lambda$ is
+This section is taken from \citet{Chaboureau2011}. The lidar attenuated backscattered (ATB) signal corrected for geometric effects and calibration constant (expressed in m$^{-1}$ sr$^{-1}$) at the altitude $z$ and the wavelength $\lambda$ is
 \begin{eqnarray}
 ATB_{\lambda}(z) = 
  & \left[ \beta_{mol,\lambda}(z) + \beta_{par,\lambda}(z) \right] \\
  & \times \exp \left\{ -2 \int_0^z 
    \left[\alpha_{mol,\lambda}(z) + \eta \alpha_{par,\lambda}(z) dz
    \right] \right\}  \nonumber
-\end{eqnarray} where $\alpha$ is the extinction coefficient (m$^{-1}$) and $\beta$ the backscatter coefficient (m$^{-1}$ sr$^{-1}$), both caused by air molecules (${mol}$) and by aerosols and cloud particles (${par}$). Multiple scattering by cloud particles is crudely taken into account with $\eta=0.5$ (Platt 1973).
+\end{eqnarray} where $\alpha$ is the extinction coefficient (m$^{-1}$) and $\beta$ the backscatter coefficient (m$^{-1}$ sr$^{-1}$), both caused by air molecules (${mol}$) and by aerosols and cloud particles (${par}$). Multiple scattering by cloud particles is crudely taken into account with $\eta=0.5$ \citep{Platt1973}.
 
-Following Collis and Russell (1976), the lidar backscatter and extinction coefficients for molecules, $\beta_{mol,\lambda}$ and $\alpha_{mol,\lambda}$ respectively, are 
+Following \citet{Collis1976}, the lidar backscatter and extinction coefficients for molecules, $\beta_{mol,\lambda}$ and $\alpha_{mol,\lambda}$ respectively, are 
 \begin{equation}
 \beta_{mol,\lambda}=5.45 \times 10^{-32} \times \frac{p}{k_B T} 
 \times \left( \frac{\lambda}{0.55} \right)^{-4.09}
@@ -325,7 +354,7 @@ Following Collis and Russell (1976), the lidar backscatter and extinction coeffi
 \end{equation}
 where $T$ is temperature (K), $p$ is pressure (hPa),  $k_B$ is the Boltzmann constant ($1.38 \times 10^{-23}$ J K$^{-1}$), and wavelength $\lambda$ is given in $\mu$m.
 
-The optical properties of cloud particles and aerosols were integrated over their size distribution while extinction $Q_{ext,\lambda}$ and backscatter $Q_{back,\lambda}$ efficiencies were computed using the Mie code of Bohren and Huffman (1985) for spheres. Thus, particles were assumed to be spherical, although particle non-sphericity can be an important factor affecting the extinction to backscatter lidar ratio when the coarse mode prevails (Dubovik et al. 2006). Refraction indices of pure water and ice were used for cloud liquid and ice crystals respectively. In consistency with the numerical experiments, the refractive index of mineral dust was taken from Tulet et al. (2008), i.e., $1.448-2.92 \times 10^{-3}i$ at 532 nm, $1.44023 - 1.16 \times 10^{-3}i$ at 730 and 820 nm, and $1.41163 - 1.06 \times 10^{-3}i$ at 1064 nm.
+The optical properties of cloud particles and aerosols were integrated over their size distribution while extinction $Q_{ext,\lambda}$ and backscatter $Q_{back,\lambda}$ efficiencies were computed using the Mie code of \citet{Bohren1985} for spheres. Thus, particles were assumed to be spherical, although particle non-sphericity can be an important factor affecting the extinction to backscatter lidar ratio when the coarse mode prevails \citep{Dubovik2006}. Refraction indices of pure water and ice were used for cloud liquid and ice crystals respectively. In consistency with the numerical experiments, the refractive index of mineral dust was taken from \citet{Tulet2008}, i.e., $1.448-2.92 \times 10^{-3}i$ at 532 nm, $1.44023 - 1.16 \times 10^{-3}i$ at 730 and 820 nm, and $1.41163 - 1.06 \times 10^{-3}i$ at 1064 nm.
 
 For the 2-moment schemes, the integration over the size distribution of the particles $n_{par}(D,z)$ was performed using an accurate quadrature formula (here Gauss-Hermite for lognormal size distributions of dust) with
 \begin{equation} \label{alphapar}
@@ -362,7 +391,7 @@ n_i(D)dD=N_i g_i(D) dD
 \noindent where $D$ is the maximum dimension of the particules, $N_i$ the 
 concentration, $\nu_i$ and $\alpha_i$, are dispersion parameters and 
 $\lambda_i$ the slope parameter. $\Gamma(x)$ is the gamma function (see 
-Press et al. (1992) for the coding). The use of the generalized gamma 
+\citet{Press1992} for the coding). The use of the generalized gamma 
 law allows a greater flexibility in representing the particle size distribution 
 while $M(p)$, the $p^{\rm th}$ moment of the law is easily computed as:
 %
@@ -379,7 +408,7 @@ G_i(p) = \frac{\displaystyle{\Gamma(\nu_i+p/\alpha_i)}}{\displaystyle{\Gamma(\nu
 
 With the notable exception of pristine ice (for which concentration is diagnosed),
 the one-moment microphysical scheme of Meso-NH assumes that $N_i$ is a power 
-function of $\lambda_i$ (Caniaux et al. 1994):
+function of $\lambda_i$ \citep{Caniaux1994}:
 %
 \beq\label{eq1}
 N_i= C_i {\lambda_i}^{X_i}.
@@ -407,7 +436,7 @@ anelatic system of equations. Using (\ref{eq1}), (\ref{eq6}) and
 
 \subsection{Grid-point radar diagnostics}
 %
-This subsection is partly reproduced in Richard et al. (2003).
+This subsection is partly reproduced in \citet{Richard2003a}.
 It is implicitly assumed that the radar wavelength is large 
 enough so that radar waves propagate without attenuation and that the Rayleigh 
 scattering approximation ($\propto D^6$ cross-section efficiency) is valid. 
@@ -417,7 +446,7 @@ Computations are made on the curvilinear "mass" grid system of the model.
 %
 The total equivalent radar reflectivity factor $Z_e$ (dBZ), is calculated 
 as a sum of radar reflectivities produced by each hydrometeor type which is
-illuminated by the radar wave (Ferrier 1993): 
+illuminated by the radar wave \citep{Ferrier1994}: 
 %
 \beq\label{sum}
 Z_e=10\; \log_{10}\big[Z_{er}+Z_{ei}+Z_{es}+Z_{eg}+Z_{eh} \big].
@@ -496,7 +525,7 @@ n_g(D_e) D_e^6 dD_e
 %
 with again $D_e$ defined by (\ref{Deff}). The water coating factor 
 $f_{c}$ has been set to an empirical constant value of 0.14 as suggested 
-by Rasmussen et al. (1984). The same was done by Walko et al. (1995) 
+by \citet{Rasmussen1984}. The same was done by \citet{Walko1995} 
 to compute the shedding rate of the hailstones.  It is assumed also that the 
 graupel are fully wetted hydrometeors below the melting level ($T>273.16$ K). 
 Integration of (\ref{Zeg}) leads to 
@@ -544,7 +573,7 @@ V_{Dop}=\dfrac{\displaystyle{\sum_{i\in[r,s,g,h]} \int^{\infty}_{0} z_i(D) v_i(D
 in the more general case of partially wetted ice particles) is the intrinsic 
 reflectivity of an hydrometeor of type "i". The fall speed is given by 
 $v_i(D)=c_i D^{d_i} (\rho/\rho_{00})^{0.4}$ with air density $\rho$ effect
-(Foote and Du Toit, 1969) ($\rho_{00}$ corresponds to the ground level) so 
+\citep{Foote1969} ($\rho_{00}$ corresponds to the ground level) so 
 making the integration of (\ref{VDop}) straightforward.
 
 %
@@ -563,22 +592,22 @@ received on a H-polarized antenna and the same for $z^{VV}_r$ but for
 the V orthogonal direction. The differential signal is due to the deformation 
 of the raindrops as their size increases thus $z^{HH}_r>z^{VV}_r$ because big
 raindrops get an oblate shape. The mean axis ratio, $r(D)$, is generally given 
-with a polynomial expansion of the form (Chuang and Beard 1990):
+with a polynomial expansion of the form \citep{Chuang1990}:
 %
 \beq\label{axis}
 r(D)=\sum_j r_j D^j.
 \eeq
 %
 A widely used representation of $r(D)$ is the equilibrium axis ratio model
-given by Pruppacher and Beard (1970):
+given by \citet{Pruppacher1970}:
 %
 \beq\label{PB70}
 r(D)=1.03-0.62\times 10^{2} \times D
 \eeq
 %
-\noindent but as stressed by Jameson (1983), multiple modes of drop oscillations
+\noindent but as stressed by \citet{Jameson1983}, multiple modes of drop oscillations
 make the computations even more difficult. The more recent study of 
-Andsager et al. (1999) takes into account this effect and recommands a 
+\citet{Andsager1999} takes into account this effect and recommands a 
 quadratic polynomial fitting.
 %
 \beq\label{ABL99}
@@ -586,7 +615,7 @@ r(D)=1.012-0.144\times 10^{2} \times D -1.03\times 10^{4} \times D^2.
 \eeq
 %
 With the approximation $z^{HH}_r(D) \sim r(D)^{-7/3} \times z^{VV}_r(D)$ 
-(Jameson 1983) and taking $z^{VV}_r(D)=n_r(D)\ D^6$, an analytical expression 
+\citep{Jameson1983} and taking $z^{VV}_r(D)=n_r(D)\ D^6$, an analytical expression 
 for (\ref{Z_{DR}}) can be derived using (\ref{ABL99}) and expanding 
 $r(D)^{1/3}$ up to the second order:
 %%
@@ -629,7 +658,7 @@ K_{DP}=\frac{180\lambda}{\pi} \int^{\infty}_{0} Re\{f_H(D)-f_V(D)\}n(D)dD
 \eeq
 %
 \noindent where $f_H(D)-f_V(D)$ are the forward scatter amplitudes at H- and 
-V-polarization. From (\ref{DefKDP}), Jameson (1985) derived a relation between 
+V-polarization. From (\ref{DefKDP}), \citet{Jameson1985} derived a relation between 
 specific differential phase and the water content and raindrop axis ratio. For
 a C and S-band radar wave with centimetric $\lambda$ ($\sim 0.1$~m),
 $K_{DP}$ is approximated by
@@ -654,7 +683,7 @@ K_{DP}=6.7\;10^{3} \times (\rho_a r_r) \Big[0.144 \times 10^{2}\frac{G(4)}{G(3)}
 \eeq
 %
 In the above expression, $K_{DP}$ is forced to zero in the absence of rain.
-Note that with the equivalent $C$ value at $\lambda=10.71$~cm suggested by Gorgucci et al. (2002) one gets 6.3 instead of 6.7 in (\ref{moreapproxPhi_{DP}}).
+Note that with the equivalent $C$ value at $\lambda=10.71$~cm suggested by \citet{Gorgucci2002} one gets 6.3 instead of 6.7 in (\ref{moreapproxPhi_{DP}}).
 
 %
 % \subsubsection{Linear depolarization ratio: $LDR$}
@@ -778,7 +807,7 @@ At present, the radar simulator does not take into account the finite bandwidth 
 \begin{equation}
 \bar z_e(\vec r_0)=\frac{8\lambda^4\ln2}{\pi^6(\Delta\vartheta)^2|K_w|^2}\int_0^{2\pi}\!\!\!\int_0^\pi\eta(\vec r)l(\vec r)^2f^4(\vartheta',\phi')\sin\vartheta'd\vartheta'd\phi'\,.\label{zefctradiale}
 \end{equation}
-The article by Caumont et al. (2006) summarizes this paragraph and provides an example of use of the reflectivity simulator on a case study.
+The article by \citet{Caumont2006} summarizes this paragraph and provides an example of use of the reflectivity simulator on a case study.
 
 With the same formalism as for reflectivity, Doppler velocity is expressed as follows:
 \begin{equation}\label{vdopppi}
@@ -790,9 +819,9 @@ with
 &=\eta(\vec r)u_r(\vec{r})-\sin\vartheta\sum_{j\in\rm type}\int_0^\infty\!\!\!\sigma_j(D,\vec{r})v_{T_j}(D,\vec{r})N_j(D,\vec{r})d D\,,
 \end{align}
 where $u_r(\vec{r})$ is the projection onto the beam direction of the wind vector (in m~s$^{-1}$), and $v_{T_j}(D,\vec{r})$ is the fall speed of particles of diameter $D$ (in m) for the precipitating hydrometeor type $j$ (in m~s$^{-1}$).
-More details about the simulation of Doppler velocities are provided by Caumont and Ducrocq (2008). %\cite{cau08}.
+More details about the simulation of Doppler velocities are provided by \citet{Caumont2008}. %\cite{cau08}.
 
-A similar, yet more general expression than in the grid-point simulator (cf. (\ref{Z_{DR}})), is used to compute differential reflectivity (in dB) (see Seliga and Bringi 1976): %\citep[see][]{sel76}:
+A similar, yet more general expression than in the grid-point simulator (cf. (\ref{Z_{DR}})), is used to compute differential reflectivity (in dB) \citep[see][]{Seliga1976}: %\citep[see][]{sel76}:
 \begin{equation}
 Z_{DR}\equiv10\log\frac{z_{HH}}{z_{VV}}
 \end{equation}
@@ -804,7 +833,7 @@ Note that, as in the grid-point simulator, only raindrops contribute to $Z_{\it 
 
 \subsubsection{Numerical implementations}
 \paragraph{Integrals over $D$.}
-(\ref{eta}), (\ref{l}), (\ref{zefctradiale}), and (\ref{vdopppi}) contain improper integrals that cannot be directly computed. The angular double quadratures in (\ref{zefctradiale}) and (\ref{vdopppi}) are evaluated by following the method of Probert-Jones (1962), i.e., considering the antenna's radiation pattern as a Gaussian function, which means that only the main lobe is taken into account. Two similar techniques are implemented: Gauss-Hermite's and Gauss-Legendre's. In the following, $\eta(\vec r)l^2(\vec{r})$ or $\overline{\eta v_r}(\vec r)l(\vec r)^2$ are denoted as $F(\vec r)$.
+(\ref{eta}), (\ref{l}), (\ref{zefctradiale}), and (\ref{vdopppi}) contain improper integrals that cannot be directly computed. The angular double quadratures in (\ref{zefctradiale}) and (\ref{vdopppi}) are evaluated by following the method of \cite{Probert-Jones1962}, i.e., considering the antenna's radiation pattern as a Gaussian function, which means that only the main lobe is taken into account. Two similar techniques are implemented: Gauss-Hermite's and Gauss-Legendre's. In the following, $\eta(\vec r)l^2(\vec{r})$ or $\overline{\eta v_r}(\vec r)l(\vec r)^2$ are denoted as $F(\vec r)$.
 
 \paragraph{Gauss-Hermite quadrature.} The first technique consists in approaching the bidimensional integral by two independent integrals over $]-\infty;\infty[$:
 \begin{equation}
@@ -834,7 +863,7 @@ The Gauss-Hermite quadrature is well-suited for low numbers of points (typically
 which is different from $\frac{\pi(\Delta\theta)^2}{8\ln2}F\left(\vec r_0\right)\simeq0.567(\Delta\theta)^2F\left(\vec r_0\right)$ as would give a simple evaluation at the centre of the volume of resolution.\\
 
 
-Similarly, the improper integral involving scatterer diameters is computed by using a Gauss-Laguerre quadrature. Further details concerning these quadrature techniques can be found in Press et al. (1992). 
+Similarly, the improper integral involving scatterer diameters is computed by using a Gauss-Laguerre quadrature. Further details concerning these quadrature techniques can be found in \citet{Press1992}. 
 
 
 \paragraph{Scattering methods.}
@@ -843,7 +872,7 @@ Four methods are available: Rayleigh (for spheres), Mie, Rayleigh for spheroids 
 \begin{description}
 \item {Rayleigh, Mie or Rayleigh for spheroids scattering methods}
   
-The three first methods have been implemented and are described by Caumont et al (2006). 
+The three first methods have been implemented and are described by \citet{Caumont2006}. 
 When using Rayleigh, Mie or Rayleigh for spheroids methods,
 hydrometeors containing ice are supposed to behave as isotropic scatterers as they fall or tumble (i.e., they are modeled as spheres).
 The approximations of Rayleigh for spheres and for spheroids yield analytic results. Thus, for instance, in the Rayleigh theory, cross sections for raindrops are
@@ -851,43 +880,43 @@ The approximations of Rayleigh for spheres and for spheroids yield analytic resu
 \sigma_{\rm HH}&=\frac{\pi^5|K_w^2|}{\lambda^4}D^6\,,\\
 C_e&=\frac{\pi^2}\lambda\Im K_wD^3+\frac{\pi^4}{15\lambda^3}\Im\left(K_w^2\frac{m^4+27m^2+38}{2m^2+3}\right)D^5+\frac{2\pi^5}{3\lambda^4}\Re(K_w^2)D^6\,.
 \end{align}
-Analytic derivations of Rayleigh for spheroids cross sections can be found in Kerker (1969, chap.~10), van de Hulst (1981), Doviak and Zrni\'c (1993), or Bringi and Chandrasekar (2001), for instance.
-Mie computations rely on the code described by Bohren and Huffman (1983). 
+Analytic derivations of Rayleigh for spheroids cross sections can be found in \citet{Kerker1969} (Chap.~10), \citet{vandeHulst1981}, \citet{Doviak1993}, or \citet{Bringi2001}, for instance.
+Mie computations rely on the code described by \citet{Bohren1983}. 
 
-For pure water particles, the dielectric function is taken from Liebe et al. (1991), while the model of Hufford et al. (1991) is taken for pure ice.  Here we make the following assumptions: for particles made of ice and air only (snow, primary ice, and graupel above the melting level), we consider the diameter of a sphere made of ice only that would have the same mass (e.g., Smith 1984). For water-coated graupel, which are made of ice, water, and air, we consider the diameter of an equivalent-mass sphere made of 14~\% of water and 86~\% of ice as spheroidal inclusions (following Rasmussen 1984). The corresponding dielectric function is then computed following Bohren and Battan (1982).
+For pure water particles, the dielectric function is taken from \citet{Liebe1991}, while the model of \citet{Hufford1991} is taken for pure ice.  Here we make the following assumptions: for particles made of ice and air only (snow, primary ice, and graupel above the melting level), we consider the diameter of a sphere made of ice only that would have the same mass \citep[e.g.,][]{Smith1984}. For water-coated graupel, which are made of ice, water, and air, we consider the diameter of an equivalent-mass sphere made of 14~\% of water and 86~\% of ice as spheroidal inclusions \citep[following][]{Rasmussen1984}. The corresponding dielectric function is then computed following \citet{Bohren1982}.
 
 \item{T-matrix scattering method}
 
-When using T-matrix scattering method, implemented and described by Augros et al (2016), not only raindrops but also snow and graupel particles are considered as spheroids. 
-The T-matrix code has been adapted from Mishchenko and Travis (1998), and Mishchenko et al. (2002). T-matrix lookup tables
+When using T-matrix scattering method, implemented and described by \citet{Augros2016}, not only raindrops but also snow and graupel particles are considered as spheroids. 
+The T-matrix code has been adapted from \citet{Mishchenko1998} and \citet{Mishchenko2002}. T-matrix lookup tables
 containing the scattering coefficients were computed in advance
 for each hydrometeor type and each radar wavelength (S, C and
 X band). These coefficients were estimated for a set of diameters,
 temperatures, elevation angles and liquid water fractions for
-melting graupel. Polarimetric variables are calculated from the scattering coefficients following the equations given in the Appendix of Augros et al (2016).
+melting graupel. Polarimetric variables are calculated from the scattering coefficients following the equations given in the Appendix of \citet{Augros2016}.
 
 When selecting T-matrix scattering method, a more continuous melting process is simulated for graupel particles. 
 In a similar way to Jung et al (2008), the water
 fraction inside graupel particles is estimated as a function of the hydrometeor contents of graupel and rain $M_g$ and $M_r$.
-More details of this parameterization are explained by Augros et al (2016). 
+More details of this parameterization are explained by \citet{Augros2016}. 
 \end{description}
 
 \section{Satellite diagnostics}
 A comparison between model outputs and satellite observations provides an assessment of how well the model can reproduce the meteorological situation.
  The model-to-satellite approach compares directly the satellite brightness temperatures (BTs) to the BTs computed from the predicted model fields 
-(Morcrette 1991). It has been first applied to Meso-NH outputs for comparison
+\citep{Morcrette1991}. It has been first applied to Meso-NH outputs for comparison
  with Meteosat observations in the infrared using a narrow-band code 
-(Chaboureau et al. 2000), then for the tuning of a critical parameter in the microphysical scheme (Chaboureau et al. 2002).
+\citep{Chaboureau2000}, then for the tuning of a critical parameter in the microphysical scheme \citep{Chaboureau2002a}.
 
-Since the Masdev 4-7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 11.3 (Saunders et al. 2005) is also available
-allowing the calculation of BT for a large number of satellites. RTTOV was first used with Meso-NH for a further tuning in the microphysical scheme (Chaboureau and Pinty 2006). The paragraphs below are taken from the RTTOV documentation. They give a broad overview on the RTTOV model. More information can be obtained from the web ressources on {\tt https://nwpsaf.eu/site/software/rttov/ }
+Since the Masdev 4-7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 11.3 \citep{Saunders2005} is also available
+allowing the calculation of BT for a large number of satellites. RTTOV was first used with Meso-NH for a further tuning in the microphysical scheme \citep{Chaboureau2006}. The paragraphs below are taken from the RTTOV documentation. They give a broad overview on the RTTOV model. More information can be obtained from the web ressources on {\tt https://nwpsaf.eu/site/software/rttov/ }
 
 The RTTOV model allows rapid simulations of radiances for satellite infrared or
 microwave nadir scanning radiometers given an atmospheric profile of
 temperature, variable gas concentrations, cloud and surface properties.
-Ozone and carbon dioxide are taken from the McClatchey et al. (1972) standard
+Ozone and carbon dioxide are taken from the \citet{McClatchey1972} standard
 profiles and the fixed value used in Meso-NH, respectively. Above the model
-top, the standard profiles from McClatchey et al. (1972) are used.
+top, the standard profiles from \citet{McClatchey1972} are used.
 All the atmospheric profiles of temperature and gas concentrations are then
 interpolated onto the 43 pressure levels of RTTOV.
 
@@ -902,342 +931,29 @@ Simulation of clear radiances are based on transmittances computed by means
 of a linear regression in optical depth.
 
 In the infrared, the RTTOV code takes clouds into account as grey bodies
-(Chevallier et al. 2001) on the Meso-NH defined model level assuming
+\citep{Chevallier2001} on the Meso-NH defined model level assuming
 maximum random overlap of clouds. Radiative properties for water clouds
-are calculated using constants tabulated in Hu and Stamnes (1993).
+are calculated using constants tabulated in \citet{Hu1993}.
 Water cloud effective radius is diagnosed using a value of 10 $\mu$m
 over land and 13 $\mu$m over sea.
-Radiative properties for ice clouds are taken from Baran and Francis (2004)
+Radiative properties for ice clouds are taken from \citet{Baran2004}
 assuming hexagonal columns with an effective dimension diagnosed
-from the ice water content (McFarquhar et al. 2003).
-Surface emissivity is given by the Ecoclimap database (Masson et al. 2003).
+from the ice water content \citep{McFarquhar2003}.
+Surface emissivity is given by the Ecoclimap database \citep{Masson2003}.
 Note that the surface emissivity is valid there for a broad band
 between 8 and 12 $\mu$m only.
 
 In the microwaves, the hydrometeor optical properties are provided to the RTTOV
 model from precomputed Mie tables for liquid water, cloud ice, rain, and
-precipitating ice (Bauer 2001). The cloud layers are overlapped following
+precipitating ice \citep{Bauer2001}. The cloud layers are overlapped following
 a maximum random approximation. Polarization is only introduced by the sea
 surface properties obtained using the FASTEM code. Elsewhere (over land
 and sea-ice) surface emissivity is fixed with typical value of bare soil.
 
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{btSect}{5-2-Diagnostics}
 \section{References}
-\decrefname
-Ahmed, N. N., and K. R. Rao, 1974: Discrete cosine transform. {\em IEEE Trans.
-  Comput.}, {\bf C-23}, 90--93.
-\decrefname
-Andsager K., K. V. Beard, and N. F. Laird, 1999: 
-      Laboratory measurements of axis ratios for large raindrops.
-      {\it J. Atmos. Sci.},
-      {\bf 56},
-      2673-2683.
-\decrefname
-Augros, C., V. Caumont, O. Ducrocq, N. Gaussiat, and P. P. Tabary, 2016:
-      Comparisons between S, C, and X band polarimetric radar observations
-      and convective-scale simulations of HyMeX first special observing period.
-      {\it Quart. J. Roy. Meteor. Soc.}, {\bf 142}, 347-362.
-\decrefname
-Bauer, P., 2001: Including a melting layer in microwave radiative transfer
-       simulation for clouds. {\it Atmos. Res.}, {\bf 67}, 9-30.
-\decrefname
-Baran, A. J. and P. N. Francis, 2004:
-      On the radiative properties of cirrus cloud at solar and thermal
-      wavelengths: A test of model consistency using high resolution
-      airborne radiance measurements.
-      {\it Q. J. Roy. Meteor. Soc.}, {\bf 130}, 763-778.
-\decrefname
-Bevis, M., S. Businger, S. Chiswell, T. Herring, R. A. Anthes, C. Rocken, and R. H. Ware, 1994:
-      GPS meteorology: Mapping zenith wet delays onto precipitable water.
-      {\it J. Appl. Meteorol}, {\bf 33}, 379-386.
-\decrefname
-Bohren, C.~F., and L.~J. Battan, 1982: Radar backscattering of microwaves by
-  spongy ice spheres. {\em J. Atmos. Sci.}, {\bf 39}, 2623--2628.
-\decrefname
-Bohren, C.~F., and D.~R. Huffman, 1983: {\em Absorption and Scattering of Light by
-  Small Particles}. John Wiley \& Sons, 530~p.
-\decrefname
-Bolton, D., 1980: The computation of equivalent potential temperature.
-      {\it Mon. Wea. Rev.}, 
-      {\bf 108},
-      1046-1053.
-\decrefname
-Brenot, H., V. Ducrocq, A. Walpersdorf, C. Champollion, and O. Caumont, 2006:
-GPS zenith delay sensitivity evaluated from high-resolution numerical weather prediction
-simulations of the 8-9th September 2002 flash flood over southeastern France.
-      {\it J. Geophys. Res.},
-      {\bf 111},
-      doi:10.1029/2004JD005726
-\decrefname
-Bringi, V.~N., and V.~Chandrasekar, 2001: {\em Polarimetric {Doppler} weather
-  radar\string: {Principles} and applications}. Cambridge University Press,
-  636~p.
-\decrefname
-Caniaux, G., J.-L. Redelsperger, and J.-P. Lafore, 1994:
-      A numerical study of the stratiform region of a fast-moving squall line.
-      Part I: General description and water and heat budgets.
-      {\it J. Atmos. Sci.},
-      {\bf 51},
-      2046-2074.
-\decrefname
-Caumont, O., and V.~Ducrocq, 2008: What should be considered when simulating
-  {Doppler} velocities measured by ground-based weather radars\string? {\em J.
-  Appl. Meteor. Climatol.}, {\bf 47}, 2256--2262. doi:10.1175/2008JAMC1894.1
-\decrefname
-Caumont, O., V. Ducrocq, G. Delrieu, M. Gosset, J.-P. Pinty, J. Parent du Ch\^atelet, 
-      H. Andrieu, Y. Lema\^itre, and G. Scialom, 2006:
-      A radar simulator for high-resolution nonhydrostatic models.
-      {\it J. Atmos. Ocean. Tech.},
-      {\bf 23},
-      1049-1067. doi:10.1175/JTECH1905.1
-\decrefname
-Chaboureau, J.-P., J.-P. Cammas, P. Mascart, J.-P. Pinty, C. Claud, R. Roca, 
-and J.-J. Morcrette, 2000: Evaluation of a cloud life-cycle simulated by
-Meso-NH during FASTEX using METEOSAT radiances and TOVS-31 cloud retrievals.
-      {\it Quart. J. Roy. Meteor. Soc.}, 
-      {\bf 126},
-      1735-1750.
-\decrefname
-Chaboureau, J.-P., J.-P. Cammas, P. Mascart, J.-P. Pinty, and J.-P. Lafore, 2002: Mesoscale model cloud scheme assessment using satellite observations.
-      {\it J. Geophys. Res.}, 
-      {\bf 107(D17)},
-      4301, doi:10.1029/2001JD000714.
-\decrefname
-Chaboureau, J.-P. and J.-P. Pinty, 2006:
-      Validation of a cirrus parameterization with Meteosat Second Generation.
-      {\it Geophys. Res. Let.}, {\bf 33}, L03815, doi:10.1029/2005GL024725.
-\decrefname
-Chaboureau, J.-P., E. Richard, J.-P. Pinty, C. Flamant, P. Di Girolamo, C. Kiemle, A. Behrendt,
-      H. Chepfer, M. Chiriaco, and V. Wulfmeyer, 2011:
-      Long-range transport of Saharan dust and its radiative impact on precipitation forecast
-      over western Europe: a case study during the Convective and Orographically induced
-      Precipitation Study (COPS).
-      {\it Quart. J. Roy. Meteor. Soc.}, 
-      {\bf 137},
-      236-251.
-\decrefname
-Chevallier, F., P. Bauer, G. Kelly, C. Jakob, and T. McNally, 2001:
-      Model clouds over oceans as seen from space:
-      comparison with HIRS/2 and MSU radiances
-      {\it J. Climate}, 
-      {\bf 14},
-      4216-4229.
-\decrefname
-Chuang, C., and K. V. Beard, 1990:
-      A numerical model for the equilibrium shape of electrified raindrops.
-      {\it J. Atmos. Sci.},
-      {\bf 47},
-      1374-1389.
-\decrefname
-Collis, R. T., and P. B. Russell, 1976: \textit{Laser monitoring of the atmosphere}.
-  Springer-Verlag
-\decrefname
-Couvreux, F., F. Hourdin, and C. Rio, 2010:
-      Resolved versus parametrized boundary-layer plumes. Part I: A parametrization-oriented
-      conditional sampling in Large-Eddy Simulations
-      {\it Bound.-Layer Meteor.},
-      {\bf 134},
-      441-458.
-\decrefname
-Denis B., J. C\^{o}t\'{e}, and R. Laprise, 2002: Spectral decomposition of
-  two-dimensional atmospheric fields on limited-area domains using the discrete
-  cosine transform (DCT). {\em Mon. Wea. Rev.}, {\bf 130}, 1812--1829.
-\decrefname
-Doviak, R. J., and D. S. Zrni\'c, 1993:
-      \textit{Doppler Radar and Weather Observations.}
-      2nd Ed.
-      Academic Press,
-      Cambridge University Press,
-      562 pp.
-\decrefname
-Dubovik, O., A. Sinyuk, T. Lapyonok, B. N. Holben, M. Mishchenko, P. Yang, T. F. Eck,
-      H. Volten, O. Mu\~noz, B. Veihelmann, W. J. van~der Zande, J.-F. Leon, M. Sorokin,
-      and I. Slutsker, 2006: Application of spheroid models to account for aerosol
-      particle nonsphericity in remote sensing of desert dust.
-      {\it J. Geophys. Res.}, {\bf 111}, D11208, doi:10.1029/2005JD006619.
-\decrefname
-Hill, R. J., S. F. Clifford, R. S. Lawrence, 1980:
-      Refractive index and absorption fluctuations in the infrared 
-      caused by temperature, humidity, and pressure-fluctuations.
-      {\it J. Opt. Soc. Am.}, 
-      {\bf 70},
-      1192-1205.  
-\decrefname
-Koshyk J. N., K. Hamilton, and J. D. Mahlman, 1999: Simulation of k$^{-5/3}$ mesoscale
-  spectral regime in the GFDL SKYHI general circulation model. {\em Geophys.
-  Res. Lett.}, {\bf 26}, 843--846.
-\decrefname
-Kunkel, B. A., 1984: Parameterization of droplet terminal velocity and
-extinction coefficient in fog models.
-     {\it J. App. Meteor. },
-      {\bf 23},
-      34-41.     
-\decrefname
-Emanuel, K. A. 1994: Atmospheric convection, Oxford University Press.
-\decrefname
-Ferrier, B. S., 1994:
-      A double-moment multiple-phase four-class bulk ice scheme.
-      Part I: Description.
-      {\it J. Atmos. Sci.},
-      {\bf 51},
-      249-280.
-\decrefname
-Foote, G. B., and P. S. Du Toit, 1969:
-      Terminal velocity of raindrops aloft.
-      {\it J. Appl. Meteor.},
-      {\bf 8},
-      249-253.
-\decrefname
-Gorgucci, E., V. Chandrasekar, V. N. Bringi, and G. Scarchilli, 2002:
-      Estimation of raindrop size distribution parameters from polarimetric
-      radar measurements.
-      {\it J. Atmos. Sci.},
-      {\bf 59},
-      2373-2384.
-\decrefname
-Harrington, J.~Y., M.~P. Meyers, R.~L. Walko, and W.~R. Cotton, 1995:
-  Parameterization of ice crystal conversion processes in cirrus clouds using
-  double-moment basis functions. Part I: Basic formulation and one-dimensional
-  tests. {\it J. Atmos. Sci.}, {\bf 52}, 4344-4366.
-\decrefname
-Hu, Y.~X. and K. Stamnes, 1993:
-   An accurate parameterization of the radiative properties of water clouds
-   suitable for use in climate models. {\it J. Climate}, {\bf 6}, 728-742.
-\decrefname
-Hufford, G.~A., 1991: A model for the complex permittivity of ice at
-  frequencies below 1~{THz}. {\em Int. J. Infrar. Millim. Waves}, {\bf 12},
-  677--682.
-\decrefname
-Jameson, A. R., 1983:
-      Microphysical interpretation of multi-parameter radar measurements in
-      rain. Part I: Interpretation of polarization measurements and estimation
-      of raindrop shapes.
-      {\it J. Atmos. Sci.},
-      {\bf 40},
-      1792-1802.
-\decrefname
-Jameson, A. R., 1985:
-      Microphysical interpretation of multi-parameter radar measurements in
-      rain. Part III: Interpretation and measurement of propagation 
-      differential phase shift between orthogonal linear polarizations.
-      {\it J. Atmos. Sci.},
-      {\bf 42},
-      607-614.
-\decrefname
-Kerker, M., 1969: {\em The Scattering of Light and other Electromagnetic
-  Radiation}. Academic Press, Inc., New York, New York, 666~p.
-\decrefname
-Liebe, H.~J., G.~A. Hufford, and T.~Manabe, 1991: A model for the complex
-  permittivity of water at frequencies below 1~{THz}. {\em Int. J. Infrar.
-  Millim. Waves}, {\bf 12}, 659--674.
-\decrefname
-Lindborg, E., 1999: Can the atmospheric kinetic energy spectrum be explained
-  by two-dimensional turbulence ? {\em J. Fluid. Mech.}, {\bf 388},
-  259--288.
-\decrefname
-Masson, V., J.-L. Champeaux, C.~Chauvin, C.~Meriguet, and R.~Lacaze, 2003:
-  A global database of land surface parameters at 1 km resolution for use in
-  meteorological and climate models. {\it J. Climate}, {\bf 16}, 1261-1282.
-\decrefname
-McClatchey, R. A., R. W. Fenn, J. E. A. Selby, F. E. Volz, and J. S.
-  Garing, 1972: Optical properties of the atmosphere. Air Force
-  Cambridge Research Laboratories Tech. Rep. AFCRL-72-0497, 108 pp.
-\decrefname
-McFarquhar, G.~M., S.~Iacobellis, and R.~C.~J. Somerville, 2003: 
-  SCM simulations of tropical ice clouds using observationnaly based
-  parameterizations of microphysics. {\it J. Climate}, {\bf 16}, 1643-1664.
-\decrefname
-Mishchenko, M.~I., and L.~D. Travis, 1998: Capabilities and limitations of a
-  current {\sc fortran} implementation of the {T}-matrix method for randomly
-  oriented, rotationally symmetric scatterers. {\em J. Quant. Spectrosc.
-  Radiat. Transfer}, {\bf 60}, 309--324.
-\decrefname
-Mishchenko, M.~I., L.~D. Travis, and A.~A. Lacis, 2002: {\em Scattering, Absorption, and
-  Emission of Light by Small Particles}. Cambridge University Press, 445~p.
-\decrefname
-Morcrette, J.-J., 1991: Evaluation of model-generated cloudiness: 
-Satellite-observed and model-generated diurnal variability of
-brightness temperature.
-      {\it Mon. Wea. Rev.}, 
-      {\bf 119},
-      1205-1224.
-\decrefname
-Nastrom, G. D., and K. S., Gage, 1985: A climatology of atmospheric wavenumber
-  spectra of wind and temperature observed by commercial aircraft. {\em J.
-  Atmos. Sci.}, {\bf 42}, 950--960.
-\decrefname
-Platt, C. M. R., 1973: Lidar and radiometric observations of cirrus clouds.
-      {\it J. Atmos. Sci.}, 
-      {\bf 30},
-      1191-1204.
-\decrefname
-Press, W. H., S. A. Teukolsky, W. T. Vetterling, and B. P. Flannery, 1992:
-      {\it Numerical Recipes in FORTRAN: The Art of Scientific Computing.}
-      2nd Ed.
-      Cambridge University Press,
-      963 pp.
-\decrefname
-Probert-Jones, J.~R., 1962: The radar equation in meteorology. {\em Quart. J.
-  Roy. Meteor. Soc.}, {\bf 88}, 485--495.
-\decrefname
-Pruppacher, H. R., and K. V. Beard, 1970: 
-      A wind tunnel investigation of the internal circulation and shape of 
-      water drops falling at terminal velocity in air.
-      {\it Quart. J. Roy. Meteor. Soc.},
-      {\bf 96},
-      247-256.
-\decrefname
-Ricard, D., C. Lac, S. Riette, R. Legrand, and A. Mary, 2013: 
-Kinetic energy spectra characteristics of two convection-permitting limited-area models AROME and Meso-NH.
-{\it Quart. J. Roy. Meteor. Soc.}, {\bf 139}, 1327-1341.
-\decrefname
-Richard, E., S. Cosma, P. Tabary, J.-P. Pinty, and M. Hagen, 2003:
-      High-resolution numerical simulations of the convective system observed
-      in the Lago Maggiore area on 17 September 1999 (MAP IOP 2a).
-      {\it Quart. J. Roy. Meteor. Soc.},
-      {\bf 129},
-      543-563.
-\decrefname
-Rasmussen, R. M., Levizzani, V., and H. R. Pruppacher, 1984:
-      A wind tunnel and theoretical study on the melting behavior of 
-      atmospheric ice particles. III: Experiment and theory for spherical 
-      ice particles of radius $>500$ $\mu$m.
-      {\it J. Atmos. Sci.},
-      {\bf 41},
-      381-388.
-\decrefname
-Sachidananda, M., and D.~S. Zrni\'c, 1986: Differential propagation phase shift
-  and rainfall estimation. {\em Radio Sci.}, {\bf 21}, 235--247.
-\decrefname
-Saunders, R., M. Matricardi, P. Brunel, S. English, P. Bauer, U. O'Keeffe, P.
-Francis and P. Rayer, 2005: RTTOV-8 science and validation report. NWP SAF
-Report, 41 pages, Tech. rep.
-\decrefname
-Seliga, T.~A., and V.~N. Bringi, 1976: Potential use of radar differential
-  reflectivity measurements at orthogonal polarizations for measuring
-  precipitation. {\em J. Appl. Meteor.}, {\bf 15}, 69--76.
-\decrefname
-Skamarock, W. C., 2004: Evaluating NWP models using kinetic energy spectra.
-  {\em Mon. Wea. Rev.}, {\bf 132}, 3019--3032.
-\decrefname
-Smith, P.~L., 1984: Equivalent radar reflectivity factors for snow and ice
-  particles. {\em J. Climate Appl. Meteor.}, {\bf 23}, 1258--1260.
-\decrefname
-Tulet, P., M. Mallet, V. Pont, J. Pelon and A. Boone, 2008: The 7-13 March 2006 dust
-  storm over West Africa: Generation, transport, and vertical stratification.
-  {\it J. Geophys. Res.}, {\bf 113}, D00C08, doi:10.1029/2008JD009871
-\decrefname
-van~de Hulst, H.~C., 1981: {\em Light Scattering by Small Particles}. Dover,
-  New York, 470~p.
-\decrefname
-Walko, R. L., W. R. Cotton, M. P. Meyers, and J. Y. Harrington, 1995:
-      New RAMS cloud microphysics parameterization. Part I: The single-moment
-      scheme.
-      {\it Atm. Res.},
-      {\bf 38},
-      29-62.
-\decrefname
-
-
+\btPrintCited
+\end{btSect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%
