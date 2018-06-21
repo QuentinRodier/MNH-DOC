@@ -1201,12 +1201,14 @@ centered on CURrent time (s)
 \item XALT\_BALLOON\index{XALT\_BALLOON!\innam{NAM\_DIAG}}: initial altitudes of the balloons (m)
 \end{itemize}
 
-\subsection{Interpolation on isobaric and isentropic levels}
+\subsection{Interpolation on altitude, isobaric and isentropic levels}
 \begin{center}
 \begin{tabular} {|l|l|l|}
 \hline
 Fortran name  & Fortran type & default value \\
 \hline
+LISOAL       & logical     & .FALSE.   \\
+XISOAL       & array(real) & 99*-1  \\
 LISOPR       & logical     & .FALSE.   \\
 XISOPR       & array(real) & 10*0  \\
 LISOTH       & logical     & .FALSE.   \\
@@ -1215,8 +1217,26 @@ XISOTH       & array(real) & 10*0  \\
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item LISOPR\index{!\innam{NAM\_DIAG}}: flag to interpolate on pressure levels the following variables : potential temperature, wind, water vapour mixing ratio, geopotential (in meters)
+\item LISOAL\index{!\innam{NAM\_DIAG}}: flag to interpolate on altitude levels the following variables: potential vorticity, wind, cloud (liquid water and ice) and precipitation (rain, snow and graupel) mixing ratio, dust extinction (if available)
+\item XISOAL\index{!\innam{NAM\_DIAG}}: altitude of the isobaric levels
+\item LISOPR\index{!\innam{NAM\_DIAG}}: flag to interpolate on altitude levels the following variables: potential temperature, wind, water vapour mixing ratio, geopotential (in meters)
 \item XISOPR\index{!\innam{NAM\_DIAG}}: altitude of the isobaric levels
-\item LISOTH\index{!\innam{NAM\_DIAG}}: flag to interpolate on isentropic levels the following variables : pressure, potential vorticity, wind, water
+\item LISOTH\index{!\innam{NAM\_DIAG}}: flag to interpolate on isentropic levels the following variables: pressure, potential vorticity, wind, water
 \item XISOTH\index{!\innam{NAM\_DIAG}}: altitude of the isentropic levels
+\end{itemize}
+
+\subsection{Coarse graining}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+LCOARSE      & logical     & .FALSE.   \\
+NDXCOARSE    & integer     & 1  \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LCOARSE\index{!\innam{NAM\_DIAG}}: flag to compute TKE (summation of the gridscale and the subgridscale parts) using coarse graining by both block and moving average
+\item NDXCOARSE\index{!\innam{NAM\_DIAG}}: number of gridpoints over which the averaging is done
 \end{itemize}
