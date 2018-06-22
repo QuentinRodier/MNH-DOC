@@ -1223,6 +1223,26 @@ XISOTH       & array(real) & 10*0  \\
 \item XISOTH\index{!\innam{NAM\_DIAG}}: altitude of the isentropic levels
 \end{itemize}
 
+\subsection{Clustering}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type & default value \\
+\hline
+LCLSTR       & logical     & .FALSE.   \\
+LBOTUP       & logical     & .TRUE.   \\
+CFIELD       & character(*8) & 'CLOUD'    \\
+XTHRES       & real        & 0.00001    \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item LCLSTR\index{!\innam{NAM\_DIAG}}: flag for 3D clustering
+\item LBOTUP\index{!\innam{NAM\_DIAG}}: to propagate clustering from bottom to top (when TRUE); otherwise from top to bottom
+\item CFIELD\index{!\innam{NAM\_DIAG}}: field on which clustering is applied, could be 'W' or 'CLOUD'
+\item XTHRES\index{!\innam{NAM\_DIAG}}: threshold value to detect the 3D structures
+\end{itemize}
+
 \subsection{Coarse graining}
 \begin{center}
 \begin{tabular} {|l|l|l|}
