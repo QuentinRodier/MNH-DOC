@@ -94,10 +94,10 @@ using files passed through namelist PRE\_IDEA1.nam
 \hline
 Fortran name & Fortran type & default value \\
 \hline
-CUVW\_ADV\_SCHEME   &  6 characters  & 'WENO\_K'   \\
+CUVW\_ADV\_SCHEME   &  6 characters  & 'CEN4TH'   \\
 CMET\_ADV\_SCHEME    &  6 characters  & 'PPM\_01'   \\
 CSV\_ADV\_SCHEME    &  6 characters  & 'PPM\_01'   \\
-CTEMP\_SCHEME    &  4 characters  & 'RK53'   \\
+CTEMP\_SCHEME    &  4 characters  & 'RKC4'   \\
 NWENO\_ORDER    &  integer       & 3   \\
 LSPLIT\_CFL   &  logical       & .TRUE.   \\
 LSPLIT\_WENO   &  logical       & .TRUE.   \\
@@ -514,6 +514,14 @@ NBERFIRC  & Bergeron-Findeisen gth. & integer  &  0 \index{NBERFIRC!\innam{NAM\_
 (if CCLOUD='ICEx') & &   &  \\\hline
 NCDEPIRC  & condensation/deposition & integer  &  0 \index{NDEPIRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx') &on ice &   &  \\\hline
+NCMELRC  & collection by snow and conversion into rain with T>XTT & integer  &  0 \index{NCMELRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+NDRYHRC  & dry growth of hail & integer  &  0 \index{NDRYHRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+NCORRRC  & correction & integer  &  0 \index{NCORRRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+NADJURC  & adjustement before  & integer  &  0 \index{NADJURC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
 NHENURC  & CCN activation  & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='C2R2' or 'KHKO') & &   &  \\\hline
 NSEDIRC  & sedimentation & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\
@@ -591,6 +599,12 @@ NCDEPIRI&   condensation/deposition & integer  &  0 \index{NCDEPIRI!\innam{NAM\_
 (if CCLOUD='ICEx') &  on ice&   &  \\\hline
 NWETHRI &   wet growth  & integer  &  0 \index{NWETHRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICE4') &of hail &   &  \\\hline
+NDRYHRI&    dry growth of hail& integer  &  0 \index{NDRYHRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+NCORRRI&   correction & integer  &  0 \index{NCORRRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
+NADJURI&   adjustment before & integer  &  0 \index{NADJURI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICEx'and LRED) &  on ice&   &  \\\hline
 NHINDRI &  heterogeneous     & integer  &  0 \index{NHINDRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &nucleation by deposition &   &  \\\hline
 NHINCRI & heterogeneous     & integer  &  0 \index{NHINCRI!\innam{NAM\_BU\_RRI}}\\
@@ -641,9 +655,15 @@ NWETGRG  & wet growth of graupel  & integer  &  0 \index{NWETGRG!\innam{NAM\_BU\
 NDRYGRG  & dry growth of graupel  & integer  &  0 \index{NDRYGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NGMLTRG  & graupel melting  & integer  &  0 \index{NGMLTRG!\innam{NAM\_BU\_RRG}}\\\hline
 NWETHRG  & wet growth of hail & integer  &  0 \index{NWETHRG!\innam{NAM\_BU\_RRG}}\\\hline
-NCOHGRG  & reconversion hail & integer  &  0 \index{NCOHGRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='ICE4') & to graupel  &   &  \\\hline
+NHGCVRG  & Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICE4' and LRED) &   &   &  \\\hline
+NGHCVRG  & Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICE4' and LRED) &   &   &  \\\hline
 NACCRG  & accretion of graupel & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\\hline
+NDRYHRG&    dry growth of hail& integer  &  0 \index{NDRYHRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+NCORRRG&   correction & integer  &  0 \index{NCORRRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
 NHONRRG  & drop homogeneous  & integer  &  0 \index{NHONRRG!\innam{NAM\_BU\_RRG}}\\
 (if CCLOUD='LIMA') &nucleation  &   &  \\\hline
 NHMGRG  & Hallett-Mossop ice  & integer  &  0 \index{NHMGRG!\innam{NAM\_BU\_RRG}}\\
@@ -676,7 +696,10 @@ NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}
 NWETGRH  & wet growth of graupel  & integer  &  0 \index{NWETGRH!\innam{NAM\_BU\_RRH}}\\\hline
 NWETHRH  & wet growth of hail  & integer  &  0 \index{NWETHRH!\innam{NAM\_BU\_RRH}}\\\hline
 NHMLTRH  & hail melting  & integer  &  0 \index{NHMLTRH!\innam{NAM\_BU\_RRH}}\\\hline
-NCOHGRH  & reconversion hail to graupel & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRH}}\\\hline
+NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RRH}}\\\hline
+NCORRRH  &  correction & integer  &  0 \index{NCORRRH!\innam{NAM\_BU\_RRH}}\\\hline
+NHGCVRH  &  Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\\hline
+NGHCVRH  &  Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -719,6 +742,12 @@ NWETHRR  & wet growth of hail & integer  &  0 \index{NWETHRR!\innam{NAM\_BU\_RRR
 (if CCLOUD='ICEx') & &   &  \\\hline
 NHMLTRR  & melting of hail& integer  &  0 \index{NHMLTRR!\innam{NAM\_BU\_RRR}}\\
 (if CCLOUD='ICE4') & &   &  \\\hline
+NCMELRR  & collection of droplets by snow and conversion into rain & integer  &  0 \index{NCMELRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='ICEx' and LRED) & &   &  \\\hline
+NDRYHRR  & dry growth of hail & integer  &  0 \index{NDRYHRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='ICE4' and LRED) & &   &  \\\hline
+NCORRRR  & correction & integer  &  0 \index{NCORRRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='ICEx' and LRED) & &   &  \\\hline
 NHONRRR  & drop homogeneous  & integer  &  0 \index{NHONRRR!\innam{NAM\_BU\_RRR}}\\
 (if CCLOUD='LIMA') &nucleation &   &  \\\hline\end{tabular}
 \end{center}
@@ -763,6 +792,10 @@ NDRYGRS  & dry growth of graupel   & integer  &  0 \index{NDRYGRS!\innam{NAM\_BU
 (if CCLOUD='ICEx') & &   &  \\\hline
 NWETHRS  & wet growth of hail  & integer  &  0 \index{NWETHRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='ICE4') & &   &  \\\hline
+NDRYHRS&    dry growth of hail& integer  &  0 \index{NDRYHRS!\innam{NAM\_BU\_RRS}}\\
+(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+NCORRRS&   correction & integer  &  0 \index{NCORRRS!\innam{NAM\_BU\_RRS}}\\
+(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
 NCNVIRS  &Conversion of    & integer  &  0 \index{NCNVIRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='LIMA') & snow to r\_i&   &  \\\hline
 NCNVSRS  & Conversion of pristine  & integer  &  0 \index{NCNVSRS!\innam{NAM\_BU\_RRS}}\\
@@ -818,6 +851,10 @@ NDEPGRV   & deposition on graupel & integer  &  0 \index{NDEPGRV!\innam{NAM\_BU\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
 NCDEPIRV   & condensation/deposition & integer  &  0 \index{NCDEPIRV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) &on ice &   &  \\\hline
+NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
 \end{tabular}
 \end{center}
 \begin{center}
@@ -963,7 +1000,9 @@ NDRYGTH  & dry growth of graupel& integer  &  0 \index{NDRYGTH!\innam{NAM\_BU\_R
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
 NGMLTTH  & graupel melting      & integer  &  0 \index{NGMLTTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NIMLTTH  & ice melting          & integer  &  0 \index{NIMLTTH!\innam{NAM\_BU\_RTH}}\\
+NDRYHTH  & dry growth of hail          & integer  &  0 \index{NDRYHTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='ICE4' ) & &   &  \\\hline
+NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
@@ -1802,10 +1841,38 @@ should not be counted here. }
 \subsection{Namelist NAM\_CONFZ}
 See section \ref{s:namconfz} page \pageref{s:namconfz} for details.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_CONVECTn}
-The namelist NAM\_CONVECTn does not exist any more since masdev48 : it is replaced by NAM\_PARAM\_KAFRn.
-The logicals LSHAL and LDEEP are deleted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_DRAGn (no-slip for model n)}
+\index{NAM\_DRAGn!namelist description}
+\begin{center}
+\begin{tabular}{|l|l|l| }
+\hline 
+ Fortran name  & Fortran type  & default value \\
+\hline
+ LDRAG & logical       & .FALSE.           \\
+ LMOUNT & logical       & .FALSE.           \\
+ NSTART & integer       & 1           \\
+ XHSTART & real       & 0           \\
+ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item   \index{LDRAG!\innam{NAM\_DRAGn}}
+LDRAG : Surface no-slip condition activation (instead of free-slip) - Only used with LVISC=T
+
+\item   \index{LMOUNT!\innam{NAM\_DRAGn}}
+LMOUNT : Surface no-slip condition activation only over a mountain
+
+\item   \index{NHSTART!\innam{NAM\_DRAGn}}
+NHSTART : Grid point number (in the X-direction) from which the no-slip condition is applied, when LMOUNT = .FALSE.
+
+\item   \index{XHSTART!\innam{NAM\_DRAGn}}
+XHSTART : Height above  which the no-slip condition is applied, when LMOUNT = .TRUE. 
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_DRAGTREE}
 \index{NAM\_DRAGTREE!namelist description}
@@ -1883,7 +1950,7 @@ XSEGLEN     &  real   & 43200.   \\
 XASSELIN    & real    & 0.2      \\
 XASSELIN\_SV & real    & 0.02     \\
 LCORIO      & logical & TRUE     \\
-LNUMDIFU    & logical & FALSE    \\
+LNUMDIFU    & logical & TRUE    \\
 LNUMDIFTH   & logical & FALSE    \\
 LNUMDIFSV   & logical & FALSE    \\
 LZDIFFU     & logical & FALSE    \\
@@ -2090,7 +2157,7 @@ LHORELAX\_SV, LHORELAX\_SVCHEM, LHORELAX\_SVC2R2,
 LHORELAX\_SVC1R3, LHOREAX\_SVLG, LHORELAX\_SVDST,
 
 
-LHORELAX\_SVPP, LHORELAX\_SVAER, LHORELAX\_SVELEC : same as for other variables
+LHORELAX\_SVPP, LHORELAX\_SVAER, LHORELAX\_SVELEC, LHORELAX\_SVSNW  : same as for other variables
 
 It is safer to set all the LHORELAX\_ values rather than
 use their default values which can be modified by the desfm file.
@@ -2414,6 +2481,7 @@ CLBCY        &  array(2 characters) & 2*"CYCL" \\
 XCPHASE      & real                 &  20.     \\
 XCPHASE\_PBL & real                 &  0.      \\
 XCARPKMAX    & real                 &  XUNDEF  \\
+XPOND        & real                 &  0.2  \\
 \hline
 \end{tabular}
 \end{center}
@@ -2457,6 +2525,10 @@ XCPHASE\_PBL : imposed phase velocity of the outgoing gravity waves in the PBL.
 XCARPKMAX : maximum value (in $s^{-1}$)  of the relaxation coefficient used to
 relaxe the normal wind in the Carpenter equation for open lbc conditions.
 If not specified,  $XCARPKMAX=1/(10.* XTSTEP)$, that is the advised value, is imposed.
+
+\item
+\index{XPOND!\innam{NAM\_LBCn}}
+XPOND :  relaxation coefficient for LBC
 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3171,11 +3243,30 @@ Fortran name & Fortran type & default value \\
 \hline
 LWARM         &  logical     & .TRUE. \\
 CPRISTINE\_ICE & 4 characters & 'PLAT' \\
-LSEDIC & logical & FALSE \\
+LSEDIC & logical & TRUE \\
 CSEDIM & 4 characters & 'SPLI' \\
 LCONVHG       &  logical     & .FALSE. \\
 LDEPOSC& logical & FALSE \\
 XVDEPOSC& real & 0.02 \\
+LRED & logical & FALSE \\
+LFEEDBACKT & logical & TRUE \\
+LEVLIMIT & logical & TRUE \\
+LNULLWETG & logical & TRUE \\
+LWETGPOST & logical & TRUE \\
+ LNULLWETH & logical & TRUE \\
+LWETHPOST & logical & TRUE \\
+CSNOWRIMING & 4 characters & 'M90 ' \\
+XFRACM90 & real & 0.1 \\
+NMAXITER & integer & 5 \\
+XMRSTEP & real & 0.00005 \\
+XTSTEP\_TS & real & 0. \\
+LADJ\_BEFORE & logical & TRUE \\
+LADJ\_AFTER & logical & TRUE \\
+CFRAC\_ICE\_ADJUST  & 1 character & 'S' \\
+CFRAC\_ICE\_SHALLOW\_MF& 1 character & 'S' \\
+LCRFLIMIT &  logical     & .TRUE. \\
+XSPLIT\_MAXCFL& real & 0.8 \\
+LSEDIM\_AFTER & logical & FALSE \\
 \hline
 \end{tabular}
 \end{center}
@@ -3218,6 +3309,79 @@ LDEPOSC \index{LDEPOSC!\innam{NAM\_PARAM\_ICE}}: TRUE to enable cloud droplet de
 
 \item
 XVDEPOSC \index{XVDEPOSC!\innam{NAM\_PARAM\_ICE}}: Droplet deposition velocity
+
+\item 
+LRED  \index{LRED!\innam{NAM\_PARAM\_ICE}}: To use modified ICE3/ICE4 to reduce time step dependency
+
+\item 
+LFEEDBACKT  \index{LFEEDBACKT!\innam{NAM\_PARAM\_ICE}}:  .TRUE. when feedback on temperature is taken into account (active when LRED=T)
+
+\item 
+LEVLIMIT  \index{LEVLIMIT!\innam{NAM\_PARAM\_ICE}}: .TRUE. when water vapour pressure is limited by saturation (active when LRED=T)
+
+\item 
+LNULLWETG  \index{LNULLWETG!\innam{NAM\_PARAM\_ICE}}: .TRUE. when graupel wet growth is activated with null rate (to allow water shedding) (active when LRED=T)
+
+\item 
+LWETGPOST  \index{LWETGPOST!\innam{NAM\_PARAM\_ICE}}: .TRUE. when graupel wet growth is activated with positive temperature (to allow water shedding) (active when LRED=T)
+ 
+\item 
+LNULLWETH  \index{LNULLWETH!\innam{NAM\_PARAM\_ICE}}: Same as LNULLWETG but for hail
+
+\item 
+LWETHPOST  \index{LWETHPOST!\innam{NAM\_PARAM\_ICE}}: Same as LWETGPOST but for hail
+
+\item 
+CSNOWRIMING  \index{CSNOWRIMING!\innam{NAM\_PARAM\_ICE}}:  Parametrization for snow riming (active when LRED=T)
+\begin{itemize}
+\item{'OLD '} : standard parametrization
+\item{'M90 '} : Murakami 1990 formulation
+\end{itemize}
+
+\item 
+XFRACM90 \index{XFRACM90!\innam{NAM\_PARAM\_ICE}}: Fraction used for the Murakami 1990 formulation (active when LRED=T)
+
+\item 
+NMAXITER  \index{NMAXITER!\innam{NAM\_PARAM\_ICE}}: Maximum number of iterations for mixing ratio or time splitting (active when LRED=T)
+
+\item 
+XMRSTEP  \index{XMRSTEP!\innam{NAM\_PARAM\_ICE}}: Maximum mixing ratio step for mixing ratio splitting (active when LRED=T)
+
+\item 
+XTSTEP\_TS  \index{XTSTEP\_TS!\innam{NAM\_PARAM\_ICE}}: Approximative time step for time-splitting (0 for no time-splitting) (active when LRED=T)
+
+\item 
+LADJ\_BEFORE  \index{LADJ\_BEFORE!\innam{NAM\_PARAM\_ICE}}: .TRUE. when an adjustment before rain\_ice call is performed (active when LRED=T)
+
+\item 
+LADJ\_AFTER  \index{LADJ\_AFTER!\innam{NAM\_PARAM\_ICE}}: .TRUE. when an adjustment after rain\_ice call is performed (equal to T when LRED=F)
+
+\item 
+CFRAC\_ICE\_ADJUST   \index{CFRAC\_ICE\_ADJUST!\innam{NAM\_PARAM\_ICE}}: Way to compute ice fraction 
+\begin{itemize}
+\item{'T'} : linear formulation according to temperature
+\item{'O'} : Tao et al. (1989) formulation
+\item{'N'} : No ice
+\item{'S'} : Ice fraction given by the slow microphysics
+\end{itemize}
+
+\item 
+CFRAC\_ICE\_SHALLOW\_MF \index{CFRAC\_ICE\_SHALLOW\_MF!\innam{NAM\_PARAM\_ICE}}: Way to compute ice fraction for MF contribution
+\begin{itemize}
+\item{'T'} : linear formulation according to temperature
+\item{'O'} : Tao et al. (1989) formulation
+\item{'N'} : No ice
+\item{'S'} : Ice fraction given by the slow microphysics
+\end{itemize}
+
+\item 
+LCRFLIMIT  \index{LCRFLIMIT!\innam{NAM\_PARAM\_ICE}}: .TRUE. to limit rain contact freezing to possible heat exchange (active when LRED=T)
+
+\item 
+XSPLIT\_MAXCFL \index{XSPLIT\_MAXCFL!\innam{NAM\_PARAM\_ICE}}: Maximum CFL number allowed for SPLIT scheme (active when LRED=T)
+
+\item 
+LSEDIM\_AFTER  \index{LSEDIM\_AFTER!\innam{NAM\_PARAM\_ICE}}: sedimentation done before (.FALSE.) or after (.TRUE.) microphysics (active when LRED=T)
 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3334,6 +3498,8 @@ XACTEMP\_CCN & real  & 280. \\
 LSCAV & logical  & .FALSE.  \\
 LAERO\_MASS & logical  & .FALSE.  \\
 LACTTKE & logical  & .TRUE.  \\
+LDEPOC & logical  & .FALSE.  \\
+XVDEPOC &real& 0.02 \\
 LPTSPLIT & logical  & .FALSE.  \\
 LFEEDBACKT & logical  & .TRUE.  \\
 NMAXITER & integer & 1 \\
@@ -3459,6 +3625,10 @@ LSCAV :Switch to activate below cloud scavenging of aerosols by rain
 LAERO\_MASS : Switch to track the mass of scavenged aerosols
 \item LACTTKE :  flag to use TKE in the CCN activation formulation
 \index{LACTTKE!\innam{NAM\_PARAM\_LIMA}}
+\item LDEPOC :  flag to activate droplet deposition
+\index{LDEPOC!\innam{NAM\_PARAM\_LIMA}}
+\item XVDEPOC : Droplet deposition velocity
+\index{XVDEPOC!\innam{NAM\_PARAM\_LIMA}}
 \item LPTSPLIT : flag to Activate the time-splitting scheme
 \index{LPTSPLIT!\innam{NAM\_PARAM\_LIMA}}
 \item LFEEDBACKT : Flag to Recompute tendencies if temperature reaches 0 (for the time-splitting scheme)
@@ -3508,6 +3678,9 @@ XA1            &  real         &    2./3.   \\
 XB             &  real         &    0.002   \\
 XC             &  real         &    0.012   \\
 XBETA1         &  real         &    0.9     \\
+XR             &  real         &    2.      \\
+XLAMBDA\_MF    &  real         &    0.      \\
+
 
 \hline
 
@@ -3602,6 +3775,12 @@ XC : Tuning variable for RHCJ10 updraft
 \item
 \index{XBETA1!\innam{NAM\_PARAM\_MFSHALLn}}
 XBETA1 : Tuning variable for RHCJ10 updraft
+\item
+\index{XR!\innam{NAM\_PARAM\_MFSHALLn}}
+XR : Aspect ratio of updraft
+\item
+\index{XLAMBDA\_MF!\innam{NAM\_PARAM\_MFSHALLn}}
+XLAMBDA\_MF : Lambda to compute ThetaS from ThetaL
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAM\_RADn (options for the radiations of model n)}
@@ -4099,6 +4278,7 @@ LSIG\_CONV  &  logical       & FALSE   \\
 LRMC01      &  logical       & FALSE  \\
 CTOM        &  4 characters  & 'NONE'   \\
 XKEMIN      &  real          & 0.01 \\
+XCEDIS      &  real          & 0.84 \\
 VSIGQSAT    & real           & 0. \\
 \hline
 \end{tabular}
@@ -4143,6 +4323,9 @@ CTURBLEN='DEAR'
 the mixing length is given by the mesh size depending on the model
 dimensionality, this length is limited to the ground distance and
 also by the Deardorff mixing length pertinent in the stable cases.
+\item
+CTURBLEN='RM17'
+The mixing length is computed according to Rodier et al. (2017)
 \end{itemize}
 
 \item
@@ -4171,6 +4354,7 @@ CSUBG\_AUCV (formerly LSUBG\_AUCV in masdev47) : Type of subgrid autoconversion 
 is set to TRUE and only with the mixed phase for the moment)
 \item 'CLFR' from the convective cloud fraction given by EDKF 
 (if CSCONV='EDKF' only)
+\item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012)
 \end{itemize}
 
 \item
@@ -4205,11 +4389,61 @@ according to Tomas and Masson (2006).
 XKEMIN: minimum value for the TKE ($m^{2}.s^{-2}$
 
 \item
+\index{XCEDIS!\innam{NAM\_TURBn}}
+XCEDIS: Constant for TKE dissipation
+(with CTURBLEN='RM17' it is better to use XCEDIS=0.34 according to Rodier et al., 2017)
+
+\item
 \index{VSIGQSAT!\innam{NAM\_TURBn}}
 VSIGQSAT: coefficient applied to qsat variance contribution. Only available if LSIGMAS=.TRUE.
 
 \end{itemize}
+Diagnostic quantities are written on every synchronuous files 
+(mixing length in clear sky, mixing length modified, amplification coefficient,...) if LTURB\_DIAG=.TRUE. in NAM\_TURBn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_VISC (viscosity)}
+\index{NAM\_VISC!namelist description}
+\begin{center}
+\begin{tabular}{|l|l|l| }
+\hline 
+ Fortran name  & Fortran type  & default value \\
+\hline
+ LVISC & logical       & .FALSE.           \\
+ LVISC\_UVW & logical       & .FALSE.           \\
+ LVISC\_TH & logical       & .FALSE.           \\
+ LVISC\_SV & logical       & .FALSE.           \\
+ LVISC\_R & logical       & .FALSE.           \\
+ XMU\_V & real       & .FALSE.           \\
+ XPRANDTL & real       & .FALSE.           \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item   \index{LVISC!\innam{NAM\_VISC}}
+LVISC : Viscosity activation
+
+\item   \index{LVISC\_UVW!\innam{NAM\_VISC}}
+LVISC\_UVW : viscosity for the momentum
+
+\item   \index{LVISC\_TH!\innam{NAM\_VISC}}
+LVISC\_TH : viscosity for the potential temperature
+
+\item   \index{LVISC\_SV!\innam{NAM\_VISC}}
+LVISC\_SV : viscosity for the scalar tracer
+
+\item   \index{LVISC\_R!\innam{NAM\_VISC}}
+LVISC\_R : viscosity for the moisture
+ 
+\item   \index{XMU\_V!\innam{NAM\_VISC}}
+XMU\_V : Molecular (cinematic) viscosity
+
+\item   \index{XPRANDTL!\innam{NAM\_VISC}}
+XPRANDTL : Prandtl number
+
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
