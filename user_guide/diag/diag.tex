@@ -1215,11 +1215,11 @@ XISOTH       & array(real) & 10*0  \\
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item LISOAL\index{!\innam{NAM\_DIAG}}: flag to interpolate on altitude levels the following variables: potential vorticity, wind, cloud (liquid water and ice) and precipitation (rain, snow and graupel) mixing ratio, dust extinction (if available)
+\item LISOAL\index{!\innam{NAM\_DIAG}}: flag to interpolate on altitude levels the following variables: potential vorticity, wind, cloud (liquid water and ice) and precipitation (rain, snow and graupel) mixing ratio, dust extinction (if available). The outputs are 3D fields named: {\tt ALT\_CLOUD}, {\tt ALT\_PRECIP}, {\tt ALT\_PRESSURE}, {\tt ALT\_PV}, {\tt ALT\_U}, {\tt ALT\_V} and {\tt ALT\_DSTEXT} (if available).
 \item XISOAL\index{!\innam{NAM\_DIAG}}: altitude of the isobaric levels
-\item LISOPR\index{!\innam{NAM\_DIAG}}: flag to interpolate on altitude levels the following variables: potential temperature, wind, water vapour mixing ratio, geopotential (in meters)
+\item LISOPR\index{!\innam{NAM\_DIAG}}: flag to interpolate on pressure levels the following variables: potential temperature, wind, water vapour mixing ratio, geopotential (in meters). The outputs are 2D fields named with suffix 'xxxxHPA' where 'xxxx' stands for the pressure value
 \item XISOPR\index{!\innam{NAM\_DIAG}}: altitude of the isobaric levels
-\item LISOTH\index{!\innam{NAM\_DIAG}}: flag to interpolate on isentropic levels the following variables: pressure, potential vorticity, wind, water
+\item LISOTH\index{!\innam{NAM\_DIAG}}: flag to interpolate on isentropic levels the following variables: pressure, potential vorticity, wind, water. The outputs are 2D fields named with suffix 'xxxK' where 'xxx' stands for the temperature value
 \item XISOTH\index{!\innam{NAM\_DIAG}}: altitude of the isentropic levels
 \end{itemize}
 
@@ -1243,6 +1243,12 @@ XTHRES       & real        & 0.00001    \\
 \item XTHRES\index{!\innam{NAM\_DIAG}}: threshold value to detect the 3D structures
 \end{itemize}
 
+The clustering outputs are three 3D fields:
+{\tt CLUSTERID} is an identity number;
+{\tt CLUSTERLV} is the level where the object has been identified for the first time (at its bottom if LBOTUP is true, at its top otherwise);
+{\tt CLDSIZE} is the horizontal section of the object at the current level.
+Together, {\tt CLUSTERID} \textbf{and} {\tt CLUSTERLV} refers univoqually to a unique 3D object. Their value is homogeneous inside each identified object. {\tt CLOUDSIZE} is homogeneous at each level inside each object.
+
 \subsection{Coarse graining}
 \begin{center}
 \begin{tabular} {|l|l|l|}
@@ -1258,3 +1264,5 @@ NDXCOARSE    & integer     & 1  \\
 \item LCOARSE\index{!\innam{NAM\_DIAG}}: flag to compute TKE (summation of the gridscale and the subgridscale parts) using coarse graining by both block and moving average
 \item NDXCOARSE\index{!\innam{NAM\_DIAG}}: number of gridpoints over which the averaging is done
 \end{itemize}
+
+Two 3D fields are generated: {\tt TKE\_BLOCKAVGxx} and {\tt TKE\_MOVINGAVGxx}, which are TKE averaged block by block and over a moving block, respectively. The suffix {\tt xx} stands for the number NDXCOARSE.
