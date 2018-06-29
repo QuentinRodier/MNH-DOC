@@ -1184,7 +1184,7 @@ CCH\_TS1D\_FILENAME 	&80 characters 	&'IO1D'\\
 \end{itemize}
 
 \index{LCH\_PH!\innam{NAM\_CH\_MNHCn}}
-\item  LCH\_PH: switch to activate the computing of pH in cloud water and rainwater as diagnostic variables. XPHC and XPHR are added in LFI output files.
+\item  LCH\_PH: switch to activate the computing of pH in cloud water and rainwater as diagnostic variables. XPHC and XPHR are added in synchronous backup files.
 
 \index{LCH\_RET\_ICE!\innam{NAM\_CH\_MNHCn}}
 \item  LCH\_RET\_ICE: switch to activate the retention of solubles gase in iced hydrometeors without considering additional pronostics variables. LUSECHIC is set to FALSE. Be carefull this option leads to a loss of mass.
@@ -1744,6 +1744,10 @@ LLFIREAD : read files in LFI file format (even if $LCDF4=.TRUE.$)
 
 {\bf Caution: if $LCDF4=.FALSE.$ and $LLFIOUT=.FALSE.$ (which are the default), LCDF4 will be forced to $.TRUE.$.}
 
+Remark: if a file is not found in the requested fileformat (NetCDF or LFI), Meso-NH will check if it exists in the other format and use it if found.
+This could be useful if you need to mix the reading of different files with different fileformats.
+
+
 \begin{itemize}
 
 \item
@@ -1770,17 +1774,23 @@ NGEN\_VERB : set the verbosity level for 'generic' messages
 \item 4 : error messages (and higher levels)
 \item 5 : fatal messages (and higher levels)
 \end{itemize}
+\index{NGEN\_VERB!\innam{NAM\_CONFIO}}
 
 \item
 NGEN\_ABORT\_LEVEL : set the minimum level of 'generic' message to abort the application (same levels as for NGEN\_VERB)
+\index{NGEN\_ABORT\_LEVEL!\innam{NAM\_CONFIO}}
 
 \item
 NIO\_VERB : set the verbosity level for 'IO' messages (same levels as for NGEN\_VERB)
+\index{NIO\_VERB!\innam{NAM\_CONFIO}}
 
 \item
 NIO\_ABORT\_LEVEL : set the minimum level of 'IO' message to abort the application (same levels as for NGEN\_VERB)
+\index{NIO\_ABORT\_LEVEL!\innam{NAM\_CONFIO}}
 
 \end{itemize}
+
+Remark: not all messages use this new infrastructure. Therefore, some of them are not affected by these options.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2928,6 +2938,7 @@ It overrides CIO\_DIR (see section \ref{s:namconfio} page \pageref{s:namconfio})
 
 Remarks:
 \begin{itemize}
+\item Not all fieldnames are possible. If a field is not (yet) knwon, it is possible to add a personalized one by modifying the $IO_WRITE_FIELD_USER$ subroutine.
 \item If a choosen time is not a multiple of the timestep, it will be rounded to the nearest one.
 \item The different ways to choose the output time can be combined. Duplicate times will be automatically removed.
 \end{itemize}

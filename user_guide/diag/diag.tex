@@ -2,7 +2,7 @@
 \section{Presentation}
 
 After running the model, useful quantities can be diagnosed from
-prognostic variables contained in the FM output files. It is done by
+prognostic variables contained in the synchronous backup files. It is done by
 the program {\bf DIAG} which computes diagnostic variables.\\
 
 \noindent Available diagnostics are listed in section \ref{s:diag_list}.\\
@@ -10,8 +10,8 @@ the program {\bf DIAG} which computes diagnostic variables.\\
 \subsection{The namelist file DIAG1.nam } \label{ss:diag_nam}
 
 The {\tt DIAG1.nam} namelist file contains the diagnostics required
-by the user, the name of the input FM files, the suffix of the
-output diachronic files, and output file type. The user can reset
+by the user, the name of the input synchronous files, the suffix of the
+output diachronic files, and file type. The user can reset
 options for the convective and radiation scheme with
 NAM\_PARAM\_KAFRn and NAM\_PARAM\_RADn namelist  (see chapter
 \ref{ch:model}).
@@ -52,7 +52,7 @@ YSUFFIX      & character (len=5)  & '\_DIAG'   \\
 \end{center}
 
 \begin{itemize}
-\item YINIFILE \index{YINIFILE!\innam{NAM\_DIAG\_FILE}}: name of the input FM files.
+\item YINIFILE \index{YINIFILE!\innam{NAM\_DIAG\_FILE}}: name of the input synchronous backup files.
 \item YINIFILEPGD \index{YINIFILEPGD!\innam{NAM\_DIAG\_FILE}}: name of the PGD file associated to YINIFILE
 
 \item YSUFFIX \index{YSUFFIX!\innam{NAM\_DIAG\_FILE}}: suffix appended to input file name to form output file name.
@@ -72,7 +72,7 @@ NSTART\_SUPP  & array of integer  & 100*NUNDEF   \\
 \end{center}
 
 \begin{itemize}
-\item CFILES \index{CFILES!\innam{NAM\_STO\_FILE}}: name of all the input FM files used to compute 
+\item CFILES \index{CFILES!\innam{NAM\_STO\_FILE}}: name of all the input synchronous backup files used to compute 
 trajectories. They must be in {\bf inverse} chronological order, and correspond
 to a reinitialisation of Lagrangian tracers (see chapter \ref{ch:model}).
 \item NSTART\_SUPP \index{NSTART\_SUPP!\innam{NAM\_STO\_FILE}}: extra origins for trajectory computations. In the second 
@@ -1130,7 +1130,7 @@ Field descriptors can be
 \item RFR : refractivity in the middle of the beam (if LREFR=T),
 \item DNZ : vertical gradient of refractivity in the middle of the beam (km$^{-1}$) (if LDNDZ=T),
 \item CSR : index characterizing the pixel: 0 stands for clear-air, 1 for stratiform, 2 for convective.
-\item PDP : differential phase beetween horizontal and vertical polarizations (°)
+\item PDP : differential phase beetween horizontal and vertical polarizations (\degree)
 \item KDR,KDS,KDG :	specific differential phase due to rain, snow or graupel(\char23 $ km^{-1}$),
 \item ZDA,ZDS,ZDG : differential reflectivity due to rain, snow or graupel (dB),
 \item RHV,RHR,RHS,RHG : copolar correlation coefficient  due to all hydrometeors, rain, snow or graupel (/),

@@ -1,9 +1,9 @@
-\chapter{The MESONH files :}
+\chapter{The Meso-NH files}
   
 \section{The F90 namelists}
 
 All the information required  to  perform a given step of a numerical
-experiment, are provided by
+experiment are provided by
 different files including a NAMELIST set. 
 Thus, the Meso-NH user can change the value of the parameters without
 any compilation (and therefore save computer time). These files provide the way 
@@ -17,7 +17,7 @@ NAMELISTs, which obey to strict writing rules (Metcalf and Reid 1993): no
 comment is allowed inside the namelists, no empty namelist can be written (it
 gives a Fortran execution error). 
 
-The information are written in the following form :
+The information are written in the following form:
 
 \begin{verbatim}
  &NAM_LUNITn  CINIFILE = "     FMFILE.1               " /
@@ -28,14 +28,14 @@ The information are written in the following form :
 
  {\tt \&NAM\_LUNITn}
 is the name of the first namelist of this file, the $/$ character indicates the 
-end of the list of information. These namelists  parameters are defined by VAR = VALUE and
-these prescriptions are separated one from each others by a comma and a blank 
+end of the list of information. These namelist  parameters are defined by VAR = VALUE and
+these prescriptions are separated from each others by a comma and a blank 
 character. Note that you can use more than one line to give a namelist, but in
 this case it is imperative to let a blank character at the end of each line.
  
 The Meso-NH user does not need to prescribe all the parameters of a namelist,
 the missing information are taken equal to the default values
-written in the fortran code. For example, the second namelist in the previous 
+written in the Fortran code. For example, the second namelist in the previous 
 example can be written as:
 \begin{verbatim}
  &NAM_CONFn  LUSERV = T /
@@ -48,13 +48,13 @@ numerical experiment, we affect a different namelist file name for each step.
 
 \begin{itemize}
 \item
-To PREpare a Meso-NH file containing PhysioGraphical Datas
+To PREpare a Meso-NH file containing PhysioGraphical Data
 \subitem  ${ \large \Longrightarrow } $ file PRE\_PGD1.nam 
 \item
-To PREpare a Meso-NH file with PhysioGraphical Datas in conformity
+To PREpare a Meso-NH file with PhysioGraphical Data in conformity
 \subitem  ${ \large \Longrightarrow } $ file PRE\_NEST\_PGD1.nam 
 \item
-To PREpare a ZOOMed Meso-NH file with PhysioGraphical Datas
+To PREpare a ZOOMed Meso-NH file with PhysioGraphical Data
 \subitem  ${ \large \Longrightarrow } $ file PRE\_ZOOM1.nam 
 \item
 To PREpare an initial Meso-NH file for an IDEAlized case study 
@@ -66,7 +66,7 @@ To PREpare an initial Meso-NH file for an REAL case study
 To SPAWN a Meso-NH file into another one with better horizontal resolution
 \subitem  ${ \large \Longrightarrow } $ file SPAWN1.nam 
 \item
-To EXecute a simulation SEGment for the $n ^{th} $ model 
+To EXecute a simulation SEGment for the $n ^{th} $ model
 \subitem  ${ \large \Longrightarrow } $ file EXSEGn.nam
 \item
 To compute DIAGnostics after a simulation
@@ -88,34 +88,52 @@ details on the description of a given parameter are present in the code itself.
 
 \section{The Meso-NH files}
 
-A Meso-NH FM-file is a set of 2 files, (which can be sticked together via the cpio UNIX
-command):
+% A Meso-NH FM-file is a set of 2 files, (which can be sticked together via the cpio UNIX
+% command):
+% \begin{itemize}
+% \item
+%  a \underline{descriptive part} ( {\tt .des}) containing 
+% information about the file generation and its description (in ASCII
+% characters)
+% \item
+% a \underline{binary part} ( {\tt .lfi}) where the fields are stored. The structure of this
+%  file is a direct access  type file, written and read by routines developped in
+% M\'et\'eo-France (Fischer, 1994) based on {\sc lfi} routines (Clochard, 1989), 
+% which can be used on a lot of different computers.
+% \end{itemize}
+
+Meso-NH writes files by group of 2:
 \begin{itemize}
 \item
- a \underline{descriptive part} ( {\tt .des}) containing 
+ a \underline{descriptive part} ({\tt .des}) containing 
 information about the file generation and its description (in ASCII
 characters)
 \item
-a \underline{binary part} ( {\tt .lfi}) where the fields are stored. The structure of this
- file is a direct access  type file, written and read by routines developped in
-M\'et\'eo-France (Fischer, 1994) based on {\sc lfi} routines (Clochard, 1989), 
-which can be used on a lot of different computers.
+a \underline{binary part} where the fields are stored. Two different fileformat are available:
+  \begin{itemize}
+  \item NetCDF (files with a {\tt .nc} suffix). This is the recommanded fileformat and is the default since Meso-NH 5.4.0.
+        NetCDF is a self-describing, machine-independent fileformat.
+        In Meso-NH, these files are mostly compliant with the CF conventions (version 1.7) and the COMODO extensions (version 1.4).
+  \item LFI  (files with a {\tt .lfi} suffix). This is the historic fileformat for Meso-NH. Its structure
+        is a direct access type file, written and read by routines developped by
+        M\'et\'eo-France (Fischer, 1994) based on {\sc LFI} routines (Clochard, 1989), 
+        which can be used on a lot of different computers.
+  \end{itemize}
 \end{itemize}
 
-This type of file is used to store all the data necessary to run any step 
-of a numerical experiment. Three different files are taken into account in the 
+These binary files are used to store all the data necessary to run any step 
+of a numerical experiment. Three different filetypes are taken into account in the 
 Meso-NH project:
 \begin{itemize}
 \item
-the \underline{synchronous file} contains all the values of all the fields allowing a
+the \underline{synchronous backup file} contains all the values of all the fields allowing a
 restart of the model and of some diagnostic fields desired by the Meso-NH user.
 All these informations are obtained at the same instant during the simulation,
-
-thus they are synchronous.
+hence their synchronous name.
 \item
-the \underline{diachronic file} contains time series of information desired by the Meso-NH 
+the \underline{diachronic file} contains time series of information requested by the Meso-NH 
 user. They are obtained during more than one time step of the model.
-It is the format in which your file must be if you want to plot it with
+If in LFI fileformat, it is the type in which your file must be if you want to plot it with
 the graphics software \tt diaprog \rm (you can convert a synchronous file
 into a diachronic one with \tt conv2dia\rm ).
 \item
@@ -123,8 +141,12 @@ the \underline{physiographic file} contains external information like
 orography, vegetation classes, chemical emissions, data sets, etc.
 \end{itemize}
 
+A fourth filetype is possible: output files. They contain only user-selected fields.
+They are useful, for example, if you need to output frequently some data without spending too much diskspace
+and too much time writing them.
 
-\subsection{The synchronous file} \label{ss:synchro}
+
+\subsection{The synchronous backup file} \label{ss:synchro}
 
 This type of file contains only information corresponding to the same instant
 of the simulation, it remains open during a whole time step of the simulation,
@@ -154,26 +176,28 @@ Note that a physiographic file does not have a descriptive part.
 
 \subsubsection{The binary part}
 
-All the writings and readings of this type of files are done through LFI 
-routines. A general subroutine to read and write a Meso-NH file is given in the
-Meso-NH library, it provides a file including the fields of the previous record
-list. This Fortran library provides a way to tackle direct access binary files
-and thus a very quick access to the data stored in this file in any order.
+This type of file can be in NetCDF or LFI fileformat.
 
-It should be noted that supplementary fields can be added to these basic
+% All the writings and readings of this type of files are done through LFI 
+% routines. A general subroutine to read and write a Meso-NH file is given in the
+% Meso-NH library, it provides a file including the fields of the previous record
+% list. This Fortran library provides a way to tackle direct access binary files
+% and thus a very quick access to the data stored in this file in any order.
+
+It should be noted that additional fields can be added to these basic
 information, which have been obtained at the same instant. 
  In order to be easily drawn by the Meso-NH graphic package, the
-commentar field must be filled, according to the following rules:
+comment field must be filled, according to the following rules:
 \begin{itemize}
 \item 
 the length of the character string is equal to 100
 \item 
-the type of the supplementary field must be specified :
+the type of the supplementary field must be specified:
 
 \begin{tabular} {|| c |c|| }
 \hline
 \hline
-type & commentar field \\
+type & comment field \\
 \hline
 3D scalar & X\_Y\_Z\_varname  (UNIT) \\
 \hline
@@ -191,32 +215,40 @@ type & commentar field \\
 \end{itemize}
 
 \subsection{The diachronic file}
-It is a file obtained during a segment of simulation or resulting of the
-conversion of a synchronous file with {\tt conv2dia} for graphical purposes.
+A diachronic file is a file obtained during a segment of simulation or resulting of the
+conversion of a synchronous file with {\tt conv2dia} for graphical purposes (available only for LFI fileformat).
 
 The file directly obtained during the simulation has a name ended by {\tt .000},
 and contains records such as averaged variables, tendencies, fluxes stored
 at different times of the simulation on the whole or some parts of the domain.
-Such records are obtained by asking for temporal series (\ref{ss:series}),
+Such records are obtained by requesting temporal series (\ref{ss:series}),
 budgets (\ref{ss:budget}), aircraft or balloon (\ref{ss:balloon}), profiler
-or station (\ref{ss:station}), LES diagnostics (\ref{s:LESdiag}).
+or station (\ref{ss:station}), or LES diagnostics (\ref{s:LESdiag}).
 
 \subsection{The physiographic file}
-It is a bidimensional MesoNH file with contains surface data as orography,
+It is a bidimensional MesoNH file with contains surface data such as orography,
 vegetation classes, chemical emissions, etc.
 
-See the documentation :``THE EXTERNALIZED SURFACE USER'S GUIDE'' for more
+See the documentation: ''Surfex user's guide'' for more
 details.
+
+\subsection{The output file}
+An output file is obtained at the user request. They are written at once for a given timestep.
+They contain only user-selected fields.
+They are useful, for example, if you need to output frequently some data without spending too much diskspace
+and too much time writing them.
+
+In contrast to the synchronous backup files, output files does not contain enough information to restart a calculation. Furthermore, they are not associated with a descriptive file.
 
 
 \section{References}
 \decrefname
 J. Clochard, 1989: Logiciel de Fichiers Index\'es. Direction de la
- Météorologie Nationale. Note de travail ARPEGE n$^\circ$12.
+ MÃ©tÃ©orologie Nationale. Note de travail ARPEGE n$^\circ$12.
 
 \decrefname
 J. Clochard, 1991: Logiciel de Fichiers Index\'es. Direction de la
- Météorologie Nationale.  Technical report.
+ MÃ©tÃ©orologie Nationale.  Technical report.
 
 \decrefname
 D. Gazen, 1999: Parallel IO routines. Man page on Meso-NH web site.
