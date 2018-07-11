@@ -254,8 +254,14 @@ vertical velocity exceeded an arbitrary threshold. Two grid points sharing a
 common face either in the horizontal or vertical direction were considered
 connected, while diagonal connections were considered only in the vertical
 direction. This technique has also been used for the attribution of dust
-emission, defined as surface objects, to wind regimes over the Sahara
-\citep{Chaboureau2016}.
+emission, defined as surface objects, to wind regimes \citep{Chaboureau2016}.
+
+Three 3D fields are generated. CLUSTERID is an identity number, CLUSTERLV is the level where the object has been identified for the first time (at its bottom if LBOTUP is true, at its top otherwise), CLDSIZE is the horizontal section of the object at the current level.
+Together, CLUSTERID \textbf{and} CLUSTERLV refer univoqually to a unique 3D object. Their value is homogeneous inside each identified object. CLOUDSIZE is homogeneous at each level inside each object. 
+
+In principle, the algorithm does first a 2D clustering at each level. Then the identification is propagated on the vertical direction: for each cluster at the current level CLUSTERID and CLUSTERLV values are changed if a connected cluster was identified at the previous level (i.e. just below if LBOTUP is true, or just above otherwise). For the cases where various 2D clusters where identified at the previous level, then the priority is given to the cluster with the largest section at the previous level, i.e. its CLUSTERID and CLUSTERLV are attributed to the current cluster. In case of further conflict, arbitrary choices are made.
+
+The user is free to change the 3D field used for detection, the threshold value for detection and the direction of propagation of the identification. \citet{Dauhut2016} investigated the updrafts using a 10~m~s$^{-1}$ threshold on the vertical velocity field $w$ and propagating the identification from the bottom to the top. Another study investigated the overshoots using a 10~$^{-5}$ kg~kg$^{-1}$ on the cloud field (sum of snow, graupel, liquid and ice cloud mixing ratios) and propagating the identification from the top to the bottom. The developer can further implement the possibility to consider other fields for the detection of the 3D objects. As with any clustering algorithm, a too low threshold value could lead to overconnected regions.
 %
 \section{Kinetic energy spectra}
 %
