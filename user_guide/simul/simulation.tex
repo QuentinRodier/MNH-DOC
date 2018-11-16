@@ -2791,6 +2791,21 @@ the scientific documentation of the model.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_MEAN}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LMEAN\_FIELD  &  logical &  .FALSE. \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+ \item LMEAN\_FIELD : flag for computation of the mean and maximum values of variables between two backup outputs. The list of variables available can be modified in mean\_field.f90.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_NESTING (grid nesting configuration)}
 
 \index{NAM\_NESTING!namelist description}

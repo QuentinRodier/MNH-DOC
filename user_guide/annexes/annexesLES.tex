@@ -1373,15 +1373,15 @@ field & notation in & processus & dim.  & comments \\
       & diac. file & name      &            & \\
 \hline
 \hline
-$- 2 <\overline{w'\theta_l'}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & SBG DP M & z,t & dyn. prod. by mean gradient \\
+$- 2 <\overline{w'\theta_l'}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_THL2 & SBG DP M & z,t & dyn. prod. by mean gradient \\
 \hline
-$<-2 \overline{w'\theta_l'}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & BU\_WTHL & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
+$<-2 \overline{w'\theta_l'}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & BU\_THL2 & SBG DP R & z,t & dyn. prod. by resolved fluctuations\\
 \hline
-$-<\frac{\partial}{\partial z}\overline{w'\theta_l'^2}>$ & BU\_WTHL & SBG TR   & z,t & subgrid turbulent transport\\
+$-<\frac{\partial}{\partial z}\overline{w'\theta_l'^2}>$ & BU\_THL2 & SBG TR   & z,t & subgrid turbulent transport\\
 \hline
-$-<\epsilon_\theta>$ & BU\_WTHL & SBG DISS & z,t & dissipation \\
+$-<\epsilon_\theta>$ & BU\_THL2 & SBG DISS & z,t & dissipation \\
 \hline
-{\rm residual of budget of} $<\overline{w'\theta_l'}>$ & BU\_WTHL & SBG RESI & z,t & must be small \\
+{\rm residual of budget of} $<\overline{w'\theta_l'}>$ & BU\_THL2 & SBG RESI & z,t & must be small \\
 \hline
 \hline
 \end{tabular}
@@ -1394,44 +1394,44 @@ $-<\epsilon_\theta>$ & BU\_WTHL & SBG DISS & z,t & dissipation \\
 field & notation in diac. file & processus name& dim.  & comments \\
 \hline
 \hline
-$-\frac{\partial }{\partial t}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES TEND & z,t & (opposite of) tendency\\
+$-\frac{\partial }{\partial t}<\tilde{\theta_l}^2>$ & BU\_THL2 & RES TEND & z,t & (opposite of) tendency\\
  & & & &of $<\tilde{\theta_l}^2>$\\
 \hline
-$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES ADV  & z,t & advection by mean flow \\
+$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_THL2 & RES ADV  & z,t & advection by mean flow \\
 \hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_WTHL & RES FORC & z,t & advection by \\
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$ & BU\_THL2 & RES FORC & z,t & advection by \\
  & & & & large-scale W forcing \\
 \hline
-$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_WTHL & RES DP   & z,t & dyn. prod.\\
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<\theta_l>$ & BU\_THL2 & RES DP   & z,t & dyn. prod.\\
  & & & &(by mean gradients) \\
 \hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>$ & BU\_WTHL & RES TR   & z,t & resolved transport of\\
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>$ & BU\_THL2 & RES TR   & z,t & resolved transport of\\
  & & & &resolved variance \\
 \hline
 $- <2 \tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$
-& BU\_WTHL & RES SBGT & z,t & sink due \\
+& BU\_THL2 & RES SBGT & z,t & sink due \\
  & & & &to subgrid turbulence \\
 \hline
-{\rm numerical diffusion of } $<\tilde{\theta_l}^2>$& BU\_WTHL & RES NUMD & z,t & numerical diffusion\\
+{\rm numerical diffusion of } $<\tilde{\theta_l}^2>$& BU\_THL2 & RES NUMD & z,t & numerical diffusion\\
  & & & &against $2\Delta x$ \\
 \hline
-{\rm relaxation of }$<\tilde{\theta_l}^2>$ & BU\_WTHL & RES RELA & z,t& sponge layer relaxation \\
+{\rm relaxation of }$<\tilde{\theta_l}^2>$ & BU\_THL2 & RES RELA & z,t& sponge layer relaxation \\
 \hline
-{\rm 2way nesting of }$<\tilde{\theta_l}^2>$ & BU\_WTHL & RES NEST & z,t& average from smaller\\
+{\rm 2way nesting of }$<\tilde{\theta_l}^2>$ & BU\_THL2 & RES NEST & z,t& average from smaller\\
  & & & &nested models \\
 \hline
-{\rm miscellaneous} & BU\_WTHL & RES MISC & z,t & ref. pressure term, \\
+{\rm miscellaneous} & BU\_THL2 & RES MISC & z,t & ref. pressure term, \\
  & & && radiation, microphysics, ... \\
 \hline
-{\rm residual of budget of} $<\tilde{\theta_l}^2>$ & BU\_WTHL & RES RESI & z,t & must be zero \\
+{\rm residual of budget of} $<\tilde{\theta_l}^2>$ & BU\_THL2 & RES RESI & z,t & must be zero \\
 \hline
-$-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ & BU\_WTHL & NSG TEND & z,t & (neglected) opposite of\\
+$-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ & BU\_THL2 & NSG TEND & z,t & (neglected) opposite of\\
 (neglected in turb. scheme) & & & &tendency of $<\overline{\theta_l'^2}>$ \\
 \hline
-$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$  & BU\_WTHL & NSG ADVM & z,t & (neglected) advection \\
+$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$  & BU\_THL2 & NSG ADVM & z,t & (neglected) advection \\
  & & & & by mean flow\\
 \hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$  & BU\_WTHL & NSG ADVR & z,t & (neglected) advection by\\
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$  & BU\_THL2 & NSG ADVR & z,t & (neglected) advection by\\
  & & & &resolved flow\\
 \hline
 \hline
