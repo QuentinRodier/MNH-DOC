@@ -254,7 +254,7 @@ before being stopped by buoyancy effects. These distances are defined by
 \int_z^{z+l_{up}} {g \over \theta_{v\,ref}} (\theta(z)-\theta(z'))dz' &= &
 -\: e(z), \nonumber \\
 \int_{z-l_{down}}^z {g \over \theta_{v\,ref}} (\theta(z')-\theta(z))dz' &= &
--\: e(z), \\
+-\: e(z), \label{eqBL89}\\
 l_{down}&\le & z, \nonumber  \\
 L&=& \left[ \frac{(l_{up})^{-2/3} + (l_{down})^{-2/3}}{2} \right]^{-3/2}
 \end{eqnarray}
@@ -359,6 +359,40 @@ and the expression for L is
 L=\sqrt{ \frac{2e} {\beta \left[ \frac {\theta(z_{n+1})-\theta(z_n)}{z_{n+1}-z_n} \right]}}
 \ee
 which fits the analytical expression.
+
+\subsection{Rodier and Masson mixing length}
+In a strictly neutral boundary layer, physical mixing is not captured by BL89 because the terms of the left-hand side of Equation \ref{eqBL89} are zero. $l_{up}$ and $l_{down}$ extend to the numerical boundaries of the model in a neutral boundary layer (Figure \ref{fig:BL89}). In stable boundary layers, BL89 overestimates the turbulent mixing (Rodier 2017).
+
+\begin{figure}[!ht]
+\centering
+\noindent\includegraphics[width = 16cm]{\EPSDIR/BL89.png}
+\caption{BL89 mixing length vertical profile (red) in convective, neutral and stable boundary layers.}
+\label{fig:BL89}
+\end{figure}
+
+To improve the representation of turbulent mixing in neutral and stable boundary layers, RM17 (Rodier and Masson, 2017) adds a local vertical wind shear term to the buoyancy-based BL89 formulation :
+\begin{equation}
+\begin{split}
+\int_z^{z+l_{up}} \left[\dfrac{g}{\theta_{vref}}(\theta_v (z) - \theta_v (z')) + C_0 \sqrt{e}S(z')\right]dz' = - e(z), \\
+\int_{z-l_{down}}^z \left[\dfrac{g}{\theta_{vref}}(\theta_v (z') - \theta_v (z))+ C_0 \sqrt{e}S(z')\right]dz' = - e(z),
+\end{split}
+\label{eq:BS}
+\end{equation}
+
+where $C_0$ is a constant and $S(z')$ the local vertical wind shear :
+
+\begin{equation}
+S = \sqrt{\left(\dfrac{\partial \overline{u}}{\partial z}\right)^2 + \left(\dfrac{\partial \overline{v}}{\partial z}\right)^2}
+\end{equation}
+
+The shear term corresponds to the slowdown effect produced by the vertical decoupling of turbulent structures when the local shear is strong (Figure \ref{fig:shear}). This effect also depends on the average eddy size with larger eddies more decoupled.
+
+\begin{figure}[!ht]
+\centering
+\noindent\includegraphics[width=8.5cm]{\EPSDIR/BS.jpg}
+\caption{Schematic view of the effect of stratification and vertical wind shear on the reduction of the vertical mixing efficiency. Without wind shear (left), the turbulent structures are constrained by the distance to the surface and by the stratification. The presence of a wind shear (right) results in the stretching and vertical decoupling of the turbulent structures.}
+\label{fig:shear}
+\end{figure}
 
 \subsection{Qualitative behavior of the 1D dry system with BL length}
 \paragraph{Critical Richardson number}
@@ -1262,6 +1296,10 @@ Redelsperger, J.-L, and G. Sommeria, 1981:
 M\'ethode de repr\'esentation de la turbulence d'\'echelle inf\'erieure
 \`a la maille pour un mod\`ele tri-dimensionnel de convection nuageuse.
 {\it  Boundary-Layer Meteor.}, {\bf 21(4)}, 509-530.
+\decrefname
+Rodier, Q., V. Masson, F. Couvreux and A. Paci, 2017: Evaluation of a Buoyancy and Shear Based Mixing Length for a Turbulence Scheme. {\it Frontiers in Earth Science}, {\bf 5}, 65.
+\decrefname
+Rodier Q, 2017. Paramétrisation de la turbulence atmosphérique dans la couche limite stable. PhD manuscrit. Université Toulouse 3 Paul Sabatier (UT3 Paul Sabatier).
 \decrefname
 Squire, P., 1958:
 The spatial variation of liquid water and droplet concentration in cumuli.
