@@ -74,16 +74,26 @@ Fortran name & Fortran type & default value\\
 \hline
 \hline
 NZSFILTER       & INTEGER      & 1 \\
+LHSLOP       & LOGICAL      & .FALSE. \\
+XHSLOP       & REAL      & 1.2 \\
+NLOCZSFILTER & INTEGER & 3 \\
 \hline
 \end{tabular}
 \end{center}
 
 \begin{itemize}
-\item NZSFILTER : number of iterations of the spatial filter applied to smooth the orography (integer, 1 iteration removes the $2\Delta x$ signal, 50\% of the $4\Delta x$
+\item NZSFILTER : number of iterations of the spatial filter applied to smooth the orography over the whole domain (integer, 1 iteration removes the $2\Delta x$ signal, 50\% of the $4\Delta x$
 signal, 25\% of the $6\Delta x$ signal, etc\footnote{The amplitude of the
 filtered signal for each wavelength $\lambda\Delta x$ 
 is $\frac{1}{2}\left( cos(2\pi/\lambda) +1\right)$.}...).
 \index{NZSFILTER!\innam{NAM\_ZSFILTER}}
+\item LHSLOP : flag to use a spatial filter applied to smooth the orography locally over the slopes (along the horizontal directions) higher than XHSLOP.
+\index{LHSLOP!\innam{NAM\_ZSFILTER}}
+\item XHSLOP : slope threshold ($\Delta z / $\Delta x$ and $\Delta z / $\Delta y$) where the local spatial filter is applied.
+\index{XHSLOP!\innam{NAM\_ZSFILTER}}
+\item NLOCZSFILTER : number of iterations of the local spatial filter applied to smooth the large slopes.
+\index{NLOCZSFILTER!\innam{NAM\_ZSFILTER}}
+
 \end{itemize}
 %\newpage
 \subsection{Namelists for the externalized surface}
