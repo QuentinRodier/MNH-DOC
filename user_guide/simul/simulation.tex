@@ -3078,7 +3078,7 @@ CACTCCN = 'NONE'  : no CCN activation scheme.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{ Namelist NAM\_PARAM\_C2R2 (control variable of the 2-moment 
+\subsection{Namelist NAM\_PARAM\_C2R2 (control variable of the 2-moment 
 warm microphysical schemes C2R2 and KHKO)}
 \index{NAM\_PARAM\_C2R2!namelist description}
 
@@ -3685,7 +3685,7 @@ LMIXUV         &  Logical      &    TRUE    \\
 LMF\_FLX       &  Logical      &    FALSE   \\
 XALP\_PERT     &  real         &    0.3     \\
 XABUO          &  real         &    1.      \\
-XBENTR         &   real        &    1.      \\
+XBENTR         &  real         &    1.      \\
 XBDETR         &  real         &    0.      \\
 XCMF           &  real         &    0.065   \\
 XENTR\_MF      &  real         &    0.035   \\
@@ -3706,7 +3706,8 @@ XC             &  real         &    0.012   \\
 XBETA1         &  real         &    0.9     \\
 XR             &  real         &    2.      \\
 XLAMBDA\_MF    &  real         &    0.      \\
-
+LGZ            &  Logical      &    TRUE    \\
+XGZ            &  real         &    1.83    \\
 
 \hline
 
@@ -3725,7 +3726,7 @@ XIMPL\_MF : Degree of implicitness
 \item
 \index{CMF\_UPDRAFT!\innam{NAM\_PARAM\_MFSHALLn}}
 CMF\_UPDRAFT : Type of Mass Flux Scheme                              
-('EDKF' or 'NONE' or 'RHCJ')
+('EDKF', 'RHCJ', 'HRIO', 'BOUT' or 'NONE' )
 \item
 \index{CMF\_CLOUD!\innam{NAM\_PARAM\_MFSHALLn}}
 CMF\_CLOUD : Type of statistical cloud                                 
@@ -3807,6 +3808,12 @@ XR : Aspect ratio of updraft
 \item
 \index{XLAMBDA\_MF!\innam{NAM\_PARAM\_MFSHALLn}}
 XLAMBDA\_MF : Lambda to compute ThetaS from ThetaL
+\item
+\index{LGZ!\innam{NAM\_PARAM\_MFSHALLn}}
+LGZ : flag to turn on the reduction of the mass-flux surface closure with the resolution
+\item
+\index{XGZ!\innam{NAM\_PARAM\_MFSHALLn}}
+XGZ : parameter for the reduction the surface closure of the Mass-Flux thermal plume if LGZ = TRUE.
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAM\_RADn (options for the radiations of model n)}
