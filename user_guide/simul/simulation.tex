@@ -1708,6 +1708,9 @@ NGEN\_ABORT\_LEVEL & integer & 2 \\
 NIO\_VERB          & integer & 3 \\
 NIO\_ABORT\_LEVEL  & integer & 2 \\
 \hline
+LIO\_ALLOW\_NO\_BACKUP & logical & FALSE \\
+LIO\_NO\_WRITE         & logical & FALSE \\
+\hline
 \end{tabular}
 \end{center}
 
@@ -1744,7 +1747,7 @@ LLFIREAD : read files in LFI file format (even if $LCDF4=.TRUE.$)
 
 {\bf Caution: if $LCDF4=.FALSE.$ and $LLFIOUT=.FALSE.$ (which are the default), LCDF4 will be forced to $.TRUE.$.}
 
-Remark: if a file is not found in the requested fileformat (NetCDF or LFI), Meso-NH will check if it exists in the other format and use it if found.
+Remark: if a file is not found in the requested fileformat (netCDF or LFI), Meso-NH will check if it exists in the other format and use it if found.
 This could be useful if you need to mix the reading of different files with different fileformats.
 
 
@@ -1767,12 +1770,12 @@ LVERB\_STDOUT : flag to write application messages on the standard output
 \item
 NGEN\_VERB : set the verbosity level for 'generic' messages
 \begin{itemize}
-\item 0 : no messages
-\item 1 : debug messages (and higher levels)
-\item 2 : info messages (and higher levels)
-\item 3 : warning messages (and higher levels)
-\item 4 : error messages (and higher levels)
-\item 5 : fatal messages (and higher levels)
+\item 0: no messages
+\item 1: fatal messages
+\item 2: error messages (and lower values)
+\item 3: warning messages (and lower values)
+\item 4: info messages (and lower values)
+\item 5: debug messages (and lower values)
 \end{itemize}
 \index{NGEN\_VERB!\innam{NAM\_CONFIO}}
 
@@ -1791,6 +1794,16 @@ NIO\_ABORT\_LEVEL : set the minimum level of 'IO' message to abort the applicati
 \end{itemize}
 
 Remark: not all messages use this new infrastructure. Therefore, some of them are not affected by these options.
+
+\begin{itemize}
+
+\item
+LIO\_ALLOW\_NO\_BACKUP : allow to have no valid backup time (useful for some tests)
+
+\item
+LIO\_NO\_WRITE : disable file writes (useful for benchs)
+
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
