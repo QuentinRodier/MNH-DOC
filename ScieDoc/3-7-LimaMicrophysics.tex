@@ -9,7 +9,7 @@
 
 
 \section{General considerations}
-This chapter described the LIMA (Liquid Ice Multiple Aerosols) quasi two-moment microphysical scheme.
+This chapter describes the LIMA (Liquid Ice Multiple Aerosols) quasi two-moment microphysical scheme.
 In short, LIMA relies on the prognostic evolution of an aerosol population, and the careful description of the nucleating properties that enable cloud droplets and pristine ice crystals to form from aerosols \citep{Vie2016}. 
 
 \subsection{Thermodynamics basics}
@@ -145,7 +145,7 @@ However, for cloud droplets and rain drops (assumed spherical), the mean volume 
 ~\\
 A 1-moment representation of snow, graupel and hail was chosen in LIMA. The number concentrations are estimated using the parameterized relationship
 \begin{equation}
- N = C \lambda^x
+ N = \frac{C \lambda^x}{\rho_d}
 \end{equation}
 where $C$ and $x$ are linked, as in the ICE3 scheme, by $\mathrm{log}_{10}(C) = -3.55 x + 3.89$ \citep{Caniaux1993}, and their values can be found in Table~\ref{hydrometeors-parameters}.
 
@@ -162,7 +162,7 @@ Combining the particle size distribution and the mass-diameter relationship, we 
 Therefore, we can determine $\lambda$:
 \begin{align}
  \lambda &= \left( a \frac{N}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{b}} \quad \mathrm{for~2-moment~species} \\
- \lambda &= \left( a \frac{C}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{b-x}} \quad \mathrm{for~1-moment~species}
+ \lambda &= \left( a \frac{C}{\rho_d r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)} \right)^{\frac{1}{b-x}} \quad \mathrm{for~1-moment~species}
 \end{align}
 
 For spherical droplets and drops ($b=3$), we get the mean volume diameter $D_m$ and $\lambda$ as:
@@ -268,7 +268,7 @@ $k_m$, $\beta_m$ and $\mu_m$ parameters are determined following \citet{Cohard20
 % 
  \frac{\mu_m}{\mu_0} &= \left(\frac{ln(\sigma_m)}{ln(\sigma_0)}\right)^{\alpha_\mu^\sigma}
 \end{align}
-where $r_m$ and $\sigma_m$ are the parameters defing the aerosol particle size distribution. Reference values $k_0$, $\beta_0$, $\mu_0$, $r_0$, $\sigma_0$, $T_0$ and $\epsilon_{m0}$ are given in Tables~1 and 2 from \citet{Cohard2000spectre} for marine and continental aerosols. \citet{Cohard2000spectre} also explain how to compute the $\alpha_\bullet^\bullet$ parameters.
+where $r_m$ and $\sigma_m$ are the parameters defining the aerosol particle size distribution. Reference values $k_0$, $\beta_0$, $\mu_0$, $r_0$, $\sigma_0$, $T_0$ and $\epsilon_{m0}$ are given in Tables~1 and 2 from \citet{Cohard2000spectre} for marine and continental aerosols. \citet{Cohard2000spectre} also explain how to compute the $\alpha_\bullet^\bullet$ parameters.
 
 $C_m$ can then be determined using Eq.\ (\ref{limiteCCN}) considering that all available aerosols are activated when the supersaturation tends to infinity.
 
@@ -356,7 +356,7 @@ The diagnostic maximum supersaturation $S_{max}$ is the supersaturation for whic
 
 \paragraph{Implementation in LIMA}
 ~\\
-As presented in the previous section, $k_m$, $\beta_m$ and $\mu m$, as well as the XLIMIT\_FACTOR parameter necessary to compute $C_m$, are initialized for each CCN mode in \emph{init\_aerosol\_properties.f90}. 
+As presented in the previous section, $k_m$, $\beta_m$ and $\mu_m$, as well as the XLIMIT\_FACTOR parameter necessary to compute $C_m$, are initialized for each CCN mode in \emph{init\_aerosol\_properties.f90}. 
 
 ~\newline
 
@@ -490,7 +490,7 @@ To compute the solution of homogeneous freezing, we need to evaluate the ratio $
  \frac{b_2}{2 \pi b_1} = \frac{\rho_i}{\rho_d ~ 2 \pi~0.211~10^{-4} ~ (P_0/P) (T/T_0)^{1.94} ~ r_{si} (S_{cr}-1)}
 \end{equation}
 
-We use Eq.\ (11a) from \citet{Karcher2002} to compute the number of frozen CCN ($N_i$, kg$^{-1}$), dividing their right side by $\rho_d$ because their $n_i$ is expressed in m$^{-3}$, and multiplying by $\rho_d / m_w$ to convert our $a_2$ and $a_3$ parameters into:
+We use Eq.\ (11a) from \citet{Karcher2002} to compute the number of frozen CCN ($N_i$, kg$^{-1}$), dividing their right side by $\rho_d$ because their $n_i$ is expressed in m$^{-3}$, and multiplying by $\rho_d / m_w$ to convert our $a_2$ and $a_3$ parameters:
 \begin{align}
  N_i &= \frac{1}{\rho_d} \frac{m_w}{\rho_i} \left( \frac{b_2}{2 \pi b_1} \right)^{3/2} \frac{a_1}{(a_2 + a_3 ~ S_{cr})(m_w/\rho_d)} \frac{w}{\sqrt{\tau}} \\
  &= \frac{1}{\rho_i} \left( \frac{b_2}{2 \pi b_1} \right)^{3/2} \frac{a_1}{a_2 + a_3 ~ S_{cr}} \frac{w}{\sqrt{\tau}}
@@ -575,7 +575,7 @@ Based on observations of ice nucleation in the continuous flow diffusion chamber
 \begin{equation}
  N_{i,ref} (T,S_i) = \frac{1000}{\rho_{CFDC}} ~ \gamma ~ (\exp[12.96 (S_i-0.1)])^{0.3}
 \end{equation}
-For temperatures warmer than -25\textdegree C, they got ([heir Eq.\ (3)]:
+For temperatures warmer than -25\textdegree C, they got ([Their Eq.\ (3)]:
 \begin{equation}
  N_{i,ref} (T,S_i) = 0.058707 ~ \frac{1000}{\rho_{CFDC}} ~ \gamma ~ \exp[12.96 ~ S_i - 0.639]
 \end{equation}
@@ -702,7 +702,6 @@ Then, for each IFN species, \emph{lima\_phillips\_integ.f90} computes the fracti
  \mathrm{ZEMBRYO} &= A = H_X(S_i,T) \xi(T) \frac{\alpha_X N_{i,ref} (T,S_i)}{\Omega_{X,1}} \quad \text{Eq.\ (10) from \citet{Phillips2008}} \\
 \end{align}
 and outputs for each IFN species the fraction of activable IFN $\mathrm{Z\_FRAC\_ACT}(X) = N_X^{IFN} / N_X$, computed as detailed above depending on the temperature. To compute the value of $\mathrm{erf}(x)$, we use the incomplete gamma function:
-{
 \begin{align*}
  \Gamma_{inc}(a,x) &= \frac{1}{\Gamma(a)} \int_0^x t^{a-1} e^{-t} \mathrm{d}t\\
  \Gamma_{inc}(\frac{1}{2},x^2) &= \mathrm{erf}(x) \quad \textrm{for $x > 0$}
@@ -1058,9 +1057,9 @@ In \emph{lima\_cold\_slow\_processes.f90}, the following computations are conduc
  \mathrm{ZDV} &= D_v \\
  \mathrm{ZAI} &= A_i \\
  \mathrm{ZCJ} &= c'/\sqrt{c} \\
- \mathrm{ZZW} = \dot{r}_s &= \frac{\mathrm{ZSSI}}{\mathrm{ZAI}} [\mathrm{X0DEPS} ~ \lambda^{\mathrm{XEX0DEPS}} + \mathrm{X1DEPS} ~ \mathrm{ZCJ} ~ \lambda^{\mathrm{XEX1DEPS}}]  \\
- &= S_i~A_i^{-1} \bigg[ 4 \pi C C_1 \bar{f_0} \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \lambda^{x-1} + 4 \pi C C_1 \bar{f_1} \frac{c'}{\sqrt{c}} \sqrt{c} \frac{\Gamma(\nu+(d+3)/2\alpha)}{\Gamma(\nu)} \lambda^{x-\frac{d+3}{2}} \bigg] \\
- &= C \lambda^x ~ 4 \pi C_1 ~ S_i ~ A_i^{-1} \bigg[ \bar{f_0} M(1) + \bar{f_1} c' M(\frac{d+3}{2}) \bigg]
+ \mathrm{ZZW} = \dot{r}_s &= \frac{1}{\rho_d} \frac{\mathrm{ZSSI}}{\mathrm{ZAI}} [\mathrm{X0DEPS} ~ \lambda^{\mathrm{XEX0DEPS}} + \mathrm{X1DEPS} ~ \mathrm{ZCJ} ~ \lambda^{\mathrm{XEX1DEPS}}]  \\
+ &= \frac{1}{\rho_d} S_i~A_i^{-1} \bigg[ 4 \pi C C_1 \bar{f_0} \frac{\Gamma(\nu+1/\alpha)}{\Gamma(\nu)} \lambda^{x-1} + 4 \pi C C_1 \bar{f_1} \frac{c'}{\sqrt{c}} \sqrt{c} \frac{\Gamma(\nu+(d+3)/2\alpha)}{\Gamma(\nu)} \lambda^{x-\frac{d+3}{2}} \bigg] \\
+ &= \frac{C \lambda^x}{\rho_d} ~ 4 \pi C_1 ~ S_i ~ A_i^{-1} \bigg[ \bar{f_0} M(1) + \bar{f_1} c' M(\frac{d+3}{2}) \bigg]
  \end{align}
 which corresponds to Eq.\ (\ref{mixing-ratio-evol}) (for snow, $\bar{f_2}=0$). The next line computes
 \begin{equation}
@@ -1464,7 +1463,7 @@ and
 
 \paragraph{Terminal fall speed of cloud droplets correction}
 ~\\
-Following \citet[][Chapter 10.3.6, Eq.\ (10-139)]{Pruppacher1997}, the terminal fall speed of small cloud droplets must be corercted by a factor first introduced by \citet{Cunningham1910}:
+Following \citet[][Chapter 10.3.6, Eq.\ (10-139)]{Pruppacher1997}, the terminal fall speed of small cloud droplets must be corrected by a factor first introduced by \citet{Cunningham1910}:
 \begin{equation}
  V(D) = (1 + 1.26 \frac{\lambda_a}{D/2}) V(D)
 \end{equation}
@@ -1502,10 +1501,10 @@ allow to update the number concentrations and mass mixing ratios using Eqs.\ (\r
 For 1-moment species (snow, graupel, hail), using the equations for $r$, $N$, and $\lambda$ (see the description of hydrometeors), Eq.\ (\ref{integ-Vnm}) becomes:
 \begin{align}
  \int_D V(D)~n(k,D)~m(D) &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} ~ r(k) \\
- &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} a C \lambda(k)^{x}\frac{1}{\lambda(k)^b} \frac{\Gamma(\nu + b/\alpha)}{\Gamma(\nu)} \\
- &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \lambda(k)^{x-b-d} \\
+ &= c \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{1}{\lambda(k)^d} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu+b/\alpha)} a \frac{C \lambda(k)^{x}}{\rho_d(k)}\frac{1}{\lambda(k)^b} \frac{\Gamma(\nu + b/\alpha)}{\Gamma(\nu)} \\
+ &= ca\frac{C}{\rho_d(k)} \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \lambda(k)^{x-b-d} \\
  \label{evol-r-1m}
- &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{r} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}}
+ &= ca\frac{C}{\rho_d(k)} \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{\rho_d(k) r(k)} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}}
 \end{align}
 
 \paragraph{Implementation in LIMA}
@@ -1519,8 +1518,8 @@ In \emph{ini\_lima\_cold\_mixed.f90}, the following variables are initialized:
 In \emph{lima\_cold\_sedimentation.f90}:
 \begin{align}
  \mathrm{ZW}(k) &= \frac{t_{split}}{z(k+1)-z(k)} \\
- \mathrm{ZWSEDR}(k) &= XFSED\bullet ~ \left(\frac{1}{r(k)}\right)^{\frac{x-b-d}{b-x}} \left(\frac{1}{\rho_d(k)}\right)^{0.4} \\
- &= caC \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{r(k)} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}} ~ \rho_d(k)
+ \mathrm{ZWSEDR}(k) &= \frac{1}{\rho_d(k)} \mathrm{XFSED\bullet} ~ \left(\frac{1}{\rho_d(k) r(k)}\right)^{\frac{x-b-d}{b-x}} \left(\frac{1}{\rho_d(k)}\right)^{0.4} ~ \rho_d(k) \\
+ &= ca\frac{C}{\rho_d(k)} \left(\frac{\rho_{00}}{\rho_d(k)}\right)^{0.4} \frac{\Gamma(\nu+(d+b)/\alpha)}{\Gamma(\nu)} \left( a \frac{C}{\rho_d(k)r(k)} \frac{\Gamma(\nu+b/\alpha)}{\Gamma(\nu)}\right)^{\frac{x-b-d}{b-x}} ~ \rho_d(k)
 \end{align}
 allow to update the mass mixing ratios using Eqs.\ (\ref{evol-r}) and (\ref{evol-r-1m}).
 
@@ -1535,7 +1534,7 @@ $A_w$ & m~s~kg$^{-1}$ & Thermodynamical function, condensation/evaporation \\
 $a$ & kg~m$^{-b}$ & Parameter for the mass-diameter relationship \\
 $B$ & - & Beta function \\
 $b$ & - & Parameter for the mass-diameter relationship \\
-$C$ & ? & Parameter for the $N=C \lambda^x$ relationship \\
+$C$ & m$^{x-3}$ & Parameter for the $N=C \lambda^x$ relationship \\
 $C$ & m & Impact of the ice crystal shape on deposition of vapor \\
 $C_{1}$ & - & Parameter for the relationship ($C=C_{1}D$)\\
 $C_i$ & J~kg$^{-1}~K^{-1}$ & Ice crystal heat capacity \\
