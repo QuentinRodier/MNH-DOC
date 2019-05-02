@@ -92,8 +92,8 @@ is $\frac{1}{2}\left( cos(2\pi/\lambda) +1\right)$.}...).
 \item XHSLOP : slope threshold ($\Delta z$/$\Delta x$ and $\Delta z$/$\Delta y$) where the local spatial filter is applied.
 \index{XHSLOP!\innam{NAM\_ZSFILTER}}
 \item NLOCZSFILTER : number of iterations of the local spatial filter applied to smooth the large slopes.
-\index{NLOCZSFILTER!\innam{NAM\_ZSFILTER}}
-
+\index{NLOCZSFILTER!\innam{NAM\_ZSFILTER}}\\
+If LHSLOP is TRUE, 3 new variables are written in the output files : ZS\_FILTR ([2D] height variations of the orography by local filtering), ZSLOPEX and ZSLOPEY ([2D] orography slopes along i and j indexes respectively after local filtering).
 \end{itemize}
 %\newpage
 \subsection{Namelists for the externalized surface}
