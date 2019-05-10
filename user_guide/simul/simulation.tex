@@ -1496,6 +1496,10 @@ XDTFIRST 	&real 		&10.\\
  XDEPTH\_BASE  & real          & 100.       \\
  XHEIGHT\_TOP  & real          & 100.       \\
  XDEPTH\_TOP   & real          & 100.       \\
+ NFINDTOP      & integer       & 0             \\
+ XTHVP         & real          & 0.25       \\
+ LTPLUS        & logical       & TRUE         \\
+
 \hline
 \end{tabular}
 \end{center}
@@ -1521,6 +1525,17 @@ Depth  on which the 2nd tracer is released
 Height above the cloud top where the 3rd tracer is released
 \item XDEPTH\_TOP  \index{XDEPTH\_TOP !\innam{NAM\_CONDSAMP}}:
 Depth on which the 3rd tracer is released
+\item NFINDTOP \index{NFINDTOP!\innam{NAM\_CONDSAMP}}:
+Method for identifying the altitude where the 3rd tracer is released :
+\begin{itemize}
+ \item NDINFTOP = 0 (by default) : the top tracer is released above the cloud top
+ \item NDINFTOP = 1 : the top tracer is released above the layer with the maximum gradient of potential temperature (by default if no clouds)
+ \item NDINFTOP = 2 : the top tracer is released at the first layer from the surface where the virtual potential temperature exceeds its bottom-up integration plus a threshold XTHVP (by default 0.25K)
+\end{itemize}
+\item XTHVP  \index{XTHVP !\innam{NAM\_CONDSAMP}}:
+Threshold (in Kelvin) to identify the boundary-layer top based on virtual potential temperature (if NFINDTOP = 2)
+\item LTPLUS \index{LTPLUS!\innam{NAM\_CONDSAMP}}:
+Flag to allow the release of 2nd and 3rd tracers one layer below the cloud base and one level above the PBL top (when the layers of emission are not detected)
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
