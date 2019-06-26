@@ -452,7 +452,7 @@ or be the first element of a new cumul (NSOURCE\_TERM= 1).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
-
+\newpage
 \subsection{Namelist NAM\_BU\_RRC (budget for cloud water)}
 \index{NAM\_BU\_RRC!namelist description}
 
@@ -487,47 +487,45 @@ NACCRRC  & accretion & integer  &  0 \index{NACCRC!\innam{NAM\_BU\_RRC}}\\
 NAUTORC  & autoconversion into rain & integer  &  0 \index{NAUTORC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD$ \neq$ 'NONE' or 'REVE') & &   &  \\\hline
 NSEDIRC  & sedimentation of cloud   & integer  &  0 \index{NSEDIRC!\innam{NAM\_BU\_RRC}}\\
-(if (CCLOUD='C2R2' or 'KHKO' and LSEDC=T) or if (CCLOUD='ICEx' and LSEDIC=T )) &  &   &   \\\hline
-NDEPORC  & surface droplet deposition   & integer  &  0 \index{NDEPORC!\innam{NAM\_BU\_RRC}}\\
-(if (CCLOUD='C2R2' or 'KHKO' and LDEPOC=T) or if (CCLOUD='ICEx' and LDEPOSC=T )) &  &   &   \\\hline
+(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA' and LSEDC=T) or if (CCLOUD='ICEx' and LSEDIC=T )) &  &   &   \\\hline
+NDEPORC  & surface droplet   & integer  &  0 \index{NDEPORC!\innam{NAM\_BU\_RRC}}\\
+(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA' & deposition &   &  \\
+ and LDEPOC=T) or if (CCLOUD='ICEx' and LDEPOSC=T )) &  &   &   \\\hline
 NDEPOTRRC  & tree droplet deposition   & integer  &  0 \index{NDEPOTRRC!\innam{NAM\_BU\_RRC}}\\
 (if ( LDRAGTREE and LDEPOTREE) ) &  &   &   \\\hline
-\end{tabular}
-\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
-\hline
 NCONDRC  &vapor condensation or & integer  &  0 \index{NCONDRC!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD $\neq$ 'NONE' and 'ICEx') &cloud water evaporation &   &  \\\hline
+(if CCLOUD $\neq$ 'NONE' and 'ICEx' and 'LIMA') &cloud water evaporation &   &  \\\hline
 NHONRC   & homogeneous   & integer  &  0 \index{NHONRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx') &nucleation &   &  \\\hline
 NRIMRC   & riming of cloud water   & integer  &  0 \index{NRIMRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NWETGRC   & wet growth of graupel  & integer  &  0 \index{NWETGRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
+\end{tabular}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
+\hline
 NDRYGRC   & dry growth of graupel & integer  &  0 \index{NDRYGRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
-%\end{tabular}
-%\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
-%\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NIMLTRC   & ice melting & integer  &  0 \index{NIMLTRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
-NBERFIRC  & Bergeron-Findeisen gth. & integer  &  0 \index{NBERFIRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
+NBERFIRC  & Bergeron-Findeisen & integer  &  0 \index{NBERFIRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NCDEPIRC  & condensation/deposition & integer  &  0 \index{NDEPIRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx') &on ice &   &  \\\hline
-NCMELRC  & collection by snow and conversion into rain with T>XTT & integer  &  0 \index{NCMELRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+NCMELRC  & collection by snow and  & integer  &  0 \index{NCMELRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' and LRED=T) & conversion into rain with T>XTT on ice &   &  \\\hline
 NDRYHRC  & dry growth of hail & integer  &  0 \index{NDRYHRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
 NCORRRC  & correction & integer  &  0 \index{NCORRRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
-NADJURC  & adjustement before  & integer  &  0 \index{NADJURC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx' .AND. LRED) &on ice &   &  \\\hline
+(if CCLOUD='ICEx' and LRED=T) or & &   &  \\
+(if CCLOUD='LIMA' and LPTSPLIT=T) & &   &  \\\hline
+NADJURC  & adjustement to & integer  &  0 \index{NADJURC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='ICEx' and LRED=T) &saturation &   &  \\\hline
 NHENURC  & CCN activation  & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='C2R2' or 'KHKO') & &   &  \\\hline
-NSEDIRC  & sedimentation & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='C2R2' or 'KHKO') & &   &  \\\hline
+(if CCLOUD='C2R2' or 'KHKO' or 'LIMA') & &   &  \\\hline
 NWETHRC  & wet growth of hail & integer  &  0 \index{NWETHRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICE4') & &   &  \\\hline
+(if CCLOUD='ICE4') or & &   &  \\
+(if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
 NNETURRC  &negative correction   & integer  &  0 \index{NNETURRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='C2R2' or 'KHKO') & induced by the turbulence&   &  \\\hline
 NNEADVRC  & negative correction  & integer  &  0 \index{NNEADVRC!\innam{NAM\_BU\_RRC}}\\
@@ -537,19 +535,22 @@ NNECONRC  &negative correction    & integer  &  0 \index{NNECONRC!\innam{NAM\_BU
 NHINCRC  & Heterogeneous  & integer  &  0 \index{NHINCRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='LIMA') &Nucleation by Contact &   &  \\\hline
 NHONCRC  & droplet homogeneous   & integer  &  0 \index{NHONCRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='LIMA') & nucleation&   &  \\\hline
-NCEDSRC  & adjustment  & integer  &  0 \index{NCEDSRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='LIMA') & &   &  \\\hline
+(if CCLOUD='LIMA') & freezing &   &  \\\hline
+NCEDSRC  & adjustment to & integer  &  0 \index{NCEDSRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='LIMA') &saturation &   &  \\\hline
 NREVARC  & evaporation   & integer  &  0 \index{NREVARC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='LIMA') & of rain drops &   &  \\\hline
+NR2C1RC  & rain to cloud change & integer  &  0 \index{NR2C1RC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='LIMA' and LPTSPLIT=T) & after sedimentation &   &  \\\hline
+NCVRCRC  & rain to cloud change & integer  &  0 \index{NCVRCRC!\innam{NAM\_BU\_RRC}}\\
+(if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
 \hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
+%\newpage
 \subsection{Namelist NAM\_BU\_RRI (budget for non-precipitating ice)}
 \index{NAM\_BU\_RRI!namelist description}
-
 \begin{center}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
@@ -573,59 +574,63 @@ NVTURBRI & vertical turbulent  & integer  &  0 \index{NVTURBRI!\innam{NAM\_BU\_R
 (if CTURB='TKEL') &diffusion &   &  \\\hline
 NNEGARI  & negative correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\\hline
 NSEDIRI  & sedimentation  & integer  &  0 \index{NSEDIRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx') or & &   &  \\
+(if CCLOUD='LIMA' and LSEDI=T) & &   &  \\\hline
 NHENURI  & heterogenous   & integer  &  0 \index{NHENURI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx') &nucleation &   &  \\\hline
 NHONRI  & homogeneous   & integer  &  0 \index{NHONRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx') &nucleation &   &  \\\hline
 NAGGSRI & aggregation of snow & integer  &  0 \index{NAGGSRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NAUTSRI & autoconversion of ice & integer  &  0 \index{NAUTSRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx') & &   &  \\\hline
 NCFRZRI &   conversion freezing  & integer  &  0 \index{NCFRZRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & of rain drops &   &  \\\hline
 NWETGRI &   wet growth of graupel & integer  &  0 \index{NWETGRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NDRYGRI &   dry growth of graupel & integer  &  0 \index{NDRYGRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
+NIMLTRI &   ice melting & integer  &  0 \index{NIMLRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
+NBERFIRI&   Bergeron-Findeisen & integer  &  0 \index{NBERFIRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
+NCDEPIRI&   condensation/deposition & integer  &  0 \index{NCDEPIRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='ICEx') &  on ice&   &  \\\hline
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
-NIMLTRI &   ice melting & integer  &  0 \index{NIMLRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
-NBERFIRI&   Bergeron-Findeisen gth. & integer  &  0 \index{NBERFIRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
-NCDEPIRI&   condensation/deposition & integer  &  0 \index{NCDEPIRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') &  on ice&   &  \\\hline
 NWETHRI &   wet growth  & integer  &  0 \index{NWETHRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICE4') &of hail &   &  \\\hline
+(if CCLOUD='ICE4') or &of hail &   &  \\
+(if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
 NDRYHRI&    dry growth of hail& integer  &  0 \index{NDRYHRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) &  on ice&   &  \\\hline
 NCORRRI&   correction & integer  &  0 \index{NCORRRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICEx' and LRED=T) or &  &   &  \\
+(if CCLOUD='LIMA' and LPTSPLIT=T) &  &   &  \\\hline
 NADJURI&   adjustment before & integer  &  0 \index{NADJURI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx'and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICEx'and LRED=T) &  on ice&   &  \\\hline
 NHINDRI &  heterogeneous     & integer  &  0 \index{NHINDRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &nucleation by deposition &   &  \\\hline
 NHINCRI & heterogeneous     & integer  &  0 \index{NHINCRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &nucleation by contact &   &  \\\hline
 NHONHRI & haze homogeneous     & integer  &  0 \index{NHONHRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='LIMA') &  nucleation source&   &  \\\hline
+(if CCLOUD='LIMA' and LHHONI=T) &  nucleation &   &  \\\hline
 NHONCRI & droplet homogeneous     & integer  &  0 \index{NHONCRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &nucleation &   &  \\\hline
 NCNVIRI & Conversion of snow     & integer  &  0 \index{NCNVIRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &to r\_i &   &  \\\hline
 NCNVSRI &  Conversion of pristine    & integer  &  0 \index{NCNVSRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &ice to r\_s &   &  \\\hline
-NHMSRI &Hallett-Mossop ice multiplication process      & integer  &  0 \index{NHMSRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='LIMA') &due to snow riming &   &  \\\hline
-NHMGRI &  Hallett-Mossop ice multiplication process due     & integer  &  0 \index{NHMGRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='LIMA') &to graupel riming &   &  \\\hline
-NCEDSRI & adjustement    & integer  &  0 \index{NCEDSRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='LIMA') & &   &  \\\hline
+NHMSRI &Hallett-Mossop ice & integer  &  0 \index{NHMSRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='LIMA') &multiplication process due to snow riming &   &  \\\hline
+NHMGRI &  Hallett-Mossop ice & integer  &  0 \index{NHMGRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='LIMA') &multiplication process due to graupel riming &   &  \\\hline
+NCEDSRI & adjustement to   & integer  &  0 \index{NCEDSRI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD='LIMA') & saturation &   &  \\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Namelist NAM\_BU\_RRG (budget for graupel)}
 \index{NAM\_BU\_RRG!namelist description}
 
@@ -647,27 +652,30 @@ NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}
 NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\\hline
 NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\\hline
 NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRS}}\\\hline
-NDEPGRG  & deposition on snow & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_RRG}}\\\hline
+NDEPGRG  & deposition on graupel & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NRIMRG   & riming of cloud water & integer  &  0 \index{NRIMRG!\innam{NAM\_BU\_RRG}}\\\hline
-NCMELRG  & conversion melting  & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\\hline
-NCFRZRG  & conversion freezing & integer  &  0 \index{NCFRZRG!\innam{NAM\_BU\_RRG}}\\\hline
+NCMELRG  & conversion melting of snow & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\\hline
+NCFRZRG  & conversion freezing of rain& integer  &  0 \index{NCFRZRG!\innam{NAM\_BU\_RRG}}\\\hline
 NWETGRG  & wet growth of graupel  & integer  &  0 \index{NWETGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NDRYGRG  & dry growth of graupel  & integer  &  0 \index{NDRYGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NGMLTRG  & graupel melting  & integer  &  0 \index{NGMLTRG!\innam{NAM\_BU\_RRG}}\\\hline
-NWETHRG  & wet growth of hail & integer  &  0 \index{NWETHRG!\innam{NAM\_BU\_RRG}}\\\hline
-NHGCVRG  & Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='ICE4' and LRED) &   &   &  \\\hline
-NGHCVRG  & Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='ICE4' and LRED) &   &   &  \\\hline
-NACCRG  & accretion of graupel & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\\hline
+NWETHRG  & wet growth of hail & integer  &  0 \index{NWETHRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='LIMA' and LHAIL=T) &  &   &  \\\hline
+NHGCVRG  & Hail to Graupel  & integer  &  0 \index{NHGCVRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
+NGHCVRG  & Graupel to Hail  & integer  &  0 \index{NGHCVRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
+NACCRG  & rain accretion on graupel & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\\hline
 NDRYHRG&    dry growth of hail& integer  &  0 \index{NDRYHRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) &  on ice&   &  \\\hline
 NCORRRG&   correction & integer  &  0 \index{NCORRRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
-NHONRRG  & drop homogeneous  & integer  &  0 \index{NHONRRG!\innam{NAM\_BU\_RRG}}\\
-(if CCLOUD='LIMA') &nucleation  &   &  \\\hline
+(if CCLOUD='ICEx' and LRED=T) &  &   &  \\\hline
+NHONRRG  & rain homogeneous  & integer  &  0 \index{NHONRRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='LIMA') &freezing  &   &  \\\hline
 NHMGRG  & Hallett-Mossop ice  & integer  &  0 \index{NHMGRG!\innam{NAM\_BU\_RRG}}\\
 (if CCLOUD='LIMA') & multiplication process due to graupel riming  &   &  \\\hline
+NCOHGRG  & conversion of hail  & integer  &  0 \index{NCOHGRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='LIMA' and LHAIL=T) &to graupel  &   &  \\\hline
 \end{tabular}
 \end{center}
 
@@ -694,16 +702,19 @@ NRELRH   & relaxation        & integer  &  0 \index{NRELRH!\innam{NAM\_BU\_RRH}}
 NNEGARH  & negative correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\\hline
 NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}\\\hline
 NWETGRH  & wet growth of graupel  & integer  &  0 \index{NWETGRH!\innam{NAM\_BU\_RRH}}\\\hline
-NWETHRH  & wet growth of hail  & integer  &  0 \index{NWETHRH!\innam{NAM\_BU\_RRH}}\\\hline
-NHMLTRH  & hail melting  & integer  &  0 \index{NHMLTRH!\innam{NAM\_BU\_RRH}}\\\hline
+NWETHRH  & wet growth of hail  & integer  &  0 \index{NWETHRH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD='LIMA' and LHAIL=T) &  &   &  \\\hline
+NHMLTRH  & hail melting  & integer  &  0 \index{NHMLTRH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD='LIMA' and LHAIL=T) &  &   &  \\\hline
 NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RRH}}\\\hline
 NCORRRH  &  correction & integer  &  0 \index{NCORRRH!\innam{NAM\_BU\_RRH}}\\\hline
 NHGCVRH  &  Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\\hline
 NGHCVRH  &  Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\\hline
+NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='LIMA' and LHAIL=T) &to graupel  &   &  \\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
 \subsection{Namelist NAM\_BU\_RRR (budget for rain water)}
 \index{NAM\_BU\_RRR!namelist description}
 
@@ -722,37 +733,48 @@ NDIFRR   & numerical diffusion & integer  &  0 \index{NDIFRR!\innam{NAM\_BU\_RRR
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}\\
 (if LHORELAX\_RR=T or LVE\_RELAX=T) &  &   &   \\\hline
-NACCRRR  & accretion of rain droplets & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\\hline
-NAUTORR   & autoconversion into rain droplets& integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\\hline
+\end{tabular}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
+\hline
+NACCRRR  & accretion of cloud droplets & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\\hline
+NAUTORR   & autoconversion into rain drops& integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\\hline
 NREVARR   & rain evaporation  & integer  &  0 \index{NREVARR!\innam{NAM\_BU\_RRR}}\\\hline
-NSEDIRR   & sedimentation of rain droplets& integer  &  0 \index{NSEDIRR!\innam{NAM\_BU\_RRR}}\\\hline
+NSEDIRR   & sedimentation of rain drops& integer  &  0 \index{NSEDIRR!\innam{NAM\_BU\_RRR}}\\\hline
 NSFRRR   & spontaneous freezing & integer  &  0 \index{NSFRRR!\innam{NAM\_BU\_RRR}}\\
 (if CCLOUD='ICEx') & &   &  \\\hline
 NACCRR   & accretion of rain water & integer  &  0 \index{NACCRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
-NCFRZRR  & conversion freezing & integer  &  0 \index{NCFRZRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & on aggregates&   &  \\\hline
+NCFRZRR  & conversion freezing of & integer  &  0 \index{NCFRZRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='ICEx' or 'LIMA') & rain drops &   &  \\\hline
 NWETGRR  & wet growth of graupel & integer  &  0 \index{NWETGRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NDRYGRR  & dry growth of graupel & integer  &  0 \index{NDRYGRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NGMLTRR  & graupel melting& integer  &  0 \index{NGMLTRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NWETHRR  & wet growth of hail & integer  &  0 \index{NWETHRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx') or & &   &  \\
+(if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
 NHMLTRR  & melting of hail& integer  &  0 \index{NHMLTRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICE4') & &   &  \\\hline
-NCMELRR  & collection of droplets by snow and conversion into rain & integer  &  0 \index{NCMELRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx' and LRED) & &   &  \\\hline
+(if CCLOUD='ICE4') or & &   &  \\
+(if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
+NCMELRR  & collection of droplets & integer  &  0 \index{NCMELRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='ICEx' and LRED=T) & by snow and conversion into rain &   &  \\\hline
 NDRYHRR  & dry growth of hail & integer  &  0 \index{NDRYHRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICE4' and LRED) & &   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
 NCORRRR  & correction & integer  &  0 \index{NCORRRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='ICEx' and LRED) & &   &  \\\hline
-NHONRRR  & drop homogeneous  & integer  &  0 \index{NHONRRR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='LIMA') &nucleation &   &  \\\hline\end{tabular}
+(if CCLOUD='ICEx' and LRED=T) or & &   &  \\
+(if CCLOUD='LIMA' and LPTSPLIT=T) & &   &  \\\hline
+NHONRRR  & rain drops homogeneous  & integer  &  0 \index{NHONRRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='LIMA') &freezing &   &  \\\hline
+NR2C1RR & rain to cloud after  & integer  &  0 \index{NR2C1RR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='LIMA' and LPTSPLIT=T) & sedimentation&   &  \\\hline
+NCVRCRR  & rain to cloud change & integer  &  0 \index{NCVRCRR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
+\end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
-%\newpage
+\newpage
 \subsection{Namelist NAM\_BU\_RRS (budget for snow)}
 \index{NAM\_BU\_RRS!namelist description}
 
@@ -773,33 +795,38 @@ NRELRS   & relaxation        & integer  &  0 \index{NRELRS!\innam{NAM\_BU\_RRS}}
 (if LHORELAX\_RS=T or LVE\_RELAX=T) &  &   &   \\\hline
 NNEGARS  & negative correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\\hline
 NSEDIRS  & sedimentation & integer  &  0 \index{NSEDIRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NDEPSRS  & deposition on snow & integer  &  0 \index{NDEPSRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NAGGSRS  & aggregation of snow    & integer  &  0 \index{NAGGSRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NAUTSRS  & autoconversion of ice   & integer  &  0 \index{NAUTSRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='ICEx') & &   &  \\\hline
 NRIMRS   & riming of cloudwater    & integer  &  0 \index{NRIMRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NACCRS   & accretion of rainwater  & integer  &  0 \index{NACCRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NCMELRS  & conversion melting     & integer  &  0 \index{NCMELRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NWETGRS  & wet growth of graupel   & integer  &  0 \index{NWETGRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NDRYGRS  & dry growth of graupel   & integer  &  0 \index{NDRYGRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx') & &   &  \\\hline
+(if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NWETHRS  & wet growth of hail  & integer  &  0 \index{NWETHRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICE4') & &   &  \\\hline
+(if CCLOUD='ICE4') or & &   &  \\
+(if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
 NDRYHRS&    dry growth of hail& integer  &  0 \index{NDRYHRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICE4' and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
 NCORRRS&   correction & integer  &  0 \index{NCORRRS!\innam{NAM\_BU\_RRS}}\\
-(if CCLOUD='ICEx' and LRED) &  on ice&   &  \\\hline
+(if CCLOUD='ICEx' and LRED=T) or &  &   &  \\
+(if CCLOUD='LIMA' and LPTSPLIT=T) &  &   &  \\\hline
 NCNVIRS  &Conversion of    & integer  &  0 \index{NCNVIRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='LIMA') & snow to r\_i&   &  \\\hline
 NCNVSRS  & Conversion of pristine  & integer  &  0 \index{NCNVSRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='LIMA') & ice to r\_s &   &  \\\hline
+\end{tabular}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
+\hline
 NHMSRS  &Hallett-Mossop ice  & integer  &  0 \index{NHMSRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='LIMA') & multiplication process due to snow riming &   &  \\\hline
 \end{tabular}
@@ -841,39 +868,38 @@ NNEGARV   & negative  & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NREVARV   & rain evaporation & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD$ \neq$ 'NONE' or 'REVE') & &   &  \\\hline
-NCONDRV   & vapor condensation & integer  &  0 \index{NCONDRV!\innam{NAM\_BU\_RRV}}\\
-          & or cloud water evaporation& &   \\\hline
+NCONDRV   & vapor condensation or & integer  &  0 \index{NCONDRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD$ \neq$ 'NONE' or 'ICEx') & cloud water evaporation& &   \\\hline
 NHENURV   & heterogenous nucleation & integer  &  0 \index{NHENURV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3','ICE4','KHKO','C2R2') & &   &  \\\hline
+(if CCLOUD='ICE3','ICE4','KHKO','C2R2', & &   &  \\
+or 'LIMA') & &   &  \\\hline
 NDEPSRV   & deposition on snow & integer  &  0 \index{NDEPSRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3', 'ICE4' or 'LIMA') & &   &  \\\hline
 NDEPGRV   & deposition on graupel & integer  &  0 \index{NDEPGRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NCDEPIRV   & condensation/deposition & integer  &  0 \index{NCDEPIRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) &on ice &   &  \\\hline
-NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
-NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+(if CCLOUD='ICE3', 'ICE4' or 'LIMA') & &   &  \\\hline
 \end{tabular}
 \end{center}
 \begin{center}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
-\hline\hline
-NHINDRV   & Heterogeneous Nucleation by Deposition & integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='LIMA'  ) & &   &  \\\hline
-NHONHRV   &Haze Homogeneous Nucleation  & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='LIMA'  ) & &   &  \\\hline
+NCDEPIRV   & deposition & integer  &  0 \index{NCDEPIRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='ICE3' or 'ICE4' ) &on ice &   &  \\\hline
+NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+NHINDRV   & Heterogeneous Nucle-& integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='LIMA'  ) &ation by Deposition  &   &  \\\hline
+NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='LIMA'  ) & Nucleation&   &  \\\hline
 NCEDSRV   & adjustement & integer  &  0 \index{NCEDSRV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD='LIMA'  ) & &   &  \\\hline
-NNETURRV   & negative correction induced by turbulence & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='C2R2' or 'KHKO'  ) & &   &  \\\hline
- NNECONRV  & negative correction induced by condensation & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='C2R2' or 'KHKO'  ) & &   &  \\\hline
-NNEADVRV&negative correction induced by advection  & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='C2R2' or 'KHKO'  ) & &   &  \\\hline
+NNETURRV   & negative correction  & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='C2R2' or 'KHKO'  ) & induced by turbulence&   &  \\\hline
+ NNECONRV  & negative correction & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='C2R2' or 'KHKO'  ) & induced by condensation&   &  \\\hline
+NNEADVRV&negative correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\
+(if CCLOUD='C2R2' or 'KHKO'  ) & induced by advection&   &  \\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -902,15 +928,12 @@ NHTURBSV & horizontal turbulent  & integer  &  0 \index{NHTURBSV!\innam{NAM\_BU\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBSV & vertical turbulent  & integer  &  0 \index{NVTURBSV!\innam{NAM\_BU\_RSV}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NCHEMSV & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\
-NDEPOSV  & surface droplet deposition   & integer  &  0 \index{NDEPOSV!\innam{NAM\_BU\_RRC}}\\
-(if (CCLOUD='C2R2' or 'KHKO' and LDEPOC=T) ) &  &   &   \\\hline
+NCHEMSV & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
 NDEPOTRSV  & tree droplet deposition   & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RRC}}\\
-(if (CCLOUD='C2R2' or 'KHKO') and ( LDRAGTREE and LDEPOTREE)  ) &  &   &   \\\hline
+(if (CCLOUD='C2R2' or 'KHKO') and (LDRAGTREE and LDEPOTREE)  ) &  &   &   \\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
 \subsection{Namelist NAM\_BU\_RTKE (budget for TKE)}
 \index{NAM\_BU\_RTKE!namelist description}
 
@@ -949,29 +972,23 @@ NADVTH   & total advection   & integer  &  0 \index{NADVTH!\innam{NAM\_BU\_RTH}}
 NFRCTH (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCTH!\innam{NAM\_BU\_RTH}} \\\hline
 N2DADVTH   &advective forcing           & integer  &  0 \index{N2DADVTH!\innam{NAM\_BU\_RTH}} \\
 (if L2D\_ADV\_FRC=T) &  &   &   \\\hline
-\end{tabular}
-\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
-\hline
 N2DRELTH   & relaxation forcing           & integer  &  0 \index{N2DRLETH!\innam{NAM\_BU\_RTH}} \\
 (if L2D\_REL\_FRC=T) &  &   &   \\\hline
 NNUDTH (if LNUDGING=T)  & nudging           & integer  &  0 \index{NNUDTH!\innam{NAM\_BU\_RTH}} \\\hline
-%\end{tabular}
-%\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
-%\hline
 NPREFTH  & reference pressure term  & integer  &  0 \index{NPREFTH!\innam{NAM\_BU\_RTH}} \\ 
 (if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
-%\end{tabular}
-%\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
-%\hline
 NDIFTH (if LNUMDIFTH=T)   & numerical diffusion & integer  &  0 \index{NDIFTH!\innam{NAM\_BU\_RTH}}\\\hline
 NRELTH   & relaxation        & integer  &  0 \index{NRELTH!\innam{NAM\_BU\_RTH}}\\
 (if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
 NRADTH (if CRAD $\neq$ 'NONE')  & radiation           & integer  &  0 \index{NRADTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDCONVTH & KAFR convection          & integer  &  0 \index{NDCONVTH!\innam{NAM\_BU\_RTH}}\\
 (if CDCONV='KAFR' ou CSCONV='KAFR') &  &   &   \\\hline
+\end{tabular}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
+\hline
 NMAFLTH (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLTH!\innam{NAM\_BU\_RTH}} \\\hline
-NHTURBTH & horizontal turbulent & integer  &  0 \index{NHTURBTH!\innam{NAM\_BU\_RTH}}\\
-(if CTURB='TKEL' and CTURBDIM='3DIM') & diffusion&   &  \\\hline
+NHTURBTH (if CTURB='TKEL'& horizontal turbulent & integer  &  0 \index{NHTURBTH!\innam{NAM\_BU\_RTH}}\\
+and CTURBDIM='3DIM') & diffusion&   &  \\\hline
 NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index{NVTURBTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
 NNEGATH  (if CCLOUD $\neq$ 'NONE') & negative            & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
@@ -979,27 +996,28 @@ NREVATH (if rain is activated)  & rain evaporation    & integer  &  0 \index{NRE
 NCONDTH (if CCLOUD='C2R2'  & vapor condensation  or     & integer  &  0 \index{NCONDTH!\innam{NAM\_BU\_RTH}}\\
 'KHKO','KESS' or 'REVE')& cloud water  evaporation  &          &    \\\hline
 NHENUTH   & heterogeneous  & integer  &  0 \index{NHENUTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3','ICE4','KHKO','C2R2') &nucleation &   &  \\\hline
+(if CCLOUD='ICE3','ICE4','KHKO','C2R2', or &nucleation &   &  \\
+'LIMA') & &   &  \\\hline
 NHONTH   & homogeneous  & integer  &  0 \index{NHONTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & nucleation&   &  \\\hline
 NSFRTH   & spontaneous freezing& integer  &  0 \index{NSFRTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NDEPSTH  & deposition of snow  & integer  &  0 \index{NDEPSTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NDEPGTH  & deposition of graupel & integer  &  0 \index{NDEPGTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NRIMTH   & riming of cloud     & integer  &  0 \index{NRIMTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+NDEPSTH  & deposition on snow  & integer  &  0 \index{NDEPSTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
+NDEPGTH  & deposition on graupel & integer  &  0 \index{NDEPGTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
+NRIMTH   & riming of cloud droplets & integer  &  0 \index{NRIMTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NACCTH   & accretion of rain   & integer  &  0 \index{NACCTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NCFRZTH  & conversion freezing & integer  &  0 \index{NCFRZTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & of rain &   &  \\\hline
 NWETGTH  & wet growth of graupel& integer  &  0 \index{NWETGTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NDRYGTH  & dry growth of graupel& integer  &  0 \index{NDRYGTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NGMLTTH  & graupel melting      & integer  &  0 \index{NGMLTTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NDRYHTH  & dry growth of hail          & integer  &  0 \index{NDRYHTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE4' ) & &   &  \\\hline
 NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RTH}}\\
@@ -1007,36 +1025,43 @@ NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RT
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
-NBERFITH  & bergeron-findeisen   & integer  &  0 \index{NBERFITH!\innam{NAM\_BU\_RTH}}\\
+NBERFITH  & Bergeron-Findeisen   & integer  &  0 \index{NBERFITH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NCDEPITH  & condensation/deposition  & integer  &  0 \index{NCDEPITH!\innam{NAM\_BU\_RTH}}\\
+NCDEPITH  & deposition  & integer  &  0 \index{NCDEPITH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & on ice   &  \\\hline
 NWETHTH   & wet growth of hail   & integer  &  0 \index{NWETHTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE4')   &  &        &   \\\hline
+(if CCLOUD='ICE4')   &  &        &   \\
+(if CCLOUD='LIMA' and LHAIL=T)   &  &        &   \\\hline
 NHMLTTH   & melting of hail      & integer  &  0 \index{NHMLTTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE4')   &   &       &   \\\hline
- NNETURTH  &  negative correction induced by turbulence     & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='KHKO' or 'C2R2')   &   &       &   \\\hline
- NNEADVTH  & negative correction induced by advection      & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='KHKO' or 'C2R2')   &   &       &   \\\hline
- NNECONTH  & negative correction induced by condensation      & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='KHKO' or 'C2R2')   &   &       &   \\\hline
-NHINDTH   & Heterogeneous Nucleation by Deposition      & integer  &  0 \index{NHINDTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='LIMA')   &   &       &   \\\hline
-NHINCTH   & Heterogeneous Nucleation by Contact      & integer  &  0 \index{NHINCTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='LIMA')   &   &       &   \\\hline
-NHONHTH   & Haze Homogeneous       & integer  &  0 \index{NHONHTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='ICE4')   &   &       &   \\
+(if CCLOUD='LIMA' and LHAIL=T)   &  &        &   \\\hline
+ NNETURTH  &  negative correction      & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='KHKO' or 'C2R2')   &induced by turbulence   &       &   \\\hline
+ NNEADVTH  & negative correction       & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='KHKO' or 'C2R2')   &induced by advection   &       &   \\\hline
+ NNECONTH  & negative correction       & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='KHKO' or 'C2R2')   &induced by condensation   &       &   \\\hline
+NHINDTH   & heterogeneous & integer  &  0 \index{NHINDTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='LIMA')   &Nucleation by Deposition   &       &   \\\hline
+NHINCTH   & heterogeneous & integer  &  0 \index{NHINCTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='LIMA')   & Nucleation by Contact  &       &   \\\hline
+NHONHTH   & haze Homogeneous       & integer  &  0 \index{NHONHTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='LIMA')   &   Nucleation&       &   \\\hline
 NHONCTH   &  droplet homogeneous      & integer  &  0 \index{NHONCTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='LIMA')   &nucleation   &       &   \\\hline
+(if CCLOUD='LIMA')   &freezing   &       &   \\\hline
 NHONRTH   & drop homogeneous       & integer  &  0 \index{NHONRTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='LIMA')   & nucleation  &       &   \\\hline
+(if CCLOUD='LIMA')   & freezing  &       &   \\\hline
 NCEDSTH   & adjustment      & integer  &  0 \index{NCEDSTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='LIMA')   &   &       &   \\\hline
+NSEDITH   &  heat transport & integer  &  0 \index{NSEDITH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='LIMA' and LPTSPLIT=T)   &by hydrometeors sedimentation   &       &   \\\hline
+NIMLTTH   & ice melting      & integer  &  0 \index{NIMLTTH!\innam{NAM\_BU\_RTH}}\\
+(if CCLOUD='LIMA' or 'ICEx')   &   &       &   \\\hline
 
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Namelist NAM\_BU\_RU (budget for U)}
 \index{NAM\_BU\_RU!namelist description}
 
@@ -1092,6 +1117,7 @@ NMAFLV (if CSCONV='EDKF')   & mass flux        & integer  &  0 \index{NMAFLV!\in
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Namelist NAM\_BU\_RW (budget for W)}
 \index{NAM\_BU\_RW!namelist description}
 
@@ -2084,6 +2110,8 @@ Fortran name & Fortran type & default value \\
 XTSTEP    & real   & 60.  \\
 CPRESOPT  & 4 characters  & 'CRESI'  \\
 NITR      & integer   & 4   \\
+LRES        & logical        & .FALSE. \\
+XRES        & real           & 1.E-07  \\
 LITRADJ   & logical   & TRUE  \\
 XRELAX    & real     & 1.   \\
 LHORELAX\_UVWTH &  logical  & FALSE  \\
@@ -2140,10 +2168,18 @@ moment (see the Scientific documentation for more details) :
 {\bf If the problem is flat and cartesian, then the resolution
 becomes exact and no iteration is performed.}
 
-\item
+\item 
 NITR : Number of iterations for the  pressure solver. The value of this
 parameter depends on the maximum slope of the orography  in the model.  
 \index{NITR!\innam{NAM\_DYNn}}
+
+\item 
+LRES : flag to change the residual divergence limit
+\index{LRES\innam{NAM\_DYNn\_PRE}}
+
+\item 
+XRES : Value of the residual divergence limit
+\index{XRES\innam{NAM\_DYNn\_PRE}}
 
 \item
 LITRADJ : Logical to adjust the number of iterations for the  pressure solver according to the range of the residual divergence. 
@@ -3519,7 +3555,7 @@ LNUCL & logical	  &  .TRUE. \\
 LSEDI &  logical&  .FALSE. \\
 LSNOW & logical  &  .TRUE.\\
 LHAIL &  logical& .FALSE. \\
-LHHONI & logical &  .TRUE.\\
+LHHONI & logical &  .FALSE.\\
 LMEYERS & logical   & .FALSE. \\
 NMOD\_IFN & integer   & 1  \\
 XIFN\_CONC & real & 100.  \\
@@ -4625,10 +4661,10 @@ evolution of y-horizontaly averaged fields at one level or verticaly averaged be
  flag to compute minimum and maximum of vertical velocity W in temporal serie
 (t).
 \item LSURF \index{LSURF!\innam{NAM\_SERIES}}: flag to compute temporal series on surface fields.
-You have to introduce in the code the surface fields you want  : 
+You have to introduce in the code the surface fields you want  : 
 \begin{itemize}
 \item In  get\_seriesn.f90 of SURFEX : put the requested fields in ZINF. In the example of the current version XTS, XT\_MNW,XT\_BOT, XCT, XH\_ML from modd\_flaken.f90 are requested.
-\item In get\_surf\_varn.f90 of SURFEX : adjust the tile necessary to be present (in the example PWATER is required)
+\item In get\_surf\_varn.f90 of SURFEX : adjust the tile necessary to be present (in the example PWATER is required)
 \item In ini\_seriesn.f90 of Meso-NH : put the number of requested fields  : ex: for 5 fields, NSTEMP\_SERIE1 = NSTEMP\_SERIE1 +5 and give the tittle of each field
 \item In seriesn.f90 of Meso-NH : give the tittle of each field
 \end{itemize}
