@@ -929,8 +929,581 @@ NHTURBSV & horizontal turbulent  & integer  &  0 \index{NHTURBSV!\innam{NAM\_BU\
 NVTURBSV & vertical turbulent  & integer  &  0 \index{NVTURBSV!\innam{NAM\_BU\_RSV}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
 NCHEMSV & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
-NDEPOTRSV  & tree droplet deposition   & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RRC}}\\
-(if (CCLOUD='C2R2' or 'KHKO') and (LDRAGTREE and LDEPOTREE)  ) &  &   &   \\\hline
+NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RRC}}\\
+(if (CCLOUD='C2R2' or 'KHKO') and (LDRAGTREE and LDEPOTREE)  ) & tree &   &   \\\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of activated nuclei}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NHENUSV & activation of CCN & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &&&\\
+and LSUPSAT=F &&&\\\hline
+NCEVASV & evaporation of droplets & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &&&\\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of cloud droplets}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NHENUSV & droplet activation & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO' &&&\\
+and LSUPSAT=F)  &&&\\
+or if (CCLOUD='LIMA' and LWARM=T &&&\\
+and LACTI=T and NMOD\_CCN>1)&&&\\\hline
+NCEVASV & droplet evaporation & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+NSELFSV & self-collection of  & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') & droplets&&\\
+or if (CCLOUD='LIMA' and (LPTSPLIT=T or &&&\\
+LWARM=T and LRAIN=T))&&&\\\hline
+NACCRSV & accretion between  & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &droplet and raindrop&&\\
+or if (CCLOUD='LIMA' and (LRAIN=T or &&& \\
+LPTSPLIT=T)) &&& \\\hline
+NSEDISV & droplet sedimentation& integer & 0 \\
+if (CCLOUD='C2R2','KHKO' or 'LIMA') &&&\\
+and LSEDC=T &&&\\\hline
+NDEPOSV & droplet deposition& integer & 0 \\
+if (CCLOUD='C2R2','KHKO' or 'LIMA') &&&\\
+and LDEPOC=T &&&\\\hline
+NNEGASV & negativity correction& integer & 0 \\
+if (CCLOUD='LIMA') &&&\\\hline
+
+NCORRSV & corrections & integer & 0 \\
+if (CCLOUD='LIMA', LPTSPLIT=T, &&&\\
+LWARM=T and LRAIN=T)&&& \\\hline
+
+NR2C1SV & rain to cloud change& integer & 0 \\
+if (CCLOUD='LIMA', &&&\\
+LPTSPLIT=T and LRAIN=T)&&& \\\hline
+
+NHINCSV & heterogeneous  & integer & 0 \\
+if (CCLOUD='LIMA', LNUCL=T,&nucleation by contact&&\\
+and LCOLD=T)&&& \\
+\hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+
+NHONCSV & droplet homogeneous  & integer & 0 \\
+if (CCLOUD='LIMA' and ((LNUCL=T,& nucleation &&\\
+LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
+
+NAUTOSV & autoconversion & integer & 0 \\
+if (CCLOUD='LIMA' and (LRAIN=T&&&\\
+or LPTSPLIT=T)&&& \\\hline
+
+NREVASV & rain evaporation & integer & 0 \\
+if (CCLOUD='LIMA' and (LRAIN=T or &&& \\
+LPTSPLIT=T)) or CCLOUD='KHKO'  or &&& \\
+CCLOUD='C2R2' &&& \\\hline
+
+NRIMSV & riming & integer & 0 \\
+if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\
+LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\
+LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\
+LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
+
+NIMLTSV & Ice MeLTing & integer & 0 \\
+if (CCLOUD='LIMA' and ((LCOLD=T&&&\\
+and LWARM=T) or LPTSPLIT=T)&&& \\\hline
+
+NCVRCSV & rain to cloud change & integer & 0 \\
+if (CCLOUD='LIMA' and LPTSPLIT=T)&&& \\\hline
+
+NWETHSV & wet growth of hail& integer & 0 \\
+if (CCLOUD='LIMA', LHAIL=T&&&\\
+and LPTSPLIT=F)&&& \\\hline
+
+NCEDSSV & adjustment & integer & 0 \\
+if CCLOUD='LIMA' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of raindrops}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NAUTOSV & autoconversion & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &&& \\
+or if ((CCLOUD='LIMA') and (LRAIN=T &&& \\
+or LPTSPLIT=T) &&& \\\hline
+
+NREVASV & drop evaporation & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') or &&& \\
+if (CCLOUD='LIMA' and (LPTSPLIT=T &&& \\
+or LRAIN=T)) &&& \\\hline
+
+NBRKUSV & spontaneous break up of  & integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') or & drops && \\
+if (CCLOUD='LIMA' and (LPTSPLIT=T &&& \\
+or LRAIN=T)) &&& \\\hline
+
+NSEDISV & raindrop sedimentation& integer & 0 \\
+if (CCLOUD='C2R2' or 'KHKO') &&& \\
+or if (CCLOUD='LIMA', LWARM=T &&& \\
+and LRAIN=T) &&& \\\hline
+
+NSCBUSV & breakup-selfcollection & integer & 0 \\
+if (CCLOUD='C2R2') &&& \\
+or if ((CCLOUD='LIMA') and (LRAIN=T &&& \\
+or LPTSPLIT=T) &&& \\\hline
+
+NNEGASV & negativity correction& integer & 0 \\
+if (CCLOUD='LIMA') and &&& \\\hline
+
+NCORRSV & corrections & integer & 0 \\
+if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\
+LWARM=T and LRAIN=T) &&& \\\hline
+
+NR2C1SV & rain to cloud change& integer & 0 \\
+if (CCLOUD='LIMA', LPTSPLIT=T &&& \\
+and LRAIN=T) &&& \\\hline
+
+NHONRSV & drop homogeneous  & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T & nucleation && \\
+or (LCOLD=T, LWARM=T, LRAIN=T, &&& \\
+and LNUCL=T))&&& \\\hline
+
+NACCSV & accretion & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\
+\hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+
+NCFRZSV & Conversion FReeZing & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
+
+NGMLTSV & graupel melting& integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
+
+NCVRCSV & rain to cloud change & integer & 0 \\
+if CCLOUD='LIMA' and LPTSPLIT=T &&& \\\hline
+
+NWETHSV & wet growth of hail& integer & 0 \\
+if CCLOUD='LIMA', LPTSPLIT=F &&& \\
+and LHAIL=T &&& \\\hline
+
+NHMLTSV & hail melting & integer & 0 \\
+if CCLOUD='LIMA', LPTSPLIT=F &&& \\
+and LHAIL=T &&& \\\hline
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of free CCN}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NNEGASV & negativity correction& integer & 0 \\
+if CCLOUD='LIMA' &&& \\\hline
+
+NCEDSSV & adjustment & integer & 0 \\
+if CCLOUD='LIMA' &&& \\\hline
+
+NSCAVSV & scavenging & integer & 0 \\
+if CCLOUD='LIMA' and LSCAV=T &&& \\\hline
+
+NHENUSV & heterogeneous  & integer & 0 \\
+if CCLOUD='LIMA', LWARM=T, &nucleation && \\
+LACTI=T and NMOD\_CCN > 1 &&& \\\hline
+
+NHONHSV & haze homogeneous  & integer & 0 \\
+if CCLOUD='LIMA', LCOLD=T, LNUCL=T, & nucleation&& \\
+LHHONI=T and NMOD\_CCN > 1 &&& \\
+
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of pristine ice crystals}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NNEGASV & negativity correction& integer & 0 \\
+if (CCLOUD='LIMA') and &&& \\\hline
+
+NCORRSV & corrections & integer & 0 \\
+if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\
+LCOLD=T and LSNOW=T) &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if (CCLOUD='LIMA', LSEDI=T &&& \\\hline
+
+NHINDSV & heterogeneous & integer & 0 \\
+if (CCLOUD='LIMA', LCOLD=T &nucleation && \\
+and LNUCL=T) & by deposition && \\\hline
+
+NHINCSV & heterogeneous   & integer & 0 \\
+if (CCLOUD='LIMA', LCOLD=T &nucleation&& \\
+and LNUCL=T) &by contact && \\\hline
+
+NHONHSV & haze homogeneous  & integer & 0 \\
+if CCLOUD='LIMA', LCOLD=T, LNUCL=T, &nucleation && \\
+LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
+
+NHONCSV & droplet homogeneous  & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &nucleation && \\
+or (LCOLD=T, LWARM=T and LNUCL=T)) &&& \\\hline
+
+NCNVISV & Conversion of snow to ri& integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T and LSNOW=T)) &&& \\\hline
+
+NCNVSSV & Conversion of pristine & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &ice to rs && \\
+or (LCOLD=T and LSNOW=T)) &&& \\\hline
+
+NAGGSSV & aggregation of ice on  & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T & snow&& \\
+or (LCOLD=T and LSNOW=T)) &&& \\\hline
+
+NIMLTSV & Ice MeLTing & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T and LWARM=T)) &&& \\\hline
+
+NHMSSV & Hallett-Mossop ice  & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &multiplication&& \\
+or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
+
+NCFRZSV & Conversion FReeZing & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\
+or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
+
+\hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NHMGSV & Hallett-Mossop ice   & integer & 0 \\
+if (CCLOUD='LIMA') and (LPTSPLIT=T &multiplication due to && \\
+or (LCOLD=T, LSNOW=T and LWARM=T)) &graupel riming&& \\\hline
+
+NWETHSV & wet growth of hail& integer & 0 \\
+if CCLOUD='LIMA', LPTSPLIT=F &&& \\
+and LHAIL=T &&& \\\hline
+
+NCEDSSV & adjustment & integer & 0 \\
+if CCLOUD='LIMA' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of free IFN}
+\begin{center}
+\begin{tabular} {|p{7cm}|p{5cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NNEGASV & negativity correction& integer & 0 \\
+if CCLOUD='LIMA' &&& \\\hline
+
+NCEDSSV & adjustment & integer & 0 \\
+if CCLOUD='LIMA' &&& \\\hline
+
+NSCAVSV & scavenging & integer & 0 \\
+if CCLOUD='LIMA' and LSCAV=T &&& \\\hline
+
+NHINDSV & heterogeneous nucleation & integer & 0 \\
+if CCLOUD='LIMA', LCOLD=T, &by deposition&& \\
+LNUCL=T and LMEYERS=F &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Concentration of homogeneous freezing of CCN}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NHONHSV & haze homogeneous  & integer & 0 \\
+if CCLOUD='LIMA', LCOLD=T, &nucleation&& \\
+LNUCL=T, LWARM=T and LHHONI=T &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of water vapor}
+\begin{center}
+\begin{tabular} {|p{7cm}|p{5cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NDEPSSV & Deposition on rs& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDEPGSV & Deposition on rg& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NREVASV & drop evaporation & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &&& \\\hline
+
+NDEPISV & adjustment& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of cloud droplets}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NAUTOSV & autoconversion & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &&& \\\hline
+
+NACCRSV & accretion between  & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &droplet and raindrop&& \\\hline
+
+NRIMSV & riming & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NIMLTSV & Ice MeLTing & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NBERFISV & Bergeron & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDEPISV & adjustment& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NINDSV & induction & integer & 0 \\
+if CCLOUD='ICEx' and LINDUCTIVE=T &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if CCLOUD='ICEx' and LSEDIC=T &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of rain drops}
+\begin{center}
+\begin{tabular} {|p{7cm}|p{5cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NAUTOSV & autoconversion & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &&& \\\hline
+
+NACCRSV & accretion between  & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &droplet and raindrop&& \\\hline
+
+NREVASV & drop evaporation & integer & 0 \\
+if CCLOUD='ICEx' and LWARM=T &&& \\\hline
+
+NACCSV & accretion & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NCFRZSV & Conversion FReeZing & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NGMLTSV & graupel melting& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of ice crystals}
+\begin{center}
+\begin{tabular} {|p{6cm}|p{6cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NAGGSSV & aggregation of ice on snow & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NAUTSSV & autoconversion ice snow& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NCFRZSV & Conversion FReeZing & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NIMLTSV & Ice MeLTing & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NBERFISV & Bergeron & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDEPISV & adjustment& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNIISSV & non-inductive I-S & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of snow}
+\begin{center}
+\begin{tabular} {|p{6cm}|p{6cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NDEPSSV & Deposition on rs& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NAGGSSV & aggregation of ice on snow & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NAUTSSV & autoconversion ice snow& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NRIMSV & riming & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NACCSV & accretion & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NCMELSV & conversion-melting & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNIISSV & non-inductive I-S & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Volumetric charge of graupel}
+\begin{center}
+\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|} 
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline\hline
+NDEPGSV & Deposition on rg& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NRIMSV & riming & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NACCSV & accretion & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NCMELSV & conversion-melting & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NCFRZSV & Conversion FReeZing & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NWETGSV & wet growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NDRYGSV & dry growth of graupel & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NGMLTSV & graupel melting& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NSEDISV & sedimentation& integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NNEUTSV & neutralization & integer & 0 \\
+if CCLOUD='ICEx' &&& \\\hline
+
+NINDSV & induction & integer & 0 \\
+if CCLOUD='ICEx' and LINDUCTIVE=T &&& \\
+
+\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -4376,7 +4949,7 @@ LRMC01      &  logical       & FALSE  \\
 CTOM        &  4 characters  & 'NONE'   \\
 XKEMIN      &  real          & 0.01 \\
 XCEDIS      &  real          & 0.84 \\
-VSIGQSAT    & real           & 0. \\
+VSIGQSAT    & real           & 0.02 \\
 \hline
 \end{tabular}
 \end{center}
@@ -4451,7 +5024,7 @@ CSUBG\_AUCV (formerly LSUBG\_AUCV in masdev47) : Type of subgrid autoconversion 
 is set to TRUE and only with the mixed phase for the moment)
 \item 'CLFR' from the convective cloud fraction given by EDKF 
 (if CSCONV='EDKF' only)
-\item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012)
+\item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012). Only if LRED=TRUE.
 \end{itemize}
 
 \item
@@ -4511,8 +5084,8 @@ Diagnostic quantities are written on every synchronuous files
  LVISC\_TH & logical       & .FALSE.           \\
  LVISC\_SV & logical       & .FALSE.           \\
  LVISC\_R & logical       & .FALSE.           \\
- XMU\_V & real       & .FALSE.           \\
- XPRANDTL & real       & .FALSE.           \\
+ XMU\_V & real       & 0.           \\
+ XPRANDTL & real       & 0.           \\
 \hline
 \end{tabular}
 \end{center}

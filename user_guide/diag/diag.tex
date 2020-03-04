@@ -165,7 +165,6 @@ Only available if CSURF='EXTE' in YINIFILE.des
 %%%%%%%%%%%%%%%%%%%%
 \subsection{General variables}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 Fortran name  & Possible &\multirow{2}{*}{ Variables [dim] meaning (unit)} \\
@@ -207,11 +206,9 @@ in \&NAM\_DIAG & Values& \\ \hline
 &\multirow{2}{*}{.TRUE.} &{\tt COREF }: [3D] Refraction coindex (if LUSERV=T)\\\cline{3-3}
 & &{\tt  MCOREF }: [3D] modified refraction coindex (if LUSERV=T)\\ \hline
 \end{tabular}
-\end{makeimage}
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 \multirow{5}{*}{LMOIST\_V}\index{LMOIST\_V!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -263,11 +260,9 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 && with \textbf{LWIND\_ZM=T}\index{LWIND\_ZM!\innam{NAM\_DIAG}} \\
 & &{\tt UM89\_ZM, VM89\_ZM }: [3D] Zonal and Meridian components of Ageostrophic wind (m/s)\\ \hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{2}{*}{LMSLP}\index{LMSLP!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -306,11 +301,9 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 &'RICHA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "bulk Richardson number method"\\\cline{2-3}
 &'THETA' &{\tt HBLTOP}: [2D] Height of boundary layer top (m) computed with "parcel method"\\\hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{35}{*}{LVAR\_PR}\index{LVAR\_PR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -350,13 +343,15 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 & &{\tt PRSCONV }: [2D] (if CDCONV$\neq$'NONE')  (mm/h) \\
 && Convective instantaneous Precipitation Rate for Snow  \\ \cline{3-3}
 & &{\tt PRECIP\_WAT }: [2D]   ($kg/m^2$) \\
-&&  Precipitable water \\ \hline
+&&  Precipitable water \\ 
+\hline
+\multirow{3}{*}{LCHAQDIAG}\index{LCHAQDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
+&\multirow{2}{*}{.TRUE.} &{\tt WC\_O3T }: [3D] Chemical scalar variables in aqueous phase (cloud and rain) as defined in BASIC.f90 (M) \\
+\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 
 \hline
@@ -423,11 +418,9 @@ LUSERC=T)& &{\tt CLDFR }: [3D] Cloud Fraction (\_)\\\cline{3-3}
 (if&\multirow{2}{*}{2} &{\tt CAPEMAX CINMAX CAPE3D, CIN3D, DCAPE3D} \\\cline{3-3}
 LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical motion) (J/kg)\\ \hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{10}{*}{LLIMA\_DIAG}\index{LLIMA\_DIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
@@ -457,12 +450,10 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & &{\tt VISIZHA }: [3D] Visibility from Zhang (m) (if CCLOUD=C2R2 or KHKO)\\\cline{3-3}
 \hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 
 \subsection{Convective scheme KAFR}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 \multirow{16}{*}{NCONV\_KF}\index{NCONV\_KF!\innam{NAM\_DIAG}} &{\bf -1} & default value : no fields\\\cline{2-3}
@@ -484,11 +475,9 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & & {\tt PRSFLXCONV }: [3D]  Solid PRecipitation Convective FLuX (m/s)\\\hline
 
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \subsection{Mass Flux Shallow Convection scheme}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 \multirow{6}{*}{LMFFLX}\index{LMFFLX!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -499,13 +488,11 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & &{\tt MF\_UW\_VFLX }: [3D] U momentum vertical flux (m$^2$/s$^2$) \\ \cline{3-3}
 & &{\tt MF\_VW\_VFLX }: [3D] V momentum vertical flux (m$^2$/s$^2$) \\ \hline
 \end{tabular} 
-\end{makeimage}
 
 
 
 \subsection{Turbulent scheme}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 \multirow{4}{*}{LVAR\_TURB}\index{LVAR\_TURB!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -539,11 +526,9 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & &  of the advection of RVCI (kg/kg/m)  \\\cline{3-3}
 & &{\tt CEI }: [3D] Cloud entrainment instability index (kg/kg/m/s) \\ \hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 \newpage
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{30}{*}{LTURBFLX}\index{LTURBFLX!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
@@ -607,12 +592,10 @@ fluxes\\
 
 \\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \subsection{Radiation scheme}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
  \hline
 \multirow{47}{*}{NRAD\_3D}\label{nrad3d}\index{NRAD\_3D!\innam{NAM\_DIAG}} & {\bf -1} & default value : no field\\\cline{2-3}
@@ -651,11 +634,9 @@ CRAD$\neq$'NONE')&\multirow{8}{*}{2} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DI
 & & {\tt PLAN\_ABS\_VIS }: [2D]  planetary absorption in visible (\_)\\\cline{3-3}
 & & {\tt PLAN\_ABS\_NIR }: [2D]  planetary absorption in  near-infrared (\_)\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{36}{*}{NRAD\_3D}\index{NRAD\_3D!\innam{NAM\_DIAG}}&\multirow{20}{*}{4} &{\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  PLAN\_ALB\_VIS  PLAN\_ALB\_NIR PLAN\_TRA\_VIS PLAN\_TRA\_NIR PLAN\_ABS\_VIS PLAN\_ABS\_NIR}  \\\cline{3-3}
@@ -690,14 +671,12 @@ $
 \end{tabular}
 \\ \hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 \newpage
 \subsection{Lagrangian tracers}
 Only available if \verb|LLG=T| in YINIFILE.des
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{6}{*}{LTRAJ}\index{LTRAJ!\innam{NAM\_DIAG}}&{\bf .FALSE} & by default : no field\\\cline{2-3}
@@ -707,14 +686,12 @@ Only available if \verb|LLG=T| in YINIFILE.des
 & &{\tt THn }: [3D] corresponding Theta  (K)\\\cline{3-3}
 & &{\tt RVn }: [3D] corresponding Vapor mixing Ratio (g/kg)\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 A documentation is available at \url{http://mesonh.aero.obs-mip.fr/mesonh/dir_doc/lag_m46_22avril2005/lagrangian46/}
 \subsection{Dust variables}
 Only available if \verb|LDUST=T| in YINIFILE.des.
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{23}{*}{by default}& &{\tt DSTM0nM}: [3D] Dust 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
@@ -738,13 +715,11 @@ Only available if \verb|LDUST=T| in YINIFILE.des.
 \\\cline{3-3}
 & &{\tt DSTEXT}: [3D] Dust Extinction (1/km)\\\hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 \newpage
 \subsection{Salt variables}
 Only available if \verb|LSALT=T| in YINIFILE.des.
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{23}{*}{by default}& &{\tt SLTM0nM}: [3D] Salt 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
@@ -768,13 +743,11 @@ Only available if \verb|LSALT=T| in YINIFILE.des.
 \\\cline{3-3}
 & &{\tt SLTEXT}: [3D] Salt Extinction (1/km)\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \subsection{Chemical variables}
 Only available if \verb|LUSECHEM=T| in YINIFILE.des
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{3}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no fields\\\cline{2-3}
@@ -784,7 +757,6 @@ XCHEMLON&arrays of real & write chemicals species on vertical profile defined by
 CSPEC\_DIAG&character(*1024) &  to compute chemical production/loss terms for each variables specified\\ \hline
 CSPEC\_BU\_DIAG&character(*1024) & to compute chemical production/loss terms for each reaction for each variables specified \\ \hline
 \end{tabular}
-\end{makeimage} 
 \end{center}
 \begin{itemize}
 \item CSPEC\_DIAG \index{CSPEC\_DIAG!\innam{NAM\_DIAG}}:list of the chemical species for production/loss terms computation. Each species is separated by a comma. Ex : CSPEC\_DIAG='O3,CO,BIO'
@@ -797,7 +769,6 @@ CSPEC\_BU\_DIAG&character(*1024) & to compute chemical production/loss terms for
 Only available if \verb|LUSECHEM=T| and  \verb|LORILAM=T| in YINIFILE.des
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{26}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no field\\\cline{2-3}
@@ -824,7 +795,6 @@ Only available if \verb|LUSECHEM=T| and  \verb|LORILAM=T| in YINIFILE.des
 & &{\tt MOCn}: [3D] Mass OC aerosol mode n ($\mu$m/m$^3$)\\\cline{3-3}
 & &{\tt MBCn}: [3D] Mass BC aerosol mode n ($\mu$m/m$^3$)\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \subsection{Production of NOx by lightening flashes}
@@ -868,7 +838,6 @@ values, the interpolated values of GPS delays are written in ASCII files
 {\it YINIFILEYSUFFIX}GPS[.P00n] (where n is the number of processor).  \\
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{5}{*}{NGPS}\index{NGPS!\innam{NAM\_DIAG}}& \textbf{-1}& by default : no field\\\cline{2-3}
@@ -877,7 +846,6 @@ values, the interpolated values of GPS delays are written in ASCII files
 &&{\tt ZHD }: [2D] Zenithal Hydrostatic Delays (m) \\\cline{3-3}
 & &{\tt ZWD }: [2D] Zenithal Wet Delays (m)\\ \hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 \subsection{Computing Satellite image from a MESO-NH run}
 
@@ -887,7 +855,6 @@ A comparison between model outputs and satellite observations provides an assess
  with Meteosat observations in the infrared using a narrow-band code 
 (Chaboureau et al., 2000).
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
 \hline
 \multirow{7}{*}{CRAD\_SAT}\index{CRAD\_SAT!\innam{NAM\_DIAG}}&\textbf{' '} & by default : no computation is made\\\cline{2-3}
@@ -904,7 +871,6 @@ A comparison between model outputs and satellite observations provides an assess
 \multirow{2}{*}{\small LRAD\_SUBG\_COND}&{\bf .TRUE.} & WITH subgrid condensation scheme taken into account \\\cline{2-3}
 &{.FALSE.} & WITHOUT subgrid condensation scheme \\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 \vspace{0.5cm}
  Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available
@@ -914,7 +880,6 @@ The RTTOV package was not included into the open source version of Meso-NH becau
 {\bf In order to use it you have to follow the instruction in A-INSTALL file to compile MESO-NH with RRTOV.}   
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
 \hline
 \multirow{5}{*}{NRTTOVinfo}\index{NRTTOVinfo!\innam{NAM\_DIAG}}&\textbf{999} & by default : no computation is made\\\cline{2-3}
@@ -935,7 +900,6 @@ $
 \\ 
 & & See below for more information\\\hline 
 \end{tabular}
-\end{makeimage}
 \end{center}
 
 
@@ -1014,7 +978,6 @@ WINDSAT  & 30  & 1 to 10 & 1 to 5 \\
 
 \subsection{Radar}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|p{2.5cm}|c|l|p{6cm}|}
 \hline
 \multirow{11}{*}{LRADAR=T}\index{LRADAR!\innam{NAM\_DIAG}}&\textbf{.FALSE.} &\multicolumn{2}{|l|}{ by default : no field} \\\cline{2-4}
@@ -1029,7 +992,6 @@ WINDSAT  & 30  & 1 to 10 & 1 to 5 \\
 & &\multirow{2}{*}{NVERSION\_RAD=2}&Simulator of radar \\
 & &&See below for more informations\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 \subsubsection{Simulator of Radar}
 Only available on mono-processor.\\
@@ -1042,7 +1004,6 @@ A radar simulator already existed in Meso-NH (Richard et al.,2003) that computes
 \item ouptut on operational (Cartesian) grids of the Aramis French radar network.
 \end{itemize}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
 Fortran name      &Fortran type&Values& Meaning\\\hline \hline
 \tt XLAT\_RAD     &array of reals & XUNDEF&latitude of each radar\\\hline
@@ -1075,11 +1036,9 @@ Fortran name      &Fortran type&Values& Meaning\\\hline \hline
 & & 4& Rayleigh with $6^{th}$ order for attenuation calculations\\\cline{3-4}
 & & 7&T-matrix scattering (from lookup tables reading) \\\hline
 \end{tabular}
-\end{makeimage}
 \end{center}
 
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
 	
 \tt NPTS\_GAULAG  &integer  & 7&number of points of the quadrature\\\hline
@@ -1094,7 +1053,6 @@ Fortran name      &Fortran type&Values& Meaning\\\hline \hline
 \tt XSNRMIN      &real     & $0$& minimum SNR (used only if LSNRT=T)\\\hline
 	
 \end{tabular}
-\end{makeimage}
 \end{center}
 
 \underline{Output files}\\
@@ -1142,14 +1100,12 @@ Field descriptors can be
 \newpage
 \subsection{Lidar}
 \begin{center}
-\begin{makeimage}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{5}{*}{LLIDAR}\index{LLIDAR!\innam{NAM\_DIAG}}& \textbf{.FALSE.}& by default : no field\\\cline{2-3}
 &\multirow{2}{*}{.TRUE} & {\tt  LIDAR }: [3D] total backscatter coefficient (1/m/sr)\\\cline{3-3}
 & &  {\tt LIPAR  }: [3D] particle backscatter coefficient  (1/m/sr)\\\hline
 \end{tabular} 
-\end{makeimage}
 \end{center}
 
 \begin{center}
