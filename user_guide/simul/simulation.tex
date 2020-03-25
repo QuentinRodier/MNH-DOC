@@ -472,7 +472,7 @@ NFRCRC   & forcing           & integer  &  0 \index{NFRCRC!\innam{NAM\_BU\_RRC}}
 NDIFRC   & numerical diffusion & integer  &  0 \index{NDIFRC!\innam{NAM\_BU\_RRC}}\\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRC   & relaxation        & integer  &  0 \index{NRELRC!\innam{NAM\_BU\_RRC}}\\
-(if LHORELAX\_RC=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RC=T) &  &   &   \\\hline
 %\end{tabular}
 %\begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 %\hline
@@ -569,7 +569,7 @@ NFRCRI   & forcing           & integer  &  0 \index{NFRCRI!\innam{NAM\_BU\_RRI}}
 NDIFRI   & numerical diffusion & integer  &  0 \index{NDIFRI!\innam{NAM\_BU\_RRI}} \\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRI   & relaxation        & integer  &  0 \index{NRELRI!\innam{NAM\_BU\_RRI}}\\
-(if LHORELAX\_RI=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RI=T) &  &   &   \\\hline
 NDCONVRI & KAFR convection   & integer  &  0 \index{NDCONVRI!\innam{NAM\_BU\_RRI}} \\
 (if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
 NHTURBRI & horizontal turbulent  & integer  &  0 \index{NHTURBRI!\innam{NAM\_BU\_RRI}}\\
@@ -654,7 +654,7 @@ NFRCRG   & forcing           & integer  &  0 \index{NFRCRG!\innam{NAM\_BU\_RRG}}
 NDIFRG   & numerical diffusion & integer  &  0 \index{NDIFRG!\innam{NAM\_BU\_RRG}} \\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}\\
-(if LHORELAX\_RG=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RG=T) &  &   &   \\\hline
 NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\\hline
 NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\\hline
 NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRG}}\\\hline
@@ -706,7 +706,7 @@ NFRCRH   & forcing           & integer  &  0 \index{NFRCRH!\innam{NAM\_BU\_RRH}}
 NDIFRH   & numerical diffusion & integer  &  0 \index{NDIFRH!\innam{NAM\_BU\_RRH}} \\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRH   & relaxation        & integer  &  0 \index{NRELRH!\innam{NAM\_BU\_RRH}}\\
-(if LHORELAX\_RH=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RH=T) &  &   &   \\\hline
 NNEGARH  & negative correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\\hline
 NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}\\\hline
 NWETGRH  & wet growth of graupel  & integer  &  0 \index{NWETGRH!\innam{NAM\_BU\_RRH}}\\\hline
@@ -742,7 +742,7 @@ NFRCRR   & forcing           & integer  &  0 \index{NFRCRR!\innam{NAM\_BU\_RRR}}
 NDIFRR   & numerical diffusion & integer  &  0 \index{NDIFRR!\innam{NAM\_BU\_RRR}}\\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}\\
-(if LHORELAX\_RR=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RR=T) &  &   &   \\\hline
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
@@ -804,7 +804,7 @@ NFRCRS   & forcing           & integer  &  0 \index{NFRCRS!\innam{NAM\_BU\_RRS}}
 NDIFRS   & numerical diffusion & integer  &  0 \index{NDIFRS!\innam{NAM\_BU\_RRS}} \\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRS   & relaxation        & integer  &  0 \index{NRELRS!\innam{NAM\_BU\_RRS}}\\
-(if LHORELAX\_RS=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RS=T) &  &   &   \\\hline
 NNEGARS  & negative correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\\hline
 NSEDIRS  & sedimentation & integer  &  0 \index{NSEDIRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
@@ -870,7 +870,7 @@ NNUDRV   & nudging           & integer  &  0 \index{NNUDRV!\innam{NAM\_BU\_RRV}}
 NDIFRV   & numerical diffusion & integer  &  0 \index{NDIFRV!\innam{NAM\_BU\_RRV}}\\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRV   & relaxation        & integer  &  0 \index{NRELRV!\innam{NAM\_BU\_RRV}}\\
-(if LHORELAX\_RV=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_RV=T) &  &   &   \\\hline
 NDCONVRV  & KAFR convection   & integer  &  0 \index{NDCONVRV!\innam{NAM\_BU\_RRV}}\\
 (if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
 NMAFLRV (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLRV!\innam{NAM\_BU\_RRV}} \\\hline
@@ -936,7 +936,7 @@ NFRCSV   & forcing           & integer  &  0 \index{NFRCSV!\innam{NAM\_BU\_RSV}}
 NDIFSV   & numerical diffusion & integer &  0 \index{NDIFSV!\innam{NAM\_BU\_RSV}}\\
 (if LNUMDIFSV=T) &  &   &   \\\hline
 NRELSV   & relaxation        & integer  &  0 \index{NRELSV!\innam{NAM\_BU\_RSV}}\\
-(if LHORELAX\_SV=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_SV=T) &  &   &   \\\hline
 NDCONVSV & KAFR convection   & integer  &  0 \index{NDCONVSV!\innam{NAM\_BU\_RSV}} \\
 (if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
 NMAFLSV (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLSV!\innam{NAM\_BU\_RSV}} \\\hline
@@ -1539,7 +1539,7 @@ NFRCTKE   & forcing           & integer  &  0 \index{NFRCTKE!\innam{NAM\_BU\_RTK
 NDIFTKE   & numerical diffusion & integer  &  0 \index{NDIFTKE!\innam{NAM\_BU\_RTKE}}\\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELTKE   & relaxation        & integer  &  0 \index{NRELTKE!\innam{NAM\_BU\_RTKE}}\\
-(if LHORELAX\_TKE=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_TKE=T) &  &   &   \\\hline
 NDPTKE    & dynamic production & integer  &  0 \index{NDPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
 NTPTKE    & thermal production & integer  &  0 \index{NTPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
 NDISSTKE  & dissipation of TKE & integer  &  0 \index{NDISSTKE!\innam{NAM\_BU\_RTKE}}\\\hline
@@ -1570,7 +1570,7 @@ NPREFTH  & reference pressure term  & integer  &  0 \index{NPREFTH!\innam{NAM\_B
 (if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
 NDIFTH (if LNUMDIFTH=T)   & numerical diffusion & integer  &  0 \index{NDIFTH!\innam{NAM\_BU\_RTH}}\\\hline
 NRELTH   & relaxation        & integer  &  0 \index{NRELTH!\innam{NAM\_BU\_RTH}}\\
-(if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
 NRADTH (if CRAD $\neq$ 'NONE')  & radiation           & integer  &  0 \index{NRADTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDCONVTH & KAFR convection          & integer  &  0 \index{NDCONVTH!\innam{NAM\_BU\_RTH}}\\
 (if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
@@ -1673,7 +1673,7 @@ NCURVU (if LCARTESIAN=F) & curvature terms   & integer  &  0 \index{NCURVU!\inna
 NCORU (if LCORIO=T ) & Coriolis  term    & integer  &  0 \index{NCORU!\innam{NAM\_BU\_RU}}\\\hline
 NDIFU (if LNUMDIFU=T) & numerical diffusion & integer  &  0 \index{NDIFU!\innam{NAM\_BU\_RU}} \\\hline
 NRELU (if LHORELAX\_UVWTH=T & relaxation  & integer  &  0 \index{NRELU!\innam{NAM\_BU\_RU}} \\
- or LVE\_RELAX=T) &  &   &   \\\hline
+ or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
 NVTURBU (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBU!\innam{NAM\_BU\_RU}}\\\hline
 NHTURBU & horizontal turbulent  & integer  &  0 \index{NHTURBU!\innam{NAM\_BU\_RU}}\\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
@@ -1702,7 +1702,7 @@ NCURVV (if LCARTESIAN=F)  & curvature terms   & integer  &  0 \index{NCURVV!\inn
 NCORV (if LCORIO=T )   & Coriolis  term    & integer  &  0 \index{NCORV!\innam{NAM\_BU\_RV}}\\\hline
 NDIFV (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFV!\innam{NAM\_BU\_RV}}\\\hline
 NRELV  (if LHORELAX\_UVWTH=T  & relaxation & integer  &  0 \index{NRELV!\innam{NAM\_BU\_RV}}\\
-or LVE\_RELAX=T) &  &   &   \\\hline
+or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
 NHTURBV  & horizontal turbulent & integer  &  0 \index{NHTURBV!\innam{NAM\_BU\_RV}}\\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBV (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBV!\innam{NAM\_BU\_RV}}\\\hline
@@ -1735,7 +1735,7 @@ NCORW (if LCORIO=T )   & Coriolis  term    & integer  &  0 \index{NCORW!\innam{N
 NGRAVW   & gravity  term     & integer  &  0 \index{NGRAVW!\innam{NAM\_BU\_RW}}\\\hline
 NDIFW (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFW!\innam{NAM\_BU\_RW}}\\\hline
 NRELW    & relaxation        & integer  &  0 \index{NRELW!\innam{NAM\_BU\_RW}}\\
-(if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
 NHTURBW  & horizontal turbulent & integer  &  0 \index{NHTURBW!\innam{NAM\_BU\_RW}}\\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBW (if CTURB='TKEL' )  & vertical turbulent diffusion & integer  &  0 \index{NVTURBW!\innam{NAM\_BU\_RW}}\\\hline
