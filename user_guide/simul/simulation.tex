@@ -466,7 +466,7 @@ NASSERC  & time filter (Asselin)   & integer  &  0 \index{NASSERC!\innam{NAM\_BU
 NNESTRC (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRC!\innam{NAM\_BU\_RRC}} \\\hline
 NVISCRC  & viscosity         & integer  &  0 \index{NVISCRC!\innam{NAM\_BU\_RRC}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRC   & total advection   & integer  &  0 \index{NADVRC!\innam{NAM\_BU\_RTH}}\\\hline
+NADVRC   & total advection   & integer  &  0 \index{NADVRC!\innam{NAM\_BU\_RRC}}\\\hline
 NFRCRC   & forcing           & integer  &  0 \index{NFRCRC!\innam{NAM\_BU\_RRC}} \\
 (if LFORCING=T) &  &   &   \\\hline
 NDIFRC   & numerical diffusion & integer  &  0 \index{NDIFRC!\innam{NAM\_BU\_RRC}}\\
@@ -494,8 +494,8 @@ NDEPORC  & surface droplet   & integer  &  0 \index{NDEPORC!\innam{NAM\_BU\_RRC}
 (if (CCLOUD='C2R2' or 'KHKO' or 'LIMA' & deposition &   &  \\
  and LDEPOC=T) or if (CCLOUD='ICEx' and LDEPOSC=T )) &  &   &   \\\hline
 NDEPOTRRC  & tree droplet deposition   & integer  &  0 \index{NDEPOTRRC!\innam{NAM\_BU\_RRC}}\\
-(if ( LDRAGTREE and LDEPOTREE) ) &  &   &   \\\hline
-NCONDRC  &vapor condensation or & integer  &  0 \index{NCONDRC!\innam{NAM\_BU\_RRV}}\\
+(if ( LDRAGTREE=T and LDEPOTREE=T) ) &  &   &   \\\hline
+NCONDRC  &vapor condensation or & integer  &  0 \index{NCONDRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD $\neq$ 'NONE' and 'ICEx' and 'LIMA') &cloud water evaporation &   &  \\\hline
 NHONRC   & homogeneous   & integer  &  0 \index{NHONRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx') &nucleation &   &  \\\hline
@@ -563,7 +563,7 @@ NASSERI  & time filter (Asselin)   & integer  &  0 \index{NASSERI!\innam{NAM\_BU
 NNESTRI (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRI!\innam{NAM\_BU\_RRI}} \\\hline
 NVISCRI  & viscosity         & integer  &  0 \index{NVISCRI!\innam{NAM\_BU\_RRI}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRI   & total advection   & integer  &  0 \index{NADVRI!\innam{NAM\_BU\_RTH}}\\\hline
+NADVRI   & total advection   & integer  &  0 \index{NADVRI!\innam{NAM\_BU\_RRI}}\\\hline
 NFRCRI   & forcing           & integer  &  0 \index{NFRCRI!\innam{NAM\_BU\_RRI}} \\
 (if LFORCING=T) &  &   &   \\\hline
 NDIFRI   & numerical diffusion & integer  &  0 \index{NDIFRI!\innam{NAM\_BU\_RRI}} \\
@@ -645,7 +645,7 @@ Fortran name & Meaning & Fortran type & default value \\
 \hline\hline
 LBU\_RRG & budget flag & logical & FALSE\index{LBU\_RRG!\innam{NAM\_BU\_RRG}} \\\hline
 NASSERG  & time filter (Asselin)   & integer  &  0 \index{NASSERG!\innam{NAM\_BU\_RRG}} \\\hline
-NNESTRG  & nesting           & integer  &  0 \index{NNESTRG!\innam{NAM\_BU\_RRG}} \\\hline
+NNESTRG (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRG!\innam{NAM\_BU\_RRG}} \\\hline
 NVISCRG  & viscosity         & integer  &  0 \index{NVISCRG!\innam{NAM\_BU\_RRG}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
 NADVRG   & total advection   & integer  &  0 \index{NADVRG!\innam{NAM\_BU\_RRG}}\\\hline
@@ -657,7 +657,7 @@ NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}
 (if LHORELAX\_RG=T or LVE\_RELAX=T) &  &   &   \\\hline
 NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\\hline
 NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\\hline
-NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRS}}\\\hline
+NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRG}}\\\hline
 NDEPGRG  & deposition on graupel & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NRIMRG   & riming of cloud water & integer  &  0 \index{NRIMRG!\innam{NAM\_BU\_RRG}}\\\hline
 NCMELRG  & conversion melting of snow & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\\hline
@@ -697,10 +697,10 @@ Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 LBU\_RRH & budget flag & logical & FALSE\index{LBU\_RRH!\innam{NAM\_BU\_RRH}} \\\hline
 NASSERH  & time filter (Asselin)   & integer  &  0 \index{NASSERH!\innam{NAM\_BU\_RRH}} \\\hline
-NNESTRH  & nesting           & integer  &  0 \index{NNESTRH!\innam{NAM\_BU\_RRH}} \\\hline
+NNESTRH (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRH!\innam{NAM\_BU\_RRH}} \\\hline
 NVISCRH  & viscosity         & integer  &  0 \index{NVISCRH!\innam{NAM\_BU\_RRH}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRH   & total advection   & integer  &  0 \index{NADVRH!\innam{NAM\_BU\_RTH}}\\\hline
+NADVRH   & total advection   & integer  &  0 \index{NADVRH!\innam{NAM\_BU\_RRH}}\\\hline
 NFRCRH   & forcing           & integer  &  0 \index{NFRCRH!\innam{NAM\_BU\_RRH}} \\
 (if LFORCING=T) &  &   &   \\\hline
 NDIFRH   & numerical diffusion & integer  &  0 \index{NDIFRH!\innam{NAM\_BU\_RRH}} \\
@@ -718,7 +718,7 @@ NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RR
 NCORRRH  &  correction & integer  &  0 \index{NCORRRH!\innam{NAM\_BU\_RRH}}\\\hline
 NHGCVRH  &  Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\\hline
 NGHCVRH  &  Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\\hline
-NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRG}}\\
+NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRH}}\\
 (if CCLOUD='LIMA' and LHAIL=T) &to graupel  &   &  \\\hline
 \end{tabular}
 \end{center}
@@ -798,7 +798,7 @@ NASSERS  & time filter (Asselin)   & integer  &  0 \index{NASSERS!\innam{NAM\_BU
 NNESTRS (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRS!\innam{NAM\_BU\_RRS}} \\\hline
 NVISCRS  & viscosity         & integer  &  0 \index{NVISCRS!\innam{NAM\_BU\_RRS}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRS   & total advection   & integer  &  0 \index{NADVRS!\innam{NAM\_BU\_RTH}}\\\hline
+NADVRS   & total advection   & integer  &  0 \index{NADVRS!\innam{NAM\_BU\_RRS}}\\\hline
 NFRCRS   & forcing           & integer  &  0 \index{NFRCRS!\innam{NAM\_BU\_RRS}} \\
 (if LFORCING=T) &  &   &   \\\hline
 NDIFRS   & numerical diffusion & integer  &  0 \index{NDIFRS!\innam{NAM\_BU\_RRS}} \\
@@ -858,7 +858,7 @@ NASSERV  & time filter (Asselin)   & integer  &  0 \index{NASSERV!\innam{NAM\_BU
 NNESTRV (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRV!\innam{NAM\_BU\_RRV}} \\\hline
 NVISCRV  & viscosity         & integer  &  0 \index{NVISCRV!\innam{NAM\_BU\_RRV}}\\
 (if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRV   & total advection   & integer  &  0 \index{NADVRV!\innam{NAM\_BU\_RTH}}\\\hline
+NADVRV   & total advection   & integer  &  0 \index{NADVRV!\innam{NAM\_BU\_RRV}}\\\hline
 NFRCRV   & forcing           & integer  &  0 \index{NFRCRV!\innam{NAM\_BU\_RRV}} \\
 (if LFORCING=T) &  &   &   \\\hline
 N2DADVRV   &advective forcing           & integer  &  0 \index{N2DADVRV!\innam{NAM\_BU\_RRV}} \\
@@ -927,7 +927,7 @@ Fortran name & Meaning & Fortran type & default value \\
 \hline\hline
 LBU\_RSV & budget flag & logical & FALSE\index{LBU\_RSV!\innam{NAM\_BU\_RSV}}\\\hline
 NASSESV  & time filter (Asselin)   & integer  &  0 \index{NASSESV!\innam{NAM\_BU\_RSV}} \\\hline
-NNESTSV  & nesting       & integer  &  0 \index{NNESTSV!\innam{NAM\_BU\_RSV}} \\\hline
+NNESTSV (if NMODEL$>1$) & nesting       & integer  &  0 \index{NNESTSV!\innam{NAM\_BU\_RSV}} \\\hline
 NVISCSV  & viscosity         & integer  &  0 \index{NVISCSV!\innam{NAM\_BU\_RSV}}\\
 (if LVISC=T and LVISC\_SV) &  &   &   \\\hline
 NADVSV   & total advection   & integer  &  0 \index{NADVSV!\innam{NAM\_BU\_RSV}}\\\hline
@@ -945,7 +945,7 @@ NHTURBSV & horizontal turbulent  & integer  &  0 \index{NHTURBSV!\innam{NAM\_BU\
 NVTURBSV & vertical turbulent  & integer  &  0 \index{NVTURBSV!\innam{NAM\_BU\_RSV}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
 NCHEMSV & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
-NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RRC}}\\
+NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RSV}}\\
 (if (CCLOUD='C2R2' or 'KHKO') and (LDRAGTREE and LDEPOTREE)  ) & tree &   &   \\\hline
 \end{tabular}
 \end{center}
@@ -1573,7 +1573,7 @@ NRELTH   & relaxation        & integer  &  0 \index{NRELTH!\innam{NAM\_BU\_RTH}}
 (if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
 NRADTH (if CRAD $\neq$ 'NONE')  & radiation           & integer  &  0 \index{NRADTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDCONVTH & KAFR convection          & integer  &  0 \index{NDCONVTH!\innam{NAM\_BU\_RTH}}\\
-(if CDCONV='KAFR' ou CSCONV='KAFR') &  &   &   \\\hline
+(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
