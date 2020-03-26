@@ -483,7 +483,7 @@ NHTURBRC & horizontam turbulent  & integer  &  0 \index{NHTURBRC!\innam{NAM\_BU\
 NVTURBRC & vertical turbulent  & integer  &  0 \index{NVTURBRC!\innam{NAM\_BU\_RRC}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
 NNEGARC   & negative correction & integer  &  0 \index{NREVARC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
+(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2') & &   &  \\\hline
 NACCRRC  & accretion & integer  &  0 \index{NACCRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD$ \neq$ 'NONE' or 'REVE') & &   &  \\\hline
 NAUTORC  & autoconversion into rain & integer  &  0 \index{NAUTORC!\innam{NAM\_BU\_RRC}}\\
@@ -513,7 +513,7 @@ NIMLTRC   & ice melting & integer  &  0 \index{NIMLTRC!\innam{NAM\_BU\_RRC}}\\
 NBERFIRC  & Bergeron-Findeisen & integer  &  0 \index{NBERFIRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NCDEPIRC  & condensation/deposition & integer  &  0 \index{NDEPIRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx') &on ice &   &  \\\hline
+(if CCLOUD='ICEx' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE')  ) &on ice &   &  \\\hline
 NCMELRC  & collection by snow and  & integer  &  0 \index{NCMELRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx' and LRED=T) & conversion into rain with T>XTT on ice &   &  \\\hline
 NDRYHRC  & dry growth of hail & integer  &  0 \index{NDRYHRC!\innam{NAM\_BU\_RRC}}\\
@@ -522,14 +522,14 @@ NCORRRC  & correction & integer  &  0 \index{NCORRRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICEx' and LRED=T) or & &   &  \\
 (if CCLOUD='LIMA' and LPTSPLIT=T) & &   &  \\\hline
 NADJURC  & adjustement to & integer  &  0 \index{NADJURC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='ICEx' and LRED=T) &saturation &   &  \\\hline
+(if CCLOUD='ICEx' and LRED=T and LADJ\_BEFORE=T) &saturation &   &  \\\hline
 NHENURC  & CCN activation  & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='C2R2' or 'KHKO' or 'LIMA') & &   &  \\\hline
 NWETHRC  & wet growth of hail & integer  &  0 \index{NWETHRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='ICE4') or & &   &  \\
 (if CCLOUD='LIMA' and LHAIL=T) & &   &  \\\hline
 NNETURRC  &negative correction   & integer  &  0 \index{NNETURRC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='C2R2' or 'KHKO') & induced by the turbulence&   &  \\\hline
+(if CTURB='TKEL' and (CCLOUD='ICEx', 'KHKO', 'C2R2' or 'LIMA'))   &induced by turbulence   &       &   \\\hline
 NNEADVRC  & negative correction  & integer  &  0 \index{NNEADVRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='C2R2' or 'KHKO') & induced by the advection&   &  \\\hline
 NNECONRC  &negative correction    & integer  &  0 \index{NNECONRC!\innam{NAM\_BU\_RRC}}\\
@@ -543,7 +543,7 @@ NCEDSRC  & adjustment to & integer  &  0 \index{NCEDSRC!\innam{NAM\_BU\_RRC}}\\
 NREVARC  & evaporation   & integer  &  0 \index{NREVARC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='LIMA') & of rain drops &   &  \\\hline
 NR2C1RC  & rain to cloud change & integer  &  0 \index{NR2C1RC!\innam{NAM\_BU\_RRC}}\\
-(if CCLOUD='LIMA' and LPTSPLIT=T) & after sedimentation &   &  \\\hline
+(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & after sedimentation &   &  \\\hline
 NCVRCRC  & rain to cloud change & integer  &  0 \index{NCVRCRC!\innam{NAM\_BU\_RRC}}\\
 (if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
 \hline
@@ -576,7 +576,8 @@ NHTURBRI & horizontal turbulent  & integer  &  0 \index{NHTURBRI!\innam{NAM\_BU\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBRI & vertical turbulent  & integer  &  0 \index{NVTURBRI!\innam{NAM\_BU\_RRI}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NNEGARI  & negative correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\\hline
+NNEGARI  & negative correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRI  & sedimentation  & integer  &  0 \index{NSEDIRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx') or & &   &  \\
 (if CCLOUD='LIMA' and LSEDI=T) & &   &  \\\hline
@@ -599,7 +600,7 @@ NIMLTRI &   ice melting & integer  &  0 \index{NIMLRI!\innam{NAM\_BU\_RRI}}\\
 NBERFIRI&   Bergeron-Findeisen & integer  &  0 \index{NBERFIRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NCDEPIRI&   condensation/deposition & integer  &  0 \index{NCDEPIRI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx') &  on ice&   &  \\\hline
+(if CCLOUD='ICEx' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) &  on ice&   &  \\\hline
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
@@ -612,7 +613,7 @@ NCORRRI&   correction & integer  &  0 \index{NCORRRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='ICEx' and LRED=T) or &  &   &  \\
 (if CCLOUD='LIMA' and LPTSPLIT=T) &  &   &  \\\hline
 NADJURI&   adjustment before & integer  &  0 \index{NADJURI!\innam{NAM\_BU\_RRI}}\\
-(if CCLOUD='ICEx'and LRED=T) &  on ice&   &  \\\hline
+(if CCLOUD='ICEx'and LRED=T and LADJ\_BEFORE=T) &  on ice&   &  \\\hline
 NHINDRI &  heterogeneous     & integer  &  0 \index{NHINDRI!\innam{NAM\_BU\_RRI}}\\
 (if CCLOUD='LIMA') &nucleation by deposition &   &  \\\hline
 NHINCRI & heterogeneous     & integer  &  0 \index{NHINCRI!\innam{NAM\_BU\_RRI}}\\
@@ -655,9 +656,11 @@ NDIFRG   & numerical diffusion & integer  &  0 \index{NDIFRG!\innam{NAM\_BU\_RRG
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}\\
 (if LHORELAX\_RG=T) &  &   &   \\\hline
-NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\\hline
+NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\\hline
-NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRG}}\\\hline
+NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRG}}\\
+(if CCLOUD='ICEx') & &   &  \\\hline
 NDEPGRG  & deposition on graupel & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_RRG}}\\\hline
 NRIMRG   & riming of cloud water & integer  &  0 \index{NRIMRG!\innam{NAM\_BU\_RRG}}\\\hline
 NCMELRG  & conversion melting of snow & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\\hline
@@ -707,17 +710,21 @@ NDIFRH   & numerical diffusion & integer  &  0 \index{NDIFRH!\innam{NAM\_BU\_RRH
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRH   & relaxation        & integer  &  0 \index{NRELRH!\innam{NAM\_BU\_RRH}}\\
 (if LHORELAX\_RH=T) &  &   &   \\\hline
-NNEGARH  & negative correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\\hline
+NNEGARH  & negative correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}\\\hline
 NWETGRH  & wet growth of graupel  & integer  &  0 \index{NWETGRH!\innam{NAM\_BU\_RRH}}\\\hline
 NWETHRH  & wet growth of hail  & integer  &  0 \index{NWETHRH!\innam{NAM\_BU\_RRH}}\\
 (if CCLOUD='LIMA' and LHAIL=T) &  &   &  \\\hline
 NHMLTRH  & hail melting  & integer  &  0 \index{NHMLTRH!\innam{NAM\_BU\_RRH}}\\
 (if CCLOUD='LIMA' and LHAIL=T) &  &   &  \\\hline
-NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RRH}}\\\hline
+NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
 NCORRRH  &  correction & integer  &  0 \index{NCORRRH!\innam{NAM\_BU\_RRH}}\\\hline
-NHGCVRH  &  Hail to Graupel ConVersion & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\\hline
-NGHCVRH  &  Graupel to Hail ConVersion & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\\hline
+NHGCVRH  & Hail to Graupel  & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
+NGHCVRH  & Graupel to Hail  & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\
+(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
 NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRH}}\\
 (if CCLOUD='LIMA' and LHAIL=T) &to graupel  &   &  \\\hline
 \end{tabular}
@@ -746,6 +753,8 @@ NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}
 \end{tabular}
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
+NNEGARR  & negative correction & integer  &  0 \index{NNEGARR!\innam{NAM\_BU\_RRR}}\\
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NACCRRR  & accretion of cloud droplets & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\\hline
 NAUTORR   & autoconversion into rain drops& integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\\hline
 NREVARR   & rain evaporation  & integer  &  0 \index{NREVARR!\innam{NAM\_BU\_RRR}}\\\hline
@@ -778,7 +787,7 @@ NCORRRR  & correction & integer  &  0 \index{NCORRRR!\innam{NAM\_BU\_RRR}}\\
 NHONRRR  & rain drops homogeneous  & integer  &  0 \index{NHONRRR!\innam{NAM\_BU\_RRR}}\\
 (if CCLOUD='LIMA') &freezing &   &  \\\hline
 NR2C1RR & rain to cloud after  & integer  &  0 \index{NR2C1RR!\innam{NAM\_BU\_RRR}}\\
-(if CCLOUD='LIMA' and LPTSPLIT=T) & sedimentation&   &  \\\hline
+(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & sedimentation&   &  \\\hline
 NCVRCRR  & rain to cloud change & integer  &  0 \index{NCVRCRR!\innam{NAM\_BU\_RRR}}\\
 (if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
 \end{tabular}
@@ -805,7 +814,8 @@ NDIFRS   & numerical diffusion & integer  &  0 \index{NDIFRS!\innam{NAM\_BU\_RRS
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRS   & relaxation        & integer  &  0 \index{NRELRS!\innam{NAM\_BU\_RRS}}\\
 (if LHORELAX\_RS=T) &  &   &   \\\hline
-NNEGARS  & negative correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\\hline
+NNEGARS  & negative correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRS  & sedimentation & integer  &  0 \index{NSEDIRS!\innam{NAM\_BU\_RRS}}\\
 (if CCLOUD='ICEx' or 'LIMA') & &   &  \\\hline
 NDEPSRS  & deposition on snow & integer  &  0 \index{NDEPSRS!\innam{NAM\_BU\_RRS}}\\
@@ -878,8 +888,8 @@ NHTURBRV & horizontal turbulent & integer  &  0 \index{NHTURBRV!\innam{NAM\_BU\_
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBRV & vertical turbulent& integer  &  0 \index{NVTURBRV!\innam{NAM\_BU\_RRV}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NNEGARV   & negative  & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
+NNEGARV   & negative correction & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\
+(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2') & &   &  \\\hline
 NREVARV   & rain evaporation & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD$ \neq$ 'NONE' or 'REVE') & &   &  \\\hline
 NCONDRV   & vapor condensation or & integer  &  0 \index{NCONDRV!\innam{NAM\_BU\_RRV}}\\
@@ -897,11 +907,11 @@ NDEPGRV   & deposition on graupel & integer  &  0 \index{NDEPGRV!\innam{NAM\_BU\
 \begin{tabular} {|p{8cm}|p{4cm}|>{\centering}p{1.5cm}|p{1.5cm}<{\centering}|}
 \hline
 NCDEPIRV   & deposition & integer  &  0 \index{NCDEPIRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) &on ice &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) &on ice &   &  \\\hline
 NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' and LRED=T) & &   &  \\\hline
 NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='ICE3' or 'ICE4' and LRED) & &   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' and LRED=T and LADJ\_BEFORE=T) & &   &  \\\hline
 NHINDRV   & Heterogeneous Nucle-& integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD='LIMA'  ) &ation by Deposition  &   &  \\\hline
 NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV}}\\
@@ -909,7 +919,7 @@ NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV
 NCEDSRV   & adjustement & integer  &  0 \index{NCEDSRV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD='LIMA'  ) & &   &  \\\hline
 NNETURRV   & negative correction  & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\
-(if CCLOUD='C2R2' or 'KHKO'  ) & induced by turbulence&   &  \\\hline
+(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE') & induced by turbulence&   &  \\\hline
  NNECONRV  & negative correction & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\
 (if CCLOUD='C2R2' or 'KHKO'  ) & induced by condensation&   &  \\\hline
 NNEADVRV&negative correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\
@@ -944,9 +954,9 @@ NHTURBSV & horizontal turbulent  & integer  &  0 \index{NHTURBSV!\innam{NAM\_BU\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBSV & vertical turbulent  & integer  &  0 \index{NVTURBSV!\innam{NAM\_BU\_RSV}}\\
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NCHEMSV & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
+NCHEMSV (if LUSECHEM=T) & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
 NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RSV}}\\
-(if (CCLOUD='C2R2' or 'KHKO') and (LDRAGTREE and LDEPOTREE)  ) & tree &   &   \\\hline
+(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA') and (LDRAGTREE=T and LDEPOTREE=T)  ) & tree &   &   \\\hline
 \end{tabular}
 \end{center}
 
@@ -1533,17 +1543,18 @@ Fortran name & Meaning & Fortran type & default value \\
 \hline\hline
 LBU\_RTKE & budget flag & logical & FALSE\index{LBU\_RTKE!\innam{NAM\_BU\_RTKE}} \\\hline
 NASSETKE  & time filter (Asselin)   & integer  &  0 \index{NASSETKE!\innam{NAM\_BU\_RTKE}} \\\hline
-NADVTKE   & total advection   & integer  &  0 \index{NADVTKE!\innam{NAM\_BU\_RTKE}}\\\hline
+NADVTKE (if CTURB='TKEL') & total advection   & integer  &  0 \index{NADVTKE!\innam{NAM\_BU\_RTKE}}\\\hline
 NFRCTKE   & forcing           & integer  &  0 \index{NFRCTKE!\innam{NAM\_BU\_RTKE}} \\
 (if LFORCING=T) &  &   &   \\\hline
 NDIFTKE   & numerical diffusion & integer  &  0 \index{NDIFTKE!\innam{NAM\_BU\_RTKE}}\\
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELTKE   & relaxation        & integer  &  0 \index{NRELTKE!\innam{NAM\_BU\_RTKE}}\\
 (if LHORELAX\_TKE=T) &  &   &   \\\hline
-NDPTKE    & dynamic production & integer  &  0 \index{NDPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NTPTKE    & thermal production & integer  &  0 \index{NTPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NDISSTKE  & dissipation of TKE & integer  &  0 \index{NDISSTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NTRTKE    & turbulent transport &  integer  &  0 \index{NTRTKE!\innam{NAM\_BU\_RTKE}} \\\hline
+NDRAGTKE (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGTKE!\innam{NAM\_BU\_RTKE}} \\\hline
+NDPTKE (if CTURB='TKEL') & dynamic production & integer  &  0 \index{NDPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
+NTPTKE (if CTURB='TKEL') & thermal production & integer  &  0 \index{NTPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
+NDISSTKE (if CTURB='TKEL') & dissipation of TKE & integer  &  0 \index{NDISSTKE!\innam{NAM\_BU\_RTKE}}\\\hline
+NTRTKE (if CTURB='TKEL') & turbulent transport &  integer  &  0 \index{NTRTKE!\innam{NAM\_BU\_RTKE}} \\\hline
 \end{tabular}
 \end{center}
 %%%%%%%%%%%%%%%%
@@ -1567,7 +1578,7 @@ N2DRELTH   & relaxation forcing           & integer  &  0 \index{N2DRLETH!\innam
 (if L2D\_REL\_FRC=T) &  &   &   \\\hline
 NNUDTH (if LNUDGING=T)  & nudging           & integer  &  0 \index{NNUDTH!\innam{NAM\_BU\_RTH}} \\\hline
 NPREFTH  & reference pressure term  & integer  &  0 \index{NPREFTH!\innam{NAM\_BU\_RTH}} \\ 
-(if LHORELAX\_UVWTH=T or LVE\_RELAX=T) &  &   &   \\\hline
+(if L1D=F and number of moist variables > 0) &  &   &   \\\hline
 NDIFTH (if LNUMDIFTH=T)   & numerical diffusion & integer  &  0 \index{NDIFTH!\innam{NAM\_BU\_RTH}}\\\hline
 NRELTH   & relaxation        & integer  &  0 \index{NRELTH!\innam{NAM\_BU\_RTH}}\\
 (if LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
@@ -1582,7 +1593,8 @@ NHTURBTH (if CTURB='TKEL'& horizontal turbulent & integer  &  0 \index{NHTURBTH!
 and CTURBDIM='3DIM') & diffusion&   &  \\\hline
 NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index{NVTURBTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
-NNEGATH  (if CCLOUD $\neq$ 'NONE') & negative            & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
+NNEGATH  & negative correction & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
+(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2') & &   &  \\\hline
 NREVATH (if rain is activated)  & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\\hline
 NCONDTH (if CCLOUD='C2R2'  & vapor condensation  or     & integer  &  0 \index{NCONDTH!\innam{NAM\_BU\_RTH}}\\
 'KHKO','KESS' or 'REVE')& cloud water  evaporation  &          &    \\\hline
@@ -1610,7 +1622,7 @@ NDRYGTH  & dry growth of graupel& integer  &  0 \index{NDRYGTH!\innam{NAM\_BU\_R
 NGMLTTH  & graupel melting      & integer  &  0 \index{NGMLTTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' or 'LIMA') & &   &  \\\hline
 NDRYHTH  & dry growth of hail          & integer  &  0 \index{NDRYHTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE4' ) & &   &  \\\hline
+(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
 NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
 \end{tabular}
@@ -1619,7 +1631,7 @@ NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RT
 NBERFITH  & Bergeron-Findeisen   & integer  &  0 \index{NBERFITH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
 NCDEPITH  & deposition  & integer  &  0 \index{NCDEPITH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='ICE3' or 'ICE4' ) & on ice   &  \\\hline
+(if CCLOUD='ICE3' or 'ICE4' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) & on ice   &  \\\hline
 NWETHTH   & wet growth of hail   & integer  &  0 \index{NWETHTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='ICE4')   &  &        &   \\
 (if CCLOUD='LIMA' and LHAIL=T)   &  &        &   \\\hline
@@ -1627,7 +1639,7 @@ NHMLTTH   & melting of hail      & integer  &  0 \index{NHMLTTH!\innam{NAM\_BU\_
 (if CCLOUD='ICE4')   &   &       &   \\
 (if CCLOUD='LIMA' and LHAIL=T)   &  &        &   \\\hline
  NNETURTH  &  negative correction      & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\
-(if CCLOUD='KHKO' or 'C2R2')   &induced by turbulence   &       &   \\\hline
+(if CTURB='TKEL' and (CCLOUD='ICEx', 'KHKO', 'C2R2' or 'LIMA'))   &induced by turbulence   &       &   \\\hline
  NNEADVTH  & negative correction       & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\
 (if CCLOUD='KHKO' or 'C2R2')   &induced by advection   &       &   \\\hline
  NNECONTH  & negative correction       & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\
@@ -1669,11 +1681,12 @@ NVISCU   & viscosity         & integer  &  0 \index{NVISCU!\innam{NAM\_BU\_RU}}\
 NADVU   & advection  & integer  &  0 \index{NADVU!\innam{NAM\_BU\_RU}} \\\hline
 NFRCU (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCU!\innam{NAM\_BU\_RU}} \\\hline
 NNUDU  (if LNUDGING=T)  & nudging           & integer  &  0 \index{NNUDU!\innam{NAM\_BU\_RU}} \\\hline
-NCURVU (if LCARTESIAN=F) & curvature terms   & integer  &  0 \index{NCURVU!\innam{NAM\_BU\_RU}} \\\hline
+NCURVU (if LCARTESIAN=F and L1D=F) & curvature terms   & integer  &  0 \index{NCURVU!\innam{NAM\_BU\_RU}} \\\hline
 NCORU (if LCORIO=T ) & Coriolis  term    & integer  &  0 \index{NCORU!\innam{NAM\_BU\_RU}}\\\hline
 NDIFU (if LNUMDIFU=T) & numerical diffusion & integer  &  0 \index{NDIFU!\innam{NAM\_BU\_RU}} \\\hline
 NRELU (if LHORELAX\_UVWTH=T & relaxation  & integer  &  0 \index{NRELU!\innam{NAM\_BU\_RU}} \\
  or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
+NDRAGU (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGU!\innam{NAM\_BU\_RU}} \\\hline
 NVTURBU (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBU!\innam{NAM\_BU\_RU}}\\\hline
 NHTURBU & horizontal turbulent  & integer  &  0 \index{NHTURBU!\innam{NAM\_BU\_RU}}\\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
@@ -1698,11 +1711,12 @@ NVISCV   & viscosity         & integer  &  0 \index{NVISCV!\innam{NAM\_BU\_RV}}\
 NADVV   & advection  & integer  &  0  \index{NADVV!\innam{NAM\_BU\_RV}}\\\hline
 NFRCV (if LFORCING=T)  & forcing           & integer  &  0 \index{NFRCV!\innam{NAM\_BU\_RV}} \\\hline
 NNUDV (if LNUDGING=T)   & nudging           & integer  &  0 \index{NNUDV!\innam{NAM\_BU\_RV}} \\\hline
-NCURVV (if LCARTESIAN=F)  & curvature terms   & integer  &  0 \index{NCURVV!\innam{NAM\_BU\_RV}}\\\hline
+NCURVV (if LCARTESIAN=F and L1D=F)  & curvature terms   & integer  &  0 \index{NCURVV!\innam{NAM\_BU\_RV}}\\\hline
 NCORV (if LCORIO=T )   & Coriolis  term    & integer  &  0 \index{NCORV!\innam{NAM\_BU\_RV}}\\\hline
 NDIFV (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFV!\innam{NAM\_BU\_RV}}\\\hline
 NRELV  (if LHORELAX\_UVWTH=T  & relaxation & integer  &  0 \index{NRELV!\innam{NAM\_BU\_RV}}\\
 or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
+NDRAGV (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGV!\innam{NAM\_BU\_RV}} \\\hline
 NHTURBV  & horizontal turbulent & integer  &  0 \index{NHTURBV!\innam{NAM\_BU\_RV}}\\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBV (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBV!\innam{NAM\_BU\_RV}}\\\hline
@@ -1730,8 +1744,8 @@ NVISCW   & viscosity         & integer  &  0 \index{NVISCW!\innam{NAM\_BU\_RW}}\
 NADVW   & advection & integer  &  0 \index{NADVW!\innam{NAM\_BU\_RW}}\\\hline
 NFRCW (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCW!\innam{NAM\_BU\_RW}} \\\hline
 NNUDW (if LNUDGING=T)   & nudging           & integer  &  0 \index{NNUDW!\innam{NAM\_BU\_RW}} \\\hline
-NCURVW (if LCARTESIAN=F)  & curvature terms   & integer  &  0 \index{NCURVW!\innam{NAM\_BU\_RW}}\\\hline
-NCORW (if LCORIO=T )   & Coriolis  term    & integer  &  0 \index{NCORW!\innam{NAM\_BU\_RW}}\\\hline
+NCURVW (if LCARTESIAN=F and L1D=F and LTHINSHELL=F) & curvature terms   & integer  &  0 \index{NCURVW!\innam{NAM\_BU\_RW}}\\\hline
+NCORW (if LCORIO=T and L1D=F and LTHINSHELL=F) & Coriolis  term    & integer  &  0 \index{NCORW!\innam{NAM\_BU\_RW}}\\\hline
 NGRAVW   & gravity  term     & integer  &  0 \index{NGRAVW!\innam{NAM\_BU\_RW}}\\\hline
 NDIFW (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFW!\innam{NAM\_BU\_RW}}\\\hline
 NRELW    & relaxation        & integer  &  0 \index{NRELW!\innam{NAM\_BU\_RW}}\\
