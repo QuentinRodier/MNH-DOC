@@ -456,7 +456,7 @@ or be the first element of a new cumul (NSOURCE\_TERM= 1).
 \subsection{Namelist NAM\_BU\_RRC (budget for cloud water)}
 \index{NAM\_BU\_RRC!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -552,7 +552,7 @@ NCVRCRC  & rain to cloud change & integer  &  0 \index{NCVRCRC!\innam{NAM\_BU\_R
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRI (budget for non-precipitating ice)}
 \index{NAM\_BU\_RRI!namelist description}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -635,7 +635,7 @@ NCEDSRI & adjustement to   & integer  &  0 \index{NCEDSRI!\innam{NAM\_BU\_RRI}}\
 \subsection{Namelist NAM\_BU\_RRG (budget for graupel)}
 \index{NAM\_BU\_RRG!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -663,10 +663,10 @@ NDEPGRG  & deposition on graupel & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_
 (if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
 NRIMRG   & riming of cloud water & integer  &  0 \index{NRIMRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NCMELRG  & conversion melting of snow & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NCFRZRG  & conversion freezing of rain& integer  &  0 \index{NCFRZRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
+NCMELRG  & conversion melting & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & of snow & & \\\hline
+NCFRZRG  & conversion freezing & integer  &  0 \index{NCFRZRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & of rain & & \\\hline
 NWETGRG  & wet growth of graupel  & integer  &  0 \index{NWETGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
 NDRYGRG  & dry growth of graupel  & integer  &  0 \index{NDRYGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
@@ -680,8 +680,8 @@ NHGCVRG  & Hail to Graupel  & integer  &  0 \index{NHGCVRG!\innam{NAM\_BU\_RRG}}
 (if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
 NGHCVRG  & Graupel to Hail  & integer  &  0 \index{NGHCVRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
-NACCRG  & rain accretion on graupel & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & &   &  \\\hline
+NACCRG  & rain accretion & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & on graupel &   &  \\\hline
 NDRYHRG&    dry growth of hail& integer  &  0 \index{NDRYHRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='ICE4' and LRED=T) &  on ice&   &  \\\hline
 NCORRRG&   correction & integer  &  0 \index{NCORRRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
@@ -698,7 +698,7 @@ NCOHGRG  & conversion of hail  & integer  &  0 \index{NCOHGRG!\innam{NAM\_BU\_RR
 \subsection{Namelist NAM\_BU\_RRH (budget for hail)}
 \index{NAM\_BU\_RRH!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -745,7 +745,7 @@ NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU
 \subsection{Namelist NAM\_BU\_RRR (budget for rain water)}
 \index{NAM\_BU\_RRR!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -764,13 +764,13 @@ NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}
 (if LHORELAX\_RR=T) &  &   &   \\\hline
 NNEGARR  & negative correction & integer  &  0 \index{NNEGARR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
 (if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
-NACCRRR  & accretion of cloud droplets & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
+NACCRRR  & accretion of & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & cloud droplets & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
  or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
  or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NAUTORR   & autoconversion into rain drops& integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
+NAUTORR   & autoconversion into & integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & rain drops & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
  or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
  or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
@@ -779,8 +779,8 @@ NREVARR & rain evaporation  & integer  &  0 \index{NREVARR!\innam{NAM\_BU\_RRR}}
  or (CCLOUD='KESS') & & & \\ \nopagebreak
  or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
  or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NSEDIRR   & sedimentation of rain drops& integer  &  0 \index{NSEDIRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
+NSEDIRR   & sedimentation of & integer  &  0 \index{NSEDIRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & rain drops & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
  or (CCLOUD='ICEx') & & & \\ \nopagebreak
  or (CCLOUD='C2R2' or 'KHKO') ) & & & \\ \hline
@@ -822,7 +822,7 @@ NCVRCRR  & rain to cloud change & integer  &  0 \index{NCVRCRR!\innam{NAM\_BU\_R
 \subsection{Namelist NAM\_BU\_RRS (budget for snow)}
 \index{NAM\_BU\_RRS!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -881,7 +881,7 @@ NHMSRS  &Hallett-Mossop ice  & integer  &  0 \index{NHMSRS!\innam{NAM\_BU\_RRS}}
 \subsection{Namelist NAM\_BU\_RRV (budget for  vapor)}
 \index{NAM\_BU\_RRV!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -934,8 +934,8 @@ NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RR
 (if CCLOUD='ICE3' or 'ICE4' and LRED=T) & &   &  \\\hline
 NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if CCLOUD='ICE3' or 'ICE4' and LRED=T and LADJ\_BEFORE=T) & &   &  \\\hline
-NHINDRV   & Heterogeneous Nucleation& integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T) & by Deposition  &   &  \\\hline
+NHINDRV   & Heterogeneous & integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
+(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T) & Nucleation by Deposition  &   &  \\\hline
 NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LNUCL=T and LHHONI=T) & Nucleation  &   &  \\\hline
 NCEDSRV   & adjustement & integer  &  0 \index{NCEDSRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
@@ -952,7 +952,7 @@ NNEADVRV&negative correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_R
 \subsection{Namelist NAM\_BU\_RSV (budget for a Scalar Variable)}
 \index{NAM\_BU\_RSV!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -982,7 +982,7 @@ NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{
 \end{longtable}
 
 \textbf{Concentration of activated nuclei}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -995,7 +995,7 @@ if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of cloud droplets}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1077,7 +1077,7 @@ if CCLOUD='LIMA' &&& \\\hline
 \end{longtable}
 
 \textbf{Concentration of raindrops}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1156,7 +1156,7 @@ and LHAIL=T &&& \\\hline
 \end{longtable}
 
 \textbf{Concentration of free CCN}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1180,7 +1180,7 @@ LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
 \end{longtable}
 
 \textbf{Concentration of pristine ice crystals}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1256,7 +1256,7 @@ if CCLOUD='LIMA' &&& \\\hline
 \end{longtable}
 
 \textbf{Concentration of free IFN}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1276,7 +1276,7 @@ LNUCL=T and LMEYERS=F &&& \\\hline
 \end{longtable}
 
 \textbf{Concentration of homogeneous freezing of CCN}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1287,7 +1287,7 @@ LNUCL=T, LWARM=T and LHHONI=T &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of water vapor}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1309,7 +1309,7 @@ if CCLOUD='ICEx' &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of cloud droplets}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1349,7 +1349,7 @@ if CCLOUD='ICEx' &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of rain drops}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1383,7 +1383,7 @@ if CCLOUD='ICEx' &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of ice crystals}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1423,7 +1423,7 @@ if CCLOUD='ICEx' &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of snow}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1463,7 +1463,7 @@ if CCLOUD='ICEx' &&& \\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of graupel}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1506,7 +1506,7 @@ if CCLOUD='ICEx' and LINDUCTIVE=T &&& \\\hline
 \subsection{Namelist NAM\_BU\_RTKE (budget for TKE)}
 \index{NAM\_BU\_RTKE!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1530,7 +1530,7 @@ NTRTKE (if CTURB='TKEL') & turbulent transport &  integer  &  0 \index{NTRTKE!\i
 %%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RTH (budget for TH)}
 \index{NAM\_BU\_RTH!namelist description}
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1562,7 +1562,7 @@ NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index
 NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
 NNEGATH  & negative correction & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
 (if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2')) & &   &  \\\hline
-NREVATH & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\\hline
+NREVATH & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
 (if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
  or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
@@ -1638,7 +1638,7 @@ NIMLTTH   & ice melting      & integer  &  0 \index{NIMLTTH!\innam{NAM\_BU\_RTH}
 \subsection{Namelist NAM\_BU\_RU (budget for U)}
 \index{NAM\_BU\_RU!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1668,7 +1668,7 @@ NMAFLU (if CSCONV='EDKF')  & mass flux        & integer  &  0 \index{NMAFLU!\inn
 \subsection{Namelist NAM\_BU\_RV (budget for V)}
 \index{NAM\_BU\_RV!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
@@ -1698,7 +1698,7 @@ NMAFLV (if CSCONV='EDKF')   & mass flux        & integer  &  0 \index{NMAFLV!\in
 \subsection{Namelist NAM\_BU\_RW (budget for W)}
 \index{NAM\_BU\_RW!namelist description}
 
-\begin{longtable} {|p{.45\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
