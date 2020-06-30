@@ -479,8 +479,6 @@ NHTURBRC & horizontal turbulent  & integer  &  0 \index{NHTURBRC!\innam{NAM\_BU\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBRC & vertical turbulent  & integer  &  0 \index{NVTURBRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NNEGARC   & negative correction & integer  &  0 \index{NNEGARC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2') & &   &  \\\hline
 NACCRRC  & accretion & integer  &  0 \index{NACCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
 (if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
@@ -529,12 +527,6 @@ NHENURC  & CCN activation  & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\
 NWETHRC  & wet growth of hail & integer  &  0 \index{NWETHRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
 (if CCLOUD='ICE4') or & &   &  \\ \nopagebreak
 (if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NNETURRC  &negative correction   & integer  &  0 \index{NNETURRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CTURB='TKEL' and (CCLOUD='ICEx', 'KHKO', 'C2R2' or 'LIMA'))   &induced by turbulence   &       &   \\\hline
-NNEADVRC  & negative correction  & integer  &  0 \index{NNEADVRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='C2R2' or 'KHKO') & induced by the advection&   &  \\\hline
-NNECONRC  &negative correction    & integer  &  0 \index{NNECONRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='C2R2' or 'KHKO') &induced by the condensation &   &  \\\hline
 NHINCRC  & Heterogeneous  & integer  &  0 \index{NHINCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   & Nucleation by Contact  &       &   \\\hline
 NHONCRC  & droplet homogeneous   & integer  &  0 \index{NHONCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
@@ -547,6 +539,14 @@ NR2C1RC  & rain to cloud change & integer  &  0 \index{NR2C1RC!\innam{NAM\_BU\_R
 (if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & after sedimentation &   &  \\\hline
 NCVRCRC  & rain to cloud change & integer  &  0 \index{NCVRCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
 (if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
+NNEGARC   & negativity correction & integer  &  0 \index{NNEGARC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNETURRC  &negativity correction   & integer  &  0 \index{NNETURRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
+(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
+NNEADVRC  & negativity correction  & integer  &  0 \index{NNEADVRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRC  &negativity correction    & integer  &  0 \index{NNECONRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -575,8 +575,6 @@ NHTURBRI & horizontal turbulent  & integer  &  0 \index{NHTURBRI!\innam{NAM\_BU\
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBRI & vertical turbulent  & integer  &  0 \index{NVTURBRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NNEGARI  & negative correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRI  & sedimentation  & integer  &  0 \index{NSEDIRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
 (if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LSEDI=T) & &   &  \\\hline
@@ -629,6 +627,14 @@ NHMGRI &  Hallett-Mossop ice & integer  &  0 \index{NHMGRI!\innam{NAM\_BU\_RRI}}
 (if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) &multiplication process due to graupel riming &   &  \\\hline
 NCEDSRI & adjustement to   & integer  &  0 \index{NCEDSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
 (if CCLOUD='LIMA') & saturation &   &  \\\hline
+NNEGARI   & negativity correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNETURRI  &negativity correction   & integer  &  0 \index{NNETURRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
+(if CTURB='TKEL' and CCLOUD='ICE3', 'ICE4' or 'LIMA')   &induced by turbulence   &       &   \\\hline
+NNEADVRI  & negativity correction  & integer  &  0 \index{NNEADVRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRI  &negativity correction    & integer  &  0 \index{NNECONRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -652,8 +658,6 @@ NDIFRG   & numerical diffusion & integer  &  0 \index{NDIFRG!\innam{NAM\_BU\_RRG
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if LHORELAX\_RG=T) &  &   &   \\\hline
-NNEGARG  & negative correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LSNOW=T) & &   &  \\\hline
@@ -692,6 +696,12 @@ NHMGRG  & Hallett-Mossop ice  & integer  &  0 \index{NHMGRG!\innam{NAM\_BU\_RRG}
 (if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & multiplication process due to graupel riming  &   &  \\\hline
 NCOHGRG  & conversion of hail  & integer  &  0 \index{NCOHGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
 (if CCLOUD='LIMA' and (LPTSPLIT=F and LCOLD=T and LWARM=T and LSNOW=T and LHAIL=T)) &to graupel  &   &  \\\hline
+NNEGARG   & negativity correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNEADVRG  & negativity correction  & integer  &  0 \index{NNEADVRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRG  &negativity correction    & integer  &  0 \index{NNECONRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -715,8 +725,6 @@ NDIFRH   & numerical diffusion & integer  &  0 \index{NDIFRH!\innam{NAM\_BU\_RRH
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRH   & relaxation        & integer  &  0 \index{NRELRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
 (if LHORELAX\_RH=T) &  &   &   \\\hline
-NNEGARH  & negative correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
 (if CCLOUD='ICE4') or & &   &  \\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LHAIL=T) & &   &  \\\hline
@@ -739,6 +747,12 @@ NGHCVRH  & Graupel to Hail  & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}
 (if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
 NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
 (if CCLOUD='LIMA' and (LPTSPLIT=F and LCOLD=T and LWARM=T and LSNOW=T and LHAIL=T)) &to graupel  &   &  \\\hline
+NNEGARH   & negativity correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNEADVRH  & negativity correction  & integer  &  0 \index{NNEADVRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRH  &negativity correction    & integer  &  0 \index{NNECONRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -762,8 +776,6 @@ NDIFRR   & numerical diffusion & integer  &  0 \index{NDIFRR!\innam{NAM\_BU\_RRR
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
 (if LHORELAX\_RR=T) &  &   &   \\\hline
-NNEGARR  & negative correction & integer  &  0 \index{NNEGARR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NACCRRR  & accretion of & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
 (if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & cloud droplets & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
@@ -816,6 +828,14 @@ NR2C1RR & rain to cloud after  & integer  &  0 \index{NR2C1RR!\innam{NAM\_BU\_RR
 (if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & sedimentation&   &  \\\hline
 NCVRCRR  & rain to cloud change & integer  &  0 \index{NCVRCRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
 (if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
+NNEGARR   & negativity correction & integer  &  0 \index{NNEGARR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNETURRR  &negativity correction   & integer  &  0 \index{NNETURRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if CTURB='TKEL' and CCLOUD='C2R2', 'KHKO' or 'LIMA')   &induced by turbulence   &       &   \\\hline
+NNEADVRR  & negativity correction  & integer  &  0 \index{NNEADVRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRR  &negativity correction    & integer  &  0 \index{NNECONRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -839,8 +859,6 @@ NDIFRS   & numerical diffusion & integer  &  0 \index{NDIFRS!\innam{NAM\_BU\_RRS
 (if LNUMDIFTH=T) &  &   &   \\\hline
 NRELRS   & relaxation        & integer  &  0 \index{NRELRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
 (if LHORELAX\_RS=T) &  &   &   \\\hline
-NNEGARS  & negative correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
 NSEDIRS  & sedimentation & integer  &  0 \index{NSEDIRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
 (if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LSNOW=T) & &   &  \\\hline
@@ -875,6 +893,14 @@ NCNVSRS  & Conversion of pristine  & integer  &  0 \index{NCNVSRS!\innam{NAM\_BU
 (if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) & ice to r\_s &   &  \\\hline
 NHMSRS  &Hallett-Mossop ice  & integer  &  0 \index{NHMSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
 (if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & multiplication process due to snow riming &   &  \\\hline
+NNEGARS   & negativity correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
+NNETURRS  &negativity correction   & integer  &  0 \index{NNETURRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
+(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
+NNEADVRS  & negativity correction  & integer  &  0 \index{NNEADVRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
+NNECONRS  &negativity correction    & integer  &  0 \index{NNECONRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -911,8 +937,6 @@ NHTURBRV & horizontal turbulent & integer  &  0 \index{NHTURBRV!\innam{NAM\_BU\_
 (if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
 NVTURBRV & vertical turbulent& integer  &  0 \index{NVTURBRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if CTURB='TKEL') &diffusion &   &  \\\hline
-NNEGARV   & negative correction & integer  &  0 \index{NNEGARV\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2') & &   &  \\\hline
 NREVARV & rain evaporation & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
@@ -940,12 +964,14 @@ NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV
 (if CCLOUD='LIMA' and LCOLD=T and LNUCL=T and LHHONI=T) & Nucleation  &   &  \\\hline
 NCEDSRV   & adjustement & integer  &  0 \index{NCEDSRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if CCLOUD='LIMA'  ) & &   &  \\\hline
-NNETURRV   & negative correction  & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
+NNEGARV   & negativity correction & integer  &  0 \index{NNEGARV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
+NNETURRV   & negativity correction  & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
 (if CTURB='TKEL' and CCLOUD $\neq$ 'NONE') & induced by turbulence&   &  \\\hline
- NNECONRV  & negative correction & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='C2R2' or 'KHKO'  ) & induced by condensation&   &  \\\hline
-NNEADVRV&negative correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='C2R2' or 'KHKO'  ) & induced by advection&   &  \\\hline
+ NNECONRV  & negativity correction & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE' ) & induced by condensation&   &  \\\hline
+NNEADVRV&negativity correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE') & induced by advection&   &  \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -992,6 +1018,14 @@ if (CCLOUD='C2R2' or 'KHKO') &&&\\ \nopagebreak
 and LSUPSAT=F &&&\\\hline
 NCEVASV & evaporation of droplets & integer & 0 \\ \nopagebreak
 if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of cloud droplets}
@@ -1021,8 +1055,6 @@ and LSEDC=T &&&\\\hline
 NDEPOSV & droplet deposition& integer & 0 \\ \nopagebreak
 if (CCLOUD='C2R2','KHKO' or 'LIMA') &&&\\ \nopagebreak
 and LDEPOC=T &&&\\\hline
-NNEGASV & negativity correction& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') &&&\\\hline
 
 NCORRSV & corrections & integer & 0 \\ \nopagebreak
 if (CCLOUD='LIMA', LPTSPLIT=T, &&&\\ \nopagebreak
@@ -1074,6 +1106,15 @@ and LPTSPLIT=F)&&& \\\hline
 
 NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA' &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of raindrops}
@@ -1106,9 +1147,6 @@ NSCBUSV & breakup-selfcollection & integer & 0 \\ \nopagebreak
 if (CCLOUD='C2R2') &&& \\ \nopagebreak
 or if ((CCLOUD='LIMA') and (LRAIN=T &&& \\ \nopagebreak
 or LPTSPLIT=T) &&& \\\hline
-
-NNEGASV & negativity correction& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and &&& \\\hline
 
 NCORRSV & corrections & integer & 0 \\ \nopagebreak
 if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\ \nopagebreak
@@ -1153,6 +1191,15 @@ and LHAIL=T &&& \\\hline
 NHMLTSV & hail melting & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA', LPTSPLIT=F &&& \\ \nopagebreak
 and LHAIL=T &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of free CCN}
@@ -1161,9 +1208,6 @@ and LHAIL=T &&& \\\hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-NNEGASV & negativity correction& integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
 NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA' &&& \\\hline
 
@@ -1177,6 +1221,15 @@ LACTI=T and NMOD\_CCN > 1 &&& \\\hline
 NHONHSV & haze homogeneous  & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA', LCOLD=T, LNUCL=T, & nucleation&& \\ \nopagebreak
 LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of pristine ice crystals}
@@ -1185,9 +1238,6 @@ LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-NNEGASV & negativity correction& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and &&& \\\hline
-
 NCORRSV & corrections & integer & 0 \\ \nopagebreak
 if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\ \nopagebreak
 LCOLD=T and LSNOW=T) &&& \\\hline
@@ -1253,6 +1303,15 @@ and LHAIL=T &&& \\\hline
 
 NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA' &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of free IFN}
@@ -1261,9 +1320,6 @@ if CCLOUD='LIMA' &&& \\\hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-NNEGASV & negativity correction& integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
 NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA' &&& \\\hline
 
@@ -1273,6 +1329,15 @@ if CCLOUD='LIMA' and LSCAV=T &&& \\\hline
 NHINDSV & heterogeneous nucleation & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA', LCOLD=T, &by deposition&& \\ \nopagebreak
 LNUCL=T and LMEYERS=F &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
 \end{longtable}
 
 \textbf{Concentration of homogeneous freezing of CCN}
@@ -1284,6 +1349,15 @@ Fortran name & Meaning & Fortran type & default value \\
 NHONHSV & haze homogeneous  & integer & 0 \\ \nopagebreak
 if CCLOUD='LIMA', LCOLD=T, &nucleation&& \\ \nopagebreak
 LNUCL=T, LWARM=T and LHHONI=T &&& \\\hline
+
+NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
+NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
+if CCLOUD='LIMA' &&&\\\hline
 \end{longtable}
 
 \textbf{Volumetric charge of water vapor}
@@ -1560,8 +1634,6 @@ NHTURBTH (if CTURB='TKEL'& horizontal turbulent & integer  &  0 \index{NHTURBTH!
 and CTURBDIM='3DIM') & diffusion&   &  \\\hline
 NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index{NVTURBTH!\innam{NAM\_BU\_RTH}}\\\hline
 NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
-NNEGATH  & negative correction & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
-(if (CCLOUD $\neq$ 'NONE' and CCLOUD $\neq$ 'KHKO' and CCLOUD $\neq$ 'C2R2')) & &   &  \\\hline
 NREVATH & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
 (if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
  or (CCLOUD='KESS') & & & \\ \nopagebreak
@@ -1610,12 +1682,6 @@ NWETHTH   & wet growth of hail   & integer  &  0 \index{NWETHTH!\innam{NAM\_BU\_
 NHMLTTH   & melting of hail      & integer  &  0 \index{NHMLTTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
 (if CCLOUD='ICE4')   &   &       &   \\ \nopagebreak
 (if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and and LWARM=T and LSNOW=T)   &  &        &   \\\hline
- NNETURTH  &  negative correction      & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CTURB='TKEL' and (CCLOUD='ICEx', 'KHKO', 'C2R2' or 'LIMA'))   &induced by turbulence   &       &   \\\hline
- NNEADVTH  & negative correction       & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='KHKO' or 'C2R2')   &induced by advection   &       &   \\\hline
- NNECONTH  & negative correction       & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='KHKO' or 'C2R2')   &induced by condensation   &       &   \\\hline
 NHINDTH   & heterogeneous & integer  &  0 \index{NHINDTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
 (if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   &Nucleation by Deposition   &       &   \\\hline
 NHINCTH   & heterogeneous & integer  &  0 \index{NHINCTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
@@ -1632,6 +1698,14 @@ NSEDITH   &  heat transport & integer  &  0 \index{NSEDITH!\innam{NAM\_BU\_RTH}}
 (if CCLOUD='LIMA' and LPTSPLIT=T)   &by hydrometeors sedimentation   &       &   \\\hline
 NIMLTTH   & ice melting      & integer  &  0 \index{NIMLTTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
 (if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
+NNEGATH  & negativity correction & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
+(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
+ NNETURTH  &  negativity correction      & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
+(if CTURB='TKEL' and (CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
+ NNEADVTH  & negativity correction       & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE')   &induced by advection   &       &   \\\hline
+ NNECONTH  & negativity correction       & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
+(if CCLOUD $\neq$ 'NONE')   &induced by condensation   &       &   \\\hline
 \end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
