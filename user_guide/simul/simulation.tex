@@ -3280,9 +3280,9 @@ LLES\_DOWNDRAFT               &  logical          & .FALSE.  \\
 LLES\_SPECTRA                 &  logical          & .FALSE.  \\
 LLES\_CS\_MASK                &  logical          & .FALSE.  \\
 NLES\_LEVELS                  & integer (:)       & all levels\\
-XLES\_HEIGHTS                 & real (:)          & none \\
+XLES\_ALTITUDES               & real (:)          & none \\
 NSPECTRA\_LEVELS              & integer (:)   & none \\
-XSPECTRA\_HEIGHTS             & real (:)   & none \\
+XSPECTRA\_ALTITUDES           & real (:)   & none \\
 %NLES\_TEMP\_SERIE\_I          & integer(:) & none \\
 %NLES\_TEMP\_SERIE\_J          & integer(:) & none \\
 %NLES\_TEMP\_SERIE\_Z          & real(:)    & none \\
@@ -3339,7 +3339,7 @@ are computed. Default is: all model levels (by default, the vertical profiles
 are computed on the MESO-NH grid).
 
 \item
-XLES\_HEIGHTS \index{XLES\_HEIGHTS!\innam{NAM\_LES}}: list of constant altitude levels where
+XLES\_ALTITUDES \index{XLES\_ALTITUDES!\innam{NAM\_LES}}: list of constant altitude levels where
 the local quantities are computed. Not used by default.
 
 \item
@@ -3348,7 +3348,7 @@ are computed. Any number is allowed, but too many will be costly
 in CPU time and memory.
 
 \item
-XSPECTRA\_HEIGHTS  \index{XSPECTRA\_HEIGHTS!\innam{NAM\_LES}}: list of constant altitude levels where
+XSPECTRA\_ALTITUDES  \index{XSPECTRA\_ALTITUDES!\innam{NAM\_LES}}: list of constant altitude levels where
 the non-local quantities are computed. Any number is allowed,
 but too many will be costly in CPU time and memory.
 
