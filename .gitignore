@@ -1,0 +1,13 @@
+*.aux
+*.bbl
+*.idx
+*.ilg
+*.ind
+*.log
+*.maf
+*.mtc*
+*.out
+*.toc
+*-eps-converted-to.pdf
+ScieDoc/*.pdf
+user_guide/*.pdf
