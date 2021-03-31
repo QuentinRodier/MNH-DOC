@@ -3279,7 +3279,7 @@ LLES\_UPDRAFT                 &  logical          & .FALSE.  \\
 LLES\_DOWNDRAFT               &  logical          & .FALSE.  \\
 LLES\_SPECTRA                 &  logical          & .FALSE.  \\
 LLES\_CS\_MASK                &  logical          & .FALSE.  \\
-NLES\_LEVELS                  & integer (:)       & all levels\\
+NLES\_LEVELS                  & integer (:)       & all levels in physical domain\\
 XLES\_ALTITUDES               & real (:)          & none \\
 NSPECTRA\_LEVELS              & integer (:)   & none \\
 XSPECTRA\_ALTITUDES           & real (:)   & none \\
@@ -3294,10 +3294,10 @@ XLES\_TEMP\_MEAN\_START       & real              & none \\
 XLES\_TEMP\_MEAN\_END         & real              & none \\
 XLES\_TEMP\_MEAN\_STEP        & real              & 3600 s \\
 LLES\_CART\_MASK              & logical           & .FALSE. \\
-NLES\_IINF                    & integer           & physical domain boundary (JPHEXT+1) \\
-NLES\_ISUP                    & integer           & physical domain boundary (NIMAX+JPHEXT) \\
-NLES\_JINF                    & integer           & physical domain boundary (JPHEXT+1) \\
-NLES\_JSUP                    & integer           & physical domain boundary (NJMAX+JPHEXT) \\
+NLES\_IINF                    & integer           & 1 (physical domain boundary) \\
+NLES\_ISUP                    & integer           & NIMAX physical domain boundary) \\
+NLES\_JINF                    & integer           & 1 (physical domain boundary) \\
+NLES\_JSUP                    & integer           & NJMAX (physical domain boundary) \\
 LLES\_NEB\_MASK               & logical           & .FALSE. \\
 LLES\_CORE\_MASK              & logical           & .FALSE. \\
 LLES\_MY\_MASK                & logical           & .FALSE. \\
@@ -3334,8 +3334,8 @@ non-local diagnostics (2 points correlations and spectra)
 LLES\_CS\_MASK \index{LLES\_CS\_MASK!\innam{NAM\_LES}} : flag for computation of the
 conditional sampling diagnostics                           
 \item
-NLES\_LEVELS \index{NLES\_LEVELS!\innam{NAM\_LES}}: list of model levels where the local quantities
-are computed. Default is: all model levels (by default, the vertical profiles
+NLES\_LEVELS \index{NLES\_LEVELS!\innam{NAM\_LES}}: list of model levels in physical domain where the local quantities
+are computed. Default is: all physical model levels (by default, the vertical profiles
 are computed on the MESO-NH grid).
 
 \item
@@ -3407,19 +3407,19 @@ only inside a cartesian subdomain defined with the indexes of the model 1. Both 
 quantities can be computed.
 
 \item
-NLES\_IINF \index{NLES\_IINF!\innam{NAM\_LES}} : lower i index of the cartesian subdomain. The default value is the 
+NLES\_IINF \index{NLES\_IINF!\innam{NAM\_LES}} : lower i index of the cartesian subdomain in the physical domain. The default value is the
 physical domain left boundary.
 
 \item
-NLES\_ISUP \index{NLES\_ISUP!\innam{NAM\_LES}} : upper i index of the cartesian subdomain. The default value is the 
+NLES\_ISUP \index{NLES\_ISUP!\innam{NAM\_LES}} : upper i index of the cartesian subdomain in the physical domain. The default value is the
 physical domain right  boundary.
 
 \item
-NLES\_JINF \index{NLES\_JINF!\innam{NAM\_LES}} : lower j index of the cartesian subdomain. The default value is the
+NLES\_JINF \index{NLES\_JINF!\innam{NAM\_LES}} : lower j index of the cartesian subdomain in the physical domain. The default value is the
 physical domain bottom boundary.
 
 \item
-NLES\_JSUP\index{NLES\_JSUP!\innam{NAM\_LES}} : upper j index of the cartesian subdomain. The default value is the
+NLES\_JSUP\index{NLES\_JSUP!\innam{NAM\_LES}} : upper j index of the cartesian subdomain in the physical domain. The default value is the
 physical domain top boundary.
 
 \item
@@ -5305,8 +5305,8 @@ LSURF        & boolean & FALSE \\
 \item LSERIES \index{LSERIES!\innam{NAM\_SERIES}}:
  flag to write temporal series in the diachronic file (.000) of each model:
 evolution of horizontally and vertically averaged fields (t), 
-evolution of horizontaly averaged vertical profiles (z,t), 
-evolution of y-horizontaly averaged fields at one level or verticaly averaged between 2 levels (x,t). 
+evolution of horizontally averaged vertical profiles (z,t), 
+evolution of y-horizontally averaged fields at one level or vertically averaged between 2 levels (x,t). 
 \item LMASKLANDSEA \index{LMASKLANDSEA!\innam{NAM\_SERIES}}:
  flag to separate sea and land points in temporal series (t) and (z,t),
 \item LWMINMAX \index{LWMINMAX!\innam{NAM\_SERIES}}:
