@@ -432,1370 +432,1568 @@ The description of the budgets for every prognostic variable is given below. Bec
 source terms.
 
 Firstly, there is a flag to activate or not the budget of a given prognostic
-variable. It should be noted that the budget terms for the variable $\Psi$ 
+variable (in the form $LBU\_*$). It should be noted that the budget terms for the variable $\Psi$
 have the dimension of  
 $$ {\partial \left[ \tilde{ \rho} \Psi \right] \over \partial t }$$   
-Then, all the source terms computed in the model for this prognostic variable
-can be selected according to the following rules:
-\begin{itemize}
-\item
-NSOURCE\_TERM= 0 if you do not want to take into account  this source term( if you are only interested in some terms of a budget and not to the
-whole budget).
-\item
-NSOURCE\_TERM= 1 if you select this source term as the first element of a
-set of source terms, which will be  accumulated.
-\item
-NSOURCE\_TERM= 2 if you select this source term and it is not the first element of a
-set of source terms, which are cumulated. Note that the source terms which come
-just after the last of this set of source term, must be discarded (NSOURCE\_TERM= 0)
-or be the first element of a new cumul (NSOURCE\_TERM= 1).
-\end{itemize}
+
+Then, all the source terms computed in the model for this prognostic variable can be selected. Each term is associated with a name. Enabled terms are simply selected by putting their names in a list (an array of character strings beginning with $CBULIST\_*$). Each entry in the list will generate an output in the diachronic file. It is possible to write each source term separateley by writing one name by entry in the array. Or source terms can be grouped together by  putting them in the same array entry and separating them with the $+$ (plus) sign without spaces. In the latter case, their respective values are added together.
+
+For example, the following $NAM\_BU\_RU$ namelist:
+
+\begin{verbatim}
+&NAM_BU_RU
+  LBU_RU = .TRUE.
+  CBULIST_RU(1)='ADV'
+  CBULIST_RU(2)='HTURB+VTURB'
+/
+\end{verbatim}
+
+will output 2 different terms. The first one corresponds to the advection source term, the second one to the addition of the horizontal and vertical turbulence source terms.
+
+A special name exists to select all the available source terms: $ALL$. If set (in the first position of the $CBULIST\_*$ array), all the available source terms (depending on the simulation parameters) will be written individually in the diachronic file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \subsection{Namelist NAM\_BU\_RRC (budget for cloud water)}
 \index{NAM\_BU\_RRC!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRC & budget flag & logical & FALSE\index{LBU\_RRC!\innam{NAM\_BU\_RRC}} \\\hline
-NASSERC  & time filter (Asselin)   & integer  &  0 \index{NASSERC!\innam{NAM\_BU\_RRC}} \\\hline
-NNESTRC (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRC!\innam{NAM\_BU\_RRC}} \\\hline
-NVISCRC  & viscosity         & integer  &  0 \index{NVISCRC!\innam{NAM\_BU\_RRC}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRC   & total advection   & integer  &  0 \index{NADVRC!\innam{NAM\_BU\_RRC}}\\\hline
-NFRCRC   & forcing           & integer  &  0 \index{NFRCRC!\innam{NAM\_BU\_RRC}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRC   & numerical diffusion & integer  &  0 \index{NDIFRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRC   & relaxation        & integer  &  0 \index{NRELRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if LHORELAX\_RC=T) &  &   &   \\\hline
-NDCONVRC & KAFR convection   & integer  &  0 \index{NDCONVRC!\innam{NAM\_BU\_RRC}} \\ \nopagebreak
-(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
-NHTURBRC & horizontal turbulent  & integer  &  0 \index{NHTURBRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBRC & vertical turbulent  & integer  &  0 \index{NVTURBRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CTURB='TKEL') &diffusion &   &  \\\hline
-NACCRRC  & accretion & integer  &  0 \index{NACCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NAUTORC  & autoconversion into rain & integer  &  0 \index{NAUTORC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NSEDIRC  & sedimentation of cloud   & integer  &  0 \index{NSEDIRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA' and LSEDC=T) or if (CCLOUD='ICEx' and LSEDIC=T )) &  &   &   \\\hline
-NDEPORC  & surface droplet   & integer  &  0 \index{NDEPORC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA' & deposition &   &  \\ \nopagebreak
- and LDEPOC=T) or if (CCLOUD='ICEx' and LDEPOSC=T and CELEC='NONE')) &  &   &   \\\hline
-NDEPOTRRC  & tree droplet deposition   & integer  &  0 \index{NDEPOTRRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if ( LDRAGTREE=T and LDEPOTREE=T) ) &  &   &   \\\hline
-NCONDRC  &vapor condensation or & integer  &  0 \index{NCONDRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' and 'ICEx' and 'LIMA') &cloud water evaporation &   &  \\\hline
-NHONRC   & homogeneous   & integer  &  0 \index{NHONRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx') &nucleation &   &  \\\hline
-NRIMRC   & riming of cloud water   & integer  &  0 \index{NRIMRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NWETGRC   & wet growth of graupel  & integer  &  0 \index{NWETGRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NDRYGRC   & dry growth of graupel & integer  &  0 \index{NDRYGRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NIMLTRC   & ice melting & integer  &  0 \index{NIMLTRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T))) & &   &  \\\hline
-NBERFIRC  & Bergeron-Findeisen & integer  &  0 \index{NBERFIRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T))) & &   &  \\\hline
-NCDEPIRC  & condensation/deposition & integer  &  0 \index{NDEPIRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE')  ) &on ice &   &  \\\hline
-NCMELRC  & collection by snow and  & integer  &  0 \index{NCMELRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) & conversion into rain with T>XTT on ice &   &  \\\hline
-NDRYHRC  & dry growth of hail & integer  &  0 \index{NDRYHRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NCORRRC  & correction & integer  &  0 \index{NCORRRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & &   &  \\\hline
-NADJURC  & adjustement to & integer  &  0 \index{NADJURC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T and LADJ\_BEFORE=T) &saturation &   &  \\\hline
-NHENURC  & CCN activation  & integer  &  0 \index{NHENURC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LWARM=T and LACTI=T)) & nucleation & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and (LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)))) ) & & & \\ \hline
-NWETHRC  & wet growth of hail & integer  &  0 \index{NWETHRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='ICE4') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NHINCRC  & Heterogeneous  & integer  &  0 \index{NHINCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   & Nucleation by Contact  &       &   \\\hline
-NHONCRC  & droplet homogeneous   & integer  &  0 \index{NHONCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LWARM=T and LNUCL=T)   &freezing   &       &   \\\hline
-NCEDSRC  & adjustment to & integer  &  0 \index{NCEDSRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA') &saturation &   &  \\\hline
-NREVARC  & evaporation   & integer  &  0 \index{NREVARC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T)) & of rain drops &   &  \\\hline
-NR2C1RC  & rain to cloud change & integer  &  0 \index{NR2C1RC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & after sedimentation &   &  \\\hline
-NCVRCRC  & rain to cloud change & integer  &  0 \index{NCVRCRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
-NNEGARC   & negativity correction & integer  &  0 \index{NNEGARC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNETURRC  &negativity correction   & integer  &  0 \index{NNETURRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
-NNEADVRC  & negativity correction  & integer  &  0 \index{NNEADVRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRC  &negativity correction    & integer  &  0 \index{NNECONRC!\innam{NAM\_BU\_RRC}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+CBULIST\_RRC & list of source terms & array of character strings & ''\index{CBULIST\_RRC!\innam{NAM\_BU\_RRC}} \\\hline
 \end{longtable}
 
-%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_BU\_RRI (budget for non-precipitating ice)}
-\index{NAM\_BU\_RRI!namelist description}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+Description of the names to be used for the different source terms in the $CBULIST\_RRC$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-LBU\_RRI & budget flag & logical & FALSE\index{LBU\_RRI!\innam{NAM\_BU\_RRI}} \\\hline
-NASSERI  & time filter (Asselin)   & integer  &  0 \index{NASSERI!\innam{NAM\_BU\_RRI}} \\\hline
-NNESTRI (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRI!\innam{NAM\_BU\_RRI}} \\\hline
-NVISCRI  & viscosity         & integer  &  0 \index{NVISCRI!\innam{NAM\_BU\_RRI}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRI   & total advection   & integer  &  0 \index{NADVRI!\innam{NAM\_BU\_RRI}}\\\hline
-NFRCRI   & forcing           & integer  &  0 \index{NFRCRI!\innam{NAM\_BU\_RRI}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRI   & numerical diffusion & integer  &  0 \index{NDIFRI!\innam{NAM\_BU\_RRI}} \\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRI   & relaxation        & integer  &  0 \index{NRELRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if LHORELAX\_RI=T) &  &   &   \\\hline
-NDCONVRI & KAFR convection   & integer  &  0 \index{NDCONVRI!\innam{NAM\_BU\_RRI}} \\ \nopagebreak
-(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
-NHTURBRI & horizontal turbulent  & integer  &  0 \index{NHTURBRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBRI & vertical turbulent  & integer  &  0 \index{NVTURBRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CTURB='TKEL') &diffusion &   &  \\\hline
-NSEDIRI  & sedimentation  & integer  &  0 \index{NSEDIRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LSEDI=T) & &   &  \\\hline
-NHENURI  & heterogenous   & integer  &  0 \index{NHENURI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx') &nucleation &   &  \\\hline
-NHONRI  & homogeneous   & integer  &  0 \index{NHONRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx') &nucleation &   &  \\\hline
-NAGGSRI & aggregation of snow & integer  &  0 \index{NAGGSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) & &   &  \\\hline
-NAUTSRI & autoconversion of ice & integer  &  0 \index{NAUTSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx') & &   &  \\\hline
-NCFRZRI &   conversion freezing  & integer  &  0 \index{NCFRZRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & of rain drops & & \\\hline
-NWETGRI &   wet growth of graupel & integer  &  0 \index{NWETGRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NDRYGRI &   dry growth of graupel & integer  &  0 \index{NDRYGRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NIMLTRI &   ice melting & integer  &  0 \index{NIMLRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T))) & &   &  \\\hline
-NBERFIRI&   Bergeron-Findeisen & integer  &  0 \index{NBERFIRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T))) & &   &  \\\hline
-NCDEPIRI&   condensation/deposition & integer  &  0 \index{NCDEPIRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) &  on ice&   &  \\\hline
-NWETHRI &   wet growth  & integer  &  0 \index{NWETHRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICE4') or &of hail &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NDRYHRI&    dry growth of hail& integer  &  0 \index{NDRYHRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) &  on ice&   &  \\\hline
-NCORRRI&   correction & integer  &  0 \index{NCORRRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LCOLD=T and LRAIN=T) & &   &  \\\hline
-NADJURI&   adjustment before & integer  &  0 \index{NADJURI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='ICEx'and LRED=T and LADJ\_BEFORE=T) &  on ice&   &  \\\hline
-NHINDRI &  heterogeneous     & integer  &  0 \index{NHINDRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T) &nucleation by deposition &   &  \\\hline
-NHINCRI & heterogeneous     & integer  &  0 \index{NHINCRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   & Nucleation by Contact  &       &   \\\hline
-NHONHRI & haze homogeneous     & integer  &  0 \index{NHONHRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T and LHHONI=T) & nucleation  &   &  \\\hline
-NHONCRI & droplet homogeneous     & integer  &  0 \index{NHONCRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LWARM=T and LNUCL=T)   & nucleation   &       &   \\\hline
-NCNVIRI & Conversion of snow     & integer  &  0 \index{NCNVIRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) &to r\_i &   &  \\\hline
-NCNVSRI &  Conversion of pristine    & integer  &  0 \index{NCNVSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) &ice to r\_s &   &  \\\hline
-NHMSRI &Hallett-Mossop ice & integer  &  0 \index{NHMSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) &multiplication process due to snow riming &   &  \\\hline
-NHMGRI &  Hallett-Mossop ice & integer  &  0 \index{NHMGRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) &multiplication process due to graupel riming &   &  \\\hline
-NCEDSRI & adjustement to   & integer  &  0 \index{NCEDSRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD='LIMA') & saturation &   &  \\\hline
-NNEGARI   & negativity correction & integer  &  0 \index{NNEGARI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNETURRI  &negativity correction   & integer  &  0 \index{NNETURRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CTURB='TKEL' and CCLOUD='ICE3', 'ICE4' or 'LIMA')   &induced by turbulence   &       &   \\\hline
-NNEADVRI  & negativity correction  & integer  &  0 \index{NNEADVRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRI  &negativity correction    & integer  &  0 \index{NNECONRI!\innam{NAM\_BU\_RRI}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_R=T           \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+DIF    & numerical diffusion            & LNUMDIFTH=T                      \\\hline
+REL    & relaxation                     & LHORELAX\_RC=T                   \\\hline
+DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+DEPOTR & tree droplet deposition        & LDRAGTREE=T and LDEPOTREE=T      \\\hline
 \end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+SEDI   & sedimentation of cloud                                   & LWARM=T and LSEDC=T \\\hline
+DEPO   & surface droplet deposition                               & LWARM=T and LDEPOC=T \\\hline
+RIM    & riming of cloud water                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+IMLT   & melting of ice                                           & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+BERFI  & Bergeron-Findeisen                                       & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+HENU   & CCN activation nucleation                                & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+HINC   & heterogeneous nucleation by contact                      & LCOLD=T and LNUCL=T \\\hline
+HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+CEDS   & adjustment to saturation                                 & no condition \\\hline
+REVA   & evaporation of rain drops                                & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
+NEGA   & negativity correction                                    & no condition \\\hline
+NETUR  & negativity correction induced by turbulence              & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection               & no condition \\\hline
+NECON  & negativity correction induced by condensation            & no condition \\\hline
+CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ACCR   & accretion of cloud droplets                   & LWARM=T \\\hline
+AUTO   & autoconversion into rain                      & LWARM=T \\\hline
+SEDI   & sedimentation of cloud                        & LSEDIC=T \\\hline
+DEPO   & surface droplet deposition                    & LDEPOSC=T and CELEC='NONE' \\\hline
+HON    & homogeneous nucleation                        & no condition \\\hline
+RIM    & riming of cloud water                         & no condition \\\hline
+WETG   & wet growth of graupel                         & no condition \\\hline
+DRYG   & dry growth of graupel                         & no condition \\\hline
+IMLT   & melting of ice                                & no condition \\\hline
+BERFI  & Bergeron-Findeisen                            & no condition \\\hline
+CDEPI  & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
+CMEL   & collection by snow and conversion into rain with $T>XTT$ on ice & LRED=T and CELEC='NONE' \\\hline
+DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+ADJU   & adjustement to saturation                     & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
+\subsubsection{C2R2 / KHKO source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ACCR   & accretion of cloud droplets                   & LRAIN=T \\\hline
+AUTO   & autoconversion into rain                      & LRAIN=T \\\hline
+SEDI   & sedimentation of cloud                        & LSEDC=T \\\hline
+DEPO   & surface droplet deposition                    & LDEPOC=T \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+HENU   & CCN activation nucleation                     & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{KESS source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ACCR   & accretion of cloud droplets                   & no condition \\\hline
+AUTO   & autoconversion into rain                      & no condition \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{REVE source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRG (budget for graupel)}
 \index{NAM\_BU\_RRG!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRG & budget flag & logical & FALSE\index{LBU\_RRG!\innam{NAM\_BU\_RRG}} \\\hline
-NASSERG  & time filter (Asselin)   & integer  &  0 \index{NASSERG!\innam{NAM\_BU\_RRG}} \\\hline
-NNESTRG (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRG!\innam{NAM\_BU\_RRG}} \\\hline
-NVISCRG  & viscosity         & integer  &  0 \index{NVISCRG!\innam{NAM\_BU\_RRG}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRG   & total advection   & integer  &  0 \index{NADVRG!\innam{NAM\_BU\_RRG}}\\\hline
-NFRCRG   & forcing           & integer  &  0 \index{NFRCRG!\innam{NAM\_BU\_RRG}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRG   & numerical diffusion & integer  &  0 \index{NDIFRG!\innam{NAM\_BU\_RRG}} \\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRG   & relaxation        & integer  &  0 \index{NRELRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if LHORELAX\_RG=T) &  &   &   \\\hline
-NSEDIRG  & sedimentation     & integer  &  0 \index{NSEDIRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LSNOW=T) & &   &  \\\hline
-NSFRRG  & spontaneous freezing & integer  &  0 \index{NSFRRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx') & &   &  \\\hline
-NDEPGRG  & deposition on graupel & integer  &  0 \index{NDEPGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NRIMRG   & riming of cloud water & integer  &  0 \index{NRIMRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NCMELRG  & conversion melting & integer  &  0 \index{NCMELRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & of snow & & \\\hline
-NCFRZRG  & conversion freezing & integer  &  0 \index{NCFRZRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & of rain & & \\\hline
-NWETGRG  & wet growth of graupel  & integer  &  0 \index{NWETGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NDRYGRG  & dry growth of graupel  & integer  &  0 \index{NDRYGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NGMLTRG  & graupel melting  & integer  &  0 \index{NGMLTRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NWETHRG  & wet growth of hail & integer  &  0 \index{NWETHRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE4' and (LRED=F or CELEC $\neq$ 'NONE') or &of hail &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NHGCVRG  & Hail to Graupel  & integer  &  0 \index{NHGCVRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
-NGHCVRG  & Graupel to Hail  & integer  &  0 \index{NGHCVRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
-NACCRG  & rain accretion & integer  &  0 \index{NACCRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & on graupel &   &  \\\hline
-NDRYHRG&    dry growth of hail& integer  &  0 \index{NDRYHRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) &  on ice&   &  \\\hline
-NCORRRG&   correction & integer  &  0 \index{NCORRRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) &  &   &  \\\hline
-NHONRRG  & rain homogeneous  & integer  &  0 \index{NHONRRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T OR (LCOLD=T AND LWARM=T AND LNUCL=T AND LRAIN=T)))   & freezing  &       &   \\\hline
-NHMGRG  & Hallett-Mossop ice  & integer  &  0 \index{NHMGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & multiplication process due to graupel riming  &   &  \\\hline
-NCOHGRG  & conversion of hail  & integer  &  0 \index{NCOHGRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=F and LCOLD=T and LWARM=T and LSNOW=T and LHAIL=T)) &to graupel  &   &  \\\hline
-NNEGARG   & negativity correction & integer  &  0 \index{NNEGARG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNEADVRG  & negativity correction  & integer  &  0 \index{NNEADVRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRG  &negativity correction    & integer  &  0 \index{NNECONRG!\innam{NAM\_BU\_RRG}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+CBULIST\_RRG & list of source terms & array of character strings & ''\index{CBULIST\_RRG!\innam{NAM\_BU\_RRG}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRG$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin) & no condition           \\\hline
+NEST   & nesting               & NMODEL$>1$             \\\hline
+VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
+ADV    & total advection       & no condition           \\\hline
+FRC    & forcing               & LFORCING=T             \\\hline
+DIF    & numerical diffusion   & LNUMDIFTH=T            \\\hline
+REL    & relaxation            & LHORELAX\_RG=T         \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & LCOLD=T and LSNOW=T \\\hline
+HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
+DEPG   & deposition on graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+ACC    & rain accretion on graupel                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
+CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & no condition \\\hline
+SFR    & spontaneous freezing                          & no condition \\\hline
+DEPG   & deposition on graupel                         & no condition \\\hline
+RIM    & riming of cloud water                         & no condition \\\hline
+ACC    & rain accretion on graupel                     & no condition \\\hline
+CMEL   & conversion melting of snow                    & no condition \\\hline
+CFRZ   & conversion freezing of rain                   & no condition \\\hline
+WETG   & wet growth of graupel                         & no condition \\\hline
+GHCV   & graupel to hail conversion                    & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+DRYG   & dry growth of graupel                         & no condition \\\hline
+GMLT   & graupel melting                               & no condition \\\hline
+WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
+HGCV   & hail to graupel conversion                    & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRH (budget for hail)}
 \index{NAM\_BU\_RRH!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRH & budget flag & logical & FALSE\index{LBU\_RRH!\innam{NAM\_BU\_RRH}} \\\hline
-NASSERH  & time filter (Asselin)   & integer  &  0 \index{NASSERH!\innam{NAM\_BU\_RRH}} \\\hline
-NNESTRH (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRH!\innam{NAM\_BU\_RRH}} \\\hline
-NVISCRH  & viscosity         & integer  &  0 \index{NVISCRH!\innam{NAM\_BU\_RRH}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRH   & total advection   & integer  &  0 \index{NADVRH!\innam{NAM\_BU\_RRH}}\\\hline
-NFRCRH   & forcing           & integer  &  0 \index{NFRCRH!\innam{NAM\_BU\_RRH}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRH   & numerical diffusion & integer  &  0 \index{NDIFRH!\innam{NAM\_BU\_RRH}} \\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRH   & relaxation        & integer  &  0 \index{NRELRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if LHORELAX\_RH=T) &  &   &   \\\hline
-NSEDIRH  & sedimentation    & integer  &  0 \index{NSEDIRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LHAIL=T) & &   &  \\\hline
-NWETGRH  & wet growth of graupel  & integer  &  0 \index{NWETGRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and (LRED=F or CELEC $\neq$ 'NONE')) or & &   &  \\
-(if CCLOUD='LIMA' and LHAIL=T and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & &   &  \\\hline
-NWETHRH  & wet growth of hail  & integer  &  0 \index{NWETHRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4') or & &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NHMLTRH  & hail melting  & integer  &  0 \index{NHMLTRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4') or & &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NDRYHRH  &  dry growth of hail & integer  &  0 \index{NDRYHRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NCORRRH  &  correction & integer  &  0 \index{NCORRRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NHGCVRH  & Hail to Graupel  & integer  &  0 \index{NHGCVRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
-NGHCVRH  & Graupel to Hail  & integer  &  0 \index{NGHCVRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & ConVersion  &   &  \\\hline
-NCOHGRH  & reconversion from hail  & integer  &  0 \index{NCOHGRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=F and LCOLD=T and LWARM=T and LSNOW=T and LHAIL=T)) &to graupel  &   &  \\\hline
-NNEGARH   & negativity correction & integer  &  0 \index{NNEGARH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNEADVRH  & negativity correction  & integer  &  0 \index{NNEADVRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRH  &negativity correction    & integer  &  0 \index{NNECONRH!\innam{NAM\_BU\_RRH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+CBULIST\_RRH & list of source terms & array of character strings & ''\index{CBULIST\_RRH!\innam{NAM\_BU\_RRH}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRH$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin) & no condition           \\\hline
+NEST   & nesting               & NMODEL$>1$             \\\hline
+VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
+ADV    & total advection       & no condition           \\\hline
+FRC    & forcing               & LFORCING=T             \\\hline
+DIF    & numerical diffusion   & LNUMDIFTH=T            \\\hline
+REL    & relaxation            & LHORELAX\_RG=T         \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & LCOLD=T and LHAIL=T \\\hline
+WETG   & wet growth of graupel                         & LHAIL and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T)) \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & no condition \\\hline
+GHCV   & graupel to hail conversion                    & LRED=T and CELEC='NONE' \\\hline
+WETG   & wet growth of graupel                         & LRED=F or CELEC/='NONE' \\\hline
+WETH   & wet growth of hail                            & no condition \\\hline
+HGCV   & hail to graupel conversion                    & LRED=T and CELEC='NONE' \\\hline
+DRYH   & dry growth of hail                            & LRED=T and CELEC='NONE' \\\hline
+HMLT   & melting of hail                               & no condition \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BU\_RRI (budget for non-precipitating ice)}
+\index{NAM\_BU\_RRI!namelist description}
+
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline \hline
+\endhead
+LBU\_RRI & budget flag & logical & FALSE\index{LBU\_RRI!\innam{NAM\_BU\_RRI}} \\\hline
+CBULIST\_RRI & list of source terms & array of character strings & ''\index{CBULIST\_RRI!\innam{NAM\_BU\_RRI}} \\\hline
+\end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRI$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_R=T           \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+DIF    & numerical diffusion            & LNUMDIFTH=T                      \\\hline
+REL    & relaxation                     & LHORELAX\_RI=T                   \\\hline
+DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of cloud                         & LCOLD=T and LSEDI=T \\\hline
+HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact            & LCOLD=T and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+AGGS   & aggregation of snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+BERFI  & Bergeron-Findeisen                             & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CEDS   & adjustment to saturation                       & no condition \\\hline
+CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+NEGA   & negativity correction                          & no condition \\\hline
+NETUR  & negativity correction induced by turbulence    & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection     & no condition \\\hline
+NECON  & negativity correction induced by condensation  & no condition \\\hline
+CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of cloud                        & no condition \\\hline
+HENU   & heterogeneous nucleation                      & no condition \\\hline
+HON    & homogeneous nucleation                        & no condition \\\hline
+AGGS   & aggregation of snow                           & no condition \\\hline
+AUTS   & autoconversion of ice                         & no condition \\\hline
+IMLT   & melting of ice                                & no condition \\\hline
+BERFI  & Bergeron-Findeisen                            & no condition \\\hline
+CFRZ   & conversion freezing of rain                   & no condition \\\hline
+WETG   & wet growth of graupel                         & no condition \\\hline
+DRYG   & dry growth of graupel                         & no condition \\\hline
+WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
+DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+CDEPI  & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRR (budget for rain water)}
 \index{NAM\_BU\_RRR!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRR & budget flag & logical & FALSE\index{LBU\_RRR!\innam{NAM\_BU\_RRR}} \\\hline
-NASSERR  & time filter (Asselin)   & integer  &  0 \index{NASSERR!\innam{NAM\_BU\_RRR}} \\\hline
-NNESTRR (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRR!\innam{NAM\_BU\_RRR}} \\\hline
-NVISCRR  & viscosity         & integer  &  0 \index{NVISCRR!\innam{NAM\_BU\_RRR}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRR   & total advection   & integer  &  0 \index{NADVRR!\innam{NAM\_BU\_RRR}}\\\hline
-NFRCRR   & forcing           & integer  &  0 \index{NFRCRR!\innam{NAM\_BU\_RRR}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRR   & numerical diffusion & integer  &  0 \index{NDIFRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRR   & relaxation        & integer  &  0 \index{NRELRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if LHORELAX\_RR=T) &  &   &   \\\hline
-NACCRRR  & accretion of & integer  &  0 \index{NACCRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & cloud droplets & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NAUTORR   & autoconversion into & integer  &  0 \index{NAUTORR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & rain drops & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NREVARR & rain evaporation  & integer  &  0 \index{NREVARR!\innam{NAM\_BU\_RRR}}\\\hline
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NSEDIRR   & sedimentation of & integer  &  0 \index{NSEDIRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & rain drops & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx') & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO') ) & & & \\ \hline
-NSFRRR   & spontaneous freezing & integer  &  0 \index{NSFRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx') & &   &  \\\hline
-NACCRR   & accretion of rain water & integer  &  0 \index{NACCRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & on aggregates & & \\\hline
-NCFRZRR  & conversion freezing of & integer  &  0 \index{NCFRZRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & rain drops & & \\\hline
-(if CCLOUD='ICEx' or 'LIMA') & rain drops &   &  \\\hline
-NWETGRR  & wet growth of graupel & integer  &  0 \index{NWETGRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NDRYGRR  & dry growth of graupel & integer  &  0 \index{NDRYGRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NGMLTRR  & graupel melting& integer  &  0 \index{NGMLTRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NWETHRR  & wet growth of hail & integer  &  0 \index{NWETHRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICE4') or &of hail &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NHMLTRR  & melting of hail& integer  &  0 \index{NHMLTRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICE4')   &   &       &   \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and and LWARM=T and LSNOW=T)   &  &        &   \\\hline
-NCMELRR  & collection of droplets & integer  &  0 \index{NCMELRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) & by snow and conversion into rain &   &  \\\hline
-NDRYHRR  & dry growth of hail & integer  &  0 \index{NDRYHRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NCORRRR  & correction & integer  &  0 \index{NCORRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & &   &  \\\hline
-NHONRRR  & rain drops homogeneous  & integer  &  0 \index{NHONRRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T OR (LCOLD=T AND LWARM=T AND LNUCL=T AND LRAIN=T)))   & freezing  &       &   \\\hline
-NR2C1RR & rain to cloud after  & integer  &  0 \index{NR2C1RR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LWARM=T and LRAIN=T) & sedimentation&   &  \\\hline
-NCVRCRR  & rain to cloud change & integer  &  0 \index{NCVRCRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T) &after other microphysical processes &   &  \\\hline
-NNEGARR   & negativity correction & integer  &  0 \index{NNEGARR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNETURRR  &negativity correction   & integer  &  0 \index{NNETURRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CTURB='TKEL' and CCLOUD='C2R2', 'KHKO' or 'LIMA')   &induced by turbulence   &       &   \\\hline
-NNEADVRR  & negativity correction  & integer  &  0 \index{NNEADVRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRR  &negativity correction    & integer  &  0 \index{NNECONRR!\innam{NAM\_BU\_RRR}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+CBULIST\_RRR & list of source terms & array of character strings & ''\index{CBULIST\_RRR!\innam{NAM\_BU\_RRR}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRR$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin) & no condition           \\\hline
+NEST   & nesting               & NMODEL$>1$             \\\hline
+VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
+ADV    & total advection       & no condition           \\\hline
+FRC    & forcing               & LFORCING=T             \\\hline
+DIF    & numerical diffusion   & LNUMDIFTH=T            \\\hline
+REL    & relaxation            & LHORELAX\_RR=T         \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of rain drops                              & LWARM=T and LRAIN=T \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+REVA   & rain evaporation                                         & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
+ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
+CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+NEGA   & negativity correction                                    & no condition \\\hline
+NETUR  & negativity correction induced by turbulence              & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection               & no condition \\\hline
+NECON  & negativity correction induced by condensation            & no condition \\\hline
+CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of rain drops                             & no condition \\\hline
+AUTO   & autoconversion into rain                                & LWARM=T \\\hline
+ACCR   & accretion of cloud droplets                             & LWARM=T \\\hline
+REVA   & rain evaporation                                        & LWARM=T \\\hline
+ACC    & accretion of rain on aggregates                         & no condition \\\hline
+CMEL   & collection of droplets by snow and conversion into rain & LRED=T and CELEC='NONE' \\\hline
+CFRZ   & conversion freezing of rain                             & no condition \\\hline
+WETG   & wet growth of graupel                                   & no condition \\\hline
+DRYG   & dry growth of graupel                                   & no condition \\\hline
+GMLT   & graupel melting                                         & no condition \\\hline
+WETH   & wet growth of hail                                      & CCLOUD='ICE4' \\\hline
+DRYH   & dry growth of hail                                      & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+HMLT   & melting of hail                                         & CCLOUD='ICE4' \\\hline
+SFR    & spontaneous freezing                                    & no condition \\\hline
+CORR   & correction                                              & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                                   & no condition \\\hline
+NEADV  & negativity correction induced by advection              & no condition \\\hline
+NECON  & negativity correction induced by condensation           & CELEC='NONE' \\\hline
+\end{longtable}
+
+\subsubsection{C2R2 / KHKO source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of rain drops                   & no condition \\\hline
+AUTO   & autoconversion into rain                      & LRAIN=T \\\hline
+ACCR   & accretion of cloud droplets                   & LRAIN=T \\\hline
+REVA   & rain evaporation                              & LRAIN=T \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{KESS source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation of rain drops                   & no condition \\\hline
+AUTO   & autoconversion into rain                      & no condition \\\hline
+ACCR   & accretion of cloud droplets                   & no condition \\\hline
+REVA   & rain evaporation                              & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRS (budget for snow)}
 \index{NAM\_BU\_RRS!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRS & budget flag & logical & FALSE\index{LBU\_RRS!\innam{NAM\_BU\_RRS}} \\\hline
-NASSERS  & time filter (Asselin)   & integer  &  0 \index{NASSERS!\innam{NAM\_BU\_RRS}} \\\hline
-NNESTRS (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRS!\innam{NAM\_BU\_RRS}} \\\hline
-NVISCRS  & viscosity         & integer  &  0 \index{NVISCRS!\innam{NAM\_BU\_RRS}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRS   & total advection   & integer  &  0 \index{NADVRS!\innam{NAM\_BU\_RRS}}\\\hline
-NFRCRS   & forcing           & integer  &  0 \index{NFRCRS!\innam{NAM\_BU\_RRS}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFRS   & numerical diffusion & integer  &  0 \index{NDIFRS!\innam{NAM\_BU\_RRS}} \\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRS   & relaxation        & integer  &  0 \index{NRELRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if LHORELAX\_RS=T) &  &   &   \\\hline
-NSEDIRS  & sedimentation & integer  &  0 \index{NSEDIRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LSNOW=T) & &   &  \\\hline
-NDEPSRS  & deposition on snow & integer  &  0 \index{NDEPSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
-NAGGSRS  & aggregation of snow    & integer  &  0 \index{NAGGSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4') or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) & &   &  \\\hline
-NAUTSRS  & autoconversion of ice   & integer  &  0 \index{NAUTSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx') & &   &  \\\hline
-NRIMRS   & riming of cloudwater    & integer  &  0 \index{NRIMRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NACCRS   & accretion of rainwater  & integer  &  0 \index{NACCRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & &   &  \\\hline
-NCMELRS  & conversion melting     & integer  &  0 \index{NCMELRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NWETGRS  & wet growth of graupel   & integer  &  0 \index{NWETGRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NDRYGRS  & dry growth of graupel   & integer  &  0 \index{NDRYGRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & & & \\\hline
-NWETHRS  & wet growth of hail  & integer  &  0 \index{NWETHRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICE4') or &of hail &   &  \\
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) & &   &  \\\hline
-NDRYHRS&    dry growth of hail& integer  &  0 \index{NDRYHRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NCORRRS&   correction & integer  &  0 \index{NCORRRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='ICEx' and LRED=T) or & &   &  \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T and LCOLD=T and LRAIN=T) & &   &  \\\hline
-NCNVIRS  &Conversion of    & integer  &  0 \index{NCNVIRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) & snow to r\_i&   &  \\\hline
-NCNVSRS  & Conversion of pristine  & integer  &  0 \index{NCNVSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T))) & ice to r\_s &   &  \\\hline
-NHMSRS  &Hallett-Mossop ice  & integer  &  0 \index{NHMSRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T))) & multiplication process due to snow riming &   &  \\\hline
-NNEGARS   & negativity correction & integer  &  0 \index{NNEGARS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' )& &   &  \\\hline
-NNETURRS  &negativity correction   & integer  &  0 \index{NNETURRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
-NNEADVRS  & negativity correction  & integer  &  0 \index{NNEADVRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by the advection&   &  \\\hline
-NNECONRS  &negativity correction    & integer  &  0 \index{NNECONRS!\innam{NAM\_BU\_RRS}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') &induced by the condensation &   &  \\\hline
+CBULIST\_RRS & list of source terms & array of character strings & ''\index{CBULIST\_RRS!\innam{NAM\_BU\_RRS}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRS$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin) & no condition           \\\hline
+NEST   & nesting               & NMODEL$>1$             \\\hline
+VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
+ADV    & total advection       & no condition           \\\hline
+FRC    & forcing               & LFORCING=T             \\\hline
+DIF    & numerical diffusion   & LNUMDIFTH=T            \\\hline
+REL    & relaxation            & LHORELAX\_RS=T         \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & LCOLD=T and LSNOW=T \\\hline
+CNVI   & conversion of snow to cloud ice               & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+DEPS   & deposition on snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CNVS   & conversion of pristine ice to snow            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+AGGS   & aggregation of snow                           & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+ACC    & accretion of rain on snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
+CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CORR   & correction                                    & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                 & no condition \\\hline
+DEPS   & deposition on snow                            & no condition \\\hline
+AGGS   & aggregation of snow                           & no condition \\\hline
+AUTS   & autoconversion of ice                         & no condition \\\hline
+RIM    & riming of cloud water                         & no condition \\\hline
+ACC    & accretion of rain on snow                     & no condition \\\hline
+CMEL   & conversion melting of snow                    & no condition \\\hline
+WETG   & wet growth of graupel                         & no condition \\\hline
+DRYG   & dry growth of graupel                         & no condition \\\hline
+WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
+DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RRV (budget for  vapor)}
 \index{NAM\_BU\_RRV!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RRV & budget flag & logical & FALSE\index{LBU\_RRV!\innam{NAM\_BU\_RRV}} \\\hline
-NASSERV  & time filter (Asselin)   & integer  &  0 \index{NASSERV!\innam{NAM\_BU\_RRV}} \\\hline
-NNESTRV (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTRV!\innam{NAM\_BU\_RRV}} \\\hline
-NVISCRV  & viscosity         & integer  &  0 \index{NVISCRV!\innam{NAM\_BU\_RRV}}\\
-(if LVISC=T and LVISC\_R) &  &   &   \\\hline
-NADVRV   & total advection   & integer  &  0 \index{NADVRV!\innam{NAM\_BU\_RRV}}\\\hline
-NFRCRV   & forcing           & integer  &  0 \index{NFRCRV!\innam{NAM\_BU\_RRV}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-N2DADVRV   &advective forcing           & integer  &  0 \index{N2DADVRV!\innam{NAM\_BU\_RRV}} \\ \nopagebreak
-(if L2D\_ADV\_FRC=T) &  &   &   \\\hline
-N2DRELRV   & relaxation forcing           & integer  &  0 \index{N2DRLERV!\innam{NAM\_BU\_RRV}} \\ \nopagebreak
-(if L2D\_REL\_FRC=T) &  &   &   \\\hline
-NNUDRV   & nudging           & integer  &  0 \index{NNUDRV!\innam{NAM\_BU\_RRV}} \\ \nopagebreak
-(if LNUDGING=T) &  &   &   \\\hline
-NDIFRV   & numerical diffusion & integer  &  0 \index{NDIFRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELRV   & relaxation        & integer  &  0 \index{NRELRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if LHORELAX\_RV=T) &  &   &   \\\hline
-NDCONVRV  & KAFR convection   & integer  &  0 \index{NDCONVRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
-NMAFLRV (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLRV!\innam{NAM\_BU\_RRV}} \\\hline
-NHTURBRV & horizontal turbulent & integer  &  0 \index{NHTURBRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBRV & vertical turbulent& integer  &  0 \index{NVTURBRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CTURB='TKEL') &diffusion &   &  \\\hline
-NREVARV & rain evaporation & integer  &  0 \index{NREVARV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NCONDRV   & vapor condensation or & integer  &  0 \index{NCONDRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' and 'ICEx' and 'LIMA') &cloud water evaporation &   &  \\\hline
-NHENURV   & heterogenous nucleation & integer  &  0 \index{NHENURV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LWARM=T and LACTI=T)) & nucleation & & \\ \nopagebreak
- or (CCLOUD='ICEx') & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and (LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)))) ) & & & \\ \hline
-NDEPSRV   & deposition on snow & integer  &  0 \index{NDEPSRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
-NDEPGRV   & deposition on graupel & integer  &  0 \index{NDEPGRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NCDEPIRV   & deposition & integer  &  0 \index{NCDEPIRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) &on ice &   &  \\\hline
-NCORRRV  & correction          & integer  &  0 \index{NCORRRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' and LRED=T) & &   &  \\\hline
-NADJURV  & adjustment before          & integer  &  0 \index{NADJURV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' and LRED=T and LADJ\_BEFORE=T) & &   &  \\\hline
-NHINDRV   & Heterogeneous & integer  &  0 \index{NHINDRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T) & Nucleation by Deposition  &   &  \\\hline
-NHONHRV   &Haze Homogeneous   & integer  &  0 \index{NHONHRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T and LHHONI=T) & Nucleation  &   &  \\\hline
-NCEDSRV   & adjustement & integer  &  0 \index{NCEDSRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD='LIMA'  ) & &   &  \\\hline
-NNEGARV   & negativity correction & integer  &  0 \index{NNEGARV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
-NNETURRV   & negativity correction  & integer  &  0 \index{NNETURRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CTURB='TKEL' and CCLOUD $\neq$ 'NONE') & induced by turbulence&   &  \\\hline
- NNECONRV  & negativity correction & integer  &  0 \index{NNECONRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE' ) & induced by condensation&   &  \\\hline
-NNEADVRV&negativity correction   & integer  &  0 \index{NNEADVRV!\innam{NAM\_BU\_RRV}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE') & induced by advection&   &  \\\hline
+CBULIST\_RRV & list of source terms & array of character strings & ''\index{CBULIST\_RRV!\innam{NAM\_BU\_RRV}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RRV$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_R=T           \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+2DADV  & advective forcing              & L2D\_ADV\_FRC=T                  \\\hline
+2DREL  & relaxation forcing             & L2D\_REL\_FRC=T                  \\\hline
+NUD    & nudging                        & LNUDGING=T                       \\\hline
+DIF    & numerical diffusion            & LNUMDIFTH=T                      \\\hline
+REL    & relaxation                     & LHORELAX\_RV=T                   \\\hline
+DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
+SNSUB  & blowing snow sublimation       & LBLOWSNOW=T and LSNOWSUBL=T      \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HENU   & heterogeneous nucleation                       & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+REVA   & rain evaporation                               & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+DEPS   & deposition on snow                             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+DEPG   & deposition on graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CEDS   & adjustment to saturation                       & no condition \\\hline
+NEGA   & negativity correction                          & no condition \\\hline
+NETUR  & negativity correction induced by turbulence    & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection     & no condition \\\hline
+NECON  & negativity correction induced by condensation  & no condition \\\hline
+CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HENU   & heterogeneous nucleation                      & no condition \\\hline
+REVA   & rain evaporation                              & LWARM=T \\\hline
+DEPS   & deposition on snow                            & no condition \\\hline
+DEPG   & deposition on graupel                         & no condition \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+CDEPI  & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
+\subsubsection{C2R2 / KHKO source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HENU   & heterogeneous nucleation                      & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
+REVA   & rain evaporation                              & LRAIN=T \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{KESS source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+REVA   & rain evaporation                              & no condition \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{REVE source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RSV (budget for a Scalar Variable)}
 \index{NAM\_BU\_RSV!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-LBU\_RSV & budget flag & logical & FALSE\index{LBU\_RSV!\innam{NAM\_BU\_RSV}}\\\hline
-NASSESV  & time filter (Asselin)   & integer  &  0 \index{NASSESV!\innam{NAM\_BU\_RSV}} \\\hline
-NNESTSV (if NMODEL$>1$) & nesting       & integer  &  0 \index{NNESTSV!\innam{NAM\_BU\_RSV}} \\\hline
-NVISCSV  & viscosity         & integer  &  0 \index{NVISCSV!\innam{NAM\_BU\_RSV}}\\
-(if LVISC=T and LVISC\_SV) &  &   &   \\\hline
-NADVSV   & total advection   & integer  &  0 \index{NADVSV!\innam{NAM\_BU\_RSV}}\\\hline
-NFRCSV   & forcing           & integer  &  0 \index{NFRCSV!\innam{NAM\_BU\_RSV}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFSV   & numerical diffusion & integer &  0 \index{NDIFSV!\innam{NAM\_BU\_RSV}}\\ \nopagebreak
-(if LNUMDIFSV=T) &  &   &   \\\hline
-NRELSV   & relaxation        & integer  &  0 \index{NRELSV!\innam{NAM\_BU\_RSV}}\\ \nopagebreak
-(if LHORELAX\_SV=T) &  &   &   \\\hline
-NDCONVSV & KAFR convection   & integer  &  0 \index{NDCONVSV!\innam{NAM\_BU\_RSV}} \\ \nopagebreak
-(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
-NMAFLSV (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLSV!\innam{NAM\_BU\_RSV}} \\\hline
-NHTURBSV & horizontal turbulent  & integer  &  0 \index{NHTURBSV!\innam{NAM\_BU\_RSV}} \\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBSV & vertical turbulent  & integer  &  0 \index{NVTURBSV!\innam{NAM\_BU\_RSV}}\\ \nopagebreak
-(if CTURB='TKEL') &diffusion &   &  \\\hline
-NCHEMSV (if LUSECHEM=T) & chemistry activity & integer  &  0 \index{NCHEMSV!\innam{NAM\_BU\_RSV}} \\\hline
-NDEPOTRSV  & droplet deposition over    & integer  &  0 \index{NDEPOTRSV!\innam{NAM\_BU\_RSV}}\\ \nopagebreak
-(if (CCLOUD='C2R2' or 'KHKO' or 'LIMA') and (LDRAGTREE=T and LDEPOTREE=T)  ) & tree &   &   \\\hline
+LBU\_RSV & budget flag & logical & FALSE\index{LBU\_RSV!\innam{NAM\_BU\_RSV}} \\\hline
+CBULIST\_RSV & list of source terms & array of character strings & ''\index{CBULIST\_RSV!\innam{NAM\_BU\_RSV}} \\\hline
 \end{longtable}
 
-\textbf{Concentration of activated nuclei}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+Description of the names to be used for the different source terms in the $CBULIST\_RSV$ array and the conditions of their availability:
+
+\subsubsection{General source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NHENUSV & activation of CCN & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\ \nopagebreak
-and LSUPSAT=F &&&\\\hline
-NCEVASV & evaporation of droplets & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_SV=T           \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+DIF    & numerical diffusion            & LNUMDIFSV=T                      \\\hline
+REL    & relaxation                     & LHORELAX\_SV(jsv)=T or corresponding LHOREAX\_SV*=T or (CELEC/='NONE' and LRELAX2FW\_ION=T and (jsv=NSV\_ELECBEG or jsv=NSV\_ELECEND) ) \\\hline
+DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
+NEGA2  & negativity correction          & no condition                     \\\hline
 \end{longtable}
 
-\textbf{Concentration of cloud droplets}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+with $jsv$ the scalar variable number.
+
+\subsubsection{C2R2 / KHKO source terms}
+
+\paragraph{Common source terms for C2R2 / KHKO}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NHENUSV & droplet activation & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO' &&&\\ \nopagebreak
-and LSUPSAT=F)  &&&\\ \nopagebreak
-or if (CCLOUD='LIMA' and LWARM=T &&&\\ \nopagebreak
-and LACTI=T and NMOD\_CCN>1)&&&\\\hline
-NCEVASV & droplet evaporation & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&&\\\hline
-NSELFSV & self-collection of  & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') & droplets&&\\ \nopagebreak
-or if (CCLOUD='LIMA' and (LPTSPLIT=T or &&&\\ \nopagebreak
-LWARM=T and LRAIN=T))&&&\\\hline
-NACCRSV & accretion between  & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &droplet and raindrop&&\\ \nopagebreak
-or if (CCLOUD='LIMA' and (LRAIN=T or &&& \\ \nopagebreak
-LPTSPLIT=T)) &&& \\\hline
-NSEDISV & droplet sedimentation& integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2','KHKO' or 'LIMA') &&&\\ \nopagebreak
-and LSEDC=T &&&\\\hline
-NDEPOSV & droplet deposition& integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2','KHKO' or 'LIMA') &&&\\ \nopagebreak
-and LDEPOC=T &&&\\\hline
-
-NCORRSV & corrections & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LPTSPLIT=T, &&&\\ \nopagebreak
-LWARM=T and LRAIN=T)&&& \\\hline
-
-NR2C1SV & rain to cloud change& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', &&&\\ \nopagebreak
-LPTSPLIT=T and LRAIN=T)&&& \\\hline
-
-NHINCSV & heterogeneous  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LNUCL=T,&nucleation by contact&&\\ \nopagebreak
-and LCOLD=T)&&& \\\hline
-
-NHONCSV & droplet homogeneous  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and ((LNUCL=T,& nucleation &&\\ \nopagebreak
-LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
-
-NAUTOSV & autoconversion & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and (LRAIN=T&&&\\ \nopagebreak
-or LPTSPLIT=T)&&& \\\hline
-
-NREVASV & rain evaporation & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and (LRAIN=T or &&& \\ \nopagebreak
-LPTSPLIT=T)) or CCLOUD='KHKO'  or &&& \\ \nopagebreak
-CCLOUD='C2R2' &&& \\\hline
-
-NRIMSV & riming & integer & 0 \\  \nopagebreak
-if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\  \nopagebreak
-LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\  \nopagebreak
-LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\  \nopagebreak
-if (CCLOUD='LIMA' and ((LSNOW=T,&&&\\  \nopagebreak
-LCOLD=T and LWARM=T) or LPTSPLIT=T)&&& \\\hline
-
-NIMLTSV & Ice MeLTing & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and ((LCOLD=T&&&\\ \nopagebreak
-and LWARM=T) or LPTSPLIT=T)&&& \\\hline
-
-NCVRCSV & rain to cloud change & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA' and LPTSPLIT=T)&&& \\\hline
-
-NWETHSV & wet growth of hail& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LHAIL=T&&&\\ \nopagebreak
-and LPTSPLIT=F)&&& \\\hline
-
-NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
-\textbf{Concentration of raindrops}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of activated nuclei for C2R2 / KHKO}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
+\hline \hline
+HENU   & CCN activation & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
+CEVA   & evaporation    & no condition \\\hline
+\endhead
+\end{longtable}
+
+\paragraph{Concentration of cloud droplets for C2R2 / KHKO}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+DEPOTR & tree droplet deposition           & LDRAGTREE=T and LDEPOTREE=T \\\hline
+HENU   & CCN activation                    & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
+SELF   & self-collection of cloud droplets & LRAIN=T \\\hline
+ACCR   & accretion of cloud droplets       & LRAIN=T \\\hline
+SEDI   & sedimentation                     & LSEDC=T \\\hline
+DEPO   & surface droplet deposition        & LDEPOC=T \\\hline
+CEVA   & evaporation                       & no condition \\\hline
+\endhead
+\end{longtable}
+
+\paragraph{Concentration of raindrops for C2R2 / KHKO}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+AUTO   & autoconversion into rain               & LRAIN=T        \\\hline
+SCBU   & self collection - coalescence/break-up & CCLOUD/='KHKO' \\\hline
+REVA   & rain evaporation                       & LRAIN=T        \\\hline
+BRKU   & spontaneous break-up                   & LRAIN=T        \\\hline
+SEDI   & sedimentation                          & no condition   \\\hline
+\endhead
+\end{longtable}
+
+\paragraph{Supersaturation for C2R2 / KHKO}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+CEVA   & evaporation & no condition \\\hline
+\endhead
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\paragraph{Common source terms for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NAUTOSV & autoconversion & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&& \\ \nopagebreak
-or if ((CCLOUD='LIMA') and (LRAIN=T &&& \\ \nopagebreak
-or LPTSPLIT=T) &&& \\\hline
-
-NREVASV & drop evaporation & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') or &&& \\ \nopagebreak
-if (CCLOUD='LIMA' and (LPTSPLIT=T &&& \\ \nopagebreak
-or LRAIN=T)) &&& \\\hline
-
-NBRKUSV & spontaneous break up of  & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') or & drops && \\ \nopagebreak
-if (CCLOUD='LIMA' and (LPTSPLIT=T &&& \\ \nopagebreak
-or LRAIN=T)) &&& \\\hline
-
-NSEDISV & raindrop sedimentation& integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2' or 'KHKO') &&& \\ \nopagebreak
-or if (CCLOUD='LIMA', LWARM=T &&& \\ \nopagebreak
-and LRAIN=T) &&& \\\hline
-
-NSCBUSV & breakup-selfcollection & integer & 0 \\ \nopagebreak
-if (CCLOUD='C2R2') &&& \\ \nopagebreak
-or if ((CCLOUD='LIMA') and (LRAIN=T &&& \\ \nopagebreak
-or LPTSPLIT=T) &&& \\\hline
-
-NCORRSV & corrections & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\ \nopagebreak
-LWARM=T and LRAIN=T) &&& \\\hline
-
-NR2C1SV & rain to cloud change& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LPTSPLIT=T &&& \\ \nopagebreak
-and LRAIN=T) &&& \\\hline
-
-NHONRSV & drop homogeneous  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T & nucleation && \\ \nopagebreak
-or (LCOLD=T, LWARM=T, LRAIN=T, &&& \\ \nopagebreak
-and LNUCL=T))&&& \\\hline
-
-NACCSV & accretion & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
-
-NCFRZSV & Conversion FReeZing & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
-
-NGMLTSV & graupel melting& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LSNOW=T))&&& \\\hline
-
-NCVRCSV & rain to cloud change & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' and LPTSPLIT=T &&& \\\hline
-
-NWETHSV & wet growth of hail& integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LPTSPLIT=F &&& \\ \nopagebreak
-and LHAIL=T &&& \\\hline
-
-NHMLTSV & hail melting & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LPTSPLIT=F &&& \\ \nopagebreak
-and LHAIL=T &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if (CCLOUD='C2R2', 'KHKO' or 'LIMA') &&&\\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
-\textbf{Concentration of free CCN}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of cloud droplets for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
-NSCAVSV & scavenging & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' and LSCAV=T &&& \\\hline
-
-NHENUSV & heterogeneous  & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LWARM=T, &nucleation && \\ \nopagebreak
-LACTI=T and NMOD\_CCN > 1 &&& \\\hline
-
-NHONHSV & haze homogeneous  & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LCOLD=T, LNUCL=T, & nucleation&& \\ \nopagebreak
-LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
+DEPOTR & tree droplet deposition                                  & LDRAGTREE=T and LDEPOTREE=T \\\hline
+SEDI   & sedimentation of cloud                                   & LWARM=T and LSEDC=T \\\hline
+DEPO   & surface droplet deposition                               & LWARM=T and LDEPOC=T \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+HENU   & CCN activation                                           & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+HINC   & heterogeneous nucleation by contact                      & LCOLD=T and LNUCL=T \\\hline
+SELF   & self-collection of cloud droplets                        & LWARM=T and LRAIN=T \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+REVA   & evaporation of rain drops                                & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+IMLT   & melting of ice                                           & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+RIM    & riming of cloud water                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CEDS   & adjustment to saturation                                 & no condition \\\hline
+CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
 \end{longtable}
 
-\textbf{Concentration of pristine ice crystals}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of raindrops for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
+\hline \hline
+SEDI   & sedimentation                                            & LWARM=T and LRAIN=T \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+SCBU   & self collection - coalescence/break-up                   & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+REVA   & rain evaporation                                         & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+BRKU   & spontaneous break-up                                     & LPTSPLIT=T or (LWARM=T and LRAIN=T)        \\\hline
+HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LRAIN=T and LNUCL=T) \\\hline
+ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
+CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
+\endhead
+\end{longtable}
+
+\paragraph{Concentration of free CCN for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NCORRSV & corrections & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LPTSPLIT=T, &&& \\ \nopagebreak
-LCOLD=T and LSNOW=T) &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LSEDI=T &&& \\\hline
-
-NHINDSV & heterogeneous & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LCOLD=T &nucleation && \\ \nopagebreak
-and LNUCL=T) & by deposition && \\\hline
-
-NHINCSV & heterogeneous   & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA', LCOLD=T &nucleation&& \\ \nopagebreak
-and LNUCL=T) &by contact && \\\hline
-
-NHONHSV & haze homogeneous  & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LCOLD=T, LNUCL=T, &nucleation && \\ \nopagebreak
-LHHONI=T and NMOD\_CCN > 1 &&& \\\hline
-
-NHONCSV & droplet homogeneous  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &nucleation && \\ \nopagebreak
-or (LCOLD=T, LWARM=T and LNUCL=T)) &&& \\\hline
-
-NCNVISV & Conversion of snow to ri& integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T and LSNOW=T)) &&& \\\hline
-
-NCNVSSV & Conversion of pristine & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &ice to rs && \\ \nopagebreak
-or (LCOLD=T and LSNOW=T)) &&& \\\hline
-
-NAGGSSV & aggregation of ice on  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T & snow&& \\ \nopagebreak
-or (LCOLD=T and LSNOW=T)) &&& \\\hline
-
-NIMLTSV & Ice MeLTing & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T and LWARM=T)) &&& \\\hline
-
-NHMSSV & Hallett-Mossop ice  & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &multiplication&& \\ \nopagebreak
-or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
-
-NCFRZSV & Conversion FReeZing & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &&& \\ \nopagebreak
-or (LCOLD=T, LSNOW=T and LWARM=T)) &&& \\\hline
-
-NHMGSV & Hallett-Mossop ice   & integer & 0 \\ \nopagebreak
-if (CCLOUD='LIMA') and (LPTSPLIT=T &multiplication due to && \\ \nopagebreak
-or (LCOLD=T, LSNOW=T and LWARM=T)) &graupel riming&& \\\hline
-
-NWETHSV & wet growth of hail& integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LPTSPLIT=F &&& \\ \nopagebreak
-and LHAIL=T &&& \\\hline
-
-NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
+HENU   & CCN activation              & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+HONH   & haze homogeneous nucleation & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+CEDS   & adjustment to saturation    & LWARM=T \\\hline
+SCAV   & scavenging                  & LSCAV=T \\\hline
 \end{longtable}
 
-\textbf{Concentration of free IFN}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of activated CCN for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NCEDSSV & adjustment & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' &&& \\\hline
-
-NSCAVSV & scavenging & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA' and LSCAV=T &&& \\\hline
-
-NHINDSV & heterogeneous nucleation & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LCOLD=T, &by deposition&& \\ \nopagebreak
-LNUCL=T and LMEYERS=F &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
+HENU   & CCN activation                      & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+HINC   & heterogeneous nucleation by contact & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation            & LWARM=T \\\hline
 \end{longtable}
 
-\textbf{Concentration of homogeneous freezing of CCN}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Scavenged mass variable for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NHONHSV & haze homogeneous  & integer & 0 \\ \nopagebreak
-if CCLOUD='LIMA', LCOLD=T, &nucleation&& \\ \nopagebreak
-LNUCL=T, LWARM=T and LHHONI=T &&& \\\hline
-
-NNEGASV   & negativity correction & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNETURSV  &negativity correction   & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNEADVSV  & negativity correction  & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
-NNECONSV  &negativity correction    & integer  &  0 \\ \nopagebreak
-if CCLOUD='LIMA' &&&\\\hline
+SCAV   & scavenging               & LSCAV=T and LAERO\_MASS=T \\\hline
+CEDS   & adjustment to saturation & LSCAV=T and LAERO\_MASS=T \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of water vapor}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of pristine ice crystals for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NDEPSSV & Deposition on rs& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDEPGSV & Deposition on rg& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NREVASV & drop evaporation & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &&& \\\hline
-
-NDEPISV & adjustment& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
+SEDI   & sedimentation                                  & LCOLD=T and LSEDI=T \\\hline
+HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact            & LCOLD=T and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+AGGS   & aggregation of snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CEDS   & adjustment to saturation                       & no condition \\\hline
+CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of cloud droplets}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of free IFN for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NAUTOSV & autoconversion & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &&& \\\hline
-
-NACCRSV & accretion between  & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &droplet and raindrop&& \\\hline
-
-NRIMSV & riming & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NIMLTSV & Ice MeLTing & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NBERFISV & Bergeron & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDEPISV & adjustment& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NINDSV & induction & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LINDUCTIVE=T &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LSEDIC=T &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
+HIND   & heterogeneous nucleation by deposition & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation               & LCOLD=T \\\hline
+SCAV   & scavenging                             & LSCAV=T \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of rain drops}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Concentration of nucleated IFN for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NAUTOSV & autoconversion & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &&& \\\hline
-
-NACCRSV & accretion between  & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &droplet and raindrop&& \\\hline
-
-NREVASV & drop evaporation & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LWARM=T &&& \\\hline
-
-NACCSV & accretion & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NCFRZSV & Conversion FReeZing & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NGMLTSV & graupel melting& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
+HIND   & heterogeneous nucleation by deposition & LCOLD=T and LNUCL=T and (LMEYERS=F or jsv=NSV\_LIMA\_IFN\_NUCL) \\\hline
+HINC   & heterogeneous nucleation by contact    & LCOLD=T and LNUCL=T and LMEYERS=T and jsv=NSV\_LIMA\_IFN\_NUCL \\\hline
+IMLT   & melting of ice                         & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+CEDS   & adjustment to saturation               & LCOLD=T \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of ice crystals}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+with $jsv$ the scalar variable number.
+
+\paragraph{Concentration of nucleated IMM for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NAGGSSV & aggregation of ice on snow & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NAUTSSV & autoconversion ice snow& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NCFRZSV & Conversion FReeZing & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NIMLTSV & Ice MeLTing & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NBERFISV & Bergeron & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDEPISV & adjustment& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNIISSV & non-inductive I-S & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
+HINC   & heterogeneous nucleation by contact & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation            & LCOLD=T \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of snow}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\paragraph{Homogeneous freezing of CCN for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NDEPSSV & Deposition on rs& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NAGGSSV & aggregation of ice on snow & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NAUTSSV & autoconversion ice snow& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NRIMSV & riming & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NACCSV & accretion & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NCMELSV & conversion-melting & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNIISSV & non-inductive I-S & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
+HONH   & haze homogeneous nucleation & LCOLD=T and LNUCL=T and ( (LHHONI=T and NMOD\_CCN>0) or (LPTSPLIT=F and LWARM=T) ) \\\hline
 \end{longtable}
 
-\textbf{Volumetric charge of graupel}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+
+\subsubsection{Electricity source terms (ICE3 / ICE4 only)}
+
+\paragraph{Common source terms for electricity}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
 \hline
-Fortran name & Meaning & Fortran type & default value \\
+Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NDEPGSV & Deposition on rg& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NRIMSV & riming & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NACCSV & accretion & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NCMELSV & conversion-melting & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NCFRZSV & Conversion FReeZing & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NWETGSV & wet growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NDRYGSV & dry growth of graupel & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NGMLTSV & graupel melting& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NSEDISV & sedimentation& integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NNEUTSV & neutralization & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' &&& \\\hline
-
-NINDSV & induction & integer & 0 \\ \nopagebreak
-if CCLOUD='ICEx' and LINDUCTIVE=T &&& \\\hline
+NEGA   & negativity correction & no condition \\\hline
 \end{longtable}
+
+\paragraph{Volumetric charge of water vapor}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+DRIFT  & ion drift motion               & no condition \\\hline
+CORAY  & cosmic ray source              & no condition \\\hline
+DEPS   & deposition on snow             & no condition \\\hline
+DEPG   & deposition on graupel          & no condition \\\hline
+REVA   & rain evaporation               & LWARM=T      \\\hline
+CDEPI  & condensation/deposition on ice & no condition \\\hline
+NEUT   & neutralization                 & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of cloud droplets}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HON    & homogeneous nucleation         & no condition \\\hline
+AUTO   & autoconversion into rain       & LWARM=T \\\hline
+ACCR   & accretion of cloud droplets    & LWARM=T \\\hline
+RIM    & riming of cloud water          & no condition \\\hline
+WETG   & wet growth of graupel          & no condition \\\hline
+DRYG   & dry growth of graupel          & no condition \\\hline
+INCG   & inductive charge transfer between cloud droplets and graupel & LINDUCTIVE=T \\\hline
+WETH   & wet growth of hail             & CCLOUD='ICE4' \\\hline
+IMLT   & melting of ice                 & no condition \\\hline
+BERFI  & Bergeron-Findeisen             & no condition \\\hline
+SEDI   & sedimentation                  & LSEDIC=T \\\hline
+CDEPI  & condensation/deposition on ice & no condition \\\hline
+NEUT   & neutralization                 & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of rain drops}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SFR    & spontaneous freezing            & no condition \\\hline
+AUTO   & autoconversion into rain        & LWARM=T \\\hline
+ACCR   & accretion of cloud droplets     & LWARM=T \\\hline
+REVA   & rain evaporation                & LWARM=T \\\hline
+ACC    & accretion of rain on aggregates & no condition \\\hline
+CFRZ   & conversion freezing of rain     & no condition \\\hline
+WETG   & wet growth of graupel           & no condition \\\hline
+DRYG   & dry growth of graupel           & no condition \\\hline
+GMLT   & graupel melting                 & no condition \\\hline
+WETH   & wet growth of hail              & CCLOUD='ICE4' \\\hline
+HMLT   & melting of hail                 & CCLOUD='ICE4' \\\hline
+SEDI   & sedimentation                   & no condition \\\hline
+NEUT   & neutralization                  & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of ice crystals}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HON    & homogeneous nucleation         & no condition \\\hline
+AGGS   & aggregation of snow            & no condition \\\hline
+AUTS   & autoconversion of ice          & no condition \\\hline
+CFRZ   & conversion freezing of rain    & no condition \\\hline
+WETG   & wet growth of graupel          & no condition \\\hline
+DRYG   & dry growth of graupel          & no condition \\\hline
+WETH   & wet growth of hail             & CCLOUD='ICE4' \\\hline
+IMLT   & melting of ice                 & no condition \\\hline
+BERFI  & Bergeron-Findeisen             & no condition \\\hline
+NIIS   & non-inductive charge separation due to ice-snow collisions & no condition \\\hline
+SEDI   & sedimentation                  & no condition \\\hline
+CDEPI  & condensation/deposition on ice & no condition \\\hline
+NEUT   & neutralization                 & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of snow}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+DEPS   & deposition on snow        & no condition \\\hline
+AGGS   & aggregation of snow       & no condition \\\hline
+AUTS   & autoconversion of ice     & no condition \\\hline
+RIM    & riming of cloud water     & no condition \\\hline
+ACC    & accretion of rain on snow & no condition \\\hline
+CMEL   & conversion melting        & no condition \\\hline
+WETG   & wet growth of graupel     & no condition \\\hline
+DRYG   & dry growth of graupel     & no condition \\\hline
+NIIS   & non-inductive charge separation due to ice-snow collisions & no condition \\\hline
+WETH   & wet growth of hail        & CCLOUD='ICE4' \\\hline
+SEDI   & sedimentation             & no condition \\\hline
+NEUT   & neutralization            & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of graupel}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SFR    & spontaneous freezing         & no condition \\\hline
+DEPG   & deposition on graupel        & no condition \\\hline
+RIM    & riming of cloud water        & no condition \\\hline
+ACC    & accretion of rain on graupel & no condition \\\hline
+CMEL   & conversion melting           & no condition \\\hline
+CFRZ   & conversion freezing of rain  & no condition \\\hline
+WETG   & wet growth of graupel        & no condition \\\hline
+DRYG   & dry growth of graupel        & no condition \\\hline
+INCG   & inductive charge transfer between cloud droplets and graupel & LINDUCTIVE=T \\\hline
+GMLT   & graupel melting              & no condition \\\hline
+WETH   & wet growth of hail           & CCLOUD='ICE4' \\\hline
+SEDI   & sedimentation                & no condition \\\hline
+NEUT   & neutralization               & no condition \\\hline
+\end{longtable}
+
+\paragraph{Volumetric charge of hail (ICE4 only)}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+WETG   & wet growth of graupel & no condition \\\hline
+WETH   & wet growth of hail    & no condition \\\hline
+HMLT   & melting of hail       & no condition \\\hline
+SEDI   & sedimentation         & no condition \\\hline
+NEUT   & neutralization        & no condition \\\hline
+\end{longtable}
+
+\paragraph{Negative ions}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+DRIFT  & ion drift motion               & no condition \\\hline
+CORAY  & cosmic ray source              & no condition \\\hline
+DEPS   & deposition on snow             & no condition \\\hline
+DEPG   & deposition on graupel          & no condition \\\hline
+REVA   & rain evaporation               & LWARM=T      \\\hline
+CDEPI  & condensation/deposition on ice & no condition \\\hline
+NEUT   & neutralization                 & no condition \\\hline
+\end{longtable}
+
+
+\subsubsection{Chemistry}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+CHEM   & chemistry activity    & no condition \\\hline
+NEGA   & negativity correction & no condition \\\hline
+\end{longtable}
+
+
+\subsubsection{Chemical aerosols}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+NEGA   & negativity correction & no condition \\\hline
+\end{longtable}
+
+
+\subsubsection{Blowing snow}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SNSUB & blowing snow sublimation   & LBLOWSNOW=T and LSNOWSUBL=T \\\hline
+SNSED & blowing snow sedimentation & LBLOWSNOW=T \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_BU\_RTKE (budget for TKE)}
-\index{NAM\_BU\_RTKE!namelist description}
-
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
-\hline
-Fortran name & Meaning & Fortran type & default value \\
-\hline \hline
-\endhead
-LBU\_RTKE & budget flag & logical & FALSE\index{LBU\_RTKE!\innam{NAM\_BU\_RTKE}} \\\hline
-NASSETKE  & time filter (Asselin)   & integer  &  0 \index{NASSETKE!\innam{NAM\_BU\_RTKE}} \\\hline
-NADVTKE (if CTURB='TKEL') & total advection   & integer  &  0 \index{NADVTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NFRCTKE   & forcing           & integer  &  0 \index{NFRCTKE!\innam{NAM\_BU\_RTKE}} \\ \nopagebreak
-(if LFORCING=T) &  &   &   \\\hline
-NDIFTKE   & numerical diffusion & integer  &  0 \index{NDIFTKE!\innam{NAM\_BU\_RTKE}}\\ \nopagebreak
-(if LNUMDIFTH=T) &  &   &   \\\hline
-NRELTKE   & relaxation        & integer  &  0 \index{NRELTKE!\innam{NAM\_BU\_RTKE}}\\ \nopagebreak
-(if LHORELAX\_TKE=T) &  &   &   \\\hline
-NDRAGTKE (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGTKE!\innam{NAM\_BU\_RTKE}} \\\hline
-NDPTKE (if CTURB='TKEL') & dynamic production & integer  &  0 \index{NDPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NTPTKE (if CTURB='TKEL') & thermal production & integer  &  0 \index{NTPTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NDISSTKE (if CTURB='TKEL') & dissipation of TKE & integer  &  0 \index{NDISSTKE!\innam{NAM\_BU\_RTKE}}\\\hline
-NTRTKE (if CTURB='TKEL') & turbulent transport &  integer  &  0 \index{NTRTKE!\innam{NAM\_BU\_RTKE}} \\\hline
-\end{longtable}
-
-%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RTH (budget for TH)}
 \index{NAM\_BU\_RTH!namelist description}
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
 LBU\_RTH & budget flag & logical & FALSE\index{LBU\_RTH!\innam{NAM\_BU\_RTH}} \\\hline
-NASSETH  & time filter (Asselin)   & integer  &  0 \index{NASSETH!\innam{NAM\_BU\_RTH}} \\\hline
-NNESTTH (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTTH!\innam{NAM\_BU\_RTH}} \\\hline
-NVISCTH  & viscosity         & integer  &  0 \index{NVISCTH!\innam{NAM\_BU\_RTH}}\\
-(if LVISC=T and LVISC\_TH) &  &   &   \\\hline
-NADVTH   & total advection   & integer  &  0 \index{NADVTH!\innam{NAM\_BU\_RTH}}\\\hline
-NFRCTH (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCTH!\innam{NAM\_BU\_RTH}} \\\hline
-N2DADVTH   &advective forcing           & integer  &  0 \index{N2DADVTH!\innam{NAM\_BU\_RTH}} \\ \nopagebreak
-(if L2D\_ADV\_FRC=T) &  &   &   \\\hline
-N2DRELTH   & relaxation forcing           & integer  &  0 \index{N2DRLETH!\innam{NAM\_BU\_RTH}} \\ \nopagebreak
-(if L2D\_REL\_FRC=T) &  &   &   \\\hline
-NNUDTH (if LNUDGING=T)  & nudging           & integer  &  0 \index{NNUDTH!\innam{NAM\_BU\_RTH}} \\\hline
-NPREFTH  & reference pressure term  & integer  &  0 \index{NPREFTH!\innam{NAM\_BU\_RTH}} \\ 
-(if L1D=F and number of moist variables > 0) &  &   &   \\\hline
-NDIFTH (if LNUMDIFTH=T)   & numerical diffusion & integer  &  0 \index{NDIFTH!\innam{NAM\_BU\_RTH}}\\\hline
-NRELTH   & relaxation        & integer  &  0 \index{NRELTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
-NRADTH (if CRAD $\neq$ 'NONE')  & radiation           & integer  &  0 \index{NRADTH!\innam{NAM\_BU\_RTH}}\\\hline
-NDCONVTH & KAFR convection          & integer  &  0 \index{NDCONVTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CDCONV='KAFR' or CSCONV='KAFR') &  &   &   \\\hline
-NMAFLTH (if CSCONV='EDKF') & Mass flux & integer  &  0 \index{NMAFLTH!\innam{NAM\_BU\_RTH}} \\\hline
-NHTURBTH (if CTURB='TKEL'& horizontal turbulent & integer  &  0 \index{NHTURBTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-and CTURBDIM='3DIM') & diffusion&   &  \\\hline
-NVTURBTH (if CTURB='TKEL') & vertical turbulent diffusion & integer  &  0 \index{NVTURBTH!\innam{NAM\_BU\_RTH}}\\\hline
-NDISSHTH (if CTURB='TKEL') & dissipation         & integer  &  0 \index{NDISSHTH!\innam{NAM\_BU\_RTH}}\\\hline
-NREVATH & rain evaporation    & integer  &  0 \index{NREVATH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LPTSPLIT=T or (LWARM=T and LRAIN=T))) & & & \\ \nopagebreak
- or (CCLOUD='KESS') & & & \\ \nopagebreak
- or (CCLOUD='ICEx' and LWARM=T) & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and LRAIN=T) ) & & & \\ \hline
-NCONDTH (if CCLOUD='C2R2'  & vapor condensation  or     & integer  &  0 \index{NCONDTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-'KHKO','KESS' or 'REVE')& cloud water  evaporation  &          &    \\\hline
-NHENUTH   & heterogeneous  & integer  &  0 \index{NHENUTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if (CCLOUD='LIMA' and (LWARM=T and LACTI=T)) & nucleation & & \\ \nopagebreak
- or (CCLOUD='ICEx') & & & \\ \nopagebreak
- or (CCLOUD='C2R2' or 'KHKO' and (LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)))) ) & & & \\ \hline
-NHONTH   & homogeneous  & integer  &  0 \index{NHONTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' ) & nucleation&   &  \\\hline
-NSFRTH   & spontaneous freezing& integer  &  0 \index{NSFRTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' ) & &   &  \\\hline
-NDEPSTH  & deposition on snow  & integer  &  0 \index{NDEPSTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
-NDEPGTH  & deposition on graupel & integer  &  0 \index{NDEPGTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NRIMTH   & riming of cloud droplets & integer  &  0 \index{NRIMTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NACCTH   & accretion of rain   & integer  &  0 \index{NACCTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T and LRAIN=T)))) & &   &  \\\hline
-NCFRZTH  & conversion freezing & integer  &  0 \index{NCFRZTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & of rain &   &  \\\hline
-NWETGTH  & wet growth of graupel& integer  &  0 \index{NWETGTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NDRYGTH  & dry growth of graupel& integer  &  0 \index{NDRYGTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NGMLTTH  & graupel melting      & integer  &  0 \index{NGMLTTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and and LWARM=T and LSNOW=T)))) & &   &  \\\hline
-NDRYHTH  & dry growth of hail          & integer  &  0 \index{NDRYHTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE4' and LRED=T) & &   &  \\\hline
-NCORRTH  & correction          & integer  &  0 \index{NCORRTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' and LRED=T) & &   &  \\\hline
-NADJUTH  & adjustment before          & integer  &  0 \index{NADJUTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' and LRED=T and LADJ\_BEFORE=T) & &   &  \\\hline
-NBERFITH  & Bergeron-Findeisen   & integer  &  0 \index{NBERFITH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
-NCDEPITH  & deposition  & integer  &  0 \index{NCDEPITH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' & on ice   & &  \\
-and (LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC $\neq$ 'NONE')  ) & & & \\\hline
-NWETHTH   & wet growth of hail   & integer  &  0 \index{NWETHTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE4') or &  &        &   \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and and LWARM=T and LSNOW=T)   &  &        &   \\\hline
-NHMLTTH   & melting of hail      & integer  &  0 \index{NHMLTTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE4')   &   &       &   \\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=F and LHAIL=T and LCOLD=T and and LWARM=T and LSNOW=T)   &  &        &   \\\hline
-NHINDTH   & heterogeneous & integer  &  0 \index{NHINDTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   &Nucleation by Deposition   &       &   \\\hline
-NHINCTH   & heterogeneous & integer  &  0 \index{NHINCTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T)   & Nucleation by Contact  &       &   \\\hline
-NHONHTH   & haze Homogeneous       & integer  &  0 \index{NHONHTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LNUCL=T and LHHONI=T)   &   Nucleation&       &   \\\hline
-NHONCTH   &  droplet homogeneous      & integer  &  0 \index{NHONCTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LCOLD=T and LWARM=T and LNUCL=T)   &freezing   &       &   \\\hline
-NHONRTH   & drop homogeneous       & integer  &  0 \index{NHONRTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and (LPTSPLIT=T OR (LCOLD=T AND LWARM=T AND LNUCL=T AND LRAIN=T)))   & freezing  &       &   \\\hline
-NCEDSTH   & adjustment      & integer  &  0 \index{NCEDSTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA')   &   &       &   \\\hline
-NSEDITH   &  heat transport & integer  &  0 \index{NSEDITH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='LIMA' and LPTSPLIT=T)   &by hydrometeors sedimentation   &       &   \\\hline
-NIMLTTH   & ice melting      & integer  &  0 \index{NIMLTTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD='ICE3' or 'ICE4' or (CCLOUD='LIMA' and (LPTSPLIT=T or (LCOLD=T and LSNOW=T)))) & &   &  \\\hline
-NNEGATH  & negativity correction & integer  &  0 \index{NNEGATH!\innam{NAM\_BU\_RTH}}\\\hline
-(if CCLOUD $\neq$ 'NONE') & &   &  \\\hline
- NNETURTH  &  negativity correction      & integer  &  0 \index{NNETURTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CTURB='TKEL' and (CCLOUD $\neq$ 'NONE')   &induced by turbulence   &       &   \\\hline
- NNEADVTH  & negativity correction       & integer  &  0 \index{NNEADVTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE')   &induced by advection   &       &   \\\hline
- NNECONTH  & negativity correction       & integer  &  0 \index{NNECONTH!\innam{NAM\_BU\_RTH}}\\ \nopagebreak
-(if CCLOUD $\neq$ 'NONE')   &induced by condensation   &       &   \\\hline
+CBULIST\_RTH & list of source terms & array of character strings & ''\index{CBULIST\_RTH!\innam{NAM\_BU\_RTH}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RTH$ array and the conditions of their availability:
+
+\subsubsection{Source terms (except water microphysical schemes)}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                            \\\hline
+NEST   & nesting                        & NMODEL$>1$                              \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_TH=T                 \\\hline
+ADV    & total advection                & no condition                            \\\hline
+FRC    & forcing                        & LFORCING=T                              \\\hline
+2DADV  & advective forcing              & L2D\_ADV\_FRC=T                         \\\hline
+2DREL  & relaxation forcing             & L2D\_REL\_FRC=T                         \\\hline
+NUD    & nudging                        & LNUDGING=T                              \\\hline
+PREF   & reference pressure             & L1D=F and number of moist variables > 0 \\\hline
+DIF    & numerical diffusion            & LNUMDIFTH=T                             \\\hline
+REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+RAD    & radiation                      & CRAD/='NONE'                            \\\hline
+DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'          \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
+DISSH  & dissipation                    & CTURB='TKEL'                            \\\hline
+MAFL   & mass flux                      & CSCONV='EDKF'                           \\\hline
+SNSUB  & blowing snow sublimation       & LBLOWSNOW=T and LSNOWSUBL=T             \\\hline
+\end{longtable}
+
+\subsubsection{LIMA source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & heat transport by hydrometeors sedimentation  & LPTSPLIT=T \\\hline
+HENU   & heterogeneous nucleation                      & LWARM=T and LACTI=T and NMOD\_CCN>0 \\\hline
+REVA   & rain evaporation                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HIND   & heterogeneous nucleation by deposition        & LCOLD=T and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact           & LCOLD=T and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                   & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                  & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
+DEPS   & deposition on snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+DEPG   & deposition on graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+IMLT   & melting of ice                                & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+BERFI  & Bergeron-Findeisen                            & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+ACC    & accretion of rain on aggregates               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
+CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+CEDS   & adjustment to saturation                      & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{ICE3 / ICE4 source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HENU   & heterogeneous nucleation                      & no condition \\\hline
+REVA   & rain evaporation                              & LWARM=T \\\hline
+HON    & homogeneous nucleation                        & no condition \\\hline
+SFR    & spontaneous freezing                          & no condition \\\hline
+DEPS   & deposition on snow                            & no condition \\\hline
+DEPG   & deposition on graupel                         & no condition \\\hline
+IMLT   & melting of ice                                & no condition \\\hline
+BERFI  & Bergeron-Findeisen                            & no condition \\\hline
+RIM    & riming of cloud water                         & no condition \\\hline
+ACC    & accretion of rain on aggregates               & no condition \\\hline
+CFRZ   & conversion freezing of rain                   & no condition \\\hline
+WETG   & wet growth of graupel                         & no condition \\\hline
+DRYG   & dry growth of graupel                         & no condition \\\hline
+GMLT   & graupel melting                               & no condition \\\hline
+WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
+DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
+HMLT   & melting of hail                               & CCLOUD='ICE4' \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+CDEPI  & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+\end{longtable}
+
+\subsubsection{C2R2 / KHKO source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+HENU   & heterogeneous nucleation                      & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
+REVA   & rain evaporation                              & LRAIN=T \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{KESS source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+REVA   & rain evaporation                              & no condition \\\hline
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
+\end{longtable}
+
+\subsubsection{REVE source terms}
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+COND   & vapor condensation or cloud water evaporation & no condition \\\hline
+\end{longtable}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BU\_RTKE (budget for TKE)}
+\index{NAM\_BU\_RTKE!namelist description}
+
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
+\hline
+Fortran name & Meaning & Fortran type & default value \\
+\hline \hline
+\endhead
+LBU\_RTKE & budget flag & logical & FALSE\index{LBU\_RTKE!\innam{NAM\_BU\_RTKE}} \\\hline
+CBULIST\_RTKE & list of source terms & array of character strings & ''\index{CBULIST\_RTKE!\innam{NAM\_BU\_RTKE}} \\\hline
+\end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RTKE$ array and the conditions of their availability:
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)        & no condition    \\\hline
+ADV    & total advection              & no condition    \\\hline
+FRC    & forcing                      & LFORCING=T      \\\hline
+DIF    & numerical diffusion          & LNUMDIFTH=T     \\\hline
+REL    & relaxation                   & LHORELAX\_TKE=T \\\hline
+DRAG   & drag force                   & LDRAGTREE       \\\hline
+DRAGB  & drag force due to buildings  & LDRAGBLDG       \\\hline
+DP     & dynamic production           & no condition    \\\hline
+TP     & thermal production           & no condition    \\\hline
+DISS   & dissipation of TKE           & no condition    \\\hline
+TR     & turbulent transport          & no condition    \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RU (budget for U)}
 \index{NAM\_BU\_RU!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-LBU\_RU  & budget flag & logical & FALSE  \index{LBU\_RU!\innam{NAM\_BU\_RU}}\\\hline
-NASSEU   & time filter (Asselin) & integer  &  0  \index{NASSEU!\innam{NAM\_BU\_RU}} \\\hline
-NNESTU (if NMODEL$>1$)   & nesting           & integer  &  0 \index{NNESTU!\innam{NAM\_BU\_RU}} \\\hline
-NVISCU   & viscosity         & integer  &  0 \index{NVISCU!\innam{NAM\_BU\_RU}}\\
-(if LVISC=T and LVISC\_UVW) &  &   &   \\\hline
-NADVU   & advection  & integer  &  0 \index{NADVU!\innam{NAM\_BU\_RU}} \\\hline
-NFRCU (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCU!\innam{NAM\_BU\_RU}} \\\hline
-NNUDU  (if LNUDGING=T)  & nudging           & integer  &  0 \index{NNUDU!\innam{NAM\_BU\_RU}} \\\hline
-NCURVU (if LCARTESIAN=F and L1D=F) & curvature terms   & integer  &  0 \index{NCURVU!\innam{NAM\_BU\_RU}} \\\hline
-NCORU (if LCORIO=T ) & Coriolis  term    & integer  &  0 \index{NCORU!\innam{NAM\_BU\_RU}}\\\hline
-NDIFU (if LNUMDIFU=T) & numerical diffusion & integer  &  0 \index{NDIFU!\innam{NAM\_BU\_RU}} \\\hline
-NRELU (if LHORELAX\_UVWTH=T & relaxation  & integer  &  0 \index{NRELU!\innam{NAM\_BU\_RU}} \\ \nopagebreak
- or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
-NDRAGU (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGU!\innam{NAM\_BU\_RU}} \\\hline
-NVTURBU (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBU!\innam{NAM\_BU\_RU}}\\\hline
-NHTURBU & horizontal turbulent  & integer  &  0 \index{NHTURBU!\innam{NAM\_BU\_RU}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NPRESU   & pressure term       & integer  &  0    \index{NPRESU!\innam{NAM\_BU\_RU}} \\\hline
-NMAFLU (if CSCONV='EDKF')  & mass flux        & integer  &  0 \index{NMAFLU!\innam{NAM\_BU\_RU}}\\\hline
+LBU\_RU & budget flag & logical & FALSE\index{LBU\_RU!\innam{NAM\_BU\_RU}} \\\hline
+CBULIST\_RU & list of source terms & array of character strings & ''\index{CBULIST\_RU!\innam{NAM\_BU\_RU}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RU$ array and the conditions of their availability:
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+NUD    & nudging                        & LNUDGING=T                       \\\hline
+CURV   & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
+COR    & Coriolis                       & LCORIO=T                         \\\hline
+DIF    & numerical diffusion            & LNUMDIFU=T                       \\\hline
+REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+DRAG   & drag force                   & LDRAGTREE                          \\\hline
+DRAGB  & drag force due to buildings  & LDRAGBLDG                          \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
+PRES   & pressure                       & no condition                     \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RV (budget for V)}
 \index{NAM\_BU\_RV!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-LBU\_RV  & budget flag & logical & FALSE \index{LBU\_RV!\innam{NAM\_BU\_RV}}\\\hline
-NASSEV   & time filter (Asselin)   & integer  &  0 \index{NASSEV!\innam{NAM\_BU\_RV}} \\\hline
-NNESTV (if NMODEL$>1$)  & nesting           & integer  &  0 \index{NNESTV!\innam{NAM\_BU\_RV}} \\\hline
-NVISCV   & viscosity         & integer  &  0 \index{NVISCV!\innam{NAM\_BU\_RV}}\\
-(if LVISC=T and LVISC\_UVW) &  &   &   \\\hline
-NADVV   & advection  & integer  &  0  \index{NADVV!\innam{NAM\_BU\_RV}}\\\hline
-NFRCV (if LFORCING=T)  & forcing           & integer  &  0 \index{NFRCV!\innam{NAM\_BU\_RV}} \\\hline
-NNUDV (if LNUDGING=T)   & nudging           & integer  &  0 \index{NNUDV!\innam{NAM\_BU\_RV}} \\\hline
-NCURVV (if LCARTESIAN=F and L1D=F)  & curvature terms   & integer  &  0 \index{NCURVV!\innam{NAM\_BU\_RV}}\\\hline
-NCORV (if LCORIO=T )   & Coriolis  term    & integer  &  0 \index{NCORV!\innam{NAM\_BU\_RV}}\\\hline
-NDIFV (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFV!\innam{NAM\_BU\_RV}}\\\hline
-NRELV  (if LHORELAX\_UVWTH=T  & relaxation & integer  &  0 \index{NRELV!\innam{NAM\_BU\_RV}}\\ \nopagebreak
-or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
-NDRAGV (if LDRAGTREE=T) & drag of trees & integer  &  0 \index{NDRAGV!\innam{NAM\_BU\_RV}} \\\hline
-NHTURBV  & horizontal turbulent & integer  &  0 \index{NHTURBV!\innam{NAM\_BU\_RV}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBV (if CTURB='TKEL' ) & vertical turbulent diffusion & integer  &  0 \index{NVTURBV!\innam{NAM\_BU\_RV}}\\\hline
-NPRESV   & pressure term       & integer  &  0 \index{NPRESV!\innam{NAM\_BU\_RV}}    \\\hline
-NMAFLV (if CSCONV='EDKF')   & mass flux        & integer  &  0 \index{NMAFLV!\innam{NAM\_BU\_RV}}\\\hline
+LBU\_RV & budget flag & logical & FALSE\index{LBU\_RV!\innam{NAM\_BU\_RV}} \\\hline
+CBULIST\_RV & list of source terms & array of character strings & ''\index{CBULIST\_RV!\innam{NAM\_BU\_RV}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RV$ array and the conditions of their availability:
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                     \\\hline
+NEST   & nesting                        & NMODEL$>1$                       \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
+ADV    & total advection                & no condition                     \\\hline
+FRC    & forcing                        & LFORCING=T                       \\\hline
+NUD    & nudging                        & LNUDGING=T                       \\\hline
+CURV   & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
+COR    & Coriolis                       & LCORIO=T                         \\\hline
+DIF    & numerical diffusion            & LNUMDIFU=T                       \\\hline
+REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+DRAG   & drag force                   & LDRAGTREE                          \\\hline
+DRAGB  & drag force due to buildings  & LDRAGBLDG                          \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
+PRES   & pressure                       & no condition                     \\\hline
+\end{longtable}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BU\_RW (budget for W)}
 \index{NAM\_BU\_RW!namelist description}
 
-\begin{longtable} {|p{.5\textwidth}|p{.25\textwidth}|>{\centering}p{.08\textwidth}|p{.08\textwidth}<{\centering}|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|>{\centering}p{.3\textwidth}|p{.21\textwidth}<{\centering}|}
 \hline
 Fortran name & Meaning & Fortran type & default value \\
 \hline \hline
 \endhead
-LBU\_RW  & budget flag & logical & FALSE\index{LBU\_RW!\innam{NAM\_BU\_RW}} \\\hline
-NASSEW   & time filter (Asselin)   & integer  &  0 \index{NASSEW!\innam{NAM\_BU\_RW}} \\\hline
-NNESTW (if NMODEL$>1$) & nesting           & integer  &  0 \index{NNESTW!\innam{NAM\_BU\_RW}} \\\hline
-NVISCW   & viscosity         & integer  &  0 \index{NVISCW!\innam{NAM\_BU\_RW}}\\
-(if LVISC=T and LVISC\_UVW) &  &   &   \\\hline
-NADVW   & advection & integer  &  0 \index{NADVW!\innam{NAM\_BU\_RW}}\\\hline
-NFRCW (if LFORCING=T)   & forcing           & integer  &  0 \index{NFRCW!\innam{NAM\_BU\_RW}} \\\hline
-NNUDW (if LNUDGING=T)   & nudging           & integer  &  0 \index{NNUDW!\innam{NAM\_BU\_RW}} \\\hline
-NCURVW (if LCARTESIAN=F and L1D=F and LTHINSHELL=F) & curvature terms   & integer  &  0 \index{NCURVW!\innam{NAM\_BU\_RW}}\\\hline
-NCORW (if LCORIO=T and L1D=F and LTHINSHELL=F) & Coriolis  term    & integer  &  0 \index{NCORW!\innam{NAM\_BU\_RW}}\\\hline
-NGRAVW   & gravity  term     & integer  &  0 \index{NGRAVW!\innam{NAM\_BU\_RW}}\\\hline
-NDIFW (if LNUMDIFU=T)   & numerical diffusion & integer  &  0 \index{NDIFW!\innam{NAM\_BU\_RW}}\\\hline
-NRELW    & relaxation        & integer  &  0 \index{NRELW!\innam{NAM\_BU\_RW}}\\ \nopagebreak
-(if LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T) &  &   &   \\\hline
-NHTURBW  & horizontal turbulent & integer  &  0 \index{NHTURBW!\innam{NAM\_BU\_RW}}\\ \nopagebreak
-(if CTURB='TKEL' and CTURBDIM='3DIM') &diffusion &   &  \\\hline
-NVTURBW (if CTURB='TKEL' )  & vertical turbulent diffusion & integer  &  0 \index{NVTURBW!\innam{NAM\_BU\_RW}}\\\hline
-NPRESW   & pressure term       & integer  &  0 \index{NPRESW!\innam{NAM\_BU\_RW}}  \\\hline
+LBU\_RW & budget flag & logical & FALSE\index{LBU\_RW!\innam{NAM\_BU\_RW}} \\\hline
+CBULIST\_RW & list of source terms & array of character strings & ''\index{CBULIST\_RW!\innam{NAM\_BU\_RW}} \\\hline
 \end{longtable}
+
+Description of the names to be used for the different source terms in the $CBULIST\_RW$ array and the conditions of their availability:
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+ALL    & all available source terms (separated) & no condition \\\hline \hline
+ASSE   & time filter (Asselin)          & no condition                            \\\hline
+NEST   & nesting                        & NMODEL$>1$                              \\\hline
+VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T                \\\hline
+ADV    & total advection                & no condition                            \\\hline
+FRC    & forcing                        & LFORCING=T                              \\\hline
+NUD    & nudging                        & LNUDGING=T                              \\\hline
+CURV   & curvature                      & L1D=F and LCARTESIAN=F and LTHINSHELL=F \\\hline
+COR    & Coriolis                       & LCORIO=T and LTHINSHELL=F               \\\hline
+DIF    & numerical diffusion            & LNUMDIFU=T                              \\\hline
+REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
+GRAV   & gravity                        & no condition                            \\\hline
+PRES   & pressure                       & no condition                            \\\hline
+\end{longtable}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
