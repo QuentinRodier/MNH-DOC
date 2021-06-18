@@ -82,6 +82,8 @@ vertical profiles are written under the name 'H\_NAME' (fieldname prefixed by 'H
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged fields (LLES\_MEAN=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.24\textwidth}|p{.18\textwidth}|p{.07\textwidth}|p{.03\textwidth}|p{.33\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -122,6 +124,7 @@ $<\sqrt{\overline{u}^2+\overline{v}^2}>$ & MEANWIND & z,t,p &  & Mean Modulus of
 \hline
 $<\overline{\rho} \;{\rm max}(\overline{w},<w>) >$  & MEANMSFX & z,t,p & & Total updraft mass flux \\\hline
 \end{longtable}
+\endgroup
 
 Notes: dimension $p$ is equal to the number of masks. When this dimension is not present, the computation is made only on the cartesian mask. Dimension $n$ corresponds to the number of scalar variables.
 
@@ -129,6 +132,8 @@ Notes: dimension $p$ is equal to the number of masks. When this dimension is not
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES pdf (LLES\_PDF=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.24\textwidth}|p{.18\textwidth}|p{.07\textwidth}|p{.03\textwidth}|p{.33\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -146,6 +151,7 @@ $PDF\_R_i$      & PDF\_RI  & z,t,p,n &   & Pdf Ri \\\hline
 $PDF\_R_s$      & PDF\_RS  & z,t,p,n &   & Pdf Rs \\\hline
 $PDF\_R_g$      & PDF\_RG  & z,t,p,n &   & Pdf Rg\\\hline
 \end{longtable}
+\endgroup
 
 Notes: dimension $p$ is equal to the number of masks. When this dimension is not present, the computation is made only on the cartesian mask. Dimension $n$ corresponds to the number of PDF intervals.
 
@@ -153,6 +159,8 @@ Notes: dimension $p$ is equal to the number of masks. When this dimension is not
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged fields (LLES\_RESOLVED=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.27\textwidth}|p{.16\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.33\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -256,12 +264,15 @@ $<\tilde{u}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES
 $<\tilde{v}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES\_VKE & z,t,p &   & Resolved flux of resolved kinetic energy \\\hline
 $<\tilde{w}\left[\frac{1}{2}(\tilde{u}^2+\tilde{v}^2+\tilde{w}^2)\right]>$ & RES\_WKE & z,t,p &   & Resolved flux of resolved kinetic energy \\\hline
 \end{longtable}
+\endgroup
 
 Notes: dimension $p$ is equal to the number of masks. When this dimension is not present, the computation is made only on the cartesian mask. Dimension $n$ corresponds to the number of scalar variables. $r_t$ is total water ($r_v+r_c+r_r+r_i+r_s+r_g+r_h$).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged fields (LLES\_SUBGRID=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.33\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.3\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -320,6 +331,7 @@ $<\overline{w'\theta'_v}_{Mass Flux}>$       & WTHV\_MF  & z,t,p   &        & Su
 $<\overline{w'u'}_{Mass Flux}>$              & WU\_MF    & z,t,p   &        & Subgrid <wu> of mass flux convection scheme \\\hline
 $<\overline{w'v'}_{Mass Flux}>$              & WV\_MF    & z,t,p   &        & Subgrid <wv> of mass flux convection scheme \\\hline
 \end{longtable}
+\endgroup
 
 Notes: dimension $p$ is equal to the number of masks. When this dimension is not present, the computation is made only on the cartesian mask. Dimension $n$ corresponds to the number of scalar variables. $r_t$ is total water ($r_v+r_c+r_r+r_i+r_s+r_g+r_h$).
 
@@ -327,6 +339,8 @@ Notes: dimension $p$ is equal to the number of masks. When this dimension is not
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged fields (LLES\_UPDRAFT=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.24\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.37\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -375,6 +389,7 @@ $<{\tilde{\theta_l}\;\tilde{s_v}}>_{up}$      & UP\_THLSV & z,t,n & $s_v$, $r_c$
 $<{\tilde{\theta_v}\;\tilde{s_v}}>_{up}$      & UP\_THVSV & z,t,n & $s_v$, $r_v$ & Updraft resolved <ThvSv> variance \\\hline
 $<{\tilde{w}\;\tilde{s_v}}>_{up}$             & UP\_WSV   & z,t,n & $s_v$ & Updraft resolved <wSv> vertical flux \\\hline
 \end{longtable}
+\endgroup
 
 Note: all computations are made only on the cartesian mask. Dimension $n$ corresponds to the number of scalar variables.
 
@@ -382,6 +397,8 @@ Note: all computations are made only on the cartesian mask. Dimension $n$ corres
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged fields (LLES\_DOWNDRAFT=TRUE)}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.24\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.37\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -430,6 +447,7 @@ $<{\tilde{\theta_l}\;\tilde{s_v}}>_{dw}$      & DW\_THLSV & z,t,n & $s_v$, $r_c$
 $<{\tilde{\theta_v}\;\tilde{s_v}}>_{dw}$      & DW\_THVSV & z,t,n & $s_v$, $r_v$ & Downdraft resolved <ThvSv> variance \\\hline
 $<{\tilde{w}\;\tilde{s_v}}>_{dw}$             & DW\_WSV   & z,t,n & $s_v$ & Downdraft resolved <wSv> vertical flux \\\hline
 \end{longtable}
+\endgroup
 
 Note: all computations are made only on the cartesian mask. Dimension $n$ corresponds to the number of scalar variables.
 
@@ -437,6 +455,8 @@ Note: all computations are made only on the cartesian mask. Dimension $n$ corres
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES averaged surface fields}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.36\textwidth}|p{.15\textwidth}|p{.04\textwidth}|p{.02\textwidth}|p{.28\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -469,6 +489,7 @@ $ACPRR$                         & ACCU\_PREC  & t   & $r_r$ & Accumulated precip
 $H_CFmax$                       & ZMAXCF      & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-6) \\\hline
 $H_CFmax2$                      & ZMAXCF2     & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-5) \\\hline
 \end{longtable}
+\endgroup
 
 Note: dimension $n$ corresponds to the number of scalar variables.
 
@@ -476,6 +497,8 @@ Note: dimension $n$ corresponds to the number of scalar variables.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Other LES averaged fields}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.24\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.37\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -489,11 +512,14 @@ $dthrad_{sw}$         & DTHRADSW & z,t,p & & SW radiative temperature tendency  
 $dthrad_{lw}$         & DTHRADLW & z,t,p & & LW radiative temperature tendency  \\\hline
 Mean Effective Radius & RADEFF   & z,t,p & & Mean effective radius  \\\hline
 \end{longtable}
+\endgroup
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES 2 points correlations}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.3\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.05\textwidth}|p{.29\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -548,6 +574,7 @@ $<\tilde{s_v}(x,y)\;\tilde{s_v}(x,y+l_y)>$           & CJ\_SSjsv & $l_y$,z,t & $
 $<\tilde{w}(x,y)\;\tilde{s_v}(x+l_x,y)>$             & CI\_WSjsv & $l_x$,z,t & $s_v$       & \\\hline
 $<\tilde{w}(x,y)\;\tilde{s_v}(x,y+l_y)>$             & CJ\_WSjsv & $l_y$,z,t & $s_v$       & \\\hline
 \end{longtable}
+\endgroup
 
 Note: $jsv$ stands for the number of the scalar variable (written with 3 characters, for example 025).
 
@@ -555,6 +582,8 @@ Note: $jsv$ stands for the number of the scalar variable (written with 3 charact
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LES spectra}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.45\textwidth}|p{.15\textwidth}|p{.08\textwidth}|p{.05\textwidth}|p{.12\textwidth}|}
 \hline
 Field & Notation in the diachronic file & Dims & If  & Comments \\
@@ -607,6 +636,7 @@ $\frac{1}{2\pi L}\int_L<\tilde{s_v}(x,y)\;\tilde{s_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_
 $\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{s_v}(x+l_x,y)>\;e^{-ik_xl_x}dl_x$             & SI\_WSjsv & $k_x$,z,t,2 & $s_v$ & \\\hline
 $\frac{1}{2\pi L}\int_L<\tilde{w}(x,y)\;\tilde{s_v}(x,y+l_y)>\;e^{-ik_yl_y}dl_y$             & SJ\_WSjsv & $k_y$,z,t,2 & $s_v$ & \\\hline
 \end{longtable}
+\endgroup
 
 Notes: dimension 2 is for real and imaginary parts. $jsv$ stands for the number of the scalar variable (written with 3 characters, for example 025).
 
@@ -690,6 +720,8 @@ the subgrid-scale model to equilibrate the sink at resolved scale.
 
 
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -728,6 +760,7 @@ $- <\tilde{u_\alpha}\frac{\partial}{\partial x_\beta}\overline{u'_\alpha u'_\bet
 {\rm miscellaneous}                            & RES\_MISC & z,t & other effects (curvature terms\ldots) \\\hline
 {\rm residual of budget of} $<E>$              & RES\_RESI & z,t & must be zero \\\hline
 \end{longtable}
+\endgroup
 
 Note that if a term is zero because the process accounting for it is
 not activated in the model, the term is not listed in the diachronic file.
@@ -767,6 +800,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -801,6 +836,7 @@ $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'\theta_l'}>$  &
 terms due to $\overline{w}$ gradients                             & NSG\_DPGW  & z,t & (neglected) dyn. prod. terms \\\hline
 terms due to hor. $\overline{\theta_l}$ gradients                 & NSG\_DPGT  & z,t & other (neglected) dyn. prod. terms\\\hline
 \end{longtable}
+\endgroup
 
 
 \subsection{Budget of total (liquid) temperature variance}
@@ -830,6 +866,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -858,6 +896,7 @@ $-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ (neglected in turb. sche
 $-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$                & NSG\_ADVM  & z,t & (neglected) advection by mean flow \\\hline
 $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$ & NSG\_ADVR & z,t & (neglected) advection by resolved flow \\\hline
 \end{longtable}
+\endgroup
 
 
 
@@ -894,6 +933,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -928,6 +969,7 @@ $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'r_t'}>$  & NSG\
 terms due to $\overline{w}$ gradients                                & NSG\_DPGW & z,t & (neglected) dyn. prod. terms \\\hline
 terms due to hor. $\overline{r_t}$ gradients                         & NSG\_DPGT & z,t & other (neglected) dyn. prod. terms \\\hline
 \end{longtable}
+\endgroup
 
 
 \subsection{Budget of liquid temperature - total water covariance}
@@ -961,6 +1003,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -989,6 +1033,7 @@ $-\frac{\partial }{\partial t}<\overline{\theta_l'r_t'}>$ (neglected in turb. sc
 $-<w>\frac{\partial}{\partial z}<\overline{\theta_l'r_t'}>$         & NSG\_ADVM & z,t & (neglected) advection by mean flow \\\hline
 $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'r_t'}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow \\\hline
 \end{longtable}
+\endgroup
 
 
 \subsection{Budget of total water variance}
@@ -1018,6 +1063,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -1046,6 +1093,7 @@ $-\frac{\partial }{\partial t}<\overline{r_t'^2}>$ (neglected in turb. scheme) &
 $-<w>\frac{\partial}{\partial z}<\overline{r_t'^2}>$                   & NSG\_ADVM  & z,t & (neglected) advection by mean flow\\\hline
 $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{r_t'^2}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow\\\hline
 \end{longtable}
+\endgroup
 
 
 \subsection{Budget of total scalar flux}
@@ -1088,6 +1136,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -1122,6 +1172,7 @@ $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w's_v'}>$ & NSG\_
 terms due to $\overline{w}$ gradients                                   & NSG\_DPGW  & z,t,n & (neglected) dyn. prod. terms \\\hline
 terms due to hor. $\overline{s_v}$ gradients                            & NSG\_DPGT  & z,t,n & other (neglected) dyn. prod. terms\\\hline
 \end{longtable}
+\endgroup
 
 
 \subsection{Budget of total scalar variance}
@@ -1151,6 +1202,8 @@ All comments made for the total Tke equation are valid here.\\
 \right.
 \end{displaymath}
 
+\begingroup
+\renewcommand\arraystretch{1.5}
 \begin{longtable}[c]{|p{.32\textwidth}|p{.14\textwidth}|p{.05\textwidth}|p{.4\textwidth}|}
 \hline
 Field & Process name & Dims & Comments \\
@@ -1179,3 +1232,4 @@ $-\frac{\partial }{\partial t}<\overline{s_v'^2}>$ (neglected in turb. scheme) &
 $-<w>\frac{\partial}{\partial z}<\overline{s_v'^2}>$               & NSG\_ADVM  & z,t,n & (neglected) advection by mean flow\\\hline
 $-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{s_v'^2}>$  & NSG\_ADVR & z,t,n & (neglected) advection by resolved flow\\\hline
 \end{longtable}
+\endgroup
