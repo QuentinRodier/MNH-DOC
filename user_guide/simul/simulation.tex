@@ -1896,23 +1896,24 @@ Description of the names to be used for the different source terms in the $CBULI
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ALL    & all available source terms (separated) & no condition \\\hline \hline
-ASSE   & time filter (Asselin)          & no condition                     \\\hline
-NEST   & nesting                        & NMODEL$>1$                       \\\hline
-VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
-ADV    & total advection                & no condition                     \\\hline
-FRC    & forcing                        & LFORCING=T                       \\\hline
-NUD    & nudging                        & LNUDGING=T                       \\\hline
-CURV   & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
-COR    & Coriolis                       & LCORIO=T                         \\\hline
-DIF    & numerical diffusion            & LNUMDIFU=T                       \\\hline
-REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
-DRAG   & drag force                   & LDRAGTREE                          \\\hline
-DRAGB  & drag force due to buildings  & LDRAGBLDG                          \\\hline
-HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
-VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
-MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
-PRES   & pressure                       & no condition                     \\\hline
+ALL     & all available source terms (separated) & no condition \\\hline \hline
+ASSE    & time filter (Asselin)          & no condition                     \\\hline
+NEST    & nesting                        & NMODEL$>1$                       \\\hline
+VISC    & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
+ADV     & total advection                & no condition                     \\\hline
+FRC     & forcing                        & LFORCING=T                       \\\hline
+NUD     & nudging                        & LNUDGING=T                       \\\hline
+CURV    & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
+COR     & Coriolis                       & LCORIO=T                         \\\hline
+DIF     & numerical diffusion            & LNUMDIFU=T                       \\\hline
+REL     & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+DRAG    & drag force                     & LDRAGTREE=T                      \\\hline
+DRAGEOL & drag force due to wind turbine & LMAIN\_EOL=T                     \\\hline
+DRAGB   & drag force due to buildings    & LDRAGBLDG=T                      \\\hline
+HTURB   & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB   & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL    & mass flux                      & CSCONV='EDKF'                    \\\hline
+PRES    & pressure                       & no condition                     \\\hline
 \end{longtable}
 
 
@@ -1936,23 +1937,24 @@ Description of the names to be used for the different source terms in the $CBULI
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ALL    & all available source terms (separated) & no condition \\\hline \hline
-ASSE   & time filter (Asselin)          & no condition                     \\\hline
-NEST   & nesting                        & NMODEL$>1$                       \\\hline
-VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
-ADV    & total advection                & no condition                     \\\hline
-FRC    & forcing                        & LFORCING=T                       \\\hline
-NUD    & nudging                        & LNUDGING=T                       \\\hline
-CURV   & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
-COR    & Coriolis                       & LCORIO=T                         \\\hline
-DIF    & numerical diffusion            & LNUMDIFU=T                       \\\hline
-REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
-DRAG   & drag force                   & LDRAGTREE                          \\\hline
-DRAGB  & drag force due to buildings  & LDRAGBLDG                          \\\hline
-HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
-VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
-MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
-PRES   & pressure                       & no condition                     \\\hline
+ALL     & all available source terms (separated) & no condition \\\hline \hline
+ASSE    & time filter (Asselin)          & no condition                     \\\hline
+NEST    & nesting                        & NMODEL$>1$                       \\\hline
+VISC    & viscosity                      & LVISC=T and LVISC\_UVW=T         \\\hline
+ADV     & total advection                & no condition                     \\\hline
+FRC     & forcing                        & LFORCING=T                       \\\hline
+NUD     & nudging                        & LNUDGING=T                       \\\hline
+CURV    & curvature                      & L1D=F and LCARTESIAN=F           \\\hline
+COR     & Coriolis                       & LCORIO=T                         \\\hline
+DIF     & numerical diffusion            & LNUMDIFU=T                       \\\hline
+REL     & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+DRAG    & drag force                     & LDRAGTREE=T                      \\\hline
+DRAGEOL & drag force due to wind turbine & LMAIN\_EOL=T                     \\\hline
+DRAGB   & drag force due to buildings    & LDRAGBLDG=T                      \\\hline
+HTURB   & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
+VTURB   & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+MAFL    & mass flux                      & CSCONV='EDKF'                    \\\hline
+PRES    & pressure                       & no condition                     \\\hline
 \end{longtable}
 
 
@@ -1976,21 +1978,22 @@ Description of the names to be used for the different source terms in the $CBULI
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ALL    & all available source terms (separated) & no condition \\\hline \hline
-ASSE   & time filter (Asselin)          & no condition                            \\\hline
-NEST   & nesting                        & NMODEL$>1$                              \\\hline
-VISC   & viscosity                      & LVISC=T and LVISC\_UVW=T                \\\hline
-ADV    & total advection                & no condition                            \\\hline
-FRC    & forcing                        & LFORCING=T                              \\\hline
-NUD    & nudging                        & LNUDGING=T                              \\\hline
-CURV   & curvature                      & L1D=F and LCARTESIAN=F and LTHINSHELL=F \\\hline
-COR    & Coriolis                       & LCORIO=T and LTHINSHELL=F               \\\hline
-DIF    & numerical diffusion            & LNUMDIFU=T                              \\\hline
-REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
-HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
-VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
-GRAV   & gravity                        & no condition                            \\\hline
-PRES   & pressure                       & no condition                            \\\hline
+ALL     & all available source terms (separated) & no condition \\\hline \hline
+ASSE    & time filter (Asselin)          & no condition                            \\\hline
+NEST    & nesting                        & NMODEL$>1$                              \\\hline
+VISC    & viscosity                      & LVISC=T and LVISC\_UVW=T                \\\hline
+ADV     & total advection                & no condition                            \\\hline
+FRC     & forcing                        & LFORCING=T                              \\\hline
+NUD     & nudging                        & LNUDGING=T                              \\\hline
+CURV    & curvature                      & L1D=F and LCARTESIAN=F and LTHINSHELL=F \\\hline
+COR     & Coriolis                       & LCORIO=T and LTHINSHELL=F               \\\hline
+DIF     & numerical diffusion            & LNUMDIFU=T                              \\\hline
+REL     & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
+HTURB   & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
+VTURB   & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
+GRAV    & gravity                        & no condition                            \\\hline
+PRES    & pressure                       & no condition                            \\\hline
+DRAGEOL & drag force due to wind turbine & LMAIN\_EOL=T                            \\\hline
 \end{longtable}
 
 
