@@ -1715,6 +1715,7 @@ ALL    & all available source terms (separated,  water microphysics included) & 
 ASSE   & time filter (Asselin)          & no condition                            \\\hline
 NEST   & nesting                        & NMODEL$>1$                              \\\hline
 VISC   & viscosity                      & LVISC=T and LVISC\_TH=T                 \\\hline
+OCEAN  & radiative tendency due to SW penetrating ocean & LOCEAN .AND. (.NOT. LCOUPLES) \\\hline
 ADV    & total advection                & no condition                            \\\hline
 FRC    & forcing                        & LFORCING=T                              \\\hline
 2DADV  & advective forcing              & L2D\_ADV\_FRC=T                         \\\hline
