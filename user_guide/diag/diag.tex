@@ -873,11 +873,9 @@ A comparison between model outputs and satellite observations provides an assess
 \end{tabular} 
 \end{center}
 \vspace{0.5cm}
- Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available
-allowing the calculation of BT for a large number of satellites. {\bf \Large The use of RTTOV is highly recommended to compute brightness temperature.} The code is available in version 8.7 and since the Masdev5\_3 in version 11.3.\\
-
-The RTTOV package was not included into the open source version of Meso-NH because it needs a licence agrement.
-{\bf In order to use it you have to follow the instruction in A-INSTALL file to compile MESO-NH with RRTOV.}   
+ {\bf The use of RTTOV is highly recommended to compute satellite BTs.} Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available allowing the calculation of BT for a large number of satellites, but only for registered users.
+ 
+Since RTTOV requires a license agreement, no RTTOV package is included in the open source version of Meso-NH. However, a subroutine calling RTTOV 11.3 is included in Meso-NH version Masdev5\_3 and another one calling RTTOV 13.0 is included in Meso-NH Masdev5\_4~BUG5. {\bf To use RTTOV, you must follow the instructions in the A-INSTALL file to compile MESO-NH with RTTOV.}   
 
 \begin{center}
 \begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
@@ -910,8 +908,24 @@ For example, to simulate both all the SEVIRI channels of MSG-2 and all the AMSU-
 \begin{verbatim}
 &NAM_DIAG NRTTOVinfo(:,1)= 12 2 21 0, NRTTOVinfo(:,2)= 1 16 4 0 /
 \end{verbatim}
-For this specific choice, you need to have three files:
-{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat}.
+For this specific choice, you need to have:
+\begin{itemize}
+\item{three files (RTTOV version 8.7)}:
+{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat};
+\item{four files (RTTOV version 11.3)}:
+{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt sccldcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat}. These files can be found in directories {\tt rttov7pred54L}, {\tt cldaer} and {\tt mietable} (or to be downloaded from the RTTOV web site};
+\item{four files (RTTOV version 13.0)}:
+{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt sccldcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt hydrotable\_noaa\_amsub.dat}. The AMSU-B coefficient files can be found in directories {\tt rttov13pred54L} and {\tt hydrotable} (or to be downloaded from the RTTOV web site}. The MSG-2 coefficient files are aliased following:\\
+~\\
+\underline{for IR only calculation}, do:\\
+{\tt ln -sf []/rttov13pred54L/rtcoef\_msg\_2\_seviri\_7gas\_ironly.dat rtcoef\_msg\_2\_seviri.dat}\\
+{\tt ln -sf []/cldaer\_ir/sccldcoef\_msg\_2\_seviri\_ironly.dat sccldcoef\_msg\_2\_seviri.dat};\\
+~\\
+\underline{for visible and IR calculation}, do:\\
+{\tt ln -sf []/rttov13pred54L/rtcoef\_msg\_2\_seviri\_o3co2.dat rtcoef\_msg\_2\_seviri.dat}\\
+{\tt ln -sf []/cldaer\_visir/sccldcoef\_msg\_2\_seviri.dat .}\\
+In addition, download the {\tt brdf\_data} file and set NRTTOVinfo(4,1) to 1.
+\end{itemize}
 
 \begin{center}\begin{tabular}{|c|c|c|}
 \hline
