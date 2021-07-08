@@ -730,35 +730,35 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_KE group of the diachronic file}} \\
 \hline
 \endfoot
-$-\frac{\partial }{\partial t}<e>$             & SBG\_TEND & z,t & (opposite of) tendency of $<e>$ \\\hline
-$-<\overline{u'w'}>\frac{\partial }{\partial z}<u>-<\overline{v'w'}>\frac{\partial }{\partial z}<v>$ & SBG\_DP\_M & z,t & dyn. prod. by mean gradients \\\hline
-$<-\overline{u'_\alpha u'_\beta}\frac{\partial}{\partial x_\beta}\tilde{u_\alpha}>$ & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations \\\hline
-$-<w>\frac{\partial}{\partial z}<e>$           & SBG\_ADVM & z,t & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<e>$      & SBG\_FORC & z,t & advection by large-scale W forcing\\\hline
+$-\frac{\partial }{\partial t}<e>$             & SBG\_TEND & z,t & subgrid (opposite of) tendency of $<e>$ \\\hline
+$-<\overline{u'w'}>\frac{\partial }{\partial z}<u>-<\overline{v'w'}>\frac{\partial }{\partial z}<v>$ & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-\overline{u'_\alpha u'_\beta}\frac{\partial}{\partial x_\beta}\tilde{u_\alpha}>$ & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations \\\hline
+$-<w>\frac{\partial}{\partial z}<e>$           & SBG\_ADVM & z,t & subgrid advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<e>$      & SBG\_FORC & z,t & subgrid advection by large-scale W forcing\\\hline
 $-<\frac{\partial}{\partial z}\overline{w'e}>$ & SBG\_TR   & z,t & subgrid turbulent transport\\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}e>$ & SBG\_ADVR & z,t & advection by resolved flow\\\hline
-$- \frac{1}{<\rho>}<\overline{u'_\alpha \frac{\partial p'}{\partial x_\alpha}}>$& SBG\_PRES & z,t & subgrid pressure-correlation term\\\hline
-$<\beta  \overline{w'\theta'_v}>$              & SBG\_TP   & z,t & thermal production \\\hline
-$-<\epsilon>$                                  & SBG\_DISS & z,t & dissipation \\\hline
-{\rm numerical diffusion of } $<e>$            & SBG\_NUMD & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<e>$                      & SBG\_RELA & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<e>$                    & SBG\_NEST & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                            & SBG\_MISC & z,t & other effects \\\hline
-{\rm residual of budget of} $<e>$              & SBG\_RESI & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<E>$             & RES\_TEND & z,t & (opposite of) tendency of $<E>$\\\hline
-$-<w>\frac{\partial}{\partial z}<E>$           & RES\_ADV  & z,t & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<E>$      & RES\_FORC & z,t & advection  by large-scale W forcing\\\hline
-$-<\tilde{u}\tilde{w}>\frac{\partial }{\partial z}<u>-<\tilde{v}\tilde{w}>\frac{\partial }{\partial z}<v>$ & RES\_DP   & z,t & dyn. prod. (by mean gradients)\\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} E>$ & RES\_TR   & z,t & transport of resolved Tke by itself \\\hline
-$- \frac{1}{<\rho>}<\tilde{u_\alpha} \frac{\partial \tilde{p}}{\partial x_\alpha}>$ & RES\_PRES\_& z,t & pressure-correlations \\\hline
-$ <\beta  \tilde{w}\tilde{\theta_v}> $         & RES\_TP   & z,t & thermal production \\\hline
-$- <\tilde{u_\alpha}\frac{\partial}{\partial x_\beta}\overline{u'_\alpha u'_\beta}> $ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm Coriolis terms}                           & RES\_CORI & z,t & should be zero for $<E>$ \\\hline
-{\rm numerical diffusion of } $<E>$            & RES\_NUMD & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<E>$                      & RES\_RELA & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<E>$                    & RES\_NEST & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                            & RES\_MISC & z,t & other effects (curvature terms\ldots) \\\hline
-{\rm residual of budget of} $<E>$              & RES\_RESI & z,t & must be zero \\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}e>$ & SBG\_ADVR & z,t & subgrid advection by resolved flow\\\hline
+$- \frac{1}{<\rho>}<\overline{u'_\alpha \frac{\partial p'}{\partial x_\alpha}}>$& SBG\_PRES & z,t & subgrid pressure-correlation \\\hline
+$<\beta  \overline{w'\theta'_v}>$              & SBG\_TP   & z,t & subgrid thermal production \\\hline
+$-<\epsilon>$                                  & SBG\_DISS & z,t & subgrid dissipation \\\hline
+{\rm numerical diffusion of } $<e>$            & SBG\_NUMD & z,t & subgrid numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<e>$                      & SBG\_RELA & z,t & subgrid sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<e>$                    & SBG\_NEST & z,t & subgrid average from smaller nested models \\\hline
+{\rm miscellaneous}                            & SBG\_MISC & z,t & subgrid: other effects \\\hline
+{\rm residual of budget of} $<e>$              & SBG\_RESI & z,t & residual of subgrid budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<E>$             & RES\_TEND & z,t & resolved (opposite of) tendency of $<E>$\\\hline
+$-<w>\frac{\partial}{\partial z}<E>$           & RES\_ADV  & z,t & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<E>$      & RES\_FORC & z,t & resolved advection by large-scale W forcing\\\hline
+$-<\tilde{u}\tilde{w}>\frac{\partial }{\partial z}<u>-<\tilde{v}\tilde{w}>\frac{\partial }{\partial z}<v>$ & RES\_DP   & z,t & resolved dynamic production by mean gradient\\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} E>$ & RES\_TR   & z,t & turbulent transport of resolved flux by itself \\\hline
+$- \frac{1}{<\rho>}<\tilde{u_\alpha} \frac{\partial \tilde{p}}{\partial x_\alpha}>$ & RES\_PRES\_& z,t & resolved pressure-correlation \\\hline
+$ <\beta  \tilde{w}\tilde{\theta_v}> $         & RES\_TP   & z,t & resolved thermal production \\\hline
+$- <\tilde{u_\alpha}\frac{\partial}{\partial x_\beta}\overline{u'_\alpha u'_\beta}> $ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm Coriolis terms}                           & RES\_CORI & z,t & resolved Coriolis effect (should be zero for $<E>$) \\\hline
+{\rm numerical diffusion of } $<E>$            & RES\_NUMD & z,t & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<E>$                      & RES\_RELA & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<E>$                    & RES\_NEST & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                            & RES\_MISC & z,t & resolved: other effects (curvature terms\ldots) \\\hline
+{\rm residual of budget of} $<E>$              & RES\_RESI & z,t & residual of resolved budget (should be zero) \\\hline
 \end{longtable}
 \endgroup
 
@@ -810,31 +810,31 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_WTHL group of the diachronic file}} \\
 \hline
 \endfoot
-$-<\overline{w'^2}>\frac{\partial }{\partial z}<\theta_l>$        & SBG\_DP\_M & z,t & dyn. prod. by mean gradient \\\hline
-$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{\theta_l}>$   & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations \\\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<\theta_l>$        & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{\theta_l}>$   & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations \\\hline
 $-<\frac{\partial}{\partial z}\overline{w'^2\theta_l'}>$          & SBG\_TR    & z,t & subgrid turbulent transport \\\hline
-$- \frac{1}{<\rho>}<\overline{\theta_l' \frac{\partial p'}{\partial z}}>$ & SBG\_PRES & z,t & subgrid pressure-correlation term \\\hline
-$<\beta  \overline{\theta_l'\theta'_v}>$                          & SBG\_TP    & z,t & thermal production \\\hline
-{\rm residual of budget of} $<\overline{w'\theta_l'}>$            & SBG\_RESI  & z,t & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{w}\tilde{\theta_l}>$        & RES\_TEND  & z,t & (opposite of) tendency of $<\tilde{w}\tilde{\theta_l}>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$      & RES\_ADV   & z,t & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$ & RES\_FORC  & z,t & advection by large-scale W forcing\\\hline
-$-<\tilde{w}^2>\frac{\partial }{\partial z}<\theta_l>-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{\theta_l}>$ & RES\_TR   & z,t & transport of resolved flux by itself \\\hline
-$- \frac{1}{<\rho>}<\tilde{\theta_l} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES & z,t & pressure-correlations \\\hline
-$ <\beta  \tilde{\theta_l}\tilde{\theta_v}> $                     & RES\_TP    & z,t & thermal production \\\hline
-$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm Coriolis terms}                                              & RES\_CORI  & z,t & \\\hline
-{\rm numerical diffusion of } $<\tilde{w}\tilde{\theta_l}>$       & RES\_NUMD  & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{w}\tilde{\theta_l}>$                 & RES\_RELA  & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{w}\tilde{\theta_l}>$               & RES\_NEST  & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                                               & RES\_MISC  & z,t & ref. pressure term, curvature term, microphysics, radiation\ldots\\\hline
-{\rm residual of budget of} $<\tilde{w}\tilde{\theta_l}>$         & RES\_RESI  & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{w'\theta_l'}>$ (neglected in turb. scheme& NSG\_TEND & z,t & (neglected) opposite of tendency of $<\overline{w'\theta_l'}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{w'\theta_l'}>$         & NSG\_ADVM  & z,t & (neglected) advection by mean flow \\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'\theta_l'}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow\\\hline
-terms due to $\overline{w}$ gradients                             & NSG\_DPGW  & z,t & (neglected) dyn. prod. terms \\\hline
-terms due to hor. $\overline{\theta_l}$ gradients                 & NSG\_DPGT  & z,t & other (neglected) dyn. prod. terms\\\hline
+$- \frac{1}{<\rho>}<\overline{\theta_l' \frac{\partial p'}{\partial z}}>$ & SBG\_PRES & z,t & subgrid pressure-correlation \\\hline
+$<\beta  \overline{\theta_l'\theta'_v}>$                          & SBG\_TP    & z,t & subgrid thermal production \\\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'}>$            & SBG\_RESI  & z,t & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{\theta_l}>$        & RES\_TEND  & z,t & resolved (opposite of) tendency of $<\tilde{w}\tilde{\theta_l}>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$      & RES\_ADV   & z,t & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{\theta_l}>$ & RES\_FORC  & z,t & resolved advection by large-scale W forcing\\\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<\theta_l>-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{\theta_l}>$ & RES\_TR   & z,t & turbulent transport of resolved flux by itself \\\hline
+$- \frac{1}{<\rho>}<\tilde{\theta_l} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES & z,t & resolved pressure-correlation \\\hline
+$ <\beta  \tilde{\theta_l}\tilde{\theta_v}> $                     & RES\_TP    & z,t & resolved thermal production \\\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm Coriolis terms}                                              & RES\_CORI  & z,t & resolved Coriolis effect \\\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{\theta_l}>$       & RES\_NUMD  & z,t & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{w}\tilde{\theta_l}>$                 & RES\_RELA  & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{\theta_l}>$               & RES\_NEST  & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                               & RES\_MISC  & z,t & resolved: other effects (ref. pressure term, curvature term, microphysics, radiation\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{\theta_l}>$         & RES\_RESI  & z,t & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{w'\theta_l'}>$ (neglected in turb. scheme& NSG\_TEND & z,t & neglected opposite of tendency of $<\overline{w'\theta_l'}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w'\theta_l'}>$         & NSG\_ADVM  & z,t & neglected advection by mean flow \\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'\theta_l'}>$  & NSG\_ADVR & z,t & neglected advection by resolved flow\\\hline
+terms due to $\overline{w}$ gradients                             & NSG\_DPGW  & z,t & neglected production by gradient of vertical velocity for subgrid quantity \\\hline
+terms due to hor. $\overline{\theta_l}$ gradients                 & NSG\_DPGT  & z,t & neglected production by horizontal gradient of Thl for subgrid quantity \\\hline
 \end{longtable}
 \endgroup
 
@@ -876,25 +876,25 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_THL2 group of the diachronic file}} \\
 \hline
 \endfoot
-$- 2 <\overline{w'\theta_l'}>\frac{\partial }{\partial z}<\theta_l>$     & SBG\_DP\_M & z,t & dyn. prod. by mean gradient \\\hline
-$<-2 \overline{w'\theta_l'}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations\\\hline
+$- 2 <\overline{w'\theta_l'}>\frac{\partial }{\partial z}<\theta_l>$     & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-2 \overline{w'\theta_l'}\frac{\partial}{\partial z}\tilde{\theta_l}>$ & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations\\\hline
 $-<\frac{\partial}{\partial z}\overline{w'\theta_l'^2}>$                 & SBG\_TR    & z,t & subgrid turbulent transport\\\hline
-$-<\epsilon_\theta>$                                                     & SBG\_DISS  & z,t & dissipation \\\hline
-{\rm residual of budget of} $<\overline{w'\theta_l'}>$                   & SBG\_RESI  & z,t & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{\theta_l}^2>$                      & RES\_TEND  & z,t & (opposite of) tendency of $<\tilde{\theta_l}^2>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$                    & RES\_ADV   & z,t & advection by mean flow \\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$               & RES\_FORC  & z,t & advection by large-scale W forcing \\\hline
-$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<\theta_l>$  & RES\_DP    & z,t & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>$ & RES\_TR & z,t & resolved transport of resolved variance \\\hline
-$- <2 \tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm numerical diffusion of } $<\tilde{\theta_l}^2>$                     & RES\_NUMD  & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{\theta_l}^2>$                               & RES\_RELA  & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{\theta_l}^2>$                             & RES\_NEST  & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                      & RES\_MISC  & z,t & ref. pressure term, radiation, microphysics\ldots \\\hline
-{\rm residual of budget of} $<\tilde{\theta_l}^2>$                       & RES\_RESI  & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ (neglected in turb. scheme)& NSG\_TEND & z,t & (neglected) opposite of tendency of $<\overline{\theta_l'^2}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$                & NSG\_ADVM  & z,t & (neglected) advection by mean flow \\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$ & NSG\_ADVR & z,t & (neglected) advection by resolved flow \\\hline
+$-<\epsilon_\theta>$                                                     & SBG\_DISS  & z,t & subgrid dissipation \\\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'}>$                   & SBG\_RESI  & z,t & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{\theta_l}^2>$                      & RES\_TEND  & z,t & resolved (opposite of) tendency of $<\tilde{\theta_l}^2>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$                    & RES\_ADV   & z,t & resolved advection by mean flow \\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}^2>$               & RES\_FORC  & z,t & resolved advection by large-scale W forcing \\\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<\theta_l>$  & RES\_DP    & z,t & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}^2>$ & RES\_TR & z,t & turbulent transport of resolved flux by itself \\\hline
+$- <2 \tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm numerical diffusion of } $<\tilde{\theta_l}^2>$                     & RES\_NUMD  & z,t & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{\theta_l}^2>$                               & RES\_RELA  & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{\theta_l}^2>$                             & RES\_NEST  & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                      & RES\_MISC  & z,t & resolved: other effects (ref. pressure term, radiation, microphysics\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{\theta_l}^2>$                       & RES\_RESI  & z,t & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{\theta_l'^2}>$ (neglected in turb. scheme)& NSG\_TEND & z,t & neglected opposite of tendency of $<\overline{\theta_l'^2}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'^2}>$                & NSG\_ADVM  & z,t & neglected advection by mean flow \\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'^2}>$ & NSG\_ADVR & z,t & neglected advection by resolved flow \\\hline
 \end{longtable}
 \endgroup
 
@@ -943,31 +943,31 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_WRT group of the diachronic file}} \\
 \hline
 \endfoot
-$-<\overline{w'^2}>\frac{\partial }{\partial z}<r_t>$                & SBG\_DP\_M & z,t & dyn. prod. by mean gradient \\\hline
-$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{r_t}>$           & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations\\\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<r_t>$                & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{r_t}>$           & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations\\\hline
 $-<\frac{\partial}{\partial z}\overline{w'^2r_t'}>$                  & SBG\_TR    & z,t & subgrid turbulent transport\\\hline
-$- \frac{1}{<\rho>}<\overline{r_t' \frac{\partial p'}{\partial z}}>$ & SBG\_PRES  & z,t & subgrid pressure-correlation term \\\hline
-$<\beta  \overline{r_t'\theta'_v}>$                                  & SBG\_TP    & z,t & thermal production \\\hline
-{\rm residual of budget of} $<\overline{w'r_t'}>$                    & SBG\_RESI  & z,t & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{w}\tilde{r_t}>$                & RES\_TEND  & z,t & (opposite of) tendency of $<\tilde{w}\tilde{r_t}>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$              & RES\_ADV   & z,t & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$         & RES\_FORC  & z,t & advection by large-scale W forcing\\\hline
-$-<\tilde{w}^2>\frac{\partial }{\partial z}<r_t>-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t & dyn. prod. by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{r_t}>$ & RES\_TR   & z,t & transport of resolved flux by itself \\\hline
-$- \frac{1}{<\rho>}<\tilde{r_t} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES\_& z,t & pressure-correlations \\\hline
-$ <\beta  \tilde{r_t}\tilde{\theta_v}> $                             & RES\_TP    & z,t & thermal production \\\hline
-$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm Coriolis terms}                                                 & RES\_CORI  & z,t & \\\hline
-{\rm numerical diffusion of } $<\tilde{w}\tilde{r_t}>$               & RES\_NUMD  & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{w}\tilde{r_t}>$                         & RES\_RELA  & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{w}\tilde{r_t}>$                       & RES\_NEST  & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                  & RES\_MISC  & z,t & ref. pressure term, curvature term, radiation, microphysics\ldots \\\hline
-{\rm residual of budget of} $<\tilde{w}\tilde{r_t}>$                 & RES\_RESI  & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{w'r_t'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & (neglected) opposite of tendency of $<\overline{w'r_t'}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{w'r_t'}>$                 & NSG\_ADVM  & z,t & (neglected) advection by mean flow\\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'r_t'}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow\\\hline
-terms due to $\overline{w}$ gradients                                & NSG\_DPGW & z,t & (neglected) dyn. prod. terms \\\hline
-terms due to hor. $\overline{r_t}$ gradients                         & NSG\_DPGT & z,t & other (neglected) dyn. prod. terms \\\hline
+$- \frac{1}{<\rho>}<\overline{r_t' \frac{\partial p'}{\partial z}}>$ & SBG\_PRES  & z,t & subgrid pressure-correlation \\\hline
+$<\beta  \overline{r_t'\theta'_v}>$                                  & SBG\_TP    & z,t & subgrid thermal production \\\hline
+{\rm residual of budget of} $<\overline{w'r_t'}>$                    & SBG\_RESI  & z,t & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{r_t}>$                & RES\_TEND  & z,t & resolved (opposite of) tendency of $<\tilde{w}\tilde{r_t}>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$              & RES\_ADV   & z,t & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{r_t}>$         & RES\_FORC  & z,t & resolved advection by large-scale W forcing\\\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<r_t>-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{r_t}>$ & RES\_TR   & z,t & turbulent transport of resolved flux by itself \\\hline
+$- \frac{1}{<\rho>}<\tilde{r_t} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES\_& z,t & resolved pressure-correlation \\\hline
+$ <\beta  \tilde{r_t}\tilde{\theta_v}> $                             & RES\_TP    & z,t & resolved thermal production \\\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm Coriolis terms}                                                 & RES\_CORI  & z,t & resolved Coriolis effect \\\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{r_t}>$               & RES\_NUMD  & z,t & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{w}\tilde{r_t}>$                         & RES\_RELA  & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{r_t}>$                       & RES\_NEST  & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                  & RES\_MISC  & z,t & resolved: other effects (ref. pressure term, curvature term, radiation, microphysics\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{r_t}>$                 & RES\_RESI  & z,t & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{w'r_t'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & neglected opposite of tendency of $<\overline{w'r_t'}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w'r_t'}>$                 & NSG\_ADVM  & z,t & neglected advection by mean flow\\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w'r_t'}>$  & NSG\_ADVR & z,t & neglected advection by resolved flow\\\hline
+terms due to $\overline{w}$ gradients                                & NSG\_DPGW & z,t & neglected production by gradient of vertical velocity for subgrid quantity \\\hline
+terms due to hor. $\overline{r_t}$ gradients                         & NSG\_DPGT & z,t & neglected production by horizontal gradient of Thl for subgrid quantity \\\hline
 \end{longtable}
 \endgroup
 
@@ -1013,25 +1013,25 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_THLR group of the diachronic file}} \\
 \hline
 \endfoot
-$-<\overline{w'\theta_l'}>\frac{\partial }{\partial z}<r_t>-<\overline{w'r_t'}>\frac{\partial }{\partial z}<\theta_l>$ & SBG\_DP\_M & z,t & dyn. prod. by mean gradient \\\hline
-$<-\overline{u_\alpha'\theta_l'}\frac{\partial}{\partial x_\alpha}\tilde{r_t}><-\overline{u_\alpha'r_t'}\frac{\partial}{\partial x_\alpha}\tilde{\theta_l}>$ & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations \\\hline
+$-<\overline{w'\theta_l'}>\frac{\partial }{\partial z}<r_t>-<\overline{w'r_t'}>\frac{\partial }{\partial z}<\theta_l>$ & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-\overline{u_\alpha'\theta_l'}\frac{\partial}{\partial x_\alpha}\tilde{r_t}><-\overline{u_\alpha'r_t'}\frac{\partial}{\partial x_\alpha}\tilde{\theta_l}>$ & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations \\\hline
 $-<\frac{\partial}{\partial z}\overline{w'\theta_l'r_t'}>$          & SBG\_TR   & z,t & subgrid turbulent transport \\\hline
-$-<\epsilon_{\theta r}>$                                            & SBG\_DISS & z,t & dissipation \\\hline
-{\rm residual of budget of} $<\overline{w'\theta_l'r_t'}>$          & SBG\_RESI & z,t & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{\theta_l}\tilde{r_t}>$        & RES\_TEND & z,t & (opposite of) tendency of $<\tilde{\theta_l}\tilde{r_t}>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$      & RES\_ADV  & z,t & advection by mean flow \\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$ & RES\_FORC & z,t & advection by large-scale W forcing\\\hline
-$-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<\theta_l>$ & RES\_DP   & z,t & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}\tilde{r_t}>$ & RES\_TR   & z,t & resolved transport of resolved flux \\\hline
-$- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm numerical diffusion of } $<\tilde{\theta_l}\tilde{r_t}>$       & RES\_NUMD & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{\theta_l}\tilde{r_t}>$                 & RES\_RELA & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{\theta_l}\tilde{r_t}>$               & RES\_NEST & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                 & RES\_MISC & z,t & ref. pressure term, radiation, microphysics\ldots \\\hline
-{\rm residual of budget of} $<\tilde{\theta_l}\tilde{r_t}>$         & RES\_RESI & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{\theta_l'r_t'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & (neglected) opposite of tendency of $<\overline{w'r_t'}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'r_t'}>$         & NSG\_ADVM & z,t & (neglected) advection by mean flow \\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'r_t'}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow \\\hline
+$-<\epsilon_{\theta r}>$                                            & SBG\_DISS & z,t & subgrid dissipation \\\hline
+{\rm residual of budget of} $<\overline{w'\theta_l'r_t'}>$          & SBG\_RESI & z,t & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{\theta_l}\tilde{r_t}>$        & RES\_TEND & z,t & resolved (opposite of) tendency of $<\tilde{\theta_l}\tilde{r_t}>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$      & RES\_ADV  & z,t & resolved advection by mean flow \\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{\theta_l}\tilde{r_t}>$ & RES\_FORC & z,t & resolved advection by large-scale W forcing\\\hline
+$-<\tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>-<\tilde{w}\tilde{r_t}>\frac{\partial }{\partial z}<\theta_l>$ & RES\_DP   & z,t & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{\theta_l}\tilde{r_t}>$ & RES\_TR   & z,t & turbulent transport of resolved flux by itself \\\hline
+$- <\tilde{\theta_l}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>- <\tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha \theta_l'}>$ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm numerical diffusion of } $<\tilde{\theta_l}\tilde{r_t}>$       & RES\_NUMD & z,t & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{\theta_l}\tilde{r_t}>$                 & RES\_RELA & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{\theta_l}\tilde{r_t}>$               & RES\_NEST & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                 & RES\_MISC & z,t & resolved: other effects (ref. pressure term, radiation, microphysics\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{\theta_l}\tilde{r_t}>$         & RES\_RESI & z,t & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{\theta_l'r_t'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & neglected opposite of tendency of $<\overline{w'r_t'}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{\theta_l'r_t'}>$         & NSG\_ADVM & z,t & neglected advection by mean flow \\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{\theta_l'r_t'}>$  & NSG\_ADVR & z,t & neglected advection by resolved flow \\\hline
 \end{longtable}
 \endgroup
 
@@ -1073,25 +1073,25 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_RT2 group of the diachronic file}} \\
 \hline
 \endfoot
-$- 2 <\overline{w'r_t'}>\frac{\partial }{\partial z}<r_t>$             & SBG\_DP\_M & z,t & dyn. prod. by mean gradient \\\hline
-$<-2 \overline{w'r_t'}\frac{\partial}{\partial z}\tilde{r_t}>$         & SBG\_DP\_R & z,t & dyn. prod. by resolved fluctuations\\\hline
+$- 2 <\overline{w'r_t'}>\frac{\partial }{\partial z}<r_t>$             & SBG\_DP\_M & z,t & subgrid dynamic production by mean gradient \\\hline
+$<-2 \overline{w'r_t'}\frac{\partial}{\partial z}\tilde{r_t}>$         & SBG\_DP\_R & z,t & subgrid dynamic production by resolved fluctuations\\\hline
 $-<\frac{\partial}{\partial z}\overline{w'r_t'^2}>$                    & SBG\_TR    & z,t & subgrid turbulent transport\\\hline
-$-<\epsilon_r>$                                                        & SBG\_DISS  & z,t & dissipation \\\hline
-{\rm residual of budget}                                               & SBG\_RESI  & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\tilde{r_t}^2>$                         & RES\_TEND  & z,t & (opposite of) tendency of $<\tilde{r_t}^2>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{r_t}^2>$                       & RES\_ADV   & z,t & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{r_t}^2>$                  & RES\_FORC  & z,t & advection by large-scale W forcing\\\hline
-$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>$     & RES\_DP    & z,t & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{r_t}^2>$ & RES\_TR    & z,t & resolved transport of resolved variance \\\hline
-$- <2 \tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>$ & RES\_SBGT & z,t & sink due to subgrid turbulence \\\hline
-{\rm numerical diffusion of } $<\tilde{r_t}^2>$                        & RES\_NUMD  & z,t & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{r_t}^2>$                                  & RES\_RELA  & z,t & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{r_t}^2>$                                & RES\_NEST  & z,t & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                    & RES\_MISC  & z,t & ref. pressure term, radiation, microphysics\ldots \\\hline
-{\rm residual of budget of} $<\tilde{r_t}^2>$                          & RES\_RESI  & z,t & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{r_t'^2}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & (neglected) opposite of tendency of $<\overline{r_t'^2}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{r_t'^2}>$                   & NSG\_ADVM  & z,t & (neglected) advection by mean flow\\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{r_t'^2}>$  & NSG\_ADVR & z,t & (neglected) advection by resolved flow\\\hline
+$-<\epsilon_r>$                                                        & SBG\_DISS  & z,t & subgrid dissipation \\\hline
+{\rm residual of budget}                                               & SBG\_RESI  & z,t & residual of subgrid budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{r_t}^2>$                         & RES\_TEND  & z,t & resolved (opposite of) tendency of $<\tilde{r_t}^2>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{r_t}^2>$                       & RES\_ADV   & z,t & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{r_t}^2>$                  & RES\_FORC  & z,t & resolved advection by large-scale W forcing\\\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<r_t>$     & RES\_DP    & z,t & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{r_t}^2>$ & RES\_TR    & z,t & turbulent transport of resolved flux by itself \\\hline
+$- <2 \tilde{r_t}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha r_t'}>$ & RES\_SBGT & z,t & resolved sink due to subgrid turbulence \\\hline
+{\rm numerical diffusion of } $<\tilde{r_t}^2>$                        & RES\_NUMD  & z,t & nresolved umerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{r_t}^2>$                                  & RES\_RELA  & z,t & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{r_t}^2>$                                & RES\_NEST  & z,t & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                    & RES\_MISC  & z,t & resolved: other effects (ref. pressure term, radiation, microphysics\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{r_t}^2>$                          & RES\_RESI  & z,t & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{r_t'^2}>$ (neglected in turb. scheme) & NSG\_TEND & z,t & neglected opposite of tendency of $<\overline{r_t'^2}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{r_t'^2}>$                   & NSG\_ADVM  & z,t & neglected advection by mean flow\\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{r_t'^2}>$  & NSG\_ADVR & z,t & neglected advection by resolved flow\\\hline
 \end{longtable}
 \endgroup
 
@@ -1146,31 +1146,31 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_WSV group of the diachronic file}} \\
 \hline
 \endfoot
-$-<\overline{w'^2}>\frac{\partial }{\partial z}<s_v>$                   & SBG\_DP\_M & z,t,n & dyn. prod. by mean gradient \\\hline
-$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{s_v}>$              & SBG\_DP\_R & z,t,n & dyn. prod. by resolved fluctuations\\\hline
+$-<\overline{w'^2}>\frac{\partial }{\partial z}<s_v>$                   & SBG\_DP\_M & z,t,n & subgrid dynamic production by mean gradient \\\hline
+$<-\overline{w'^2}\frac{\partial}{\partial z}\tilde{s_v}>$              & SBG\_DP\_R & z,t,n & subgrid dynamic production by resolved fluctuations\\\hline
 $-<\frac{\partial}{\partial z}\overline{w'^2s_v'}>$                     & SBG\_TR    & z,t,n & subgrid turbulent transport\\\hline
-$- \frac{1}{<\rho>}<\overline{s_v' \frac{\partial p'}{\partial z}}>$    & SBG\_PRES  & z,t,n & subgrid pressure-correlation term \\\hline
-$<\beta  \overline{s_v'\theta'_v}>$                                     & SBG\_TP    & z,t,n & thermal production \\\hline
-{\rm residual of budget of} $<\overline{w's_v'}>$                       & SBG\_RESI  & z,t,n & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{w}\tilde{s_v}>$                   & RES\_TEND  & z,t,n & (opposite of) tendency of $<\tilde{w}\tilde{s_v}>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$                 & RES\_ADV   & z,t,n & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$            & RES\_FORC  & z,t,n & advection by large-scale W forcing\\\hline
-$-<\tilde{w}^2>\frac{\partial }{\partial z}<s_v>-<\tilde{w}\tilde{s_v}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t,n & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{s_v}>$ & RES\_TR   & z,t,n & transport of resolved flux by itself \\\hline
-$- \frac{1}{<\rho>}<\tilde{s_v} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES  & z,t,n & pressure-correlations \\\hline
-$ <\beta  \tilde{s_v}\tilde{\theta_v}> $                                & RES\_TP    & z,t,n & thermal production \\\hline
-$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>- <\tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t,n & sink due to subgrid turbulence \\\hline
-{\rm Coriolis terms}                                                    & RES\_CORI  & z,t,n & \\\hline
-{\rm numerical diffusion of } $<\tilde{w}\tilde{s_v}>$                  & RES\_NUMD  & z,t,n & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{w}\tilde{s_v}>$                            & RES\_RELA  & z,t,n & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{w}\tilde{s_v}>$                          & RES\_NEST  & z,t,n & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                     & RES\_MISC  & z,t,n & curvature term, chemistry\ldots \\\hline
-{\rm residual of budget of} $<\tilde{w}\tilde{s_v}>$                    & RES\_RESI  & z,t,n & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{w's_v'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t,n & (neglected) opposite of tendency of  $<\overline{w's_v'}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{w's_v'}>$                    & NSG\_ADVM  & z,t,n & (neglected) advection by mean flow\\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w's_v'}>$ & NSG\_ADVR & z,t,n & (neglected) advection by resolved flow\\\hline
-terms due to $\overline{w}$ gradients                                   & NSG\_DPGW  & z,t,n & (neglected) dyn. prod. terms \\\hline
-terms due to hor. $\overline{s_v}$ gradients                            & NSG\_DPGT  & z,t,n & other (neglected) dyn. prod. terms\\\hline
+$- \frac{1}{<\rho>}<\overline{s_v' \frac{\partial p'}{\partial z}}>$    & SBG\_PRES  & z,t,n & subgrid pressure-correlation \\\hline
+$<\beta  \overline{s_v'\theta'_v}>$                                     & SBG\_TP    & z,t,n & subgrid thermal production \\\hline
+{\rm residual of budget of} $<\overline{w's_v'}>$                       & SBG\_RESI  & z,t,n & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{w}\tilde{s_v}>$                   & RES\_TEND  & z,t,n & resolved (opposite of) tendency of $<\tilde{w}\tilde{s_v}>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$                 & RES\_ADV   & z,t,n & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{w}\tilde{s_v}>$            & RES\_FORC  & z,t,n & resolved advection by large-scale W forcing\\\hline
+$-<\tilde{w}^2>\frac{\partial }{\partial z}<s_v>-<\tilde{w}\tilde{s_v}>\frac{\partial }{\partial z}<w>$ & RES\_DP   & z,t,n & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{w}\tilde{s_v}>$ & RES\_TR   & z,t,n & turbulent transport of resolved flux by itself \\\hline
+$- \frac{1}{<\rho>}<\tilde{s_v} \frac{\partial \tilde{p}}{\partial z}>$ & RES\_PRES  & z,t,n & resolved pressure-correlation \\\hline
+$ <\beta  \tilde{s_v}\tilde{\theta_v}> $                                & RES\_TP    & z,t,n & resolved thermal production \\\hline
+$- <\tilde{w}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>- <\tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha w'}>$ & RES\_SBGT & z,t,n & resolved sink due to subgrid turbulence \\\hline
+{\rm Coriolis terms}                                                    & RES\_CORI  & z,t,n & resolved Coriolis effect \\\hline
+{\rm numerical diffusion of } $<\tilde{w}\tilde{s_v}>$                  & RES\_NUMD  & z,t,n & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{w}\tilde{s_v}>$                            & RES\_RELA  & z,t,n & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{w}\tilde{s_v}>$                          & RES\_NEST  & z,t,n & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                     & RES\_MISC  & z,t,n & resolved: other effects (curvature term, chemistry\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{w}\tilde{s_v}>$                    & RES\_RESI  & z,t,n & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{w's_v'}>$ (neglected in turb. scheme) & NSG\_TEND & z,t,n & neglected opposite of tendency of  $<\overline{w's_v'}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{w's_v'}>$                    & NSG\_ADVM  & z,t,n & neglected advection by mean flow\\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{w's_v'}>$ & NSG\_ADVR & z,t,n & neglected advection by resolved flow\\\hline
+terms due to $\overline{w}$ gradients                                   & NSG\_DPGW  & z,t,n & neglected production by gradient of vertical velocity for subgrid quantity \\\hline
+terms due to hor. $\overline{s_v}$ gradients                            & NSG\_DPGT  & z,t,n & neglected production by horizontal gradient of Thl for subgrid quantity \\\hline
 \end{longtable}
 \endgroup
 
@@ -1212,24 +1212,24 @@ Field & Process name & Dims & Comments \\
 \multicolumn{4}{|c|}{\textbf{Remark: all these processes are written in the BU\_SV2 group of the diachronic file}} \\
 \hline
 \endfoot
-$- 2 <\overline{w's_v'}>\frac{\partial }{\partial z}<s_v>$         & SBG\_DP\_M & z,t,n & dyn. prod. by mean gradient \\\hline
-$<-2 \overline{w's_v'}\frac{\partial}{\partial z}\tilde{s_v}>$     & SBG\_DP\_R & z,t,n & dyn. prod. by resolved fluctuations\\\hline
+$- 2 <\overline{w's_v'}>\frac{\partial }{\partial z}<s_v>$         & SBG\_DP\_M & z,t,n & subgrid dynamic production by mean gradient \\\hline
+$<-2 \overline{w's_v'}\frac{\partial}{\partial z}\tilde{s_v}>$     & SBG\_DP\_R & z,t,n & subgrid dynamic production by resolved fluctuations\\\hline
 $-<\frac{\partial}{\partial z}\overline{w's_v'^2}>$                & SBG\_TR    & z,t,n & subgrid turbulent transport\\\hline
-$-<\epsilon_{s_v}>$                                                & SBG\_DISS  & z,t,n & dissipation \\\hline
-{\rm residual of budget of} $<\overline{w's_v'}>$                  & SBG\_RESI  & z,t,n & must be small \\\hline
-$-\frac{\partial }{\partial t}<\tilde{s_v}^2>$                     & RES\_TEND  & z,t,n & (opposite of) tendency of $<\tilde{s_v}^2>$\\\hline
-$-<w>\frac{\partial}{\partial z}<\tilde{s_v}^2>$                   & RES\_ADV   & z,t,n & advection by mean flow\\\hline
-$-W_{forc}\frac{\partial}{\partial z}<\tilde{s_v}^2>$              & RES\_FORC  & z,t,n & advection by large-scale W forcing\\\hline
-$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<s_v>$ & RES\_DP    & z,t,n & dyn. prod. (by mean gradients) \\\hline
-$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{s_v}^2>$ & RES\_TR   & z,t,n & resolved transport of resolved variance \\\hline
-$- <2 \tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>$ & RES\_SBGT & z,t,n & sink due to subgrid turbulence \\\hline
-{\rm numerical diffusion of } $<\tilde{s_v}^2>$                    & RES\_NUMD  & z,t,n & numerical diffusion against $2\Delta x$ \\\hline
-{\rm relaxation of }$<\tilde{s_v}^2>$                              & RES\_RELA  & z,t,n & sponge layer relaxation \\\hline
-{\rm 2way nesting of }$<\tilde{s_v}^2>$                            & RES\_NEST  & z,t,n & average from smaller nested models \\\hline
-{\rm miscellaneous}                                                & RES\_MISC  & z,t,n & chemistry\ldots \\\hline
-{\rm residual of budget of} $<\tilde{s_v}^2>$                      & RES\_RESI  & z,t,n & must be zero \\\hline
-$-\frac{\partial }{\partial t}<\overline{s_v'^2}>$ (neglected in turb. scheme) & NSG\_TEND & z,t,n & (neglected) opposite of tendency of $<\overline{s_v'^2}>$ \\\hline
-$-<w>\frac{\partial}{\partial z}<\overline{s_v'^2}>$               & NSG\_ADVM  & z,t,n & (neglected) advection by mean flow\\\hline
-$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{s_v'^2}>$  & NSG\_ADVR & z,t,n & (neglected) advection by resolved flow\\\hline
+$-<\epsilon_{s_v}>$                                                & SBG\_DISS  & z,t,n & subgrid dissipation \\\hline
+{\rm residual of budget of} $<\overline{w's_v'}>$                  & SBG\_RESI  & z,t,n & residual of subgrid budget (must be small) \\\hline
+$-\frac{\partial }{\partial t}<\tilde{s_v}^2>$                     & RES\_TEND  & z,t,n & resolved (opposite of) tendency of $<\tilde{s_v}^2>$\\\hline
+$-<w>\frac{\partial}{\partial z}<\tilde{s_v}^2>$                   & RES\_ADV   & z,t,n & resolved advection by mean flow\\\hline
+$-W_{forc}\frac{\partial}{\partial z}<\tilde{s_v}^2>$              & RES\_FORC  & z,t,n & resolved advection by large-scale W forcing\\\hline
+$-< 2 \tilde{w}\tilde{\theta_l}>\frac{\partial }{\partial z}<s_v>$ & RES\_DP    & z,t,n & resolved dynamic production by mean gradient \\\hline
+$-\frac{\partial}{\partial x_\alpha} <\tilde{u_\alpha} \tilde{s_v}^2>$ & RES\_TR   & z,t,n & turbulent transport of resolved flux by itself \\\hline
+$- <2 \tilde{s_v}\frac{\partial}{\partial x_\alpha}\overline{u'_\alpha s_v'}>$ & RES\_SBGT & z,t,n & resolved sink due to subgrid turbulence \\\hline
+{\rm numerical diffusion of } $<\tilde{s_v}^2>$                    & RES\_NUMD  & z,t,n & resolved numerical diffusion against $2\Delta x$ \\\hline
+{\rm relaxation of }$<\tilde{s_v}^2>$                              & RES\_RELA  & z,t,n & resolved sponge layer relaxation \\\hline
+{\rm 2way nesting of }$<\tilde{s_v}^2>$                            & RES\_NEST  & z,t,n & resolved average from smaller nested models \\\hline
+{\rm miscellaneous}                                                & RES\_MISC  & z,t,n & resolved: other effects (chemistry\ldots) \\\hline
+{\rm residual of budget of} $<\tilde{s_v}^2>$                      & RES\_RESI  & z,t,n & residual of resolved budget (should be zero) \\\hline
+$-\frac{\partial }{\partial t}<\overline{s_v'^2}>$ (neglected in turb. scheme) & NSG\_TEND & z,t,n & neglected opposite of tendency of $<\overline{s_v'^2}>$ \\\hline
+$-<w>\frac{\partial}{\partial z}<\overline{s_v'^2}>$               & NSG\_ADVM  & z,t,n & neglected advection by mean flow\\\hline
+$-<\tilde{u_\alpha}\frac{\partial}{\partial x_\alpha}\overline{s_v'^2}>$  & NSG\_ADVR & z,t,n & neglected advection by resolved flow\\\hline
 \end{longtable}
 \endgroup
