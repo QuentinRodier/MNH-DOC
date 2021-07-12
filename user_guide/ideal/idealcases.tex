@@ -604,11 +604,11 @@ NJZS      & integer & 5  \\
 
 \item XDELTAX \index{XDELTAX!\innam{NAM\_GRIDH\_PRE}} : mesh length (in meters)
  in x-direction on the conformal or cartesian plane. It is  not
-used if you read informations in a Meso-NH constant file (PGD\_FILE). 
+used if you read information in a Meso-NH constant file (PGD\_FILE). 
 
 \item XDELTAY \index{XDELTAY!\innam{NAM\_GRIDH\_PRE}} : mesh length (in meters)
  in y-direction on the conformal or cartesian plane. It is  not
-used if you read informations in a Meso-NH constant file (PGD\_FILE).
+used if you read information in a Meso-NH constant file (PGD\_FILE).
 
 \item  XHMAX\footnote{default is 300. for mountain and 0 for flat orography}  
 \index{XHMAX!\innam{NAM\_GRIDH\_PRE}}: Maximum height (in meters)
@@ -675,6 +675,140 @@ simulation, we therefore do not need any surface parameters. All the namelists o
 
 \end{itemize}  
 
+\subsection{Namelist NAM\_IBM\_LSF (LevelSet Function for Immersed Boundary Method)}
+\index{NAM\_IBM\_LSF!namelist description}
+\label{s:namibmlsf}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type  & default value \\
+\hline
+LIBM\_LSF     & logical       & .FALSE.       \\
+CIBM\_TYPE    & 4 characters  & 'NONE'        \\
+NIBM\_SMOOTH  & integer       & 1             \\
+XIBM\_SMOOTH  & real          & 0.0001        \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item LIBM\_LSF \index{LIBM\_LSF!\innam{NAM\_IBM\_LSF}} : Flag to
+  calculate LevelSet Function (the minimum distance to the obstacles) or not.
+\begin{itemize}
+\item .TRUE.: The LevelSet Function is calculated.
+\item .FALSE.: The LevelSet Function is not calculated.
+\end{itemize}
+
+\item CIBM\_TYPE \index{CIBM\_TYPE!\innam{NAM\_IBM\_LSF}} : The way the
+  obstacles are described.
+\begin{itemize}
+\item 'NONE': No obstacles.
+\item 'IDEA': Idealised ellipsoide or parallelepiped obstacles that
+  are described in the additional namelist ibm\_idea.nam (see section \ref{s:namibmidea}).
+\item 'GENE': Generic user defined obstacles in .obj format (see the description of the ibm\_gene.obj file below).
+\end{itemize}
+
+\item NIBM\_SMOOTH \index{NIBM\_SMOOTH!\innam{NAM\_IBM\_LSF}} : The
+  number of iterations for smoothing the LevelSet Function. In the
+  case a considerable smoothing shall be done, it is recommended to use NIBM\_SMOOTH=10.
+
+\item XIBM\_SMOOTH \index{XIBM\_SMOOTH!\innam{NAM\_IBM\_LSF}} : The
+  characteristic length scale used for smoothing the LevelSet
+  Function. It is recommended to use a value of XIBM\_SMOOTH close to the grid size.
+
+\end{itemize}
+
+\underbar{The ibm\_gene.obj file}
+\\
+The ibm\_gene.obj file contains the information of the triangles constituting the faces of the obstacles. 
+The .obj file must have a particular organization:
+\begin{enumerate}
+ \item A line with 'usemtl' indicates the two materials of each side of the interface. Only the faces with  their external face in contact with the outside air are read (mat2=air).
+ \item A line starting with 'v' indicates the location (x,y,z coordinates) of a triangle vertex.
+ \item A line starting with 'f' indicates the vertex constituting one triangle.
+\end{enumerate}
+\begin{verbatim}
+usemtl mat1:mat2
+v      xv1      yv1      zv1
+v      xv2      yv2      zv2
+v      xv3      yv3      zv3
+v      xv4      yv4      zv4
+f         1         2         3
+f         1         3         4
+usemtl mat3:mat2
+v      xv5      yv5      zv5
+v      xv6      yv6      zv6
+v      xv7      yv7      zv7
+v      xv8      yv8      zv8
+f         5         6         7
+f         5         7         8
+\end{verbatim}
+In the above example, the first triangle is formed by vertex numbers
+1, 2, 3 and the second by vertex numbers 1, 3, 4. The two triangles form the interface mat1:mat2.
+The interface mat3:mat2 is defined by two other triangles. The vertex number increment starts at the first vertex defined in the file.
+\\There are numerous other ways to write an .obj file. For instance,
+the normal or the texture of the faces can be defined. For the sake of
+simplicity only material ('usemtl'), vertex coordinates ('v') and face
+definition ('f') are considered in Meso-NH. The face normal is
+computed directly in the code and the face texture is irrelevant
+in the present version of the code.
+
+\subsection{Namelist ibm\_idea.nam (Idealised obstacles definition)}
+\index{ibm\_idea.nam!namelist description}
+\label{s:namibmidea}
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name  & Fortran type  & default value \\
+\hline
+NOBJ          & integer       & none       \\
+NOBJ\_TYPE    & integer       & none       \\
+NTYPE         & integer       & none       \\
+NOBJ\_ETYPE   & integer       & none       \\
+XX1           & real          & none       \\
+XX2           & real          & none       \\
+XY1           & real          & none       \\
+XY2           & real          & none       \\
+XZ1           & real          & none       \\
+XZ2           & real          & none       \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item NOBJ  \index{NOBJ!\innam{ibm\_idea.nam}} : Total number of obstacles (parallelepiped and ellipsoide).
+
+\item NOBJ\_TYPE  \index{NOBJ!\innam{ibm\_idea.nam}} : Number of obstacles type (parallelepiped and/or ellipsoide).
+
+\item NTYPE  \index{NTYPE!\innam{ibm\_idea.nam}} : Obstacle type:
+\begin{itemize}
+\item 1: Parallelepiped.
+\item 2: Ellipsoide.
+\end{itemize}
+
+\item NOBJ\_ETYPE  \index{NOBJ\_ETYPE!\innam{ibm\_idea.nam}} : Number of obstacles for each type.
+
+\item XX1, XX2, XY1, XY2, XZ1, XZ2  \index{XX1!\innam{ibm\_idea.nam}} : Locations of the obstacles.
+\begin{itemize}
+ \item if type 1 (parallelepiped): I1/I2 = min/max in direction (X,Y,Z)
+ \item if type 2 (ellipsoide): X1/Y1/Z1 locations of object center, X2/Y2/Z2 axe lenght in each direction
+\end{itemize}
+\end{itemize}
+
+\underbar{Example (case of 4 parallelepipeds and 1 ellipsoide)}
+\begin{verbatim}
+5    2                                         # NOBJ  / NOBJ_TYPE
+1    4                                         # NTYPE / NOBJ_ETYPE
++51.00 +53.42  +51.45  +63.65  -1.00  +2.54    # XX1/XX2/XY1/XY2/XZ1/XZ2
++51.00 +53.42  +71.55  +83.75  -1.00  +2.54    #
++51.00 +53.42  +91.65  +103.85  -1.00  +2.54   #
++51.00 +53.42  +111.75  +123.95  -1.00  +2.54  #
+2    1                                         # NTYPE / NOBJ_ETYPE
++100. +10. +100. +10. -1. 10.                  # XX1/XX2/XY1/XY2/XZ1/XZ2
+\end{verbatim}
+In the case of obstacles in contact with the ground it is necessary to have negative value of XZ1.
 
 \subsection{Namelist NAM\_LBCn\_PRE (lateral boundary conditions)} 
 \index{NAM\_LBCn\_PRE!namelist description}
@@ -1069,7 +1203,7 @@ Notice that in this case the V(z) values given by the profile are not used.
 
 
 \item 
-CTYPELOC  \index{CTYPELOC!\innam{NAM\_VPROFn\_PRE}}: Type of informations  used to give the
+CTYPELOC  \index{CTYPELOC!\innam{NAM\_VPROFn\_PRE}}: Type of information used to give the
                     localization of vertical profile (string of 6 characters)
 \begin{itemize}
 \item
@@ -1112,10 +1246,7 @@ If you use a 1D model, then NILOC is reset to 1 by the program.
                                          CTYPELOC='IJGRID') 
 If you use a 1D or a 2D  model, then NJLOC is reset to 1 by the program.
 
-\end{itemize}              
-
-
-
+\end{itemize}
 
 \section{Namelists for the externalized surface}
 \subsection{Principles}
@@ -1163,7 +1294,7 @@ NAM\_PGD\_SCHEMES CSEA='FLUX' and NAM\_COVER XUNIF\_COVER(1)=1. is often met.
 An example of namelist is given in the following part (Example 2).
 \end{enumerate}
  
-\item You want to use all the informations contained in a PGD file. Only the prognostic variables must be defined, and the following namelists must be filled:
+\item You want to use all the information contained in a PGD file. Only the prognostic variables must be defined, and the following namelists must be filled:
 
 \begin{itemize}
 \item NAM\_PREP\_SURF\_ATM\index{NAM\_PREP\_SURF\_ATM!surfex namelist}
@@ -1371,7 +1502,7 @@ ice  mixing ratio if  LUSERI=T (real, in Kg/Kg)
 
 {\bf You should make sure that the levels are dense enough so that the Laplace
 relation, which gives the thickness between successive levels, can be applied.}
-The radiosounding informations are written in the file  in the following order :
+The radiosounding information is written in the file  in the following order :
 
 
 \begin{itemize}
@@ -1486,7 +1617,7 @@ number of levels - 1)
 \end{itemize}
 
 In this case, the level number can even be equal to 1, because the profile
-informations are linearly interpolated on the model grid without orography
+information is linearly interpolated on the model grid without orography
 (wind components, $\theta _v$ and humidity) before the application of the Laplace
 relation to deduce the pressure and the vapor mixing ratio. Thus, the
 layers' thicknesses are never too large to invalidate the Laplace relation.
@@ -1532,7 +1663,7 @@ is made.
 Note that an available Newtonian relaxation forcing type on $[u, v]$ and/or
 $[\theta$, $r_v]$ is exclusive from the other physical forcings.
 
-The forcing informations and soundings have to be added at the end of the
+The forcing information and soundings have to be added at the end of the
 free-format part already written for CIDEAL='CSTN' or 'RSOU'. First, the
 type of forcing and the number of time dependent forcing are given:
 
@@ -1633,7 +1764,7 @@ keyword: {\bf ZFRC\_ADV}
 
 For 2D idealized simulation, an advective forcing can be used to impose effects to the model solution. This functionality works (L2D\_ADV\_FRC=.TRUE. in MODD\_CONF) only in 2D cases. The advecting forcings mimic the latidudinal humidity and temperature advection not taken into account in a 2D model.
          
-The forcing informations and soundings have to be added at the end of the
+The forcing information and soundings have to be added at the end of the
 free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 
 \begin{itemize}
 \item ZFRC\_ADV : keyword for advective forcing
@@ -1663,7 +1794,7 @@ keyword: {\bf ZFRC\_REL}
 
 For 2D idealized simulation, a relaxation forcing can be used to impose effects to the model solution. This functionality works (L2D\_REL\_FRC=.TRUE. in MODD\_CONF) only in 2D cases.  The relaxation forcing allows the relax the model fields towards a 2D climatology for temperature and humidity.
          
-The forcing informations and soundings have to be added at the end of the
+The forcing information and soundings have to be added at the end of the
 free-format part already written for CIDEAL='CSTN' or 'RSOU'. They are set in the following order : 
 \begin{itemize}
 \item ZFRC\_REL : keyword for advective forcing
@@ -1750,8 +1881,7 @@ CSTN
 0.01
 \end{verbatim}
 
-  
-This file contains the  informations necessary to generate the initial 
+This file contains the  information necessary to generate the initial 
 conditions for a quasi-hydrostatic flow, in the weakly
 non-linear regime, with a regular vertical grid.
 

@@ -186,7 +186,7 @@ the chemical species if they are not in the HATMFILE or if the ones of the
 HATMFILE are not used (only if HATMFILETYPE is 'GRIBEX'). The grids must
 be the same as the ones of the output file (CINIFILE).
 \index{HCHEMFILE!\innam{NAM\_FILE\_NAMES}}
-\item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH','NETCDF')
+\item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH', 'NETCDF')
 \index{HCHEMFILETYPE!\innam{NAM\_FILE\_NAMES}}
 \item CINIFILE : name of the MESO-NH output FM-file, used as initial
 or coupling file in a MESO-NH simulation
@@ -356,6 +356,13 @@ before replacing the dad name of CINIFILE by CDADBOGFILE instead of CDADATMFILE.
 CDADBOGFILE must exist before running the prep\_real\_case job. 
 \index{CDADBOGFILE!\innam{NAM\_HURR\_CONF}}
 \end{itemize}
+
+
+\subsection{Namelist NAM\_IBM\_LSF}
+See section \ref{s:namibmlsf} page \pageref{s:namibmlsf} for details.
+
+\subsection{Namelist ibm\_idea.nam}
+See section \ref{s:namibmidea} page \pageref{s:namibmidea} for details.
 
 \subsection{Namelist NAM\_REAL\_CONF  (configuration variables)}
 \index{NAM\_REAL\_CONF!namelist description}
@@ -623,7 +630,7 @@ ZHAT
 \section{Processing of extra fields in AROME GRIB file}
 \label{i:realdummy}
 
-AROME GRIB files obtained with extractarpege contain fields which aren't read by default by PREP\_REAL\_CASE. You could want to have this extra fields in your FM file. To get this fields, you have to use LDUMMY\_REAL=T and fill a free formatted part at the end of PRE\_REAL1.nam.
+AROME GRIB files obtained with extractMF contain fields which aren't read by default by PREP\_REAL\_CASE. You could want to have this extra fields in your FM file. To get this fields, you have to use LDUMMY\_REAL=T and fill a free formatted part at the end of PRE\_REAL1.nam.
 
 This part must begin by the keyword {\bf DUMMY\_2D} (for 2D fields).
 Then, the list of the MesoNH dummy fields, and their corresponding GRIB code in the GRIB file (parameter code, and if 

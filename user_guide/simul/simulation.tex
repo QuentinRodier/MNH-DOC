@@ -3668,7 +3668,267 @@ XUTRANS,XVTRANS
 %\end{itemize}
 %\index{LPGROUND\_FRC!\innam{NAM\_FRC}}
 \end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_IBM\_PARAMn (Parameters for Immersed Boundary Method)}
+\index{NAM\_IBM\_PARAMn!namelist description}
+\begin{center}
+\begin{tabular}{|l|l|l| }
+\hline 
+ Fortran name        & Fortran type  & default value \\
+\hline
+LIBM                 & logical       & .FALSE.       \\
+LIBM\_TROUBLE        & logical       & .FALSE.       \\
+CIBM\_ADV            & 6 characters  & 'NOTHIN'      \\
+XIBM\_EPSI           & real          & 1.E-9         \\
+XIBM\_RUG            & real          & 0.01          \\
+XIBM\_CNU            & real          & 0.06          \\
+NIBM\_LAYER\_V       & integer       & 2             \\
+NIBM\_LAYER\_T       & integer       & 2             \\
+NIBM\_LAYER\_R       & integer       & 2             \\
+NIBM\_LAYER\_E       & integer       & 2             \\
+NIBM\_LAYER\_S       & integer       & 2             \\
+CIBM\_MODE\_INTE3\_V & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE3\_T & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE3\_R & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE3\_E & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE3\_S & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE1NV  & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1TV  & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1CV  & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1\_T & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1\_R & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1\_E & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1\_S & 3 characters  & 'CL2'         \\
+XIBM\_RADIUS\_V      & real          & 2.            \\
+XIBM\_RADIUS\_T      & real          & 2.            \\
+XIBM\_RADIUS\_R      & real          & 2.            \\
+XIBM\_RADIUS\_E      & real          & 2.            \\
+XIBM\_RADIUS\_S      & real          & 2.            \\
+XIBM\_POWERS\_V      & real          & 1.            \\
+XIBM\_POWERS\_T      & real          & 1.            \\
+XIBM\_POWERS\_R      & real          & 1.            \\
+XIBM\_POWERS\_E      & real          & 1.            \\
+XIBM\_POWERS\_S      & real          & 1.            \\
+CIBM\_MODE\_BOUNN\_V & 3 characters  & 'ASY'         \\
+CIBM\_MODE\_BOUNT\_V & 3 characters  & 'ASY'         \\
+CIBM\_MODE\_BOUNC\_V & 3 characters  & 'ASY'         \\
+CIBM\_MODE\_BOUND\_T & 3 characters  & 'SYM'         \\
+CIBM\_MODE\_BOUND\_R & 3 characters  & 'SYM'         \\
+CIBM\_MODE\_BOUND\_E & 3 characters  & 'SYM'         \\
+CIBM\_MODE\_BOUND\_S & 3 characters  & 'SYM'         \\
+XIBM\_FORC\_BOUNN\_V & real          & 0.            \\
+XIBM\_FORC\_BOUNT\_V & real          & 0.            \\
+XIBM\_FORC\_BOUNC\_V & real          & 0.            \\
+XIBM\_FORC\_BOUND\_T & real          & 0.            \\
+XIBM\_FORC\_BOUND\_R & real          & 0.            \\
+XIBM\_FORC\_BOUND\_E & real          & 0.            \\
+XIBM\_FORC\_BOUND\_S & real          & 0.            \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l| }
+\hline 
+ Fortran name        & Fortran type  & default value \\
+\hline
+
+CIBM\_TYPE\_BOUNT\_V & 3 characters  & 'DIR'         \\
+CIBM\_TYPE\_BOUNN\_V & 3 characters  & 'DIR'         \\
+CIBM\_TYPE\_BOUNC\_V & 3 characters  & 'DIR'         \\
+CIBM\_TYPE\_BOUND\_T & 3 characters  & 'NEU'         \\
+CIBM\_TYPE\_BOUND\_R & 3 characters  & 'NEU'         \\
+CIBM\_TYPE\_BOUND\_E & 3 characters  & 'NEU'         \\
+CIBM\_TYPE\_BOUND\_S & 3 characters  & 'NEU'         \\
+CIBM\_FORC\_BOUNN\_V & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUNT\_V & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUNC\_V & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUNR\_V & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUND\_T & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUND\_R & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUND\_E & 3 characters  & 'CST'         \\
+CIBM\_FORC\_BOUND\_S & 3 characters  & 'CST'         \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+ 
+\item LIBM \index{LIBM!\innam{NAM\_IBM\_PARAMn}}: Flag to
+  activate Immersed Boundary Method (IBM) or not. CAUTION: In their
+  current version, IBM can only be used in combination with
+  flat terrain (LFLAT=.TRUE.), cartesian coordinates
+  (LCARTESIAN=.TRUE.), and near-neutral atmospheric conditions.
+  It is furthermore recommended to use IBM in combination with
+  the WENO5 or WENO3 momentum advection scheme.
+\begin{itemize}
+\item .TRUE.: Immersed Boundary Method is activated.
+\item .FALSE.: Immersed Boundary Method is not activated.
+\end{itemize}
+  
+\item LIBM\_TROUBLE \index{LIBM\_TROUBLE!\innam{NAM\_IBM\_PARAMn}}:
+  Flag to deal with too small obstacles or too small space in between
+  obstacles (underresolved obstacles). Recommended is to filter the
+  obstacles during the preprocessing and not to use LIBM\_TROUBLE=.TRUE..
+\begin{itemize}
+\item .TRUE.: Flag to deal with too small obstacles is activated.
+\item .FALSE.: Flag to deal with too small obstacles is not activated.
+\end{itemize}
+  
+\item CIBM\_ADV \index{CIBM\_ADV!\innam{NAM\_IBM\_PARAMn}}:
+How to deal with the Immersed Boundary Conditions in the Runge Kutta
+time stepping. Recommended is 'LOWORD'.
+\begin{itemize}
+\item 'NOTHIN': Nothing special is done - One ghost cell technique
+  forcing is used per time step and the same advection scheme (WENO or
+  CENTERED) is used close to the
+  obstacles than in the rest of the model domain.
+\item 'LOWORD': Low order - One ghost cell technique forcing is used per time
+  step and a lower order advection scheme (WENO3 instead of
+  WENO5 or CEN2 instead of CEN4) is used close to the obstacles.
+\item 'FORCIN': Forcing - The ghost cell technique is used at all intermediate time
+  steps of the Runge Kutta scheme.
+\item 'FREEZE': Freeze - A quasi-static approach for the Immersed
+  Boundary Conditions is used at the intermediate time steps of the Runge
+  Kutta scheme.
+\end{itemize}
+
+\item XIBM\_EPSI \index{XIBM\_EPSI!\innam{NAM\_IBM\_PARAMn}}:
+Very small real number value to be used in computations related to the
+Immersed Boundary Method.
+  
+\item XIBM\_RUG \index{XIBM\_RUG!\innam{NAM\_IBM\_PARAMn}}:
+Aerodynamical roughness length [m] of obstacles. A constant value
+is used for all obstacles.
+  
+\item XIBM\_CNU \index{XIBM\_CNU!\innam{NAM\_IBM\_PARAMn}}:
+Parameter in the IBM wall model.
+
+\item NIBM\_LAYER\_\{V,T,R,E,S\} \index{NIBM\_LAYER\_V!\innam{NAM\_IBM\_PARAMn}}:
+Number of ghost point layers for \{wind velocity components,
+potential temperature,mixing ratio of water vapour, subgrid turbulent
+kinetic energy, mixing ratio of scalar variables\}.
+
+\item CIBM\_MODE\_INTE3\_\{V,T,R,E,S\} \index{CIBM\_MODE\_INTE3\_V!\innam{NAM\_IBM\_PARAMn}}:
+Method for 3D interpolation to calculate the values of \{wind velocity,
+potential temperature,mixing ratio of water vapour,subgrid turbulent kinetic energy,
+mixing ratio of scalar variables\} at mirror, image1, and image2 points.
+\begin{itemize}
+\item 'LAI': Inverse distance weighting.
+\item 'LAM': Modified distance weighting.
+\end{itemize}
+
+\item CIBM\_MODE\_INTE1\{NV,TV,CV\} \index{CIBM\_MODE\_INTE1\_NV!\innam{NAM\_IBM\_PARAMn}}:
+Method for 1D interpolation to calculate the value of velocity
+\{normal,tangential,tangential\} to the obstacles at ghost points.
+\begin{itemize}
+\item 'CL1': Lagrange Polynomials - 1 point.
+\item 'CL2': Lagrange Polynomials - 2 points.
+\item 'CL3': Lagrange Polynomials - 3 points.
+\end{itemize}
+
+\item CIBM\_MODE\_INTE1\_\{T,R,E,S\} \index{CIBM\_MODE\_INTE1\_T!\innam{NAM\_IBM\_PARAMn}}:
+Method for 1D interpolation to calculate the value of \{potential
+temperature,mixing ratio of water vapour,subgrid turbulent kinetic energy,mixing
+ratio of scalar variables\} at ghost points.
+\begin{itemize}
+\item 'CL1': Lagrange Polynomials - 1 point.
+\item 'CL2': Lagrange Polynomials - 2 points.
+\item 'CL3': Lagrange Polynomials - 3 points.
+\end{itemize}
+
+\item XIBM\_RADIUS\_\{V,T,R,E,S\} \index{XIBM\_RADIUS\_V!\innam{NAM\_IBM\_PARAMn}}:
+Radius (in number of grid points) for modified distance
+weighting ('LAM') of \{wind velocity components,potential temperature,
+mixing ratio of water vapour,subgrid turbulent kinetic energy,mixing
+ratio of scalar variables\}.
+
+\item XIBM\_POWERS\_\{V,T,R,E,S\} \index{XIBM\_POWERS\_V!\innam{NAM\_IBM\_PARAMn}}:
+Exponent to be used in inverse ('LAI') or modified distance
+weighting ('LAM') of \{wind velocity components,potential temperature,
+mixing ratio of water vapour,subgrid turbulent kinetic energy,mixing
+ratio of scalar variables\}.
+       
+\item CIBM\_MODE\_BOUN\{N,T,C\}\_V \index{CIBM\_MODE\_BOUNN\_V!\innam{NAM\_IBM\_PARAMn}}:
+The way the value at the ghost point for wind velocity
+\{normal,tangential,tangential\} to the obstacles is calculated based on the value at the
+image point and the value at the interface.
+\begin{itemize}
+\item 'SYM': Symmetrical: VALUE\_GHOST = VALUE\_IMAGE.
+\item 'ASY': Asymmetrical: VALUE\_GHOST = -VALUE\_IMAGE + 2.*VALUE\_INTERFACE.
+\item 'CST': Constant: VALUE\_GHOST = VALUE\_INTERFACE.
+\end{itemize}
+
+\item CIBM\_MODE\_BOUND\_\{T,R,E,S\} \index{CIBM\_MODE\_BOUND\_T!\innam{NAM\_IBM\_PARAMn}}:
+The way the value at the ghost point for \{potential
+temperature,mixing ratio of water vapour,subgrid turbulent kinetic energy,mixing ratio of scalar variables\}
+is calculated based on the value at the image point and the value at the interface.
+\begin{itemize}
+\item 'SYM': Symmetrical: VALUE\_GHOST = VALUE\_IMAGE.
+\item 'ASY': Asymmetrical: VALUE\_GHOST = -VALUE\_IMAGE + 2.*VALUE\_INTERFACE.
+\item 'CST': Constant: VALUE\_GHOST = VALUE\_INTERFACE.
+\end{itemize}
+
+\item XIBM\_FORC\_BOUN\{N,T,C\}\_V \index{XIBM\_FORC\_BOUNN\_V!\innam{NAM\_IBM\_PARAMn}}:
+The value of the boundary condition for wind velocity \{normal,tangential,tangential\} to the
+obstacles specified at the interface. 
+  
+\item XIBM\_FORC\_BOUND\_\{T,R,E,S\} \index{XIBM\_FORC\_BOUND\_T!\innam{NAM\_IBM\_PARAMn}}:
+The value of the boundary condition for \{potential temperature,water
+vapour mixing ratio,subgrid turbulent kinetic energy,mixing ratio of
+scalar variables\} specified at the interface. 
+
+\item CIBM\_TYPE\_BOUN\{N,T,C\}\_V \index{CIBM\_TYPE\_BOUNN\_V!\innam{NAM\_IBM\_PARAMn}}:
+The type of boundary condition for wind velocity \{normal,tangential,tangential\} to the obstacles.
+\begin{itemize}
+\item 'DIR': Dirichlet boundary condition - the value of the boundary
+  condition is the value of the parameter.
+\item 'NEU': Neumann boundary condition - the value of the boundary condition
+  is the gradient of the parameter.
+\item 'ROB': Robin boundary condition - linear combination between Dirichlet and Neumann.
+\end{itemize}
+  
+\item CIBM\_TYPE\_BOUND\_\{T,R,E,S\} \index{CIBM\_TYPE\_BOUND\_T!\innam{NAM\_IBM\_PARAMn}}:
+The type of boundary condition for \{potential temperature,mixing
+ratio of water vapour,subgrid turbulent kinetic energy,mixing ratio of scalar variables\}.  
+\begin{itemize}
+\item 'DIR': Dirichlet boundary condition - the value of the boundary
+condition is the value of the parameter.
+\item 'NEU': Neumann boundary condition - the value of the boundary condition
+is the gradient of the parameter.
+\item 'ROB': Robin boundary condition - linear combination between Dirichlet and Neumann.
+\end{itemize}
+
+\item CIBM\_FORC\_BOUN\{N,T,C\}\_V \index{CIBM\_FORC\_BOUNN\_V!\innam{NAM\_IBM\_PARAMn}}:
+The way to calculate the value at the interface for wind velocity
+\{normal,tangential,tangential\} to the obstacles.
+\begin{itemize}
+\item 'CST': VALUE\_INTERFACE is taken.
+\item 'WN1': A wall model is activated between the first layer image point and the interface.
+\item 'WN3': A wall model is activated between the second layer image point and the interface.
+\end{itemize}
+
+\item CIBM\_FORC\_BOUND\_\{T,R,E,S\} \index{CIBM\_FORC\_BOUND\_T!\innam{NAM\_IBM\_PARAMn}}:
+The way to calculate the value at the interface for \{potential
+temperature,mixing ratio of water vapour,subgrid turbulent kinetic energy,mixing ratio of
+scalar variables\}.
+\begin{itemize}
+\item 'CST': VALUE\_INTERFACE is taken.
+\item 'WN1': A wall model is activated between the first layer image point and the interface.
+\item 'WN3': A wall model is activated between the second layer image point and the interface.
+\end{itemize}
+
+\item CIBM\_FORC\_BOUNR\_V \index{CIBM\_FORC\_BOUNR\_V!\innam{NAM\_IBM\_PARAMn}}:
+Parameter for the interpolation when performing the change of basis (u,v,w) to (n,t,c) of the wind
+vector close to the obstacles.
+\begin{itemize}
+\item 'CST': Interpolation in the direction of the first image layer.
+\item 'LIN': Linear evolution between first and second image layer.
+\end{itemize}
+
+\end{itemize}
+
 \subsection{Namelist NAM\_LBCn (boundary conditions of model n)}
 \index{NAM\_LBCn!namelist description}
 
@@ -5282,7 +5542,7 @@ Ending date of the release (in YYYYMMDDHHMMSS)
 \hline
 Fortran name & Fortran type & default value \\
 \hline
-LLES\_PDF                     &  logical          & .FALSE.  \\
+LLES\_PDF                     & logical          & .FALSE.  \\
 NPDF                          & integer           & 1 \\
 XTH\_PDF\_MIN                 & real              & 270. \\
 XTH\_PDF\_MAX                 & real              & 350. \\
@@ -5386,6 +5646,77 @@ XTHL\_PDF\_MIN : Minimum value of $\theta_l$ pdf
 \item
 XTHL\_PDF\_MAX : Maximum value of $\theta_l$ pdf
 
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_RECYCL\_PARAMn (Parameters for Turbulence Recycling Method)}
+\index{NAM\_RECYCL\_PARAMn!namelist description}
+\begin{center}
+\begin{tabular}{|l|l|l| }
+\hline 
+ Fortran name        & Fortran type  & default value \\
+\hline
+LRECYCL              & logical       & .FALSE.       \\
+LRECYCLW             & logical       & .FALSE.       \\
+LRECYCLE             & logical       & .FALSE.       \\
+LRECYCLS             & logical       & .FALSE.       \\
+LRECYCLN             & logical       & .FALSE.       \\
+XDRECYCLW            & real          & 0.            \\
+XDRECYCLE            & real          & 0.            \\
+XDRECYCLS            & real          & 0.            \\
+XDRECYCLN            & real          & 0.            \\
+XARECYCLW            & real          & 0.            \\
+XARECYCLE            & real          & 0.            \\
+XARECYCLS            & real          & 0.            \\
+XARECYCLN            & real          & 0.            \\
+XTMOY                & real          & 0.            \\
+XNUMBELT             & real          & 28.           \\
+XTMOYCOUNT           & real          & 0.            \\
+XRCOEFF              & real          & 0.2           \\
+XTBVTOP              & real          & 500.          \\
+XTBVBOT              & real          & 300.          \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+ 
+\item LRECYCL \index{LRECYCL!\innam{NAM\_RECYCL\_PARAMn}}: Flag to
+  activate turbulence recycling method or not. CAUTION: In its
+  current version, the turbulence recycling method has only been validated with
+  flat terrain (LFLAT=.TRUE.), cartesian coordinates
+  (LCARTESIAN=.TRUE.), and a near-neutral boundary layer.
+\begin{itemize}
+\item .TRUE.: turbulence recycling method is activated.
+\item .FALSE.: turbulence recycling method is not activated.
+\end{itemize}
+
+\item LRECYCL\{W,E,S,N\} \index{LRECYCLW!\innam{NAM\_RECYCL\_PARAMn}}: Flag to
+  activate turbulence recycling method on the \{West, East, South, North\} boundaries of the domain or not.
+\begin{itemize}
+\item .TRUE.: turbulence recycling method is activated on the \{West, East, South, North\} boundaries of the domain.
+\item .FALSE.: turbulence recycling method is not activated on the \{West, East, South, North\} boundaries of the domain.
+\end{itemize}
+
+\item XDRECYCL\{W,E,S,N\} \index{XDRECYCLW!\innam{NAM\_RECYCL\_PARAMn}}: Distance (in meters) of the recycling plan to the \{West, East, South, North\} boundary (1/4 of the domain is recommended).
+
+\item XARECYCL\{W,E,S,N\} \index{XDRECYCLW!\innam{NAM\_RECYCL\_PARAMn}}: Angle between the recycling plan and the \{West, East, South, North\} boundary (0. for X-direction and
+$\frac{\pi}{2}$ for Y-direction).
+
+\item XTMOY \index{XTMOY!\innam{NAM\_RECYCL\_PARAMn}}: Total number of time-steps within time window
+for the calculation of the moving temporal average.
+
+\item XNUMBELT \index{XNUMBELT!\innam{NAM\_RECYCL\_PARAMn}}: Number of elements used for the variable averaging.
+
+\item XTMOYCOUNT \index{XTMOYCOUNT!\innam{NAM\_RECYCL\_PARAMn}}: Number of time-steps between an update of the averaged variable (XTMOYCOUNT=XTMOY/XNUMBELT)
+
+\item XRCOEFF \index{XRCOEFF!\innam{NAM\_RECYCL\_PARAMn}}: Weighting coefficient for the turbulent fluctuations, preventing calculation divergence. XRCOEFF $\in$ [0.1-0.3] for near-neutral simulations.
+
+\item XTBVTOP \index{XTBVTOP!\innam{NAM\_RECYCL\_PARAMn}}: Threshold to filter the gravity waves. Shoud be equal to approximatively 4 times the Brunt-V{\"a}is{\"a}l{\"a} period.
+
+\item XTBVBOT \index{XTBVBOT!\innam{NAM\_RECYCL\_PARAMn}}: Threshold to filter the gravity waves. Shoud be equal to approximatively 2 times the Brunt-V{\"a}is{\"a}l{\"a} period.
+  
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_SALT }
@@ -5667,10 +5998,6 @@ XMU\_V : Molecular (cinematic) viscosity
 XPRANDTL : Prandtl number
 
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 \section{SURFACE SCHEMES: namelists of the externalized surface}
 \label{ss:surf}
