@@ -3282,6 +3282,265 @@ They are included in the declarative module MODD\_ELEC\_DESCRn.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_EOL (wind turbines)}
+\index{NAM\_EOL!namelist description}
+It is possible to simulate wind turbines only in ideal cases. 
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LMAIN\_EOL      & logical        & FALSE \\
+CMETH\_EOL      & 4 characters   & `ADNR' \\
+CSMEAR          & 4 characters   & `3LIN' \\
+NMODEL\_EOL     & integer        & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item LMAIN\_EOL: flag to model wind turbines
+\begin{itemize}
+\item .TRUE.  to simulate wind turbines.
+\item .FALSE. to forget about them.
+\end{itemize}
+\index{LMAIN\_EOL!\innam{NAM\_EOL}}
+
+\item CMETH\_EOL: aerodynamic method for wind turbine simulations
+\begin{itemize}
+\item `ADNR' to use the  Non-Rotating Actuator Disc.
+\item `ALM' to use the Actuator Line Method.
+\end{itemize}
+\index{CMETH\_EOL!\innam{NAM\_EOL}}
+
+\item CSMEAR: smearing method of the aerodynamic forces field
+\begin{itemize}
+\item `NULL' no smearing.
+\item `1LIN' 1D linear smearing method.
+\item `3LIN' 3D linear smearing method.
+\end{itemize}
+\index{CSMEAR!\innam{NAM\_EOL}}
+
+\item NMODEL\_EOL: model number where the wind turbines are included (if nested models). If NMODEL\_EOL$=n\neq1$, the namelists NAM\_EOL* have to be in EXSEG\underline{$n$}.nam
+\index{NMODEL\_EOL!\innam{NAM\_EOL}}
+
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_EOL\_ADNR}
+\index{NAM\_EOL\_ADNR!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CFARM\_CSVDATA      & 100 characters   & `data\_farm.csv' \\
+CTURBINE\_CSVDATA   & 100 characters   & `data\_turbine.csv' \\
+CINTERP             & 3 characters     & `CLS' \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item CFARM\_CSVDATA: name of the CSV data file containing the description of the wind farm. The file must contain a header and one row of data per wind turbine. The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are: 
+\begin{enumerate}
+\item x-axis position [m] of the base of the tower (ideal conditions only),
+\item y-axis position [m] of the base of the tower (ideal conditions only),
+\item thrust coefficient [-] of the rotor, defined with the infinite upstream velocity (see scientific documentation for details).
+\end{enumerate}
+An example for two wind turbines is given below:
+\begin{center}
+\begin{tabular} {|rrr|}
+\hline
+X [m],& Y [m],& Ct\_inf [-] \\
+1000,&  600,& 0.8 \\
+2500,&  600,& 0.6 \\
+\hline
+\end{tabular}
+\end{center}
+\index{CFARM\_CSVDATA!\innam{NAM\_EOL\_ADNR}}
+
+\item CTURBINE\_CSVDATA: name of the CSV data file containing the description of the wind turbine. The file must contain a header and one row of data, as only one type of wind turbine can be simulated in a Meso-NH model\footnote{If the user wants to simulate two wind farms built with two different types of wind turbines, the user can set two Meso-NH son models using two CSV data files.} (or sub-model). The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are: 
+\begin{enumerate}
+\item name of the wind turbine [-] (not used by the code, useful for the user),
+\item hub height [m],
+\item radius of the rotor [m].
+\end{enumerate}
+One can note that the hub radius, the deport and the tilt are not taken into account with this model. An example for a DTU\_10MW rotor is given below:
+\begin{center}
+\begin{tabular} {|rrr|}
+\hline
+Turbine name,& Hub height [m],& Rotor radius [m] \\
+DTU\_10MW,&  119,& 89.15 \\
+\hline
+\end{tabular}
+\end{center}
+\index{CTURBINE\_CSVDATA!\innam{NAM\_EOL\_ADNR}}
+
+
+\item CINTERP: method of interpolation of wind conditions at disc position:
+\begin{itemize}
+\item `CLS' closest cell value (no interpolation).
+\item `8NB' eigth neighbourhood interpolation.
+\end{itemize}
+\index{CMETH\_EOL!\innam{NAM\_EOL\_ADNR}}
+
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_EOL\_ALM}
+\index{NAM\_EOL\_ALM!namelist description}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+CFARM\_CSVDATA      & 100 characters   & `data\_farm.csv' \\
+CTURBINE\_CSVDATA   & 100 characters   & `data\_turbine.csv' \\
+CBLADE\_CSVDATA     & 100 characters   & `data\_blade.csv' \\
+CAIRFOIL\_CSVDATA   & 100 characters   & `data\_airfoil.csv' \\
+CINTERP             & 3 characters     & `CLS' \\
+NNB\_BLAELT         & integer          & 42 \\
+LTIMESPLIT          & logical          & FALSE \\
+LTIPLOSSG           & logical          & TRUE \\
+LTECOUTPTS          & logical          & FALSE \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item CFARM\_CSVDATA: name of the CSV data file containing the description of the wind farm. The file must contain a header and one row of data per wind turbine. The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are: 
+\begin{enumerate}
+\item x-axis position [m] of the base of the tower (ideal conditions only),
+\item y-axis position [m] of the base of the tower (ideal conditions only),
+\item angular velocity [rad/s] of the rotor (trigonometric convention seen from upstream),
+\item yaw angle [rad] of the nacelle ($0$ $\Leftrightarrow$ facing an upstream x-axis wind; trigonometric convention seen from the sky),
+\item pitch angle [rad] of the blades ($0$ $\Leftrightarrow$ rotor plane ; $-\pi/2$ $\Leftrightarrow$ feathering. Trigonometric convention seen from blade tip).
+\end{enumerate}
+An example for one wind turbine is given below:
+\begin{center}
+\begin{tabular} {|rrrrr|}
+\hline
+X [m],& Y [m],& Omega [rad/s],& N\_yaw [rad],& B\_pitch [rad]\\
+1000,& 600,& -1.00531,& 0.0,& -0.07866\\
+\hline
+\end{tabular}
+\end{center}
+\index{CFARM\_CSVDATA!\innam{NAM\_EOL\_ALM}}
+
+\item CTURBINE\_CSVDATA: name of the CSV data file containing the description of the wind turbine. The file must contain a header and one row of data, as only one type of wind turbine can be simulated in a Meso-NH model\footnote{If the user wants to simulate two wind farms built with two different types of wind turbines, the user can set two Meso-NH son models using two CSV data files.} (or sub-model). The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are : 
+\begin{enumerate}
+\item name of the wind turbine [-] (not used by the code, useful for the user),
+\item number of blades [-],
+\item hub height [m],
+\item radius of blade root (or hub radius) [m],
+\item radius of blade tip (or rotor radius) [m],
+\item tilt angle [rad] of the nacelle ($0$ $\Leftrightarrow$ facing an upstream x-axis wind; $\pi/2$ $\Leftrightarrow$ facing the sky),
+\item hub deport [m].
+\end{enumerate}
+An example for a DTU\_10MW rotor is given below:
+\begin{center}
+\begin{tabular} {|rrrrrrr|}
+\hline
+Turbine name,& Nb b.[-],& H\_h [m],& R\_r [m],& R\_t [m],& N\_tilt [rad],& H\_dep. [m]\\
+DTU\_10MW,& 3,& 119,& 2.8,& 89.15,& 0.0,& 7.1 \\
+\hline
+\end{tabular}
+\end{center}
+\index{CTURBINE\_CSVDATA!\innam{NAM\_EOL\_ALM}}
+
+\item CBLADE\_CSVDATA: name of the CSV data file containing the description of the blade. The file must contain a header and one row of data per blade element centre. The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are : 
+\begin{enumerate}
+\item center position [\%] along blade length (from root radius to tip) of the element,
+\item chord [m] of the element,
+\item twist angle [rad] of the element ($0$ $\Leftrightarrow$ rotor plane ; $-\pi/2$ $\Leftrightarrow$ feathering. Trigonometric convention seen from blade tip),
+\item name of the airfoil [-].
+\end{enumerate}
+An example of a blade description rotor is given below:
+\begin{center}
+\begin{tabular} {|rrrr|}
+\hline
+Center [\%],& Chord [m],& Twist [rad],& Airfoil [-] \\
+0.03111,& 5.37574,& -0.25188,& Cylinder   \\
+0.07854,& 5.40375,& -0.25311,& Cylinder   \\
+0.11164,& 5.53313,& -0.24859,& FFA-W3-600 \\
+\ldots  &         &          &            \\
+0.98605,& 1.33250,& 0.057858,& FFA-W3-241 \\
+0.99527,& 0.94924,& 0.059291,& FFA-W3-241 \\
+\hline
+\end{tabular}
+\end{center}
+\index{CBLADE\_CSVDATA!\innam{NAM\_EOL\_ALM}}
+
+\item CAIRFOIL\_CSVDATA: name of the CSV data file containing the descprition of the airfoils. The file must contain a header and tabulated polars for all the airfoils of the blade. For each airfoil, one row of data per angle of attack must be specified. The name of the variables in the header can be modified by the user since it is not read by the program. The delimiters of the file are commas. The data and the column order of this file are : 
+\begin{enumerate}
+\item name of the airfoil [-],
+\item angle of attack [deg],
+\item Reynolds number [-] (not used by the code, useful for the user),
+\item lift coefficient [-],
+\item drag coefficient [-]
+\item moment coefficient [-] (not used by the code yet).
+\end{enumerate}
+An example of an airfoil data file is given below:
+\begin{center}
+\begin{tabular} {|rrrrrr|}
+\hline
+Airfoil name,& AoA [deg],& Re [-],& C\_l [-],& C\_d [-],& C\_m [-] \\
+Cylinder,    & -180,     & 0.0,   & 0.0,     & 0.6,     & 0.0    \\
+Cylinder,    &  0.0,     & 0.0,   & 0.0,     & 0.6,     & 0.0    \\
+Cylinder,    &  180,     & 0.0,   & 0.0,     & 0.6,     & 0.0    \\
+FFA-W3-241,  & -180,     & 0.0,   & 0.0,     & 0.0,     & 0.0    \\
+FFA-W3-241,  & -175,     & 0.0,   & 0.1736,  & 0.01142, & 0.0218 \\
+FFA-W3-241,  & -170,     & 0.0,   & 0.3420,  & 0.04523, & 0.0434 \\
+\ldots       &           &        &          &          &        \\
+FFA-W3-600,  & 170,      & 0.0,   &-0.342,   & 0.0392,  &-0.0434 \\
+FFA-W3-600,  & 175,      & 0.0,   &-0.1736,  & 0.0099,  &-0.0218 \\
+FFA-W3-600,  & 180,      & 0.0,   & 0.0,     & 0.0,     & 0.0    \\
+\hline
+\end{tabular}
+\end{center}
+\index{CAIRFOIL\_CSVDATA!\innam{NAM\_EOL\_ALM}}
+
+\item CINTERP: method of interpolation of wind conditions at blade element position:
+\begin{itemize}
+\item `CLS' closest cell value (no interpolation).
+\item `8NB' eight neighbourhood interpolation.
+\end{itemize}
+\index{CMETH\_EOL!\innam{NAM\_EOL\_ALM}}
+
+\item NNB\_BLAELT: number of blade elements for the discretisation of the blade radius. This value is independent of the number of elements in CBLADE\_CSVDATA, as the algorithm will proceed to its own discretization through an interpolation of the data given by the blade description (CBLADE\_CSVDATA).
+\index{NNB\_BLAELT!\innam{NAM\_EOL\_ALM}}
+
+\item LTIMESPLIT: flag to activate time-splitting method (also known as Actuator Sector). 
+The CFL criterion of Meso-NH imposes a time step. Nevertheless, the ALM often requires a smaller time step in order to ensure that a blade element will not skip a mesh cell during this time step. As it could be too restrictive, the ALM algorithm can be called a few times during the main CFL-based time step duration, in order to respect the ALM time step criterion. It allows computational cost saving, but results can be less accurate.
+\begin{itemize}
+\item .TRUE.  activate time-splitting method only if XTSTEP (NAM\_DYNn) is too high.
+\item .FALSE. no activation.
+\end{itemize}
+\index{LTIMESPLIT!\innam{NAM\_EOL\_ALM}}
+
+\item LTIPLOSSG: flag to activate the tip loss correction of Glauert. 
+Usually applied to alleviate the over-predicted loads at the blade tip region when the low resolution or the smearing method cannot capture tip vortices. One can note that this correction should only be used with models such as the Actuator Disc with Rotation to correct for finite number of blades.
+\begin{itemize}
+\item .TRUE.  activate the tip loss correction of Glauert.
+\item .FALSE. no activation.
+\end{itemize}
+\index{LTIPLOSSG!\innam{NAM\_EOL\_ALM}}
+
+\item LTECOUTPTS: flag to activate the output of geometrical points (XYZ) of the wind turbine in a tecplot file. It describes the spatial position at each element point of the wind turbine. Useful to check the set-up : geometry of the wind turbine, layout of the wind farm. 
+\begin{itemize}
+\item .TRUE.  activate the tecplot output.
+\item .FALSE. no activation.
+\end{itemize}
+\index{LTECOUTPTS!\innam{NAM\_EOL\_ALM}}
+
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_FRC (forcing control)}
 \index{NAM\_FRC!namelist description}
 
@@ -4420,7 +4679,7 @@ Fortran name & Fortran type & default value \\
 \hline
 LCOLD         &  logical     & .TRUE. \\
 LNUCL & logical	  &  .TRUE. \\
-LSEDI &  logical&  .FALSE. \\
+LSEDI &  logical&  .TRUE. \\
 LSNOW & logical  &  .TRUE.\\
 LHAIL &  logical& .FALSE. \\
 LHHONI & logical &  .FALSE.\\
@@ -4439,7 +4698,7 @@ NPHILLIPS & integer  & 8 \\
 LWARM & logical  & .TRUE. \\
 LACTI& logical  & .TRUE. \\
 LRAIN& logical  & .TRUE. \\
-LSEDC& logical  & .FALSE. \\
+LSEDC& logical  & .TRUE. \\
 LACTIT& logical  & .FALSE. \\
 NMOD\_CCN & integer   & 1  \\
 XCCN\_CONC & real & 300.  \\
@@ -4638,7 +4897,7 @@ XC             &  real         &    0.012   \\
 XBETA1         &  real         &    0.9     \\
 XR             &  real         &    2.      \\
 XLAMBDA\_MF    &  real         &    0.      \\
-LGZ            &  Logical      &    TRUE    \\
+LGZ            &  Logical      &    FALSE   \\
 XGZ            &  real         &    1.83    \\
 
 \hline
@@ -4742,7 +5001,7 @@ XR : Aspect ratio of updraft
 XLAMBDA\_MF : Lambda to compute ThetaS from ThetaL
 \item
 \index{LGZ!\innam{NAM\_PARAM\_MFSHALLn}}
-LGZ : flag to turn on the reduction of the mass-flux surface closure with the resolution
+LGZ : flag to turn on the reduction of the mass-flux surface closure with the resolution. Must be used in the turbulence grey-zone (~500 meters horizontal resolution)
 \item
 \index{XGZ!\innam{NAM\_PARAM\_MFSHALLn}}
 XGZ : parameter for the reduction the surface closure of the Mass-Flux thermal plume if LGZ = TRUE.

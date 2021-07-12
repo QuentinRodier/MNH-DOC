@@ -157,8 +157,6 @@ Only available if CSURF='EXTE' in YINIFILE.des
 &&{\tt UM10 VM10} : [2D] components of wind at 10m (m/s)\\\cline{3-3}
 &&{\tt FF10MAX} : [2D] Wind gusts at 10 m (only if CTURB='TKEL')\\ \cline{3-3}
 &&{\tt SFCO2} : [2D] CO2 flux (mg/m2/s) (if present in YINIFILE)\\ \cline{3-3}
-&&{\tt SW} : [2D] SW (W/m2)\\ \cline{3-3}
-&&{\tt LW} : [2D] LW (W/m2) \\ \cline{3-3}
 \end{tabular} 
 \end{center}
 \newpage
@@ -612,21 +610,25 @@ fluxes\\
 & & {\tt SCA\_ALB}: [2D]  scattered albedo (\_)\\\cline{3-3}
 & & {\tt TSRAD}: [2D] radiative surface temperature (K)\\\cline{2-3}
 &\multirow{12}{*}{1} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD}\\\cline{3-3}
+&&{\tt SWU} : [2D] Upward SW radiative fluxes (W/m$^2$)\\ \cline{3-3}
+&&{\tt SWD} : [2D] Downward SW radiative fluxes (W/m$^2$)\\ \cline{3-3}
+&&{\tt LWU} : [2D] Upward LW radiative fluxes (W/m$^2$) \\ \cline{3-3}
+&&{\tt LWD} : [2D] Downward LW radiative fluxes (W/m$^2$) \\ \cline{3-3}
 & & {\tt SWF\_DOWN}: [3D] Downward SW radiative fluxes (W/m$^2$)\\\cline{3-3}
 & & {\tt SWF\_UP}: [3D] Upward SW radiative fluxes (W/m$^2$)\\\cline{3-3}
-& & {\tt LWF\_DOWN}: [3D] Downward LW  radiative fluxes (W/m$^2$)\\\cline{3-3}
-& & {\tt LWF\_UP} : [3D] Upward LW  radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt LWF\_DOWN}: [3D] Downward LW radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt LWF\_UP} : [3D] Upward LW radiative fluxes (W/m$^2$)\\\cline{3-3}
 & & {\tt LWF\_NET} : [3D] Total LW net radiative fluxes (W/m$^2$)\\\cline{3-3}
-& & {\tt SWF\_NET} : [3D] Total SW  radiative fluxes (W/m$^2$)\\\cline{3-3}
+& & {\tt SWF\_NET} : [3D] Total SW radiative fluxes (W/m$^2$)\\\cline{3-3}
 & & {\tt DTRAD\_LW }: [3D] LW radiative tendency for {\tt T} (K/day)\\\cline{3-3}
 & & {\tt DTRAD\_SW }: [3D] SW radiative tendency for {\tt T} (K/day)\\\cline{3-3}
 & & {\tt RADSWD\_VIS }: [2D] surface radiative flux in visible (W/m$^2$)\\\cline{3-3}
 (Only& & {\tt RADSWD\_NIR }: [2D] surface radiative flux in near-infrared (W/m$^2$)\\\cline{3-3}
 available if & & {\tt RADLWD }: [2D] LW surface radiative flux (W/m$^2$)\\\cline{2-3}
-CRAD$\neq$'NONE')&\multirow{8}{*}{2} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD }\\\cline{3-3}
+CRAD$\neq$'NONE')&\multirow{8}{*}{2} & {\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWU SWD LWU LWD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD }\\\cline{3-3}
 && Clear Sky results :\\
 & &{\tt SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS }\ \\\cline{2-3}
-&\multirow{13}{*}{3} &{\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  }  \\\cline{3-3}
+&\multirow{13}{*}{3} &{\tt DTHRAD FLALWD DIRFLASWD SCAFLASWD DIRSRFSWD CLEARCOL\_TM1 EMIS ZENITH AZIM DIR\_ALB SCA\_ALB TSRAD SWU SWD LWU LWD SWF\_DOWN SWF\_UP LWF\_DOWN LWF\_UP LWF\_NET SWF\_NET DTRAD\_LW DTRAD\_SW RADSWD\_NIR RADLWD SWF\_DOWN\_CS SWF\_UP\_CS LWF\_DOWN\_CS LWF\_UP\_CS LWF\_NET\_CS SWF\_NET\_CS DTRAD\_LW\_CS DTRAD\_SW\_CS RADSWD\_NIR\_CS RADLWD\_CS  }  \\\cline{3-3}
 & & {\tt PLAN\_ALB\_VIS }: [2D] planetary albedo in visible (\_) \\\cline{3-3}
 & & {\tt PLAN\_ALB\_NIR }: [2D] planetary albedo  in near-infrared (\_) \\\cline{3-3}
 & &{\tt PLAN\_TRA\_VIS} : [2D] planetary transmission in visible(\_) \\\cline{3-3}
