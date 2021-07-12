@@ -467,27 +467,13 @@ $<\overline{w'r_v'}_{surf}>$    & E0          & t   & $r_v$ & Latent heat flux a
 $<\overline{w's_v'}_{surf}>$    & SV0         & t,n & $s_v$ & Scalar variable fluxes at the surface  \\\hline
 $u_*=\left\{<\overline{u'w'}_{surf}>^2+<\overline{v'w'}_{surf}>^2\right\}^\frac{1}{4}$ & Ustar & t &   & Friction velocity  \\\hline
 $w_*=\left\{<\frac{g}{\theta}><\overline{w'\theta_v'}_{surf}><h>\right\}^\frac{1}{3}$ & Wstar & t &   & Convective velocity if positive surface buoyancy flux \\\hline
-$<h>$                           & BL\_H       & t   &       & Boundary Layer Height  \\\hline
 $<L_{MO}>$                      & L\_MO       & t   &       & Monin-Obukhov length  \\\hline
-$\int{TKE}dz$                   & INT\_TKE    & t   &       & Vertical integrated TKE  \\\hline
-$ZCB$                           & ZCB         & t   & $r_c$ & Cloud base height  \\\hline
-$CF$                            & ZCFTOT      & t   & $r_c$ & Total cloud cover ($r_c > 1.e-6$)   \\\hline
-$CF2$                           & ZCF2TOT     & t   & $r_c$ & Total cloud cover ($r_c > 1.e-5$)  \\\hline
-$\int{\rho (r_c+r_r)}$          & LWP         & t   & $r_c$ & Liquid water path  \\\hline
-$VAR_LWP$                       & LWPVAR      & t   & $r_c$ & Liquid Water path variance  \\\hline
-$\int{\rho r_r}$                & RWP         & t   & $r_r$ & Rain Water path  \\\hline
-$\int{\rho r_i}$                & IWP         & t   & $r_i$ & Ice Water path  \\\hline
-$\int{\rho r_s}$                & SWP         & t   & $r_s$ & Snow Water path  \\\hline
-$\int{\rho r_g}$                & GWP         & t   & $r_g$ & Graupel Water path  \\\hline
-$\int{\rho r_h}$                & HWP         & t   & $r_h$ & hail Water path  \\\hline
 $PRECFR$                        & PREC\_FRAC  & t   & $r_r$ & Fraction of columns where rain at surface \\\hline
 $INPRR$                         & INST\_PREC  & t   & $r_r$ & Instantaneous precipitation rate  \\\hline
 $INPRC$                         & INST\_SEDIM & t   & $r_c$ & Instantaneous cloud precipitation rate  \\\hline
 $INDEP$                         & INST\_DEPOS & t   & $r_c$ & Instantaneous cloud deposition rate (if LDEPOSC=T or LDEPOC=T) \\\hline
 $RAIN\_INPRR$                   & RAIN\_PREC  & t   & $r_r$ & Instantaneous precipitation rate over rainy grid cells  \\\hline
 $ACPRR$                         & ACCU\_PREC  & t   & $r_r$ & Accumulated precipitation rate  \\\hline
-$H_CFmax$                       & ZMAXCF      & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-6) \\\hline
-$H_CFmax2$                      & ZMAXCF2     & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-5) \\\hline
 \end{longtable}
 \endgroup
 
@@ -495,7 +481,7 @@ Note: dimension $n$ corresponds to the number of scalar variables.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Other LES averaged fields}
+\section{LES averaged fields: radiative terms}
 
 \begingroup
 \renewcommand\arraystretch{1.5}
@@ -511,6 +497,34 @@ $lw_{down}$           & LWD      & z,t,p & & LW downward radiative flux  \\\hlin
 $dthrad_{sw}$         & DTHRADSW & z,t,p & & SW radiative temperature tendency  \\\hline
 $dthrad_{lw}$         & DTHRADLW & z,t,p & & LW radiative temperature tendency  \\\hline
 Mean Effective Radius & RADEFF   & z,t,p & & Mean effective radius  \\\hline
+\end{longtable}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Miscellaneous LES averaged fields}
+
+\begingroup
+\renewcommand\arraystretch{1.5}
+\begin{longtable}[c]{|p{.24\textwidth}|p{.15\textwidth}|p{.06\textwidth}|p{.03\textwidth}|p{.37\textwidth}|}
+\hline
+Field & Notation in the diachronic file & Dims & If  & Comments \\
+\hline \hline
+\endhead
+$<h>$                  & BL\_H       & t   &       & Boundary Layer Height  \\\hline
+$\int{TKE}dz$          & INT\_TKE    & t   &       & Vertical integrated TKE  \\\hline
+$ZCB$                  & ZCB         & t   & $r_c$ & Cloud base height  \\\hline
+$CF$                   & ZCFTOT      & t   & $r_c$ & Total cloud cover ($r_c > 1.e-6$)   \\\hline
+$CF2$                  & ZCF2TOT     & t   & $r_c$ & Total cloud cover ($r_c > 1.e-5$)  \\\hline
+$\int{\rho (r_c+r_r)}$ & LWP         & t   & $r_c$ & Liquid water path  \\\hline
+$VAR_LWP$              & LWPVAR      & t   & $r_c$ & Liquid Water path variance  \\\hline
+$\int{\rho r_r}$       & RWP         & t   & $r_r$ & Rain Water path  \\\hline
+$\int{\rho r_i}$       & IWP         & t   & $r_i$ & Ice Water path  \\\hline
+$\int{\rho r_s}$       & SWP         & t   & $r_s$ & Snow Water path  \\\hline
+$\int{\rho r_g}$       & GWP         & t   & $r_g$ & Graupel Water path  \\\hline
+$\int{\rho r_h}$       & HWP         & t   & $r_h$ & hail Water path  \\\hline
+$H_CFmax$              & ZMAXCF      & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-6) \\\hline
+$H_CFmax2$             & ZMAXCF2     & t   & $r_c$ & Height of cloud fraction maximum  (rc>1e-5) \\\hline
 \end{longtable}
 \endgroup
 
