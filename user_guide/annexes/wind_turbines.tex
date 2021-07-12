@@ -1,0 +1,76 @@
+\chapter{Wind turbine variables in Meso-NH}
+
+Here is a list of the variables of Meso-NH when wind turbines are simulated. Notations: `3D' stands for 3-dimensional, `R' stands for the number of rotors (wind turbines), `B' stands for the number of blades for one rotor, `E' stands for the number of discretized elements of a blade. The `global frame' denotes the coordinate system of Meso-NH, the `hub frame' the coordinate system linked to the hub, the `blade element frame' the coordinate system linked to a blade element, and the `relative frame' the aerodynamic coordinate system linked to the relative wind speed (see Scientific documentation for more details). The mean values of variables are computed between two backup outputs.
+
+\subsection*{Main variables}
+LMAIN\_EOL = .TRUE.
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{2cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt FX\_RG }     &[3D]& X-component field of aerodynamic force (wind$\rightarrow$rotor) in global frame         & N\\ \hline
+{\tt FY\_RG }     &[3D]& Y-component field of aerodynamic force (wind$\rightarrow$rotor) in global frame         & N\\ \hline
+{\tt FZ\_RG }     &[3D]& Z-component field of aerodynamic force (wind$\rightarrow$rotor) in global frame         & N\\ \hline
+{\tt FX\_SMR\_RG} &[3D]& X-component field of smeared aerodynamic force (wind$\rightarrow$rotor) in global frame & N\\ \hline
+{\tt FY\_SMR\_RG} &[3D]& Y-component field of smeared aerodynamic force (wind$\rightarrow$rotor) in global frame & N\\ \hline
+{\tt FZ\_SMR\_RG} &[3D]& Z-component field of smeared aerodynamic force (wind$\rightarrow$rotor) in global frame & N\\ \hline
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Non-Rotating Actuator Disc}
+\subsubsection*{Instantaneous variables}
+LMAIN\_EOL = .TRUE. and CMETH\_EOL=`ADNR'. 
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{2cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt A\_INDU} &[R]& induction factor                                           & - \\ \hline
+{\tt CT\_D  } &[R]& thrust coefficient at disc ($C_{t_d} \neq C_{t_\infty}$)   & - \\ \hline
+{\tt THRUT  } &[R]& instantaneous thrust (wind$\rightarrow$rotor) in hub frame & N \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Averaged variables}
+LMAIN\_EOL = .TRUE. and CMETH\_EOL=`ADNR' and LMEAN\_FIELD=.TRUE.
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{2cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt THRUMME} &[R]& averaged thrust (wind$\rightarrow$rotor) in hub frame      & N  \\  \hline
+\end{tabular}
+\end{center}
+
+
+\subsection*{Actuator Line Method}
+\subsubsection*{Instantaneous variables}
+LMAIN\_EOL = .TRUE. and CMETH\_EOL=`ALM'.
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{2cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt ELT\_RAD } & [R,B,E]    & radius (0m at hub)                                         & m   \\  \hline
+{\tt AOA      } & [R,B,E]    & instantaneous angle of attack                              & rad \\  \hline
+{\tt FLIFT    } & [R,B,E]    & instantaneous lift force in relative frame                 & N   \\  \hline
+{\tt FDRAG    } & [R,B,E]    & instantaneous drag force in relative frame                 & N   \\  \hline
+{\tt FAERO\_RE} & [R,B,E,3D] & instantaneous aerodyn. force in b. element frame           & N   \\  \hline
+{\tt FAERO\_RG} & [R,B,E,3D] & instantaneous aerodyn. force in global frame               & N   \\  \hline
+{\tt THRUT    } & [R]        & instantaneous thrust (wind$\rightarrow$rotor) in hub frame & N   \\  \hline
+{\tt TORQT    } & [R]        & instantaneous torque (wind$\rightarrow$rotor) in hub frame & Nm  \\  \hline
+{\tt POWT     } & [R]        & instantaneous power (wind$\rightarrow$rotor)               & W   \\  \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Averaged variables}
+LMAIN\_EOL = .TRUE. and CMETH\_EOL=`ALM' and LMEAN\_FIELD=.TRUE.
+\begin{center}
+\begin{tabular}{||>{\centering}p{2.2cm}|>{\centering}p{2cm}|p{9cm}|p{1cm}<{\centering}||}
+\hline \hline
+Name & Dim& Meaning & Unit \\ \hline \hline
+{\tt AOAMME      } & [R,B,E]    & averaged angle of attack                              & rad \\  \hline
+{\tt FAEROMME\_RE} & [R,B,E,3D] & averaged aerodyn. force in b. element frame           & N   \\  \hline
+{\tt THRUMME     } & [R]        & averaged thrust (wind$\rightarrow$rotor) in hub frame & N   \\  \hline
+{\tt TORQMME     } & [R]        & averaged torque (wind$\rightarrow$rotor) in hub frame & Nm  \\  \hline
+{\tt POWMME      } & [R]        & averaged power (wind$\rightarrow$rotor)               & W   \\  \hline
+\end{tabular}
+\end{center}
