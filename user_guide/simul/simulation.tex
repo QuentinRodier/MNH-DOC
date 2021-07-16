@@ -5760,6 +5760,75 @@ LDEPOS\_SLT & logical  & FALSE  \\
 \index{LDEPOS\_SLT!\innam{NAM\_SALT}}
 \item LDEPOS\_SLT: flag to activate salt wet deposition  
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_STATIONn }\label{s:namstationn}
+\index{NAM\_STATIONn!namelist description}
+%
+This namelist is used to configure a virtual observed point at a station by using the following described parameters \bf{or} a .csv file. Calculations are done for all the nested models and recorded in the corresponding diachronic files.\\
+Before the version 5.5, this was done by re-compiling the code and modifying ini\_stationn.f90.
+
+\begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
+NNUMB\_STAT    & integer &  0 \\
+XSTEP\_STAT    & real  &  60.0 \\
+XX\_STAT       & real(:)  &  NNUMB\_STAT * XUNDEF \\
+XY\_STAT       & real(:)  &  NNUMB\_STAT * XUNDEF  \\
+XLAT\_STAT     & real(:)  &  NNUMB\_STAT * XUNDEF \\
+XLON\_STAT     & real(:)  &  NNUMB\_STAT * XUNDEF \\
+XZ\_STAT       & real(:)  &  NNUMB\_STAT * XUNDEF \\
+CNAME\_STAT    & array(7*characters)  &  NNUMB\_STAT * ' ' \\
+CFILE\_STAT    & 20 characters  &  'NO\_INPUT\_CSV' \\
+LDIAG\_SURFRAD & logical & TRUE \\
+\end{longtable}
+
+\begin{itemize}
+\index{NNUMB\_STAT!\innam{NAM\_STATIONn}}
+\item NNUMB\_STAT : number of stations
+
+\index{XSTEP\_STAT!\innam{NAM\_STATIONn}}
+\item XSTEP\_STAT : time (in seconds) between two sampling written in the diachronic file
+
+\index{XX\_STAT!\innam{NAM\_STATIONn}}
+\item XX\_STAT : X-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
+
+\index{XY\_STAT!\innam{NAM\_STATIONn}}
+\item XY\_STAT : Y-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
+
+\index{XLAT\_STAT!\innam{NAM\_STATIONn}}
+\item XLAT\_STAT : latitude (in degrees) of the station (with LCARTESIAN=F only)
+
+\index{XLON\_STAT!\innam{NAM\_STATIONn}}
+\item XLON\_STAT : longitude (in degrees) of the station (with LCARTESIAN=F only)
+
+\index{XZ\_STAT!\innam{NAM\_STATIONn}}
+\item XZ\_STAT : altitude (in meters) of the station
+
+\index{CNAME\_STAT!\innam{NAM\_STATIONn}}
+\item CNAME\_STAT : name of the station
+
+\index{CFILE\_STAT!\innam{NAM\_STATIONn}}
+\item CFILE\_STAT : name of the .csv file containing the definition of the stations (see below). If CFILE\_STAT='NO\_INPUT\_CSV', the .csv file is not read.
+
+\index{LDIAG\_SURFRAD!\innam{NAM\_STATIONn}}
+\item LDIAG\_SURFRAD : if True, the surface and radiation variables are written
+
+\end{itemize}
+
+The .csv file should follow the format example hereafter :
+\begin{verbatim}
+Name, X[m]/Lat[deg], Y[m]/Lon[deg], Z[m]
+probe1, 50.0,  50.0, 10.0
+probe2, 50.0,   1.0, 11.25
+probe3, 350.0, 50.0, 10.0
+\end{verbatim}
+The values of X,Y or Lat/Lon are read depending on LCARTESIAN.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_TURB}
 \index{NAM\_TURB!namelist description}
@@ -6276,12 +6345,10 @@ If surface diagnostics are asked (see surface namelists), surface variables
 (10m-wind, 2m-temperature and humidity, surface fluxes) are also recorded. But if you want to add a new surface field, you have to introduce it in all the following routines : mnhget\_surf\_paramn.f90, ground\_paramn.f90, ini\_diag\_in\_run.f90, modd\_diag\_in\_run.f90, end\_diag\_in\_run.f90, modd\_type\_profiler.f90, ini\_posprofilern.f90, profilern.f90  following the example to HU2M field. 
 
 
-The specification of the characteristics of profilers and stations are not
- given in a namelist, but directly in Fortran routines: 
-\begin{itemize}
-\item  {\it ini\_profilern.f90} for profilers,
-\item  {\it ini\_stationn.f90} for stations.
-\end{itemize}
+The specification of the characteristics of profilers are not
+ given in a namelist, but directly in the ini\_profilern.f90 Fortran routines for profiler.
+Since the version 5.5, the stations are set using a CSV data file or directly in the namelist, see section \ref{s:namstationn} page \pageref{s:namstationn}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Run MESONH with ForeFire}
