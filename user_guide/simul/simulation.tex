@@ -141,7 +141,8 @@ are possible (see the Scientific Documentation for more details):
 \index{CSV\_ADV\_SCHEME!\innam{NAM\_ADVn}}
 CSV\_ADV\_SCHEME: Advection scheme used for the tracer variables. The same options as CMET\_ADV\_SCHEME can be used.\\
 
-Note that if LLG=T in NAM\_CONF, CSV\_ADV\_SCHEME must be equal to CMET\_ADV\_SCHEME.
+Note that if LLG=T in NAM\_CONF, CSV\_ADV\_SCHEME must be equal \\
+to CMET\_ADV\_SCHEME.
 
 \item
 \index{CTEMP\_SCHEME!\innam{NAM\_ADVn}}
@@ -217,7 +218,8 @@ XBAK\_TIME\_FREQ(m): time between 2 backups for each model $m$
 
 \item
 \index{XBAK\_TIME\_FREQ\_FIRST!\innam{NAM\_BACKUP}} 
-XBAK\_TIME\_FREQ\_FIRST(m): time of the first backup for each model $m$ (if XBAK\_TIME\_FREQ(m) is set)
+XBAK\_TIME\_FREQ\_FIRST(m): time of the first backup for each model $m$ \\
+(if XBAK\_TIME\_FREQ(m) is set)
 
 \item
 \index{NBAK\_STEP\_FREQ!\innam{NAM\_BACKUP}} 
@@ -317,11 +319,13 @@ It contains the variables and types for the BLOWSNOW scheme.
 \label{ss:budget}
 \index{NAM\_BUDGET!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.15\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 CBUTYPE   &  4 characters   & 'NONE'     \\
 NBUMOD    & integer & 1        \\
 XBULEN    & real    & 43200.   \\
@@ -336,9 +340,7 @@ NBUJH     & integer & 0        \\
 LBU\_ICP  & logical & TRUE     \\
 LBU\_JCP  & logical & TRUE     \\
 NBU\_MASK & integer & 1 \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the description of the box in which the budget are performed. 
 
@@ -2020,11 +2022,13 @@ DRAGEOL & drag force due to wind turbine & LMAIN\_EOL=T                         
 \label{ss:chem}
 \index{NAM\_CH\_MNHCn!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.35\textwidth}|p{.15\textwidth}|p{.20\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LUSECHEM                & logical       & FALSE      \\
 LUSECHAQ 		&logical 	&FALSE\\
 LUSECHIC 		&logical 	&FALSE\\
@@ -2049,9 +2053,7 @@ NCH\_VEC\_LENGTH 		&integer 	&1000\\
 XCH\_TS1D\_TSTEP 		&real 		&600.\\
 CCH\_TS1D\_COMMENT 	&80 characters 	&'no comment'\\
 CCH\_TS1D\_FILENAME 	&80 characters 	&'IO1D'\\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 
@@ -2163,16 +2165,17 @@ This parameterization include coagulation (intra and inter modal), nucleation,  
  This parameterization need to be run together with gas chemical phase (namelist NAM\_CH\_MNHCn). 
 For correct representation, it is recommended to have severals compounds as HNO3 (nitric acid), H2SO4 (or SULF; sulphates), NH3 (ammonium) and CO (carbon monoxyde) in the chemical scheme. 
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LORILAM     & logical  & FALSE  \\
 LVARSIGI    & logical  & FALSE  \\
 LVARSIGJ    & logical  & FALSE  \\
 LSEDIMAERO  & logical  & FALSE  \\
-%LAERINIT    & logical  & FALSE  \\
 XINIRADIUSI & real     & 0.01  \\
 XINIRADIUSJ & real     & 0.5  \\
 CRGUNIT     & character (len=4)  & 'MASS'   \\
@@ -2187,9 +2190,7 @@ XCOEFRADJMIN& real     &  .1  \\
 CMINERAL    & character (len=5)  & 'NONE'   \\
 CORGANIC    & character (len=5)  & 'NONE'   \\
 CNUCLEATION & character (len=80) & 'NONE'   \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 
@@ -2251,11 +2252,13 @@ CNUCLEATION = 'KERMINEN': KERMINEN parameterization
 \subsection{Namelist NAM\_CH\_SOLVERn (control stiff solvers for modeln)}
 \index{NAM\_CH\_SOLVERn!namelist description}
  
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.20\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 CSOLVER 	&32 characters 	&'EXQSSA'\\
 NSSA 		&integer 	&0\\
 NSSAINDEX 	&array integers &1000*0\\
@@ -2275,9 +2278,8 @@ NQSSAITER 	&integer 	&1\\
 XDTMIN 		&real	 	&0.1\\
 XDTMAX 		&real	 	&600.\\
 XDTFIRST 	&real 		&10.\\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
+
 \begin{itemize}
 
 \index{CSOLVER!\innam{NAM\_CH\_SOLVERn}}
@@ -2439,11 +2441,13 @@ It contains the model configuration parameters common to all the models. They
 are included in the module MODD\_CONF. 
 
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.20\textwidth}|p{.15\textwidth}|p{.20\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 CCONF      &  5 characters  & 'START'  \\
 LFLAT      & logical        & FALSE  \\
 CEQNSYS    & 3 characters   & 'DUR'    \\
@@ -2460,11 +2464,7 @@ LNOMIXLG   & logical        & FALSE  \\
 CEXP       & 5 characters   & 'EXP01'  \\
 CSEG       & 5 characters   & 'SEG01'  \\
 LCHECK     & logical        & FALSE  \\
-\hline
-\end{tabular}
-\end{center}
-
-
+\end{longtable}
 
 \begin{itemize}
 
@@ -2970,11 +2970,13 @@ XALZBAS :  Height (in meters) in the physical space of the lower absorbing layer
 \subsection{Namelist NAM\_DYNn (parameters for the dynamics of model n)}
 \index{NAM\_DYNn!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.30\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 XTSTEP    & real   & 60.  \\
 CPRESOPT  & 4 characters  & 'CRESI'  \\
 NITR      & integer   & 4   \\
@@ -3007,10 +3009,7 @@ XRIMKMAX  &  real     & $1 / (100*60.) $ \\
 XT4DIFU   &  real     & 1800.  \\
 XT4DIFTH  &  real     & 1800.  \\
 XT4DIFSV  &  real     & 1800.  \\
-\hline
-\end{tabular}
-\end{center}
-
+\end{longtable}
 
 It contains the specific dynamic parameters  for the modesimulation.texl n. They
 are included in the module MODD\_DYNn. 
@@ -3192,11 +3191,13 @@ of fourth order for scalar variables ( in seconds). Associated to LNUMDIFSV in N
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_ELEC}
 \index{NAM\_ELEC!namelist description}
-  \begin{center}
-  \begin{tabular}{|l|l|l|}
-    \hline
-    Fortran name & Fortran type & default value \\
-    \hline
+ \begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
     LOCG            & logical      & .FALSE. \\
     LELEC\_FIELD    & logical      & .TRUE.  \\
     LFLASH\_GEOM    & logical      & .TRUE.  \\
@@ -3228,9 +3229,7 @@ of fourth order for scalar variables ( in seconds). Associated to LNUMDIFSV in N
     XDFRAC\_L       & real         & 1500.   \\
     XWANG\_A        & real         & 0.34E21 \\
     XWANG\_B        & real         & 1.3E16  \\
-    \hline
-  \end{tabular}
-  \end{center}
+  \end{longtable}
 
 
 It contains the different parameters used by the electrical scheme. 
@@ -3674,8 +3673,10 @@ XUTRANS,XVTRANS
 \begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
-\hline \hline
+\hline 
 \endhead
+\hline
+\endfoot
 LIBM                 & logical       & .FALSE.       \\
 LIBM\_TROUBLE        & logical       & .FALSE.       \\
 CIBM\_ADV            & 6 characters  & 'NOTHIN'      \\
@@ -3989,11 +3990,13 @@ This namelist controls the diagnostics of turbulence, especially
 for Large Eddy Simulations. The diagnostics are saved in the
 diachronic file (.000). The list of the diagnostics is given in annexe \ref{s:LESdiag} page  \pageref{s:LESdiag}.
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.45\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LLES\_MEAN                    &  logical          & .FALSE.  \\
 LLES\_RESOLVED                &  logical          & .FALSE.  \\
 LLES\_SUBGRID                 &  logical          & .FALSE.  \\
@@ -4005,9 +4008,6 @@ NLES\_LEVELS                  & integer (:)       & all levels in physical domai
 XLES\_ALTITUDES               & real (:)          & none \\
 NSPECTRA\_LEVELS              & integer (:)   & none \\
 XSPECTRA\_ALTITUDES           & real (:)   & none \\
-%NLES\_TEMP\_SERIE\_I          & integer(:) & none \\
-%NLES\_TEMP\_SERIE\_J          & integer(:) & none \\
-%NLES\_TEMP\_SERIE\_Z          & real(:)    & none \\
 CLES\_NORM\_TYPE              & character (len=4) & 'NONE' \\
 CBL\_HEIGHT\_DEF              & character (len=3) & 'KE ' \\
 XLES\_TEMP\_SAMPLING          & real              & 60 s if CTURB='3DIM' \\
@@ -4024,9 +4024,7 @@ LLES\_NEB\_MASK               & logical           & .FALSE. \\
 LLES\_CORE\_MASK              & logical           & .FALSE. \\
 LLES\_MY\_MASK                & logical           & .FALSE. \\
 NLES\_MASKS\_USER             & integer           & NUNDEF \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 \item
@@ -4520,11 +4518,13 @@ CACTCCN = 'NONE'  : no CCN activation scheme.
 warm microphysical schemes C2R2 and KHKO)}
 \index{NAM\_PARAM\_C2R2!namelist description}
 
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name & Fortran type  & default value \\
+\begin{longtable} {|p{.25\textwidth}|p{.25\textwidth}|p{.15\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
 HPARAM\_CCN\ & character (LEN=3) & 'XXX' \\
 HINI\_CCN\   & character (LEN=3) & 'XXX' \\
 HTYPE\_CCN\  & character (LEN=1) &  'X'  \\
@@ -4548,9 +4548,7 @@ LSUPSAT\ & boolean & FALSE \\
 LDEPOC\ & boolean & FALSE \\
 XVDEPOC& real & 0.02 \\
 LACTTKE\ & boolean & TRUE \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the control parameters for the C2R2 warm microphysical
 scheme. They are in the declarative module MODD\_PARAM\_C2R2.
@@ -4700,11 +4698,13 @@ It contains the options for the ECRAD radiative scheme.
 parameterization ICE3 and ICE4)}
 \index{NAM\_PARAM\_ICE!namelist description}
 %
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LWARM         &  logical     & .TRUE. \\
 CPRISTINE\_ICE & 4 characters & 'PLAT' \\
 LSEDIC & logical & TRUE \\
@@ -4731,9 +4731,8 @@ CFRAC\_ICE\_SHALLOW\_MF& 1 character & 'S' \\
 LCRFLIMIT &  logical     & .TRUE. \\
 XSPLIT\_MAXCFL& real & 0.8 \\
 LSEDIM\_AFTER & logical & FALSE \\
-\hline
-\end{tabular}
-\end{center}
+
+\end{longtable}
 
 It contains the options for the mixed phase cloud parameterizations
 used  by the model (ICE3 or ICE4). They are included in the declarative module
@@ -4919,11 +4918,13 @@ NENSM : number of additional convective ensemble members for deep convection
 parameterization LIMA)}
 \index{NAM\_PARAM\_LIMA!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
 \hline
+\endhead
+\hline
+\endfoot
 LCOLD         &  logical     & .TRUE. \\
 LNUCL & logical	  &  .TRUE. \\
 LSEDI &  logical&  .TRUE. \\
@@ -4952,7 +4953,7 @@ XCCN\_CONC & real & 300.  \\
 LCCN\_HOM & logical & .TRUE.  \\
 CCCN\_MODES &  8 characters & 'COPT    '  \\
 HINI\_CCN & 3 characters  & 'AER' \\
-HTYPE\_CCN & character & 'M'  \\
+HTYPE\_CCN & 10 characters & 'M'  \\
 XALPHAC & real & 3.  \\
 XNUC & real  & 1.  \\
 XALPHAR &  real& 1. \\
@@ -4968,10 +4969,11 @@ LPTSPLIT & logical  & .FALSE.  \\
 LFEEDBACKT & logical  & .TRUE.  \\
 NMAXITER & integer & 1 \\
 XMRSTEP&real& 0. \\
-XTSTEP\_TS&real&0.\\
-\hline
-\end{tabular}
-\end{center}
+XTSTEP\_TS& real&0.\\
+LADJ & logical &  .TRUE. \\
+LSPRO & logical & .FALSE. \\
+\end{longtable}
+
 It contains the options for the 2 moment mixed phase cloud parameterizations
 used  by the model (LIMA). They are included in the declarative module
 MODD\_PARAM\_LIMA
@@ -5062,13 +5064,13 @@ XCCN\_CONC : Reference concentration for each CCN mode (\verb?#/cm3?)
 LCCN\_HOM : If set to true, the initial concentration of CCN is homogeneous on the vertical. If set to false, the CCN concentration is equal to the reference value XCCN\_CONC below 1000m and exponentially decreasing above.
 \item
 \index{CCCN\_MODES!\innam{NAM\_PARAM\_LIMA}}
-CCCN\_MODES : Select the size distribution of CCN modes ('JUNGFRAU','COPT','MACC','MACC\_JPP','SIRTA','CPS00','DEFAULT')
+CCCN\_MODES : Select the size distribution of CCN modes \\ ('JUNGFRAU','COPT','MACC','MACC\_JPP','SIRTA','CPS00','FREETROP')
 \item
 \index{HINI\_CCN!\innam{NAM\_PARAM\_LIMA}}
 HINI\_CCN : Switch to use aerosols as CCN or to describe directly the CCN activation spectrum : 'AER' (use aerosols) or 'CCN' (use the CCN activation spectrum directly)
 \item
 \index{HTYPE\_CCN!\innam{NAM\_PARAM\_LIMA}}
-HTYPE\_CCN : Switch to affect maritime or continental activation properties to each CCN mode : 'C' continental or 'M' maritim
+HTYPE\_CCN : Switch to affect maritime or continental activation properties to each CCN mode : 'C' continental or 'M' maritime. NH42SO4 (=C), NH4NO3, NaCl (=S), H2SO4, NaNO3, NaHSO4, Na2SO4, NH43HSO42, SOA
 \item
 \index{XALPHAC,XNUC!\innam{NAM\_PARAM\_LIMA}}
 XALPHAC,XNUC : Droplets size distribution parameter
@@ -5083,7 +5085,7 @@ XFSOLUB\_CCN : Fractional solubility of the CCN
 XACTEMP\_CCN : Expected temperature of CCN activation
 \item
 \index{LSCAV!\innam{NAM\_PARAM\_LIMA}}
-LSCAV :Switch to activate below cloud scavenging of aerosols by rain
+LSCAV : Switch to activate below cloud scavenging of aerosols by rain
 \item
 \index{LAERO\_MASS!\innam{NAM\_PARAM\_LIMA}}
 LAERO\_MASS : Switch to track the mass of scavenged aerosols
@@ -5093,9 +5095,9 @@ LAERO\_MASS : Switch to track the mass of scavenged aerosols
 \index{LDEPOC!\innam{NAM\_PARAM\_LIMA}}
 \item XVDEPOC : Droplet deposition velocity
 \index{XVDEPOC!\innam{NAM\_PARAM\_LIMA}}
-\item LPTSPLIT : flag to Activate the time-splitting scheme
+\item LPTSPLIT : flag to activate the time-splitting scheme
 \index{LPTSPLIT!\innam{NAM\_PARAM\_LIMA}}
-\item LFEEDBACKT : Flag to Recompute tendencies if temperature reaches 0 (for the time-splitting scheme)
+\item LFEEDBACKT : Flag to recompute tendencies if temperature reaches 0 (for the time-splitting scheme)
 \index{LFEEDBACKT!\innam{NAM\_PARAM\_LIMA}}
 \item NMAXITER : Maximum number of iterations (for the time-splitting scheme)
 \index{NMAXITER!\innam{NAM\_PARAM\_LIMA}}
@@ -5103,19 +5105,39 @@ LAERO\_MASS : Switch to track the mass of scavenged aerosols
 \index{XMRSTEP!\innam{NAM\_PARAM\_LIMA}}
 \item XTSTEP\_TS : Maximum length of sub-time-steps (for the time-splitting scheme)
 \index{XTSTEP\_TS!\innam{NAM\_PARAM\_LIMA}}
+\item 
+\index{LADJ\_MF!\innam{NAM\_PARAM\_LIMA}}
+LADJ : flag to activate the saturation adjustement from Thouron et al. 2012 (diagnostic supersaturation)
+\item
+\index{LSPRO\_MF!\innam{NAM\_PARAM\_LIMA}}
+LSPRO : flag to activate the prognostic supersaturation (to use with LADJ=F)
 \end{itemize}
 
+Use of CAMS with LIMA. You must have set HCAMSFILE and HCAMSFILETYPE at the PREP\_REAL\_CASE step (see section \ref{s:namfilenames} page \pageref{s:namfilenames}).
+\begin{verbatim}
+&NAM_PARAM_LIMA 	HTYPE_CCN(1)='NaCl',
+                	HTYPE_CCN(2)='NH42SO4',
+                	HTYPE_CCN(3)='SOA',
+                	NMOD_CCN=3,
+                	CCCN_MODES='CAMS_AIT',
+                	NMOD_IFN=2,
+                	CIFN_SPECIES='CAMS_AIT',
+                	CINT_MIXING='CAMS',
+                	NMOD_IMM=1 /
+\end{verbatim}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAM\_MFSHALLn (options for the Mass Flux shallow convective
 scheme of model n)}
 
 \index{NAM\_PARAM\_MFSHALLn!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.25\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 XIMPL\_MF      &  real         &   1        \\
 CMF\_UPDRAFT   &  4 characters &   'EDKF'   \\
 CMF\_CLOUD     &  4 characters &   'DIRE'   \\
@@ -5146,11 +5168,7 @@ XR             &  real         &    2.      \\
 XLAMBDA\_MF    &  real         &    0.      \\
 LGZ            &  Logical      &    FALSE   \\
 XGZ            &  real         &    1.83    \\
-
-\hline
-
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the options retained for the EDKF shallow convection scheme, used
 by the  model n. They are included in the declarative module
@@ -5257,11 +5275,13 @@ XGZ : parameter for the reduction the surface closure of the Mass-Flux thermal p
 \subsection{Namelist NAM\_PARAM\_RADn (options for the radiations of model n)}
 \index{NAM\_PARAM\_RADn!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.25\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 XDTRAD         &  real          & XTSTEP \\
 XDTRAD\_CLONLY &  real          & XTSTEP \\
 CLW            &  4 characters  & 'RRTM'   \\
@@ -5280,9 +5300,7 @@ XFUDG          & real           &   1.   \\
 LAERO\_FT      & logical        & FALSE  \\
 LFIX\_DAT      & logical        & FALSE  \\
 LRAD\_DUST     & logical        & FALSE  \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the options retained for the radiations scheme, used by the 
 model n. They are
@@ -5468,15 +5486,16 @@ $NOVLP=8 $ : Maximum Random overlap for Clear Sky fraction and
 Effective Zenithal Angle. It corresponds to the previous configurations before  masdev4\_7.
 \end{itemize}
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ù
 \subsection{Namelist NAM\_PASPOL (Passive pollutants)}
 \index{NAM\_PASPOL!namelist description}
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name  & Fortran type  & default value \\
+\begin{longtable} {|p{.15\textwidth}|p{.30\textwidth}|p{.30\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
  LPASPOL       & logical       & FALSE         \\
  NRELEASE      & integer       & 0             \\
  CPPINIT       & array (3 characters)& 100*'1PT'\\
@@ -5489,9 +5508,7 @@ Effective Zenithal Angle. It corresponds to the previous configurations before  
  CPPT2         & array (14 characters)& 100*'20010921090000'\\
  CPPT3         & array (14 characters)& 100*'20010921091500'\\
  CPPT4         & array (14 characters)& 100*'20010921091500'\\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the parameters to activate passive pollutants, by specifying the position and the kinetic of the release. 
 \begin{itemize}
@@ -5523,12 +5540,13 @@ Ending date of the release (in YYYYMMDDHHMMSS)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PDF (LES budgets) }                                
 \index{NAM\_PDF!namelist description}
-
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.25\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LLES\_PDF                     & logical          & .FALSE.  \\
 NPDF                          & integer           & 1 \\
 XTH\_PDF\_MIN                 & real              & 270. \\
@@ -5553,9 +5571,8 @@ XRT\_PDF\_MIN                 & real              & 0. \\
 XRT\_PDF\_MAX                 & real              & 20. \\
 XTHL\_PDF\_MIN                & real              & 270. \\
 XTHL\_PDF\_MAX                & real              & 350. \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
+
 
 Each PDF includes $NPDF$ intervals number between X\_PDF\_MIN 
 and X\_PDF\_MAX.
@@ -5639,11 +5656,13 @@ XTHL\_PDF\_MAX : Maximum value of $\theta_l$ pdf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_RECYCL\_PARAMn (Parameters for Turbulence Recycling Method)}
 \index{NAM\_RECYCL\_PARAMn!namelist description}
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name        & Fortran type  & default value \\
+\begin{longtable} {|p{.20\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
 LRECYCL              & logical       & .FALSE.       \\
 LRECYCLW             & logical       & .FALSE.       \\
 LRECYCLE             & logical       & .FALSE.       \\
@@ -5663,9 +5682,7 @@ XTMOYCOUNT           & real          & 0.            \\
 XRCOEFF              & real          & 0.2           \\
 XTBVTOP              & real          & 500.          \\
 XTBVBOT              & real          & 300.          \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
  
@@ -5713,20 +5730,20 @@ This namelist is used to active explicit sea salt aerosols.
 It is not necessary to use chemistry to activate sea salt but it is recommended to activate on-line sea salt emissions (see surface namelists).
 
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.20\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 LSALT       & logical  & FALSE  \\
 LVARSIG\_SLT& logical  & FALSE  \\
 LSEDIMSALT  & logical  & FALSE  \\
 NMODE\_SLT  & integer  &  3  \\
 LRGFIX\_SLT & logical  & FALSE  \\
 LDEPOS\_SLT & logical  & FALSE  \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 
@@ -5747,17 +5764,17 @@ LDEPOS\_SLT & logical  & FALSE  \\
 \subsection{Namelist NAM\_TURB}
 \index{NAM\_TURB!namelist description}
 It contains the characteristics of the turbulence scheme used by all models.
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name  & Fortran type  & default value \\
+\begin{longtable} {|p{.25\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
  XPHI\_LIM        & real        & 3.     \\
  XSBL\_O\_BL      & real        & 0.05   \\
  XFTOP\_O\_FSURF  & real        & 0.05   \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 \item 'XPHI\_LIM'\index{XPHI\_LIM!\innam{NAM\_TURB}} is the threshold value for $\phi _{3}$ and $\psi _{3}$
@@ -5767,19 +5784,19 @@ It contains the characteristics of the turbulence scheme used by all models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_TURB\_CLOUD (mixing length for clouds)}
 \index{NAM\_TURB\_CLOUD!namelist description}
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name  & Fortran type  & default value \\
+\begin{longtable} {|p{.30\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
+\hline
+\endfoot
  NMODEL\_CLOUD & integer       & 999           \\
  CTURBLEN\_CLOUD & 4 characters       & 'DELT'   \\
  XCOEF\_AMPL\_SAT& real        & 5.   \\
  XCEI\_MIN       & real        & 0.001E-6   \\
  XCEI\_MAX       & real        & 0.01E-6    \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 \item NMODEL\_CLOUD \index{NMODEL\_CLOUD!\innam{NAM\_TURB\_CLOUD}}:
@@ -5803,11 +5820,13 @@ Diagnostic quantities are written on every synchronuous files
 \subsection{Namelist NAM\_TURBn (turbulence parameters for model n)}
 \index{NAM\_TURBn!namelist description}
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value \\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
+\endfoot
 XIMPL       &  real          & 1.     \\
 CTURBLEN    &  4 characters  & 'BL89'   \\
 CTURBDIM    &  4 characters  & '1DIM'   \\
@@ -5831,9 +5850,7 @@ XCOEFHGRADTHL & real         & 1.0   \\
 XCOEFHGRADRM  & real         & 1.0   \\
 XALTHGRAD     & real         & 2000.0 \\
 XCLDTHOLD     & real         & -1.0   \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 It contains the characteristics of the turbulence scheme used by the model n. They are
 included in the declarative module MODD\_TURBn
@@ -5893,7 +5910,7 @@ number, Schmidt number, sources of TKE\ldots)
 \item
 \index{LSUBG\_COND!\innam{NAM\_TURBn}}
 LSUBG\_COND: flag to activate the subgrid condensation scheme (refer to the scientific 
-documentation for more details)
+documentation for more details).  With the microphysics scheme LIMA (CCLOUD='LIMA' in NAM\_PARAMn), it must be used with time-splitting LPTSPLIT=T in NAM\_PARAM\_LIMA.
 
 \item
 \index{CCONDENS!\innam{NAM\_TURBn}}

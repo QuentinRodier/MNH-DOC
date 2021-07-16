@@ -16,7 +16,7 @@ What's going in and out?
 (hereafter called atmospheric file); it can be
 either
 \begin{itemize}
-\item a GRIB file obtained from {\bf extractecmwf} or {\bf extractarpege}
+\item a GRIB file (from AROME, ARPEGE, IFS, GFS or ERA5) obtained from {\bf extractecmwf} or {\bf extractarpege}
 \item or a MESO-NH file (obtained with {\bf SPAWNING} for example)
 \end{itemize}
 In the first case, both horizontal and vertical interpolations are carried
@@ -28,8 +28,7 @@ done by the spwaning (see chapter \ref{c:SPAWNING})
 chemical file); it is used only if the atmospheric file is a GRIB file. 
 It can be either
 \begin{itemize}
-\item a GRIB file obtained from {\bf extractarpege} (e.g. an file from the
-Mocage french model)
+\item a GRIB file (e.g. a file from the MOCAGE french model)
 \item or a MESO-NH file (obtained in a previous simulation for example)
 \end{itemize}
 \item the file PRE\_REAL1.nam which contains the directives for PREP\_REAL\_CASE
@@ -78,13 +77,13 @@ the vertical grid.  The file can also contain a free formatted part after the ve
 definition namelist, where  the vertical levels can be prescribed  if this
 option is chosen.
 \subsection{Namelist NAM\_AERO\_CONF (aerosol initialization)}
-\index{NAM\_AERO\_CONF!namelist description}
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.15\textwidth}|p{.15\textwidth}|p{.25\textwidth}|}
 \hline
-Fortran name & Fortran type & default value\\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
-\hline
+\endfoot
 LORILAM      & logical       & FALSE    \\
 LDUST        & logical       & FALSE    \\
 LSALT        & logical       & FALSE    \\
@@ -106,9 +105,7 @@ XN0MIN\_SLT  & real          & 1.e4 , 1.e2 , 1.e-1 \\
 XINIRADIUS\_SLT & real       & 0.14, 1.125,  7.64\\
 XINISIG\_SLT    & real       & 1.9, 2., 2. \\
 CRGUNITS     & character     & "MASS"   \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 See section \ref{s:namaeropre} page \pageref{s:namaeropre} for details.
 			  
@@ -149,7 +146,7 @@ See section \ref{s:namconfio} page \pageref{s:namconfio} for details.
 \subsection{Namelist NAM\_CONFZ}
 See section \ref{s:namconfz} page \pageref{s:namconfz} for details.
 
-\subsection{Namelist NAM\_FILE\_NAMES ( file names)}
+\subsection{Namelist NAM\_FILE\_NAMES (file names)}\label{s:namfilenames}
 \index{NAM\_FILE\_NAMES!namelist description}
 
 \begin{center}
@@ -165,7 +162,10 @@ HSURFFILE     & character (LEN=28) & ' '           \\
 HSURFFILETYPE & character (LEN=6)  & 'MESONH'      \\
 HCHEMFILE     & character (LEN=28) & ' '           \\
 HCHEMFILETYPE & character (LEN=6)  & 'MESONH'      \\
+HCAMSFILE     & character (LEN=28) & ' '           \\
+HCAMSFILETYPE & character (LEN=6)  & 'NETCDF'      \\
 CINIFILE      & character (LEN=28) & 'INIFILE'     \\
+
 \hline
 \end{tabular}
 \end{center}
@@ -188,11 +188,16 @@ be the same as the ones of the output file (CINIFILE).
 \index{HCHEMFILE!\innam{NAM\_FILE\_NAMES}}
 \item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH', 'NETCDF')
 \index{HCHEMFILETYPE!\innam{NAM\_FILE\_NAMES}}
+\item HCAMSFILE : optional name of the CAMS file containing
+the aerosols species. The file must be a NETCDF.
+\index{HCAMSFILE!\innam{NAM\_FILE\_NAMES}}
+\item HCAMSFILETYPE : type of the CAMS file ('NETCDF')
+\index{HCAMSFILETYPE!\innam{NAM\_FILE\_NAMES}}
+
 \item CINIFILE : name of the MESO-NH output FM-file, used as initial
 or coupling file in a MESO-NH simulation
 \index{CINIFILE!\innam{NAM\_FILE\_NAMES}}
 \end{itemize}
-\newpage
 \subsection{Namelist NAM\_HURR\_CONF (hurricane filtering and vortex bogussing)}
 \index{NAM\_HURR\_CONF!namelist description}
 Two PREP\_REAL\_CASE jobs are to be performed.
@@ -203,7 +208,8 @@ It is used as input file for the second
 PREP\_REAL\_CASE job during which the analytical vortex is added.\\
 
 Each step (hurricane filtering and vortex bogussing) is separately invoked
-within the PREP\_REAL\_CASE program:
+within \\
+the PREP\_REAL\_CASE program:
 \subitem
 i) The hurricane filtering is applied on four input atmospheric GRIB fields
 (HATMFILETYPE='GRIBEX'), when they are in the horizontal grid of the PGD file
@@ -231,12 +237,13 @@ with the program SPAWNING (see section \ref{s:spawn}).
 Then, for each inner domain, a vortex bogussing is added with the program
 PREP\_REAL\_CASE.
 
-\begin{center}
-\begin{tabular} {|l|l|l|}
+\begin{longtable} {|p{.22\textwidth}|p{.22\textwidth}|p{.15\textwidth}|}
 \hline
-Fortran name & Fortran type & default value\\
+Fortran name &  Fortran type & default value \\
+\hline 
+\endhead
 \hline
-\hline
+\endfoot
 LFILTERING     & logical  & .FALSE.    \\
 CFILTERING     & character (LEN=5)  & 'UVT  '  \\
 NK             & integer  & 50  \\
@@ -266,9 +273,7 @@ XANGCONV1000   & real & 0.   \\
 XANGCONV2000   & real & 0.   \\
 CDADATMFILE    & character (LEN=28) & ' '           \\
 CDADBOGFILE    & character (LEN=28) & ' '           \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
 \item LFILTERING : Flag to filter the fields (U,V,T,Q,reduced Ps) of the 
