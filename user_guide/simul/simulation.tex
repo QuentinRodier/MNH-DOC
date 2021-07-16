@@ -3669,78 +3669,67 @@ XUTRANS,XVTRANS
 %\index{LPGROUND\_FRC!\innam{NAM\_FRC}}
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_IBM\_PARAMn (Parameters for Immersed Boundary Method)}
 \index{NAM\_IBM\_PARAMn!namelist description}
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name        & Fortran type  & default value \\
+\begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
 \hline
+Fortran name &  Fortran type & default value \\
+\hline \hline
+\endhead
 LIBM                 & logical       & .FALSE.       \\
 LIBM\_TROUBLE        & logical       & .FALSE.       \\
 CIBM\_ADV            & 6 characters  & 'NOTHIN'      \\
 XIBM\_EPSI           & real          & 1.E-9         \\
 XIBM\_RUG            & real          & 0.01          \\
-XIBM\_CNU            & real          & 0.06          \\
+XIBM\_CNU            & real          & 0.06          \\\hline
 NIBM\_LAYER\_V       & integer       & 2             \\
 NIBM\_LAYER\_T       & integer       & 2             \\
 NIBM\_LAYER\_R       & integer       & 2             \\
-NIBM\_LAYER\_E       & integer       & 2             \\
+NIBM\_LAYER\_E       & integer       & 2             \\\hline
 NIBM\_LAYER\_S       & integer       & 2             \\
 CIBM\_MODE\_INTE3\_V & 3 characters  & 'LAI'         \\
 CIBM\_MODE\_INTE3\_T & 3 characters  & 'LAI'         \\
 CIBM\_MODE\_INTE3\_R & 3 characters  & 'LAI'         \\
 CIBM\_MODE\_INTE3\_E & 3 characters  & 'LAI'         \\
-CIBM\_MODE\_INTE3\_S & 3 characters  & 'LAI'         \\
+CIBM\_MODE\_INTE3\_S & 3 characters  & 'LAI'         \\\hline
 CIBM\_MODE\_INTE1NV  & 3 characters  & 'CL2'         \\
 CIBM\_MODE\_INTE1TV  & 3 characters  & 'CL2'         \\
 CIBM\_MODE\_INTE1CV  & 3 characters  & 'CL2'         \\
 CIBM\_MODE\_INTE1\_T & 3 characters  & 'CL2'         \\
 CIBM\_MODE\_INTE1\_R & 3 characters  & 'CL2'         \\
 CIBM\_MODE\_INTE1\_E & 3 characters  & 'CL2'         \\
-CIBM\_MODE\_INTE1\_S & 3 characters  & 'CL2'         \\
+CIBM\_MODE\_INTE1\_S & 3 characters  & 'CL2'         \\\hline
 XIBM\_RADIUS\_V      & real          & 2.            \\
 XIBM\_RADIUS\_T      & real          & 2.            \\
 XIBM\_RADIUS\_R      & real          & 2.            \\
-XIBM\_RADIUS\_E      & real          & 2.            \\
+XIBM\_RADIUS\_E      & real          & 2.            \\\hline
 XIBM\_RADIUS\_S      & real          & 2.            \\
 XIBM\_POWERS\_V      & real          & 1.            \\
 XIBM\_POWERS\_T      & real          & 1.            \\
 XIBM\_POWERS\_R      & real          & 1.            \\
 XIBM\_POWERS\_E      & real          & 1.            \\
-XIBM\_POWERS\_S      & real          & 1.            \\
+XIBM\_POWERS\_S      & real          & 1.            \\\hline
 CIBM\_MODE\_BOUNN\_V & 3 characters  & 'ASY'         \\
 CIBM\_MODE\_BOUNT\_V & 3 characters  & 'ASY'         \\
 CIBM\_MODE\_BOUNC\_V & 3 characters  & 'ASY'         \\
 CIBM\_MODE\_BOUND\_T & 3 characters  & 'SYM'         \\
 CIBM\_MODE\_BOUND\_R & 3 characters  & 'SYM'         \\
 CIBM\_MODE\_BOUND\_E & 3 characters  & 'SYM'         \\
-CIBM\_MODE\_BOUND\_S & 3 characters  & 'SYM'         \\
+CIBM\_MODE\_BOUND\_S & 3 characters  & 'SYM'         \\\hline
 XIBM\_FORC\_BOUNN\_V & real          & 0.            \\
 XIBM\_FORC\_BOUNT\_V & real          & 0.            \\
 XIBM\_FORC\_BOUNC\_V & real          & 0.            \\
 XIBM\_FORC\_BOUND\_T & real          & 0.            \\
 XIBM\_FORC\_BOUND\_R & real          & 0.            \\
 XIBM\_FORC\_BOUND\_E & real          & 0.            \\
-XIBM\_FORC\_BOUND\_S & real          & 0.            \\
-\hline
-\end{tabular}
-\end{center}
-
-\begin{center}
-\begin{tabular}{|l|l|l| }
-\hline 
- Fortran name        & Fortran type  & default value \\
-\hline
-
+XIBM\_FORC\_BOUND\_S & real          & 0.            \\\hline
 CIBM\_TYPE\_BOUNT\_V & 3 characters  & 'DIR'         \\
 CIBM\_TYPE\_BOUNN\_V & 3 characters  & 'DIR'         \\
 CIBM\_TYPE\_BOUNC\_V & 3 characters  & 'DIR'         \\
 CIBM\_TYPE\_BOUND\_T & 3 characters  & 'NEU'         \\
 CIBM\_TYPE\_BOUND\_R & 3 characters  & 'NEU'         \\
 CIBM\_TYPE\_BOUND\_E & 3 characters  & 'NEU'         \\
-CIBM\_TYPE\_BOUND\_S & 3 characters  & 'NEU'         \\
+CIBM\_TYPE\_BOUND\_S & 3 characters  & 'NEU'         \\\hline
 CIBM\_FORC\_BOUNN\_V & 3 characters  & 'CST'         \\
 CIBM\_FORC\_BOUNT\_V & 3 characters  & 'CST'         \\
 CIBM\_FORC\_BOUNC\_V & 3 characters  & 'CST'         \\
@@ -3749,9 +3738,7 @@ CIBM\_FORC\_BOUND\_T & 3 characters  & 'CST'         \\
 CIBM\_FORC\_BOUND\_R & 3 characters  & 'CST'         \\
 CIBM\_FORC\_BOUND\_E & 3 characters  & 'CST'         \\
 CIBM\_FORC\_BOUND\_S & 3 characters  & 'CST'         \\
-\hline
-\end{tabular}
-\end{center}
+\end{longtable}
 
 \begin{itemize}
  
@@ -5835,6 +5822,11 @@ CTOM        &  4 characters  & 'NONE'   \\
 XKEMIN      &  real          & 0.01 \\
 XCEDIS      &  real          & 0.84 \\
 VSIGQSAT    & real           & 0.02 \\
+LHGRAD      & logical        & FALSE \\
+XCOEFHGRADTHL & real         & 1.0   \\
+XCOEFHGRADRM  & real         & 1.0   \\
+XALTHGRAD     & real         & 2000.0 \\
+XCLDTHOLD     & real         & -1.0   \\
 \hline
 \end{tabular}
 \end{center}
@@ -5941,18 +5933,39 @@ according to Tomas and Masson (2006).
 
 \item
 \index{XKEMIN!\innam{NAM\_TURBn}}
-XKEMIN: minimum value for the TKE ($m^{2}.s^{-2}$
+XKEMIN: minimum value for the TKE ($m^{2}.s^{-2}$).
 
 \item
 \index{XCEDIS!\innam{NAM\_TURBn}}
 XCEDIS: Constant for TKE dissipation
-(with CTURBLEN='RM17' it is better to use XCEDIS=0.34 according to Rodier et al., 2017)
+(with CTURBLEN='RM17' it is better to use XCEDIS=0.34 according to Rodier et al., 2017).
 
 \item
 \index{VSIGQSAT!\innam{NAM\_TURBn}}
 VSIGQSAT: coefficient applied to qsat variance contribution. Only available if LSIGMAS=.TRUE.
 
+\item
+\index{LHGRAD!\innam{NAM\_TURBn}}
+LHGRAD: Flag to compute the Leonard terms applied to the vertical fluxes of $\theta_l$ and $r_c$. The main effects are an increase of TKE and a decrease of vertical fluctuations.
+
+\item
+\index{XCOEFHGRADTHL!\innam{NAM\_TURBn}}
+XCOEFHGRADTHL: coefficient applied to the vertical fluxes of $\theta_l$.
+
+\item
+\index{XCOEFHGRADRM!\innam{NAM\_TURBn}}
+XCOEFHGRADRM: coefficient applied to the vertical fluxes of cloud mixing ratio $r_c$.
+
+\item
+\index{XALTHGRAD!\innam{NAM\_TURBn}}
+XALTHGRAD: height above ground from which the Leonard terms are applied.
+
+\item
+\index{XCLDTHOLD!\innam{NAM\_TURBn}}
+XCLDTHOLD: mixing ratios threshold ($r_c + r_i$) from which the Leonard terms are applied. For instance, XCLDTHOLD=$10^{-6}$ kg/kg to apply only on clouds. XCLDTHOLD=-1 to apply everywhere.
+
 \end{itemize}
+
 Diagnostic quantities are written on every synchronuous files 
 (mixing length in clear sky, mixing length modified, amplification coefficient\ldots) if LTURB\_DIAG=.TRUE. in NAM\_TURBn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
