@@ -5814,7 +5814,11 @@ CTURBDIM    &  4 characters  & '1DIM'   \\
 LTURB\_FLX  &  logical       & FALSE  \\
 LTURB\_DIAG &  logical       & FALSE  \\
 LSUBG\_COND &  logical       & FALSE  \\
+CCONDENS    &  80 characters  & 'CB02' \\
+CLAMBDA3    &  4 characters  & 'CB' \\
 CSUBG\_AUCV &  4 characters  & 'NONE' \\
+CSUBG\_AUCV\_RI &  80 characters  & 'NONE' \\
+CSUBG\_MF\_PDF  &  80 characters  & 'TRIANGLE' \\
 LSIGMAS     &  logical       & TRUE   \\
 LSIG\_CONV  &  logical       & FALSE   \\
 LRMC01      &  logical       & FALSE  \\
@@ -5892,16 +5896,50 @@ LSUBG\_COND: flag to activate the subgrid condensation scheme (refer to the scie
 documentation for more details)
 
 \item
-\index{CSUBG\_AUCV!\innam{NAM\_TURBn}}
-CSUBG\_AUCV (formerly LSUBG\_AUCV in masdev47) : Type of subgrid autoconversion scheme.
+\index{CCONDENS!\innam{NAM\_TURBn}}
+CCONDENS: subgrid distribution used in the saturation adjustment
 \begin{itemize}
-\item  'NONE' 
+\item  'CB02' to use the Chaboureau and Bechtold (2002) formulations
+\item 'GAUS' to use a gaussian PDF
+\end{itemize}
+
+\item
+\index{CLAMBDA3!\innam{NAM\_TURBn}}
+CLAMBDA3: modulation of s'r' computation in the saturation adjustment
+\begin{itemize}
+\item 'CB' to use the formulation originally associated to the use of CCONDENS='CB02'
+\item 'NONE' to use a value of 1 (no modulation)
+\end{itemize}
+
+\item
+\index{CSUBG\_AUCV!\innam{NAM\_TURBn}}
+CSUBG\_AUCV (formerly LSUBG\_AUCV in masdev47) : Type of subgrid $r_c$ - $r_r$ autoconversion scheme.
+\begin{itemize}
+\item  'NONE'
 \item 'SIGM' for Redelsperger and Sommeria (1982) scheme using $\overline{s'r'_{c}}$ 
 (if LSUBG\_COND
 is set to TRUE and only with the mixed phase for the moment)
 \item 'CLFR' from the convective cloud fraction given by EDKF 
 (if CSCONV='EDKF' only)
 \item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012). Only if LRED=TRUE.
+\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
+\end{itemize}
+
+\item
+\index{CSUBG\_AUCV\_RI!\innam{NAM\_TURBn}}
+CSUBG\_AUCV\_RI: Type of subgrid $r_i$ - $r_s$ autoconversion scheme.
+\begin{itemize}
+\item  'NONE' for considering a homogeneous cloud over the entire grid-cell
+\item 'CLFR' for considering a homogeneous cloud over its cloud fraction
+\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
+\end{itemize}
+
+\item
+\index{CSUBG\_MF\_PDF!\innam{NAM\_TURBn}}
+CSUBG\_MF\_PDF: PDF used to diagnose autoconversion from the shallow convection cloud.
+\begin{itemize}
+\item  'NONE' for considering a homogeneous cloud over its fraction.
+\item 'TRIANGLE' to use a triangular PDF.
 \end{itemize}
 
 \item
