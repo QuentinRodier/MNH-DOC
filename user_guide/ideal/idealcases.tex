@@ -229,6 +229,7 @@ L2D\_ADV\_FRC  & logical     & FALSE \\
 L2D\_REL\_FRC  & logical     & FALSE \\
 NHALO      & integer        & 1      \\
 JPHEXT     & integer        & 1      \\
+LOCEAN     & logical        & FALSE \\
 \hline
 \end{tabular}
 \end{center}
@@ -345,6 +346,10 @@ impact on simulation results.\\
 JPHEXT:  Horizontal External points number\\
 JPHEXT must be equal to 3 for cyclic cases with WENO5.
 \index{JPHEXT!\innam{NAM\_CONF\_PRE}}
+
+\item
+LOCEAN: flag to activate the Ocean version of Meso-NH. Pronostic variables are: Current (U \& V), Vertical velocity (W), Temperature (TH), Subgrid Turbulent Kinetic Energy (TKE). Salinity (RV) can be activated with LUSERV=T. The Z-axis is directed upward (as in the atmosphere version), i.e. top of model domain corresponds to the sea surface. The initial profile must be defined in the free-format part (see Section \ref{ss:ocean_iniprofile}).
+\index{LOCEAN!\innam{NAM\_CONF\_PRE}}
 
 \end{itemize}
 
@@ -1837,6 +1842,43 @@ ZSDATA
 40.    82.5  153.0   180.5   156.7   100.3
 \end{verbatim}
 
+\subsection{The ocean version} \label{ss:ocean_iniprofile}
+
+keyworkd: {\bf RSOU}
+
+For oceanic version of Meso-NH, the initial and forcing profiles of the ocean are written in the free-format part of PRE\_IDEA1.nam file, where
+the altitude variable is the depth. To follow usual convention for ocean data, the 1D profiles are given starting from the surface (positive value).
+The profile and forcing information are written in the following order :
+\begin{itemize}
+\item YEAR (integer, exemple : 1994), MONTH (integer, exemple : 4), DAY (integer, exemple
+: 22), TIME (real, in seconds, exemple : 36000 for 10 h)
+\item KIND of data used for the profile. Two kind are possible : KIND='IDEALOCE' (data written in PRE\_IDEA1.nam) or KIND='STANDOCE' (data written in a NetCDF file). The following format is valid for KIND='IDEALOCE'.
+\item ATMOSPHERIC PRESSURE at the surface which is the top domain of the oceanic model (real, in Pascal)
+\item SEA SURFACE TEMPERATURE at the surface (real, in Kelvin)
+\item SEA SURFACE SALINITY at the surface (real, in g/kg)
+\item NUMBER of SEA CURRENT levels (integer)
+\item level 1 : DEPTH HEIGHT variable (real, meters) , U-CURRENT (real, m/s), V-CURRENT at CURRENT level (real, m/s)
+\item level 2 : DEPTH HEIGHT variable (real, meters) , U-CURRENT (real, m/s), V-CURRENT at CURRENT level (real, m/s)\\
+  \vdots
+
+\item NUMBER of mass data LEVELS (integer).
+\item level 2 : DEPTH HEIGHT variable (real, meters), WATER TEMPERATURE (real, Kelvin), SALINITY at mass level (real, g/kg)
+\item level 3 : DEPTH HEIGHT variable (real, meters), WATER TEMPERATURE (real, Kelvin), SALINITY at mass level (real, g/kg)\\
+ \vdots
+
+\item NUMBER of time-varying FORCING (integer). The data used to define each forcing are given sequentially in the
+following order (one item per line):
+\item YEAR (integer, exemple : 1994), MONTH (integer, exemple : 4), DAY (integer, exemple
+: 22), TIME (real, in seconds, exemple : 36000 for 10 h)
+\item U-STRESS  (real, $m^2/s^2$)
+\item V-STRESS  (real, $m^2/s^2$)
+\item HEAT TURBULENT FLUX (real, $W/m^2$)
+\item RADIATIVE FLUX (real, $W/m^2$)
+\end{itemize}
+Surface fluxes are positive when going upward (from the ocean to the atmosphere)  \\
+
+In the KIND='STANDOCE': initial 1D profiles and surface fluxes(t) are read from 2 netcdf files (See set\_rsou.f90 for details)
+ 
 
 \section{Example of PRE\_IDEA1.nam : }
 The selected case is the following:

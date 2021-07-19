@@ -3009,6 +3009,7 @@ XRIMKMAX  &  real     & $1 / (100*60.) $ \\
 XT4DIFU   &  real     & 1800.  \\
 XT4DIFTH  &  real     & 1800.  \\
 XT4DIFSV  &  real     & 1800.  \\
+LOCEAN    &  logical  & FALSE \\
 \end{longtable}
 
 It contains the specific dynamic parameters  for the modesimulation.texl n. They
@@ -3149,6 +3150,11 @@ of fourth order for meteorological variables ( in seconds). Associated to LNUMDI
 \index{XT4DIFSV!\innam{NAM\_DYNn}}
 XT4DIFSV (formerly in masdev47 XT4DIFF) : characteristic time (e-folding time)  of the numerical diffusion
 of fourth order for scalar variables ( in seconds). Associated to LNUMDIFSV in NAM\_DYN.
+
+\item
+LOCEAN: flag to activate the Ocean version of Meso-NH. Pronostic variables are: Current (U \& V), Vertical velocity (W), Temperature (TH), Subgrid Turbulent Kinetic Energy (TKE). Salinity (RV) can be activated with LUSERV=T. The Z-axis is directed upward (as in the atmosphere version), i.e. top of model domain corresponds to the sea surface. 
+\index{LOCEAN!\innam{NAM\_DYNn}}
+
 
 \end{itemize}
 %\newpage
@@ -3556,17 +3562,21 @@ Fortran name & Fortran type & default value \\
 LGEOST\_UV\_FRC      & logical      & FALSE \\
 LGEOST\_TH\_FRC      & logical      & FALSE \\
 LTEND\_THRV\_FRC     & logical      & FALSE \\
-LTEND\_UV\_FRC     & logical      & FALSE \\
+LTEND\_UV\_FRC       & logical      & FALSE \\
 LVERT\_MOTION\_FRC   & logical      & FALSE \\
 LRELAX\_THRV\_FRC    & logical      & FALSE \\
 LRELAX\_UV\_FRC      & logical      & FALSE \\
 XRELAX\_TIME\_FRC    & real         & 10800. \\
 XRELAX\_HEIGHT\_FRC  & real         & 0. \\
-CRELAX\_HEIGHT\_TYPE &  character*4 & 'FIXE' \\
+CRELAX\_HEIGHT\_TYPE & character*4  & 'FIXE' \\
 LTRANS               & logical      & FALSE \\
 XUTRANS              & real         & 0. \\
 XVTRANS              & real         & 0. \\
-%LPGROUND\_FRC        & logical      & FALSE \\
+LDEEPOC              & logical      & FALSE \\
+XCENTX\_OC            & real         & 16000. \\
+XCENTY\_OC            & real         & 16000. \\
+XRADX\_OC             & real         & 8000. \\
+XRADY\_OC             & real         & 8000. \\
 \hline
 \end{tabular}
 \end{center}
@@ -3658,14 +3668,21 @@ XUTRANS,XVTRANS
 \index{XVTRANS!\innam{NAM\_FRC}}
 \index{XUTRANS!\innam{NAM\_FRC}}
 
-%\item LPGROUND\_FRC : flag to simulate a time varying ground pressure.
-%( WARNING: THIS FLAG CAN NOT YET BE ACTIVATED ! )
-%\begin{itemize}
-%\item .TRUE.  means that the ground pressure is updated if it
-%varies with time in the "Free Format Forcing Part" of the  PRE\_IDEA1.nam file.
-%\item .FALSE. not active
-%\end{itemize}
-%\index{LPGROUND\_FRC!\innam{NAM\_FRC}}
+\item LDEEPOC : flag to activate an idealized forcing at the surface for oceanic deep convection (if LOCEAN=T)
+\index{LDEEPOC!\innam{NAM\_FRC}}
+
+\item XCENTX\_OC : x-position (in meters) of the center of the surface forcing for ideal ocean deep convection (if LOCEAN=T and LDEEPOC=T)
+\index{XCENTX\_OC!\innam{NAM\_FRC}}
+
+\item XCENTY\_OC : y-position (in meters) of the center of the surface forcing for ideal ocean deep convection (if LOCEAN=T and LDEEPOC=T)
+\index{XCENTY\_OC!\innam{NAM\_FRC}}
+
+\item XRADX\_OC : x-radius (in meters) of the surface forcing for ideal ocean deep convection (if LOCEAN=T and LDEEPOC=T)
+\index{XRADX\_OC!\innam{NAM\_FRC}}
+
+\item XRADY\_OC : y-radius (in meters) of the surface forcing for ideal ocean deep convection (if LOCEAN=T and LDEEPOC=T)
+\index{XRADX\_OC!\innam{NAM\_FRC}}
+
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_IBM\_PARAMn (Parameters for Immersed Boundary Method)}
@@ -4253,6 +4270,7 @@ Fortran name & Fortran type & default value \\
 NDAD  &  array (8 real) &  m-1   \\
 NDTRATIO & array (8 integer) & 1 \\
 XWAY & array (8 real) & 2 \\
+LCOUPLES & logical & FALSE \\
 \hline
 \end{tabular}
 \end{center}
@@ -4272,6 +4290,10 @@ XWAY(m) : is the interactive nesting level for model m and its father NDAD(m)
 \item 2 two-way interactions : upward information are given to the father (also for 2D fields (Surface precipitation and
 shirt wave radiative fluxes) that are used by the surface (corresponding previously to $XWAY=3$ in masdev4\_7)). 
 \end{itemize}
+\item
+\index{LCOUPLES!\innam{NAM\_NESTING}} 
+LCOUPLES : flag to activate the auto-coupling ocean-atmosphere version of Meso-NH. Domains 1 and 2 correspond to the atmosphere model and the ocean model respectively. This work is still in development.
+
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_NUDGINGn (nudging of model n)}
