@@ -1039,7 +1039,10 @@ Fortran name      &Fortran type&Values& Meaning\\\hline \hline
 &&\tt"AND99"&axis ratio of raindrops : Andsager et al. (1999). \\\cline{3-4}
 &&\tt"BR02"&axis ratio of raindrops : Brandes et al. (2002). \\\cline{3-4}
 &&\tt"SPHE"&axis ratio for spheres (r=1)\\\hline
-
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
 \tt LREFR         & logical & \tt.FALSE.&if true writes out refractivity ($N\equiv(n-1)\times10^6$)\\\hline
 \tt LDNDZ         & logical & \tt.FALSE.&if true writes out vertical gradient of refractivity ($\d N/\d z$)\\\hline
 \multirow{2}{*}{\tt NCURV\_INTERPOL}&\multirow{2}{*}{integer} & 0& use an average beam bending equivalent to 4/3 of the Earth's radius\\\cline{3-4}
@@ -1051,12 +1054,7 @@ Fortran name      &Fortran type&Values& Meaning\\\hline \hline
 & & 3& Rayleigh for spheroids scattering\\\cline{3-4}
 & & 4& Rayleigh with $6^{th}$ order for attenuation calculations\\\cline{3-4}
 & & 7&T-matrix scattering (from lookup tables reading) \\\hline
-\end{tabular}
-\end{center}
 
-\begin{center}
-\begin{tabular}{|>{\centering}p{2.6cm}|>{\centering}p{3.5cm}|>{\centering}p{1.5cm}| p{8.2cm}|}\hline
-	
 \tt NPTS\_GAULAG  &integer  & 7&number of points of the quadrature\\\hline
 \tt XGRID         &real     & 2000.& size of the Cartesian grid (m)\\\hline
 %\tt NDGS          &integer  &2&  number of points taken to evaluate 2-dimensional integrals in the T-matrix code\\\hline

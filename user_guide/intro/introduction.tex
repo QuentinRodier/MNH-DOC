@@ -45,15 +45,15 @@ that contains all the parameters and fields necessary for the execution of the m
 \item
 {\bf extractecmwf}\footnote{A user account is necessary on the station ecgate of ECMWF to run
 {\bf extractecmwf}} 
-or {\bf extractarpege}\footnote{A user account at METEO FRANCE is necessary to run
-{\bf extractarpege}} 
+or {\bf extractMF}\footnote{A user account at METEO FRANCE is necessary to run
+{\bf extractMF}} 
 : it extracts the surface
 and altitude fields for a specific date, respectively for ECMWF archive 
 (ECMWF forecast model) or
-METEO-FRANCE operational archive (ARPEGE, AROME and ALADIN models).
+METEO-FRANCE operational archive (ARPEGE and AROME models).
 In both cases, the fields are written in a GRIB format file, on the gaussian
 grid. The extraction must be done separately for each date and time (for
-the initial file and each of the coupling file). The Unix procedures used for these extractions are not presented in this book.
+the initial file and each of the coupling file). The Unix procedures used for these extractions are not presented in this book, but presented on the Meso-NH website.
 \item 
 {\bf PREP\_REAL\_CASE }: this MESO-NH program performs the change of
 orography and vertical grid by interpolating horizontally and vertically for a 
