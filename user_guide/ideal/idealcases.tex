@@ -146,8 +146,8 @@ Definition of XINIRADIUS\_SLT : mean radius is in mass or in number; possible va
 \end{itemize}
 
 
-\subsection{Namelist NAM\_BLANK (available variables)} \label{s:namblank}
-\index{NAM\_BLANK !namelist description}
+\subsection{Namelist NAM\_BLANKn (available user variables)} \label{s:namblank}
+\index{NAM\_BLANKn !namelist description}
 \begin{center}
 \begin{tabular} {|l|l|l|}
 \hline
@@ -170,7 +170,7 @@ arrays of dummy, real, integer, logical and character*80 for test
 and debugging  purposes are defined and passed through the namelist
 read operations. None of the MesoNH routines uses any of these
 variables. When a developper choses to introduce temporarily a
-parameter to some subroutine, he has to introduce a USE MODD\_BLANK
+parameter to some subroutine, he has to introduce a USE MODD\_BLANKn
 statement into that subroutine. Then he can use any of the variables
 defined here and change them easily via the namelist input.
 
@@ -680,7 +680,7 @@ simulation, we therefore do not need any surface parameters. All the namelists o
 
 \end{itemize}  
 
-\subsection{Namelist NAM\_IBM\_LSF (LevelSet Function for Immersed Boundary Method)}
+\subsection{Namelist NAM\_IBM\_LSF (LevelSet Funct. for Immersed Boundary Method)}
 \index{NAM\_IBM\_LSF!namelist description}
 \label{s:namibmlsf}
 \begin{center}
@@ -1343,7 +1343,7 @@ without prescribed fluxes :
 &NAM_VPROF_PRE LGEOSBAL = .FALSE., CTYPELOC='IJGRID', NILOC=2, NJLOC=2 /
 &NAM_GRn_PRE CSURF='EXTE'/
 &NAM_CH_MNHCn_PRE /
-&NAM_BLANK /
+&NAM_BLANKn /
 &NAM_PGD_SCHEMES CNATURE='ISBA' /
 &NAM_ISBA XUNIF_CLAY = 0.3, XUNIF_SAND = 0.3 /
 &NAM_COVER XUNIF_COVER(208)=1. /   
@@ -1369,7 +1369,7 @@ Example 2 : You do not want to use a PGD file and you want to prescribed your ow
 &NAM_VPROF_PRE /
 &NAM_GRn_PRE CSURF='EXTE'/
 &NAM_CH_MNHCn_PRE /
-&NAM_BLANK /
+&NAM_BLANKn /
 &NAM_PGD_SCHEMES CSEA='FLUX  ' /
 &NAM_COVER XUNIF_COVER(1)=1. /
 

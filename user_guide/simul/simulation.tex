@@ -250,7 +250,7 @@ Remarks:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_BLANK (available variables)}
+\subsection{Namelist NAM\_BLANKn (available user variables)}
 See section \ref{s:namblank} page \pageref{s:namblank} for details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3566,6 +3566,7 @@ LTEND\_UV\_FRC       & logical      & FALSE \\
 LVERT\_MOTION\_FRC   & logical      & FALSE \\
 LRELAX\_THRV\_FRC    & logical      & FALSE \\
 LRELAX\_UV\_FRC      & logical      & FALSE \\
+LRELAX\_UVMEAN\_FRC  & logical      & FALSE \\
 XRELAX\_TIME\_FRC    & real         & 10800. \\
 XRELAX\_HEIGHT\_FRC  & real         & 0. \\
 CRELAX\_HEIGHT\_TYPE & character*4  & 'FIXE' \\
@@ -3639,6 +3640,14 @@ horizontal wind component.
 \item .FALSE. not active
 \end{itemize}
 \index{LRELAX\_UV\_FRC!\innam{NAM\_FRC}}
+
+\item LRELAX\_UVMEAN\_FRC : flag to apply a Newtonian relaxation on the horizontal mean value of each
+horizontal wind component.
+\begin{itemize}
+\item .TRUE.  to relax the horizontal mean wind towards large scale values.
+\item .FALSE. not active
+\end{itemize}
+\index{LRELAX\_UVMEAN\_FRC!\innam{NAM\_FRC}}
 
 \item XRELAX\_TIME\_FRC : constant damping time for the forced relaxation.
 \index{XRELAX\_TIME\_FRC!\innam{NAM\_FRC}}
@@ -3947,7 +3956,7 @@ CLBCY        &  array(2 characters) & 2*"CYCL" \\
 XCPHASE      & real                 &  20.     \\
 XCPHASE\_PBL & real                 &  0.      \\
 XCARPKMAX    & real                 &  XUNDEF  \\
-XPOND        & real                 &  0.2  \\
+XPOND        & real                 &  1.0  \\
 \hline
 \end{tabular}
 \end{center}
@@ -3994,7 +4003,7 @@ If not specified,  $XCARPKMAX=1/(10.* XTSTEP)$, that is the advised value, is im
 
 \item
 \index{XPOND!\innam{NAM\_LBCn}}
-XPOND :  relaxation coefficient for LBC
+XPOND :  relaxation coefficient for LBC.
 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5219,7 +5228,7 @@ XIMPL\_MF : Degree of implicitness
 \item
 \index{CMF\_UPDRAFT!\innam{NAM\_PARAM\_MFSHALLn}}
 CMF\_UPDRAFT : Type of Mass Flux Scheme                              
-('EDKF', 'RHCJ', 'HRIO', 'BOUT' or 'NONE' )
+('EDKF', 'RHCJ' or 'NONE' )
 \item
 \index{CMF\_CLOUD!\innam{NAM\_PARAM\_MFSHALLn}}
 CMF\_CLOUD : Type of statistical cloud                                 
@@ -5783,7 +5792,6 @@ LDEPOS\_SLT & logical  & FALSE  \\
 \end{longtable}
 
 \begin{itemize}
-
 \index{LSALT!\innam{NAM\_SALT}}
 \item LSALT: flag to activate passive salt aerosol.
 \index{LVARSIG\_SLT!\innam{NAM\_SALT}}
@@ -5797,14 +5805,13 @@ LDEPOS\_SLT & logical  & FALSE  \\
 \index{LDEPOS\_SLT!\innam{NAM\_SALT}}
 \item LDEPOS\_SLT: flag to activate salt wet deposition  
 \end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_STATIONn }\label{s:namstationn}
 \index{NAM\_STATIONn!namelist description}
 %
-This namelist is used to configure a virtual observed point at a station by using the following described parameters \bf{or} a .csv file. Calculations are done for all the nested models and recorded in the corresponding diachronic files.\\
-Before the version 5.5, this was done by re-compiling the code and modifying ini\_stationn.f90.
+This namelist is used to configure a virtual observed point at a station by using the following described parameters \textbf{or} a .csv file. Calculations are done for all the nested models and recorded in the corresponding diachronic files. Before the version 5.5, this was done by re-compiling the code and modifying ini\_stationn.f90.
 
+\vspace{0.5cm}
 \begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
@@ -5823,7 +5830,6 @@ CNAME\_STAT    & array(7*characters)  &  NNUMB\_STAT * ' ' \\
 CFILE\_STAT    & 20 characters  &  'NO\_INPUT\_CSV' \\
 LDIAG\_SURFRAD & logical & TRUE \\
 \end{longtable}
-
 \begin{itemize}
 \index{NNUMB\_STAT!\innam{NAM\_STATIONn}}
 \item NNUMB\_STAT : number of stations
@@ -5999,7 +6005,10 @@ dimensionality, this length is limited to the ground distance and
 also by the Deardorff mixing length pertinent in the stable cases.
 \item
 CTURBLEN='RM17'
-The mixing length is computed according to Rodier et al. (2017)
+The mixing length is computed according to Rodier et al. (2017). It is a non-local mixing length combining BL89 with a wind shear term.
+\item
+CTURBLEN='ADAP'
+The mixing length is computed according to Honnert et al. (2021). For large horizontal grid meshes, this is equal to RM17. For LES grid meshes, this is equivalent to DEAR : the base mixing lentgh is the horizontal grid mesh, and it is limited by a stability-based length (RM17), as was done in DEAR (but taking into account shear as well). For grid meshes in the grey zone, ADAP is the smaller of the two.
 \end{itemize}
 
 \item
@@ -6107,15 +6116,15 @@ VSIGQSAT: coefficient applied to qsat variance contribution. Only available if L
 
 \item
 \index{LHGRAD!\innam{NAM\_TURBn}}
-LHGRAD: Flag to compute the Leonard terms applied to the vertical fluxes of $\theta_l$ and $r_c$. The main effects are an increase of TKE and a decrease of vertical fluctuations.
+LHGRAD: Flag to compute the Leonard terms (instead of K-gradient terms) applied to the vertical fluxes of $\theta_l$ and $r_{np}$ ($r_c$ + $r_i$ + $r_v$). The main effects are an increase of TKE and a decrease of vertical velocity.
 
 \item
 \index{XCOEFHGRADTHL!\innam{NAM\_TURBn}}
-XCOEFHGRADTHL: coefficient applied to the vertical fluxes of $\theta_l$.
+XCOEFHGRADTHL: coefficient applied to the vertical turbulent flux of $\theta_l$.
 
 \item
 \index{XCOEFHGRADRM!\innam{NAM\_TURBn}}
-XCOEFHGRADRM: coefficient applied to the vertical fluxes of cloud mixing ratio $r_c$.
+XCOEFHGRADRM: coefficient applied to the vertical turbulent flux of non precipitating total water mixing ratio $r_{np}$.
 
 \item
 \index{XALTHGRAD!\innam{NAM\_TURBn}}
@@ -6413,7 +6422,7 @@ The documentation of ForeFire  is available in the mesonh website : \url{http://
 &NAM_DYN  XSEGLEN =20000., XASSELIN = 0.2, LCORIO = F, XALKTOP = 0.005,
           XALZBOT = 12570., LNUMDIFU =.T. /
 &NAM_BACKUP XBAK_TIME(1,1) = 10000., XBAK_TIME(1,2) = 20000. /
-&NAM_BLANK /
+&NAM_BLANKn /
 \end{verbatim}
 \newpage
 \underline{FILE {\bf EXSEG1.nam} for a real case}
