@@ -849,7 +849,7 @@ values, the interpolated values of GPS delays are written in ASCII files
 & &{\tt ZWD }: [2D] Zenithal Wet Delays (m)\\ \hline
 \end{tabular} 
 \end{center}
-\subsection{Computing Satellite image from a MESO-NH run}
+\subsection{Simulating satellite images from a MESO-NH run}
 
 A comparison between model outputs and satellite observations provides an assessment on how well the model can reproduce the meteorological situation.
  The model-to-satellite approach compares directly the satellite brightness temperatures (BTs) to the BTs computed from the predicted model fields 
@@ -877,7 +877,7 @@ A comparison between model outputs and satellite observations provides an assess
 \vspace{0.5cm}
  {\bf The use of RTTOV is highly recommended to compute satellite BTs.} Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available allowing the calculation of BT for a large number of satellites, but only for registered users.
  
-Since RTTOV requires a license agreement, no RTTOV package is included in the open source version of Meso-NH. However, a subroutine calling RTTOV 11.3 is included in Meso-NH version Masdev5\_3 and another one calling RTTOV 13.0 is included in Meso-NH Masdev5\_4~BUG5. {\bf To use RTTOV, you must follow the instructions in the A-INSTALL file to compile MESO-NH with RTTOV.}   
+Since RTTOV requires a license agreement, no RTTOV package is included in the open source version of Meso-NH. However, a subroutine calling RTTOV 11.3 is included in Meso-NH version Masdev5\_3 and another one calling RTTOV 13.0 is included in Meso-NH Masdev5\_5. {\bf To use RTTOV, you must follow the instructions in the A-INSTALL file to compile MESO-NH with RTTOV.}   
 
 \begin{center}
 \begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
@@ -904,7 +904,7 @@ $
 
 
 \vspace{0.5cm}
-To simulate an instrument, use the code given in the following Tables reproduced from the RTTOV users guide (see \url{https://www.nwpsaf.eu/site/software/rttov}). 
+To simulate an instrument, use the code given in the following tables reproduced from the RTTOV users guide (see \url{https://www.nwpsaf.eu/site/software/rttov}). 
 
 For example, to simulate both all the SEVIRI channels of MSG-2 and all the AMSU-B channels of NOAA-16, write in DIAG1.nam
 \begin{verbatim}
