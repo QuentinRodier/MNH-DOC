@@ -394,6 +394,26 @@ The shear term corresponds to the slowdown effect produced by the vertical decou
 \label{fig:shear}
 \end{figure}
 
+\subsection{Mixing length for the grey zone of turbulence}
+
+This mixing length is adapted to the constraints of the hectometric-scale grey zone of turbulence for neutral and convective boundary layers. 
+It combines a mixing length for mesoscale simulations $L_{RM17}$ (see above), where the turbulence is fully subgrid and a mixing length for Large-Eddy Simulations, where the coarsest turbulent eddies are explicitly resolved.
+ 
+\begin{eqnarray}
+	L_{\Delta}=(\Delta x \Delta y)^{1/2},
+\end{eqnarray}
+
+The mixing length $\mathfrak{L}$ is built for isotropic turbulence schemes, as well as schemes using the horizontal homogeneity assumption. $\mathfrak{L}$ is the minimum mixing length between the horizontal grid cell $L_{\Delta}$ and $L_{RM17}$: 
+
+\begin{eqnarray}
+	\mathfrak{L}=min(\alpha L_{\Delta}, L_{RM17}),
+	\label{Eq1}
+\end{eqnarray}
+
+where $\alpha$ is a tuning parameter set to 0.5, according to the numerical experiments detailed in Honnert et al. (2021).
+
+With this new mixing length, the turbulence scheme produces the right proportion between subgrid and resolved turbulent exchanges in Large Eddy Simulations, in the grey zone of turbulence, as well as at the mesoscale. This opens the way of using a single mixing length whatever the grid mesh of the atmospheric model, the evolution stage or the depth of the boundary layer.
+
 \subsection{Qualitative behavior of the 1D dry system with BL length}
 \paragraph{Critical Richardson number}
 Let us write the 1D TKE evolution equation introducing into it the expressions
@@ -1256,6 +1276,56 @@ In practice, the source term $S^t$ contains only the surface fluxes. It is
 therefore a "split" treatment. After solving for $s^{t+1}$, the equivalent
 tendency ${\partial s \over \partial t}$ is recomputed, and added to the
 other sources of the variable $s$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Turbulence Recycling Method}
+
+One of the main bottlenecks encountered when performing multiscale LES simulations on nested grids is to generate proper turbulence in the Atmospheric Boundary Layer (ABL). Indeed, a development fetch is needed within each domain to allow for the cascade of eddies of different scales in the inertial subrange to adapt to the new resolution (Munoz-Esparza et al (2014)). Realistic turbulent inflow conditions must be generated to reduce this fetch. 
+\\
+\\ In Meso-NH, a recycling method adapted from the original proposition of Lund et al. (1998) is introduced: the prognostic variable fluctuations from a vertical plane parallel to the inflow boundary are calculated with respect to a moving temporal average and these fluctuations are added to the prognostic variable field at the inlet. First, it must be ensured that the turbulence is resolved down to M$\Delta$ in the father model, $\Delta$ being the horizontal grid size and M being ideally equal to 4 or 6, depending on the effective resolution of the father model (Skamarock (2004)). The effective resolution of a model is the minimum wavelength correctly seen by the model. In the son domain, the time window for the calculation of the moving temporal average ($T_{recycl}$) has to be selected sufficiently large for the fluid to be advected over a distance corresponding to about M$\Delta$ in the father model. Furthermore, to save computational time and memory, the variable average is calculated with a limited number of son domain timesteps (N) over $T_{recycl}$. N should be sufficiently high to reduce the statistical uncertainty of the calculated moving average and sufficiently low in terms of memory requirements, since the N values for each grid point in the recycling plane need to be kept in memory.
+
+\begin{figure}[!ht]
+\begin{center}
+ {\includegraphics[width=1.\textwidth]{EPS/recycl3D_sketch.png}}
+\caption{\label{recycling_sketch}\footnotesize \textit{Sketch of the turbulence recycling method used to generate turbulent inflow. For clarity, only the recycling of fluctuations at the West boundary is shown, but the same method applies on the four lateral sides.}}
+\end{center}
+\end{figure}
+
+Figure \ref{recycling_sketch} shows a domain where inflow boundary conditions may be imposed at each lateral side (North, East, South, West). For the sake of clarity, the recycling method is only shown for the West boundary but the same method applies on the four lateral sides, a wind vector that is not aligned with the grid axis will thus be recycled on two sides. Considering the prognostic variable at the West boundary ($W$) $\varphi_W$ $\left(\varphi \in [u,v,w] \right)$,
+the fluctuations $\varphi_W'$ are calculated in the recycling plane being located at a distance $D_{recycle}$ from the inlet. The fluctuations calculation reads:
+\begin{equation}
+\label{fluct}
+\varphi_W'(y,z,t)  =  \varphi_W(x_{Rplan},y,z,t)-\overline{\varphi_W(x_{Rplan},y,z)},
+\end{equation}
+where $\varphi_W(x_{Rplan},y,z,t)$ is the instantaneous prognostic variable and $\overline{\varphi_W(x_{Rplan},y,z)}$ the time average of the prognostic variable in one point of the recycling plane.
+\\The value of $\varphi_W'(y,z,t)$ is added to the corresponding inflow prognostic variable, $\varphi_{Inlet_W}$ :  
+\begin{equation}
+\label{InletField}
+\varphi_{Inlet_W}(y,z,t)  =  \varphi_{LargeScale_W}(y,z,t)+\varphi_W'(y,z,t)\beta\psi_W(y,z,t),
+\end{equation}
+where $\varphi_{LargeScale_W}$ is the variable field imposed at the boundary, $\beta \in$ [0.1-0.3] a weighting coefficient preventing calculation divergence and $\psi_W(y,z,t)$ an inflow damping function calculated based on $T_{recycl}$ and the Brunt-V{\"a}is{\"a}l{\"a} period ($T_{BV}$): 
+\begin{equation}
+\label{dampingFunction}
+\psi_w \rightarrow \left\{
+    \begin{array}{ll}
+        1 & \mbox{; if } T_{recycl}>4T_{BV} \\
+        \frac{\displaystyle \left(T_{recycl}-2T_{BV} \right)}{\displaystyle \left(4T_{BV}-2T_{BV}\right)} & \mbox{; if } 2T_{BV} \leq T_{recycl} \leq 4T_{BV} \\
+        0 & \mbox{; if } T_{recycl} < 2T_{BV}
+    \end{array}
+\right.  
+\end{equation}
+$\psi_W$ is calculated at the inlet, it is equal to 1 in neutral or near-neutral layers (e.g. in the boundary layer) and is linearly damped to 0 in stable layers. Its purpose is twofold: filtering the fluctuations due to gravity waves and preventing the imposed fluctuations to be affected by a potential increase in boundary-layer height between the recycling plane and the inlet.
+\\Please note that even if the method has been built for grid-nested domains, it may also be applied to single domain configurations. Indeed, the variable field imposed at the boundary, $\varphi_{LargeScale_W}$, can result from any boundary condition type (father domain output or constant profile). However, in a single domain configuration, the efficiency of the method can not be assured. If the user is interested in using the recycling method for a single domain configuration only, she or he should adapt the recycling method. Some of the following ideas could be undertaken:
+\begin{itemize}
+ \item Introduce a strong initial perturbation in NAM\_PERT\_PRE (more likely a temperature perturbation)
+ \item Recycle the fluctuations on a very short period, at least in a first run.
+\end{itemize}
+If none of the previous tips are working, it is suggested to perform a two-domain simulation. Having a coarse-resolution father domain almost not increases the computational cost and ensures the efficiency of the recycling method.
+\\
+\\Finally, please note that the turbulence recycling method has only been validated on idealized, cartesian, one-way nested and near-neutral cases.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{References}
@@ -1287,10 +1357,22 @@ Hanjalic, K., and B. E. Launder, 1972:
 A Reynolds stress model of turbulence and its application to thin shear flows.
 {\it J. Fluid Mech.}, {\bf 52}, 609-638.
 \decrefname
+Honnert, R., Masson, V., Lac, C., and Nagel, T. 2021:
+A Theoretical Analysis of Mixing Length for Atmospheric Models From Micro to Large Scales. 
+{\it Front. Earth Sci}, {\bf 8}.
+\decrefname
 Klaassen, G. P., and T. L. Clark, 1985:
 Dynamics of the cloud~environment interface and entrainment in small cumuli:
 Two-dimensional simulations in the absence of ambient shear.
 {\it  J. Atmos. Sci.}, {\bf 42}, 2621-2642.
+\decrefname
+Lund, Thomas S and Wu Xiohua and Squires, Kyle D, 1998:
+Generation of turbulent inflow data for spatially developing boundary layer simulations.
+{\it Journal of Computational Physics}, {\bf 140}, 233-258.
+\decrefname
+Mu{\~n}oz-Esparza, D. and Kosovi{\'c}, B. and Mirocha, J. and van Beeck, J., 
+ Bridging the Transition from Mesoscale to Microscale Turbulence in Numerical Weather Prediction Models.
+{\it Boundary-Layer Meteorology}, {\bf 153}, 409-440.
 \decrefname
 Redelsperger, J.-L, and G. Sommeria, 1981:
 M\'ethode de repr\'esentation de la turbulence d'\'echelle inf\'erieure
@@ -1300,6 +1382,9 @@ M\'ethode de repr\'esentation de la turbulence d'\'echelle inf\'erieure
 Rodier, Q., V. Masson, F. Couvreux and A. Paci, 2017: Evaluation of a Buoyancy and Shear Based Mixing Length for a Turbulence Scheme. {\it Frontiers in Earth Science}, {\bf 5}, 65.
 \decrefname
 Rodier Q, 2017. Param\'etrisation de la turbulence atmosph\'erique dans la couche limite stable. PhD manuscrit. Universit\'e Toulouse 3 Paul Sabatier (UT3 Paul Sabatier).
+\decrefname
+Skamarock, William C, 2004: Evaluating mesoscale NWP models using kinetic energy spectra.
+{\it Monthly weather review}, {\bf 132}, 3019-3032.
 \decrefname
 Squire, P., 1958:
 The spatial variation of liquid water and droplet concentration in cumuli.
