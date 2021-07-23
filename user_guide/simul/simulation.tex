@@ -5943,6 +5943,7 @@ Fortran name &  Fortran type & default value \\
 XIMPL       &  real          & 1.     \\
 CTURBLEN    &  4 characters  & 'BL89'   \\
 CTURBDIM    &  4 characters  & '1DIM'   \\
+XCADAP      & real           & 0.5 \\
 LTURB\_FLX  &  logical       & FALSE  \\
 LTURB\_DIAG &  logical       & FALSE  \\
 LSUBG\_COND &  logical       & FALSE  \\
@@ -6009,8 +6010,12 @@ CTURBLEN='RM17'
 The mixing length is computed according to Rodier et al. (2017). It is a non-local mixing length combining BL89 with a wind shear term.
 \item
 CTURBLEN='ADAP'
-The mixing length is computed according to Honnert et al. (2021). For large horizontal grid meshes, this is equal to RM17. For LES grid meshes, this is equivalent to DEAR : the base mixing lentgh is the horizontal grid mesh, and it is limited by a stability-based length (RM17), as was done in DEAR (but taking into account shear as well). For grid meshes in the grey zone, ADAP is the smaller of the two.
+resolution-adaptative mixing length is computed according to Honnert et al. (2021) and given by the minimum between RM17 and the horizontal resolution XCADAP$\sqrt{\Delta x \Delta y}$, where XCADAP is a namelist parameter set to 0.5.
 \end{itemize}
+
+\item
+\index{XCADAP!\innam{NAM\_TURBn}} 
+XCADAP: coefficient applied to the ADAP mixing length
 
 \item
 \index{LTURB\_FLX!\innam{NAM\_TURBn}}
