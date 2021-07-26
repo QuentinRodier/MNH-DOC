@@ -4351,9 +4351,9 @@ NOUT\_STEP\_FREQ\_FIRST & integer(:)         & 1            \\
 LOUT\_BEG               & logical            & .FALSE.      \\
 LOUT\_END               & logical            & .FALSE.      \\
 \hline
-LOUT\_REDUCE\_FLOAT\_PRECISION  & logical    & .FALSE.      \\
-LOUT\_COMPRESS                  & logical    & .FALSE.      \\
-NOUT\_COMPRESS\_LEVEL           & integer    & 4            \\
+LOUT\_REDUCE\_FLOAT\_PRECISION  & logical(:) & .FALSE.      \\
+LOUT\_COMPRESS                  & logical(:) & .FALSE.      \\
+NOUT\_COMPRESS\_LEVEL           & integer(:) & 4            \\
 \hline
 COUT\_DIR               & character(len=512) & ''           \\
 \hline
@@ -4401,15 +4401,15 @@ LOUT\_END: force an output at the last timestep
 
 \item
 \index{LOUT\_REDUCE\_FLOAT\_PRECISION!\innam{NAM\_OUTPUT}} 
-LOUT\_REDUCE\_FLOAT\_PRECISION: force writing of floating points numbers in single precision (only for files in netCDF format, not for LFI format)
+LOUT\_REDUCE\_FLOAT\_PRECISION(m): force writing of floating points numbers in single precision for each model $m$ (only for files in netCDF format, not for LFI format)
 
 \item
 \index{LOUT\_COMPRESS!\innam{NAM\_OUTPUT}} 
-LOUT\_COMPRESS: enable lossless compression of data (only for files in netCDF format, not for LFI format). This can have a negative impact on performance.
+LOUT\_COMPRESS(m): enable lossless compression of data for each model $m$ (only for files in netCDF format, not for LFI format). This can have a negative impact on performance.
 
 \item
 \index{LOUT\_COMPRESS\_LEVEL!\innam{NAM\_OUTPUT}} 
-LOUT\_COMPRESS\_LEVEL: set the compression level (only for files in netCDF format, not for LFI format). The value must be in the 0 to 9 interval (0 for no compression, 9 for maximum compression).
+LOUT\_COMPRESS\_LEVEL(m): set the compression level for each model $m$ (only for files in netCDF format, not for LFI format). The value must be in the 0 to 9 interval (0 for no compression, 9 for maximum compression).
 
 \item
 \index{COUT\_DIR!\innam{NAM\_OUTPUT}} 
