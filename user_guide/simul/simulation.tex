@@ -2612,9 +2612,11 @@ CIO\_DIR & character(len=512) & '' \\
 LVERB\_OUTLST      & logical & TRUE  \\
 LVERB\_STDOUT      & logical & FALSE \\
 LVERB\_ALLPRC      & logical & FALSE \\
-NGEN\_VERB         & integer & 3 \\
+NGEN\_VERB         & integer & 4 \\
 NGEN\_ABORT\_LEVEL & integer & 2 \\
-NIO\_VERB          & integer & 3 \\
+NBUD\_VERB         & integer & 4 \\
+NBUD\_ABORT\_LEVEL & integer & 2 \\
+NIO\_VERB          & integer & 4 \\
 NIO\_ABORT\_LEVEL  & integer & 2 \\
 \hline
 LIO\_ALLOW\_NO\_BACKUP & logical & FALSE \\
@@ -2693,6 +2695,14 @@ NGEN\_ABORT\_LEVEL : set the minimum level of 'generic' message to abort the app
 \index{NGEN\_ABORT\_LEVEL!\innam{NAM\_CONFIO}}
 
 \item
+NBUD\_VERB : set the verbosity level for 'budget' messages (same levels as for NGEN\_VERB)
+\index{NBUD\_VERB!\innam{NAM\_CONFIO}}
+
+\item
+NBUD\_ABORT\_LEVEL : set the minimum level of 'budget' message to abort the application (same levels as for NGEN\_VERB)
+\index{NBUD\_ABORT\_LEVEL!\innam{NAM\_CONFIO}}
+
+\item
 NIO\_VERB : set the verbosity level for 'IO' messages (same levels as for NGEN\_VERB)
 \index{NIO\_VERB!\innam{NAM\_CONFIO}}
 
@@ -2702,7 +2712,7 @@ NIO\_ABORT\_LEVEL : set the minimum level of 'IO' message to abort the applicati
 
 \end{itemize}
 
-Remark: not all messages use this new infrastructure. Therefore, some of them are not affected by these options.
+Remark: not all messages use this infrastructure. Therefore, some of them are not affected by these options.
 
 \begin{itemize}
 
