@@ -146,7 +146,7 @@ See section \ref{s:surfexdiag} for details.
 &&{\tt RHOREFZ } : [1D] rhodz for reference state without orography (kg/m3)  \\ \cline{3-3}
 &&{\tt THVREFZ} : [1D] thetavz for reference state without orography (K) \\ \cline{3-3}
 &&{\tt EXNTOP} :  Exner function at model top\\ \cline{3-3}
-&&{\tt PPTn } : [3D] passive pollutant n concentration (g/m$^3$) only if LPASPOL=T in YINIFILE.des\\ \cline{3-3}
+&&{\tt SVPPn } : [3D] passive pollutant n concentration (g/m$^3$) only if LPASPOL=T in YINIFILE.des\\ \cline{3-3}
 \end{tabular} 
 \end{center}
 \underline{Diagnostic relative to surface}\\
@@ -287,11 +287,12 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 & &{\tt MRS }: [3D] Mixing Ratio for Snow (g/kg) (if LUSERS=T)\\\cline{3-3}
 & &{\tt MRG }: [3D] Mixing Ratio for Graupel (g/kg) (if LUSERG=T)\\\cline{3-3}
 & &{\tt MRH }: [3D] Mixing Ratio for Hail (g/kg) (if LUSERH=T)\\\cline{3-3}
-& &{\tt CCCNM} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
-& &{\tt CCLOUDM} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
-& &{\tt RAINM }: [3D] if CCLOUD='C2R2' \\\cline{3-3}
-& &{\tt CICEM }: [3D] if CCLOUD='C1R3' \\\cline{3-3}
-& &{\tt CINM }: [3D] if CCLOUD='C1R3' \\\hline
+& &{\tt CCCN} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt CCLOUD} : [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt CRAIN }: [3D] if CCLOUD='C2R2' \\\cline{3-3}
+& &{\tt SUPSAT }: [3D] if CCLOUD='C2R2' and LSUPSAT=T \\\cline{3-3}
+& &{\tt CICE }: [3D] if CCLOUD='C1R3' \\\cline{3-3}
+& &{\tt CIN }: [3D] if CCLOUD='C1R3' \\\hline
 \hline
 \multirow{2}{*}{LVAR\_MRSV}\index{LVAR\_MRSV!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field\\\cline{2-3}
 &.TRUE. &{\tt MRSVnnn }: [3D] Mixing Ratio for User Scalar Variable {\tt n }(g/kg) \\ \hline
@@ -344,7 +345,7 @@ XMEAN\_POVO (1:2)\index{XMEAN\_POVO!\innam{NAM\_DIAG}}&(15000,50000)&averaged be
 &&  Precipitable water \\ 
 \hline
 \multirow{3}{*}{LCHAQDIAG}\index{LCHAQDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.} & by default : no field \\\cline{2-3}
-&\multirow{2}{*}{.TRUE.} &{\tt WC\_O3T }: [3D] Chemical scalar variables in aqueous phase (cloud and rain) as defined in BASIC.f90 (M) \\
+&\multirow{2}{*}{.TRUE.} &{\tt WC\_O3 }: [3D] Chemical scalar variables in aqueous phase (cloud and rain) as defined in BASIC.f90 (M) \\
 \hline
 \end{tabular} 
 \end{center}
@@ -431,14 +432,14 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & &{\tt MRH }: [3D] Mixing Ratio for Hail (g/kg) (if LUSERH=T)\\\cline{3-3}
 & &{\tt NCT }: [3D] Cloud concentration (cm${-3}$)\\\cline{3-3}
 & &{\tt NRT }: [3D] Rain concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt NFREET }: [3D] Free CCN concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt NCCNT }: [3D] CCN concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt MASSAPT }: [3D] Scavenging (kg.cm${-3}$)\\\cline{3-3}
-& &{\tt CICET }: [3D] Ice concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt CIFNFREET }: [3D] Free IFN concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt CIFNNUCLT }: [3D] Nucleated IFN concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt CCNINIMMT }: [3D] Nucleated IMM concentration (cm${-3}$)\\\cline{3-3}
-& &{\tt CCCNNUCLT }: [3D] Homogeneous Freezing of CCN (cm${-3}$)\\\cline{3-3}
+& &{\tt NFREE }: [3D] Free CCN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt NCCN }: [3D] CCN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt MASSAP }: [3D] Scavenging (kg.cm${-3}$)\\\cline{3-3}
+& &{\tt CICE }: [3D] Ice concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CIFNFREE }: [3D] Free IFN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CIFNNUCL }: [3D] Nucleated IFN concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CCNINIMM }: [3D] Nucleated IMM concentration (cm${-3}$)\\\cline{3-3}
+& &{\tt CCCNNUCL }: [3D] Homogeneous Freezing of CCN (cm${-3}$)\\\cline{3-3}
 & &{\tt LWC }: [3D] Liquid Water content (g.m${-3}$) (if LUSERC=T)\\\cline{3-3}
 & &{\tt IWC }: [3D] Ice Water content (g.m${-3}$) (if LUSERC=T)\\\cline{3-3}
 \hline
@@ -465,7 +466,7 @@ LUSERV=T)&&{\tt VKE }: [3D] Vertical Kinetic Energy (from explicit vertical moti
 & & {\tt DRVCONV}: Convective tendency for vapor (/s)\\\cline{3-3}
 & & {\tt DRCCONV}: Convective tendency for  cloud (/s)\\\cline{3-3}
 & & {\tt DRICONV }: Convective tendency for ice (/s)\\\cline{3-3}
-& & {\tt DSVCONVnnn }:Convective tendency for scalar variable {\tt n} (/s)\\\cline{2-3}
+& & {\tt DSVCONV\_* }:Convective tendency for scalar variables (/s)\\\cline{2-3}
 &\multirow{5}{*}{2} & {\tt CAPE CLTOPCONV CLBASCONV DTHCONV DRVCONV DRCCONV DRICONV DSVCONVnnn}\\\cline{3-3}
 &&{\tt UMFCONV }: [3D] Updraft Convective Mass Flux (m$^2$ kg/s) \\\cline{3-3}
 &&{\tt DMFCONV }: [3D] Downdraft Convective Mass Flux (m$^2$ kg/s) \\\cline{3-3} 
@@ -683,7 +684,7 @@ Only available if \verb|LLG=T| in YINIFILE.des
 \hline
 \multirow{6}{*}{LTRAJ}\index{LTRAJ!\innam{NAM\_DIAG}}&{\bf .FALSE} & by default : no field\\\cline{2-3}
 &\multirow{5}{*}{.TRUE.} &{\tt X, Y }: [3D] X and Y coordinates (km) \\\cline{3-3}
-& &{\tt LGXM, LGYM, LGZM }: [3D] Lagrangian tracers coordinates (m)\\\cline{3-3}
+& &{\tt LGX, LGY, LGZ }: [3D] Lagrangian tracers coordinates (m)\\\cline{3-3}
 & &{\tt Xn, Yn, Zn }: [3D] Lagrangian tracers coordinates at time origin {\tt n} \\ \cline{3-3}
 & &{\tt THn }: [3D] corresponding Theta  (K)\\\cline{3-3}
 & &{\tt RVn }: [3D] corresponding Vapor mixing Ratio (g/kg)\\\hline
@@ -696,10 +697,10 @@ Only available if \verb|LDUST=T| in YINIFILE.des.
 \begin{center}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
-\multirow{23}{*}{by default}& &{\tt DSTM0nM}: [3D] Dust 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
-& &{\tt DSTM3nM} : [3D] Dust 3$^{rd}$-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
-& &{\tt DSTM6nM} : [3D] Dust 6$^{rd}$-order moment of mode n 
-              {\small(if {\tt LVARSIG})} (ppbv)\\\cline{3-3}
+\multirow{23}{*}{by default}& &{\tt DSTM0n}: [3D] Dust 0-order moment of the lognormal mode n (ppb)\\\cline{3-3}
+& &{\tt DSTM3n} : [3D] Dust 3$^{rd}$-order moment of the lognormal mode n (ppb)\\\cline{3-3}
+& &{\tt DSTM6n} : [3D] Dust 6$^{rd}$-order moment of mode n
+              {\small(if {\tt LVARSIG})} (ppb)\\\cline{3-3}
 & &{\tt DSTRGAn} : [3D] Dust number mean Radius of the lognormal mode n ($\mu$m)
 \\\cline{3-3}
 & &{\tt DSTRGAMn} : [3D] Dust Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
@@ -708,8 +709,8 @@ Only available if \verb|LDUST=T| in YINIFILE.des.
 & &{\tt DSTMSSn} : [3D] Dust Mass concentration of the lognormal mode n 
 ($\mu$g/m$^3$)\\\cline{3-3}
 & &{\tt DSTBRDNn} : [2D] Dust Burden of the lognormal mode n (g/m$^2$)\\\cline{3-3}
-& &{\tt DEDSTM3nCM}  : [3D] Dust Mass of mode n in cloud water only if \verb|LDEPOS_DST=T| (ppb) \\\cline{3-3}
-& &{\tt DEDSTM3nRM}  : [3D]  Dust Mass of mode n in rain only if \verb|LDEPOS_DST=T| (ppb)\\\cline{3-3}
+& &{\tt DEDSTM3nC}  : [3D] Dust Mass of mode n in cloud water only if \verb|LDEPOS_DST=T| (ppb) \\\cline{3-3}
+& &{\tt DEDSTM3nR}  : [3D]  Dust Mass of mode n in rain only if \verb|LDEPOS_DST=T| (ppb)\\\cline{3-3}
 & &{\tt DEDSTN0An} : [3D] Number of dust particles in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_DST=T| (/m$^3$)\\\cline{3-3}
 & &{\tt DEDSTMSSn} : [3D] Dust mass in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_DST=T|($\mu$g/m$^3$)\\\cline{1-3}
 \multirow{3}{*}{NRAD\_3D}& \multirow{3}{*}{$\ge$ 1}&{\tt DSTAOD2D}: [2D] Dust Optical Depth (\_)\\\cline{3-3}
@@ -724,10 +725,10 @@ Only available if \verb|LSALT=T| in YINIFILE.des.
 \begin{center}
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
-\multirow{23}{*}{by default}& &{\tt SLTM0nM}: [3D] Salt 0-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
-& &{\tt SLTM3nM} : [3D] Salt 3$^{rd}$-order moment of the lognormal mode n (ppbv)\\\cline{3-3}
-& &{\tt SLTM6nM} : [3D] Salt 6$^{rd}$-order moment of mode n 
-              {\small(if {\tt LVARSIG\_SLT})} (ppbv)\\\cline{3-3}
+\multirow{23}{*}{by default}& &{\tt SLTM0nM}: [3D] Salt 0-order moment of the lognormal mode n (ppb)\\\cline{3-3}
+& &{\tt SLTM3n} : [3D] Salt 3$^{rd}$-order moment of the lognormal mode n (ppb)\\\cline{3-3}
+& &{\tt SLTM6n} : [3D] Salt 6$^{rd}$-order moment of mode n
+              {\small(if {\tt LVARSIG\_SLT})} (ppb)\\\cline{3-3}
 & &{\tt SLTRGAn} : [3D] Salt number mean Radius of the lognormal mode n ($\mu$m)
 \\\cline{3-3}
 & &{\tt SLTRGAMn} : [3D] Salt Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
@@ -736,8 +737,8 @@ Only available if \verb|LSALT=T| in YINIFILE.des.
 & &{\tt SLTMSSn} : [3D] Salt Mass concentration of the lognormal mode n 
 ($\mu$g/m$^3$)\\\cline{3-3}
 & &{\tt SLTBRDNn} : [2D] Salt Burden of the lognormal mode n (g/m$^2$)\\\cline{3-3}
-& &{\tt DESLTM3nCM}  : [3D] Salt Mass of mode n in cloud water only if \verb|LDEPOS_SLT=T| (ppb) \\\cline{3-3}
-& &{\tt DESLTM3nRM}  : [3D] Salt  Mass of mode n in rain only if \verb|LDEPOS_SLT=T| (ppb)\\\cline{3-3}
+& &{\tt DESLTM3nC}  : [3D] Salt Mass of mode n in cloud water only if \verb|LDEPOS_SLT=T| (ppb) \\\cline{3-3}
+& &{\tt DESLTM3nR}  : [3D] Salt  Mass of mode n in rain only if \verb|LDEPOS_SLT=T| (ppb)\\\cline{3-3}
 & &{\tt DESLTN0An} : [3D] Number of salt particles in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_SLT=T|  (/m$^3$)\\\cline{3-3}
 & &{\tt DESLTMSSn} : [3D] Salt mass in cloud water (for n=1,2,3) or in rain (for n=4,5,6) only if \verb|LDEPOS_SLT=T| ($\mu$g/m$^3$)\\\cline{1-3}
 \multirow{3}{*}{NRAD\_3D}& \multirow{3}{*}{$\ge$ 1}&{\tt SLTAOD2D}: [2D] Salt Optical Depth (\_)\\\cline{3-3}
@@ -753,7 +754,7 @@ Only available if \verb|LUSECHEM=T| in YINIFILE.des
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{3}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no fields\\\cline{2-3}
-& \multirow{2}{*}{.TRUE.}&{\tt O3T ... } : [3D] Chemical scalar variables as defined in BASIC.f90 (ppbv)\\ \hline
+& \multirow{2}{*}{.TRUE.}&{\tt O3... } : [3D] Chemical scalar variables as defined in BASIC.f90 (ppb)\\ \hline
 XCHEMLAT,&\textbf{XUNDEF}&  by default : no fields\\\cline{2-3}
 XCHEMLON&arrays of real & write chemicals species on vertical profile defined by (XCHEMLAT,XCHEMLON)\\ \hline
 CSPEC\_DIAG&character(*1024) &  to compute chemical production/loss terms for each variables specified\\ \hline
@@ -774,7 +775,7 @@ Only available if \verb|LUSECHEM=T| and  \verb|LORILAM=T| in YINIFILE.des
 \begin{tabular}{|>{\centering}p{3cm}|>{\centering}p{2.5cm}|p{11cm}|}
 \hline
 \multirow{26}{*}{LCHEMDIAG}\index{LCHEMDIAG!\innam{NAM\_DIAG}}&\textbf{.FALSE.}&  by default : no field\\\cline{2-3}
-&\multirow{25}{*}{.TRUE.}  &{\tt SOAIM ... } : [3D] Aerosol scalar variable as defined in ch\_aer\_init\_soa.f90 (ppbv)\\ \cline{3-3}
+&\multirow{25}{*}{.TRUE.}  &{\tt SOAI... } : [3D] Aerosol scalar variable as defined in ch\_aer\_init\_soa.f90 (ppb)\\ \cline{3-3}
 & &{\tt RGAn}: [3D] Aerosol number mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
 &  &{\tt RGAMn}: [3D] Aerosol Mass mean Radius of the lognormal mode n ($\mu$m)\\\cline{3-3}
 &  &{\tt N0An}: [3D] Aerosol Number of the lognormal mode n (/cc)
@@ -804,7 +805,7 @@ only available if  LCH\_CONV\_LINOX=T and LUSECHEM=F in YINIFILE.des with LCHEMD
 \begin{center}
 \begin{tabular}{>{\centering}p{3cm}>{\centering}p{2.5cm}|p{11cm}|}
 \cline{3-3}
-&&{\tt LINOXT} : [3D] linox scalar variables\\\cline{3-3}
+&&{\tt LINOX} : [3D] linox scalar variables (ppb)\\\cline{3-3}
 &&{\tt IC\_RATE} : [2D] IntraCloud lightning Rate   (/s) \\ \cline{3-3}
 &&{\tt CG\_RATE} :[2D] CloudGround lightning Rate (/s) \\ \cline{3-3}
 &&{\tt IC\_TOTAL\_NB} :[2D] IntraCloud lightning Number (\_)\\ \cline{3-3}
