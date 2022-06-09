@@ -2821,7 +2821,7 @@ XHSTART : Height above  which the no-slip condition is applied, when LMOUNT = .T
 This namelist allows to take into account drag of trees in the atmospheric model instead of SURFEX according
 to Aumond et al. (2011) in the case of very fine vertical resolution. 
 The Z0 vegetation is therefore reduced to the roughness of grassland in SURFEX
- (z0v\_from\_lai.F90). LTREE\_DRAG in NAM\_TREEDRAG of SURFEX must also be activated.
+ (z0v\_from\_lai.F90). LTREEDRAG in NAM\_TREEDRAG of SURFEX must also be activated.
 
 \begin{center}
 \begin{tabular} {|l|l|l|}
@@ -4787,7 +4787,9 @@ CFRAC\_ICE\_SHALLOW\_MF& 1 character & 'S' \\
 LCRFLIMIT &  logical     & .TRUE. \\
 XSPLIT\_MAXCFL& real & 0.8 \\
 LSEDIM\_AFTER & logical & FALSE \\
-
+CSUBG\_RC\_RR\_ACCR & 80 characters & 'NONE' \\
+CSUBG\_RR\_EVAP & 80 characters & 'NONE' \\
+CSUBG\_PR\_PDF & 80 characters & 'SIGM' \\
 \end{longtable}
 
 It contains the options for the mixed phase cloud parameterizations
@@ -4901,6 +4903,34 @@ XSPLIT\_MAXCFL \index{XSPLIT\_MAXCFL!\innam{NAM\_PARAM\_ICE}}: Maximum CFL numbe
 
 \item 
 LSEDIM\_AFTER  \index{LSEDIM\_AFTER!\innam{NAM\_PARAM\_ICE}}: sedimentation done before (.FALSE.) or after (.TRUE.) microphysics (active when LRED=T)
+
+\item
+CSUBG\_RC\_RR\_ACCR \index{CSUBG\_RC\_RR\_ACCR!\innam{NAM\_PARAM\_ICE}}:
+Subgrid rc-rr accretion
+\begin{itemize}
+\item{'NONE'} : cloud and rain occupy the entire grid cell of the model
+\item{'PRFR'} : the cloud is concentrated on the cloud fraction and the rain on the rain fraction
+\end{itemize}
+
+\item
+CSUBG\_RR\_EVAP \index{CSUBG\_RR\_EVAP!\innam{NAM\_PARAM\_ICE}}:
+Subgrid rr evaporation
+\begin{itemize}
+\item{'NONE'} : rain occupies the entire grid cell and evaporation can only occur on grid cells that are completely free of clouds
+\item{'CLFR'} : rain occupies the entire grid cell and evaporation can only occur on the clear sky part of the grid cell
+\item{'PRFR'} : same as CLFR but rain is concentrated on the rain fraction
+\end{itemize}
+
+\item
+CSUBG\_PR\_PDF \index{CSUBG\_PR\_PDF!\innam{NAM\_PARAM\_ICE}}:
+PDF for subgrid precipitation
+\begin{itemize}
+\item{'SIGM'} : use of the Redelsperger and Sommeria (1986) PDF 
+\item{'HLCRECTPDF'} : rectangular PDF
+\item{'HLCTRIANGPDF'} : triangular PDF
+\item{'HLCQUADRAPDF'} : second order quadratic PDF
+\item{'HLCISOTRIPDF'} : isocele triangular PDF
+\end{itemize}
 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
