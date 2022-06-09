@@ -260,7 +260,11 @@ L&=& \left[ \frac{(l_{up})^{-2/3} + (l_{down})^{-2/3}}{2} \right]^{-3/2}
 \end{eqnarray}
 %PM 27-06-2001 corrections signes pour e(z) des deux integrales ci-dessus
 %JPC 27-06-2007 correction for the calculation of L
-where $e(z)$ is the turbulent kinetic energy at level $z$.
+where $e(z)$ is the turbulent kinetic energy at level $z$ and. The coefficient 2/3=$\alpha$ of the previous equation can be generalized by
+\begin{equation}
+\alpha = \dfrac{log(16)}{4log(\kappa) + log(C_{\epsilon}) - 3log(C_m)}
+\end{equation}
+from Lemarié et al. 2021.
 This method allows the length scale at any level to be influenced
 not only by the stability at this level, but by the effect of remote stable
 zones, or the presence of the ground.
@@ -418,7 +422,7 @@ With this new mixing length, the turbulence scheme produces the right proportion
 \paragraph{Critical Richardson number}
 Let us write the 1D TKE evolution equation introducing into it the expressions
 for the fluxes, and neglecting the turbulent transport for this particular case:
-%PM 02/07/2001 D�but diverses retouches Pascal Marquet
+%PM 02/07/2001 D\E9but diverses retouches Pascal Marquet
 \be
 \frac {\partial e}{\partial t}=
 \frac{4 L}{15 C_m} e^{\frac{1}{2}} (\frac {\partial U}{\partial z})^2
@@ -1365,6 +1369,11 @@ Klaassen, G. P., and T. L. Clark, 1985:
 Dynamics of the cloud~environment interface and entrainment in small cumuli:
 Two-dimensional simulations in the absence of ambient shear.
 {\it  J. Atmos. Sci.}, {\bf 42}, 2621-2642.
+\decrefname
+Lemarié, F., Samson, G., Redelsperger, J. L., Giordani, H., Brivoal, T., and G. Madec, 2021:
+A simplified atmospheric boundary layer model for an improved representation of air–sea interactions 
+in eddying oceanic models: implementation and first evaluation in NEMO (4.0).
+{\it Geoscientific Model Development}, {\bf 14(1)}, 543-572.
 \decrefname
 Lund, Thomas S and Wu Xiohua and Squires, Kyle D, 1998:
 Generation of turbulent inflow data for spatially developing boundary layer simulations.
