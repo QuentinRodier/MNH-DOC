@@ -170,7 +170,7 @@ arrays of dummy, real, integer, logical and character*80 for test
 and debugging  purposes are defined and passed through the namelist
 read operations. None of the MesoNH routines uses any of these
 variables. When a developper choses to introduce temporarily a
-parameter to some subroutine, he has to introduce a USE MODD\_BLANKn
+parameter to some subroutine, he has to introduce a USE MODD\_BLANK\_n
 statement into that subroutine. Then he can use any of the variables
 defined here and change them easily via the namelist input.
 
@@ -1651,7 +1651,7 @@ keyword: {\bf ZFRC} or {\bf PFRC}
 For idealized simulations a forced mode can be useful to impose the effects of
 a simplified large scale environment to the model solution. This functionality
 works (LFORCING=.TRUE. in module MODD\_CONF) when CIDEAL='RSOU' or 'CSTN'
-(see 5.2.10 and 5.3) and only in the case LCARTESIAN =.TRUE. and
+(see 5.2.10 and 5.3) and only in the case 
 LGEOSBAL =.FALSE. for inclusion of a geostrophic wind forcing.
 All forcing fields are  issued from spatial interpolation of chronological series of 1D data (provided by the user onto the model grid). They are prepared during the
 {\bf prep\_ideal\_case} sequence and are stored in the LFI files for further use
