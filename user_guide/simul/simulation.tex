@@ -254,6 +254,156 @@ Remarks:
 See section \ref{s:namblank} page \pageref{s:namblank} for details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BLAZE (fire model)}
+
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+
+LBLAZE					&	logical 		& .FALSE. \\
+NREFINX 					&	integer			& 1 \\
+NREFINY 					&	integer			& 1 \\
+CFIRE\_CPL\_MODE 		& 	character(7)	& '2WAYCPL' \\
+CBMAPFILE 				&   character(28)	& CINIFILE \\
+CPROPAG\_MODEL			&	character(11)	& 'SANTONI2011' \\
+
+CHEAT\_FLUX\_MODEL		&   character(3)	& 'EXS' \\
+CLATENT\_FLUX\_MODEL	& 	character(3)	& 'EXP' \\
+XFERR					&	real			& 0.8 \\
+LSGBAWEIGHT 				&	logical 		& .FALSE. \\
+XFLUXZEXT				&	real			& 3. \\
+XFLUXZMAX 				&	real			& 4. * XFLUXZEXT \\  
+XFLXCOEFTMP				&	real			& 1. \\ 
+
+NFIRE\_WENO\_ORDER 		&	integer			& 3 \\
+NFIRE\_RK\_ORDER 		& 	integer			& 3 \\
+XCFLMAXFIRE 				& 	real			& 0.8 \\
+XLSDIFFUSION 			&	real			& 0.1 \\
+XROSDIFFUSION 			&	real			& 0.05 \\
+
+LINTERPWIND 				& 	logical 		& .TRUE. \\
+LWINDFILTER 				& 	logical 		& .FALSE. \\
+CWINDFILTER				&	character(4)	& 'EWAM' \\
+XEWAMTAU					&	real			& 20. \\
+XWLIMUTH 				&	real			& 8. \\
+XWLIMUTMAX				&	real			& 9. \\
+
+NNBSMOKETRACER			&	integer			& 1 \\
+NWINDSLOPECPLMODE		&	integer			& 0 \\
+\hline
+\end{tabular}
+\end{center}
+It contains the variables and types for the \textsc{Blaze} fire model. More informations about the scheme and on input data construction with python Pyrolib package on https://pypi.org/project/pyrolib/ and https://pyrolib.readthedocs.io/en/latest/ 
+
+\begin{itemize}
+	\item 
+	\index{LBLAZE!\innam{LBLAZE}}
+	LBLAZE : flag to activate the \textsc{Blaze} fire model.
+	\item 
+	\index{NREFINX!\innam{NREFINX}}
+	NREFINX : Refinement ratio for fire mesh in the x direction.
+	\item 
+	\index{NREFINY!\innam{NREFINY}}
+	NREFINY : Refinement ratio for fire mesh in the y direction.
+	\item 
+	\index{CFIRE\_CPL\_MODE!\innam{CFIRE\_CPL\_MODE}}
+	CFIRE\_CPL\_MODE: atmosphere/fire coupling mode. Three options are available:
+	\begin{itemize}
+		\item 2WAYCPL: two-way coupled mode. Fire spread and heat fluxes computations are activated
+		\item ATM2FIR: one way coupling where atmosphere forces the fire. Only fire spread computation is activated.
+		\item FIR2ATM: fire replay mode where the fire spread is derived from an arrival time map and the heat fluxes computation is activated.
+	\end{itemize}
+	\item 
+	\index{CBMAPFILE!\innam{CBMAPFILE}}
+	CBMAPFILE: File name of arrival time map (burning map) for FIR2ATM mode (current initialisation file as default file).
+	\item 
+	\index{CPROPAG\_MODEL!\innam{CPROPAG\_MODEL}}
+	CPROPAG\_MODEL: Rate of spread parameterization. Following options are available:
+	\begin{itemize}
+		\item SANTONI2011: Balbi's model based on Santoni (2011) formulation.
+	\end{itemize}
+	\index{CHEAT\_FLUX\_MODEL!\innam{CHEAT\_FLUX\_MODEL}}
+	CHEAT\_FLUX\_MODEL: sensible heat flux parameterization. Following options are available:
+	\begin{itemize}
+		\item EXS: Exponential and smoldering flux model. 
+		\item EXP: Exponential flux model.
+		\item CST: Constant flux model.
+	\end{itemize}
+	\item
+	\index{CLATENT\_FLUX\_MODEL!\innam{CLATENT\_FLUX\_MODEL}}
+	CLATENT\_FLUX\_MODEL: latent heat flux parameterization. Following options are available:
+	\begin{itemize}
+		\item EXP: Exponential flux model.
+		\item CST: Constant flux model.
+	\end{itemize}
+	\item
+	\index{XFERR!\innam{XFERR}}
+	XFERR: fraction of energy reservoir released during the flaming time ($0 < \mathrm{XFERR} < 1$).
+	\item
+	\index{LSGBAWEIGHT!\innam{LSGBAWEIGHT}}
+	LSGBAWEIGHT: flag to use to use the weighted averaged method to compute the sub-grid burning area instead of the explicite fire front reconstruction (EFFR) method (Recommended to FALSE).
+	\item
+	\index{XFLUXZEXT!\innam{XFLUXZEXT}}
+	XFLUXZEXT: Characteristic height $z_f$ for vertical exponential distribution of fire heat fluxes.
+	\item
+	\index{XFLUXZMAX!\innam{XFLUXZMAX}}
+	XFLUXZMAX: maximum height $z_{\mathrm{max}}$ for vertical exponential distribution of fire heat fluxes.
+	\item
+	\index{XFLXCOEFTMP!\innam{XFLXCOEFTMP}}
+	XFLXCOEFTMP: heat fluxes multiplier. 
+	\item
+	\index{NFIRE\_WENO\_ORDER!\innam{NFIRE\_WENO\_ORDER}}
+	NFIRE\_WENO\_ORDER: WENO scheme order for fire spread computation. Orders 1 and 3 available (order 3 recommended).
+	\item
+	\index{NFIRE\_RK\_ORDER!\innam{NFIRE\_RK\_ORDER}}
+	NFIRE\_RK\_ORDER: Runge-Kutta scheme order for fire spread computation. Orders 1, 2, 3, 4, 5, 6 available (order 3 recommended).
+	\item
+	\index{XCFLMAXFIRE!\innam{XCFLMAXFIRE}}
+	XCFLMAXFIRE: maximum CFL for fire spread computation. If computed CFL is above this value, fire time step is split to match the required maximum CFL. 
+	\item
+	\index{XLSDIFFUSION!\innam{XLSDIFFUSION}}
+	XLSDIFFUSION: level-set function diffusion coefficient $\epsilon_\phi$.
+	\item
+	\index{XROSDIFFUSION!\innam{XROSDIFFUSION}}
+	XROSDIFFUSION: rate of spread diffusion coefficient $\epsilon_{\mathcal R}$.
+	\item
+	\index{LINTERPWIND!\innam{LINTERPWIND}}
+	LINTERPWIND: flag to use horizontal interpolation of surface wind (recommended to TRUE).
+	\item
+	\index{LWINDFILTER!\innam{LWINDFILTER}}
+	LWINDFILTER: flag to use temporal filter for surface wind. Recommended for highly fluctuating surface wind.
+	\item
+	\index{CWINDFILTER!\innam{CWINDFILTER}}
+	CWINDFILTER: Method for temporal filtering of surface wind. Follong options are available:
+	\begin{itemize}
+		\item EWAM: exponential weighted average method used of each wind component (Recommended)
+		\item WLIM: limiter of surface wind on fire spread direction. 
+	\end{itemize}
+	\item
+	\index{XEWAMTAU!\innam{XEWAMTAU}}
+	XEWAMTAU: averaging time constant for EWAM method. Equivalent to averaging time window for simple moving average method.
+	\item
+	\index{XWLIMUTH!\innam{XWLIMUTH}}
+	XWLIMUTH: wind threshold value for WLIM method.
+	\item
+	\index{XWLIMUTMAX!\innam{XWLIMUTMAX}}
+	XWLIMUTMAX: maximum surface wind value for WLIM method. 
+	\item
+	\index{NNBSMOKETRACER!\innam{NNBSMOKETRACER}}
+	NNBSMOKETRACER: number of smoke passive scalar fluxes. Made for futur implementation of different smoke flux models. Only 1 smoke passive scalar is currently implemented.
+	\item
+	\index{NWINDSLOPECPLMODE!\innam{NWINDSLOPECPLMODE}}
+	NWINDSLOPECPLMODE: flag for wind/slope use for rate of spread computation. Suitable for testing/sensitivity analysis purposes. Following options are available:
+	\begin{itemize}
+		\item 0: Wind and slope values are used to compute the rate of spread.
+		\item 1: Only wind is used to compute the rate of spread (slope value is ignored).
+		\item 2: Only slope is used to compute the rate of spread (wind value is ignored).
+	\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BLOWSNOW }
 \index{NAM\_BLOWSNOW!namelist description}
 
