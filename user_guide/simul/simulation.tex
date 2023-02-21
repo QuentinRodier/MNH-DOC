@@ -5889,6 +5889,69 @@ XTHL\_PDF\_MAX : Maximum value of $\theta_l$ pdf
 
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_PROFILERn }\label{s:namprofilern}
+\index{NAM\_PROFILERn!namelist description}
+%
+This namelist is used to configure virtual vertical profilers by using the following described parameters \textbf{or} a .csv file. Calculations are done for all the nested models for which the namelist is provided and recorded in the corresponding diachronic files. Before the version 5.6 of MesoNH, this was done by modifying ini\_profilern.f90 and re-compiling the code.
+
+\vspace{0.5cm}
+\begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline
+\endhead
+\hline
+\endfoot
+NNUMB\_PROF    & integer &  0 \\
+XSTEP\_PROF    & real  &  60.0 \\
+XX\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF \\
+XY\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF  \\
+XLAT\_PROF     & real(:)  &  NNUMB\_PROF * XUNDEF \\
+XLON\_PROF     & real(:)  &  NNUMB\_PROF * XUNDEF \\
+XZ\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF \\
+CNAME\_PROF    & array(8*characters)  &  NNUMB\_PROF * ' ' \\
+CFILE\_PROF    & 32 characters  &  'NO\_INPUT\_CSV' \\
+\end{longtable}
+\begin{itemize}
+\index{NNUMB\_PROF!\innam{NAM\_PROFILERn}}
+\item NNUMB\_PROF: number of profilers. Limited to 100 if not using a .csv file.
+
+\index{XSTEP\_PROF!\innam{NAM\_PROFILERn}}
+\item XSTEP\_PROF: time (in seconds) between two sampling written in the diachronic file
+
+\index{XX\_PROF!\innam{NAM\_PROFILERn}}
+\item XX\_PROF: X-position (in meters) of the profiler in the cartesian coordinates (with LCARTESIAN=T only)
+
+\index{XY\_PROF!\innam{NAM\_PROFILERn}}
+\item XY\_PROF: Y-position (in meters) of the profiler in the cartesian coordinates (with LCARTESIAN=T only)
+
+\index{XLAT\_PROF!\innam{NAM\_PROFILERn}}
+\item XLAT\_PROF: latitude (in degrees) of the profiler (with LCARTESIAN=F only)
+
+\index{XLON\_PROF!\innam{NAM\_PROFILERn}}
+\item XLON\_PROF: longitude (in degrees) of the profiler (with LCARTESIAN=F only)
+
+\index{XZ\_PROF!\innam{NAM\_PROFILERn}}
+\item XZ\_PROF: altitude (in meters) of the profiler
+
+\index{CNAME\_PROF!\innam{NAM\_PROFILERn}}
+\item CNAME\_PROF: name of the profiler
+
+\index{CFILE\_PROF!\innam{NAM\_PROFILERn}}
+\item CFILE\_PROF: name of the .csv file containing the definition of the profilers (see below). If CFILE\_PROF='NO\_INPUT\_CSV', the .csv file is not read.
+
+\end{itemize}
+
+If a .csv file is provided, coordinates given in the namelist will be ignored. The .csv file should follow the format example hereafter:
+\begin{verbatim}
+Name, X[m]/Lat[deg], Y[m]/Lon[deg], Z[m]
+prof1, 50.0,  50.0, 10.0
+prof2, 50.0,   1.0, 11.25
+prof3, 350.0, 50.0, 10.0
+\end{verbatim}
+The values of X,Y or Lat/Lon are read depending on LCARTESIAN.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_RECYCL\_PARAMn (Parameters for Turbulence Recycling Method)}
@@ -6000,7 +6063,7 @@ LDEPOS\_SLT & logical  & FALSE  \\
 \subsection{Namelist NAM\_STATIONn }\label{s:namstationn}
 \index{NAM\_STATIONn!namelist description}
 %
-This namelist is used to configure a virtual observed point at a station by using the following described parameters \textbf{or} a .csv file. Calculations are done for all the nested models and recorded in the corresponding diachronic files. Before the version 5.5, this was done by re-compiling the code and modifying ini\_stationn.f90.
+This namelist is used to configure a virtual observed point at a station by using the following described parameters \textbf{or} a .csv file. Calculations are done for all the nested models for which the namelist is provided and recorded in the corresponding diachronic files. Before the version 5.5 of MesoNH, this was done by modifying ini\_stationn.f90 and re-compiling the code.
 
 \vspace{0.5cm}
 \begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
@@ -6023,38 +6086,38 @@ LDIAG\_SURFRAD & logical & TRUE \\
 \end{longtable}
 \begin{itemize}
 \index{NNUMB\_STAT!\innam{NAM\_STATIONn}}
-\item NNUMB\_STAT : number of stations
+\item NNUMB\_STAT: number of stations. Limited to 100 if not using a .csv file.
 
 \index{XSTEP\_STAT!\innam{NAM\_STATIONn}}
-\item XSTEP\_STAT : time (in seconds) between two sampling written in the diachronic file
+\item XSTEP\_STAT: time (in seconds) between two sampling written in the diachronic file
 
 \index{XX\_STAT!\innam{NAM\_STATIONn}}
-\item XX\_STAT : X-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
+\item XX\_STAT: X-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
 
 \index{XY\_STAT!\innam{NAM\_STATIONn}}
-\item XY\_STAT : Y-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
+\item XY\_STAT: Y-position (in meters) of the station in the cartesian coordinates (with LCARTESIAN=T only)
 
 \index{XLAT\_STAT!\innam{NAM\_STATIONn}}
-\item XLAT\_STAT : latitude (in degrees) of the station (with LCARTESIAN=F only)
+\item XLAT\_STAT: latitude (in degrees) of the station (with LCARTESIAN=F only)
 
 \index{XLON\_STAT!\innam{NAM\_STATIONn}}
-\item XLON\_STAT : longitude (in degrees) of the station (with LCARTESIAN=F only)
+\item XLON\_STAT: longitude (in degrees) of the station (with LCARTESIAN=F only)
 
 \index{XZ\_STAT!\innam{NAM\_STATIONn}}
-\item XZ\_STAT : altitude (in meters) of the station
+\item XZ\_STAT: altitude (in meters) of the station
 
 \index{CNAME\_STAT!\innam{NAM\_STATIONn}}
-\item CNAME\_STAT : name of the station
+\item CNAME\_STAT: name of the station
 
 \index{CFILE\_STAT!\innam{NAM\_STATIONn}}
-\item CFILE\_STAT : name of the .csv file containing the definition of the stations (see below). If CFILE\_STAT='NO\_INPUT\_CSV', the .csv file is not read.
+\item CFILE\_STAT: name of the .csv file containing the definition of the stations (see below). If CFILE\_STAT='NO\_INPUT\_CSV', the .csv file is not read.
 
 \index{LDIAG\_SURFRAD!\innam{NAM\_STATIONn}}
-\item LDIAG\_SURFRAD : if True, the surface and radiation variables are written
+\item LDIAG\_SURFRAD: if True, the surface and radiation variables are written
 
 \end{itemize}
 
-The .csv file should follow the format example hereafter :
+If a .csv file is provided, coordinates given in the namelist will be ignored. The .csv file should follow the format example hereafter:
 \begin{verbatim}
 Name, X[m]/Lat[deg], Y[m]/Lon[deg], Z[m]
 probe1, 50.0,  50.0, 10.0
