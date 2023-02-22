@@ -6177,9 +6177,9 @@ XARECYCLW            & real          & 0.            \\
 XARECYCLE            & real          & 0.            \\
 XARECYCLS            & real          & 0.            \\
 XARECYCLN            & real          & 0.            \\
-XTMOY                & real          & 0.            \\
-XNUMBELT             & real          & 28.           \\
-XTMOYCOUNT           & real          & 0.            \\
+NTMOY                & integer       & 0             \\
+NNUMBELT             & integer       & 28            \\
+NTMOYCOUNT           & integer       & 0             \\
 XRCOEFF              & real          & 0.2           \\
 XTBVTOP              & real          & 500.          \\
 XTBVBOT              & real          & 300.          \\
@@ -6209,12 +6209,12 @@ XTBVBOT              & real          & 300.          \\
 \item XARECYCL\{W,E,S,N\} \index{XDRECYCLW!\innam{NAM\_RECYCL\_PARAMn}}: Angle between the recycling plan and the \{West, East, South, North\} boundary (0. for X-direction and
 $\frac{\pi}{2}$ for Y-direction).
 
-\item XTMOY \index{XTMOY!\innam{NAM\_RECYCL\_PARAMn}}: Total number of time-steps within time window
+\item NTMOY \index{NTMOY!\innam{NAM\_RECYCL\_PARAMn}}: Total number of time-steps within time window
 for the calculation of the moving temporal average.
 
-\item XNUMBELT \index{XNUMBELT!\innam{NAM\_RECYCL\_PARAMn}}: Number of elements used for the variable averaging.
+\item NNUMBELT \index{NNUMBELT!\innam{NAM\_RECYCL\_PARAMn}}: Number of elements used for the variable averaging.
 
-\item XTMOYCOUNT \index{XTMOYCOUNT!\innam{NAM\_RECYCL\_PARAMn}}: Number of time-steps between an update of the averaged variable (XTMOYCOUNT=XTMOY/XNUMBELT)
+\item NTMOYCOUNT \index{NTMOYCOUNT!\innam{NAM\_RECYCL\_PARAMn}}: Number of time-steps between an update of the averaged variable (NTMOYCOUNT=NTMOY/NNUMBELT)
 
 \item XRCOEFF \index{XRCOEFF!\innam{NAM\_RECYCL\_PARAMn}}: Weighting coefficient for the turbulent fluctuations, preventing calculation divergence. XRCOEFF $\in$ [0.1-0.3] for near-neutral simulations.
 
