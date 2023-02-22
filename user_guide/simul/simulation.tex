@@ -181,6 +181,78 @@ LSPLIT\_WENO: Flag to split WENO momentum advection
 
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_AIRCRAFTS }\label{s:namaircrafts}
+\index{NAM\_AIRCRAFTS!namelist description}
+
+This namelist allows to add virtual aircrafts to the simulation. Before version 5.6 of MesoNH, aircraft configuration was done by modifying ini\_aircraft.f90 and re-compiling the code.
+
+Before using this namelist, the total number of aircrafts must be set in the \textbf{NAM\_FLYERS} namelist (see section \ref{s:namflyers} page \pageref{s:namflyers}).
+
+All the prognostic fields (zonal and meridian wind (from U and V components), vertical
+velocity, potential temperature, pression, mixing ratios, tke, radiative surface temperature...) are
+recorded along the trajectories of the aircrafts, as well as their trajectories themselves (positions
+in X, Y and Z directions and orography). All records are stored in the diachronic files (.000).
+
+\vspace{0.5cm}
+\begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline
+\endhead
+\hline
+\endfoot
+CFILE   & character(len=32)(:) & '' \\
+CMODEL  & character(len=3)(:)  & 'FIX' \\
+CTITLE  & character(len=10)(:) & 'AIRCRAnnn' \\
+LALTDEF & logical(:)           & .FALSE. \\
+NMODEL  & integer(:)           & 0 \\
+NPOS    & integer(:)           & 0 \\
+TLAUNCH & type(date\_time)(:)  & default value of type(date\_time) \\
+XTSTEP  & real(:)              & 60. \\
+\end{longtable}
+
+\begin{itemize}
+\index{CFILE!\innam{NAM\_AIRCRAFTS}}
+\item CFILE: name of the .csv file with the aircraft positions (one file per aircraft)
+
+\index{CMODEL!\innam{NAM\_AIRCRAFTS}}
+\item CMODEL: 'FIX' if the aircraft stays on the same grid model, 'MOB' if the aircraft may change of grid model (always the finest depending on the horizontal position). 'FIX' by default
+
+\index{CTITLE!\innam{NAM\_AIRCRAFTS}}
+\item CTITLE: name of the aircraft. If not provided, it is set to 'AIRCRAnnn' with $nnn$ the number of the aircraft
+
+\index{LALTDEF!\innam{NAM\_AIRCRAFTS}}
+\item LALTDEF: if .FALSE. (by default), atlitude is given in meters; if .TRUE. altitude is given in pressure (hPa)
+
+\index{NMODEL!\innam{NAM\_AIRCRAFTS}}
+\item NMODEL: number of the grid model where the aircraft flies. If CMODEL='FIX', it may be any grid model number (forced to 1 if NMODEL not set). If CMODEL='MOB', NMODEL is forced to 1 at simulation start but will change during flight to always fly on the finest model at a given horizontal position.
+
+\index{NPOS!\innam{NAM\_AIRCRAFTS}}
+\item NPOS: number of aircraft positions that will be read in the .csv file
+
+\index{TLAUNCH!\innam{NAM\_AIRCRAFTS}}
+\item TLAUNCH: instant of launch. This type has 4 fields (nyear, nmonth, nday and xtime). For example:
+  \begin{itemize}
+    \item $TLAUNCH(1)\%nyear  =  2023$
+    \item $TLAUNCH(1)\%nmonth =     1$
+    \item $TLAUNCH(1)\%nday   =    16$
+    \item $TLAUNCH(1)\%xtime  = 21600.$
+  \end{itemize}
+
+\index{XTSTEP!\innam{NAM\_AIRCRAFTS}}
+\item XTSTEP: data storage frequency. If not set, it is forced to 60s
+
+\end{itemize}
+
+The .csv files should follow the format example hereafter (the first line is ignored, here the altitude is given in pressure):
+\begin{verbatim}
+Time Lat Lon Alt(p)
+0.   45.  -4. 1003.6
+150. 47.5 -.5 990.8
+300. 50.  2.  988.1
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BACKUP (backup instants)}\label{s:nambackup}
 \index{NAM\_BACKUP!namelist description}
@@ -248,6 +320,104 @@ Remarks:
 \item If a choosen time is not a multiple of the timestep, it will be rounded to the nearest one.
 \item The different ways to choose the backup time can be combined. Duplicate times will be automatically removed.
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_BALLOONS }\label{s:namballoons}
+\index{NAM\_BALLOONS!namelist description}
+
+This namelist allows to add virtual balloons to the simulation. Before version 5.6 of MesoNH, balloon configuration was done by modifying ini\_balloon.f90 and re-compiling the code.
+
+Before using this namelist, the total number of balloons must be set in the \textbf{NAM\_FLYERS} namelist (see section \ref{s:namflyers} page \pageref{s:namflyers}).
+
+Balloons are advected by the wind of the model. They can crash.
+All the prognostic fields (zonal and meridian wind (from U and V components), vertical
+velocity, potential temperature, pression, mixing ratios, tke, radiative surface temperature...) are
+recorded along the trajectories of the balloons, as well as their trajectories themselves (positions
+in X, Y and Z directions and orography). All records are stored in the diachronic files (.000).
+
+\vspace{0.5cm}
+\begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline
+\endhead
+\hline
+\endfoot
+CMODEL      & character(len=3)(:)  & 'FIX' \\
+CTITLE      & character(len=10)(:) & CTYPE//nnn \\
+CTYPE       & character(len=6)(:)  & '' \\
+NMODEL      & integer(:)           & 0 \\
+TLAUNCH     & type(date\_time)(:)  & default value of type(date\_time) \\
+XTSTEP      & real(:)              & 60. \\
+XLATLAUNCH  & real(:)              & XUNDEF \\
+XLONLAUNCH  & real(:)              & XUNDEF \\
+XALTLAUNCH  & real(:)              & XNEGUNDEF \\
+XPRES       & real(:)              & XNEGUNDEF \\
+XWASCENT    & real(:)              & XNEGUNDEF \\
+XDIAMETER   & real(:)              & XNEGUNDEF \\
+XVOLUME     & real(:)              & XNEGUNDEF \\
+XMASS       & real(:)              & XNEGUNDEF \\
+XAERODRAG   & real(:)              & XNEGUNDEF \\
+XINDDRAG    & real(:)              & XNEGUNDEF \\
+\end{longtable}
+
+\begin{itemize}
+\index{CMODEL!\innam{NAM\_BALLOONS}}
+\item CMODEL: 'FIX' if the balloon stays on the same grid model, 'MOB' if the balloon may change of grid model (always the finest depending on the horizontal position). 'FIX' by default
+
+\index{CTITLE!\innam{NAM\_BALLOONS}}
+\item CTITLE: name of the balloon. If not provided, it is set to CTYPE//nnn with $nnn$ the number of the balloon
+
+\index{CTYPE!\innam{NAM\_BALLOONS}}
+\item CTYPE: 'CVBALL' for constant volume balloon, 'ISODEN' for iso-density balloon, 'RADIOS' for radiosounding balloon. Mandatory
+
+\index{NMODEL!\innam{NAM\_BALLOONS}}
+\item NMODEL: number of the grid model where the balloon flies. If CMODEL='FIX', it may be any grid model number (forced to 1 if NMODEL not set). If CMODEL='MOB', NMODEL is forced to 1 at simulation start but will change during flight to always fly on the finest model at a given horizontal position.
+
+\index{TLAUNCH!\innam{NAM\_BALLOONS}}
+\item TLAUNCH: instant of launch. Mandatory. This type has 4 fields (nyear, nmonth, nday and xtime). For example:
+  \begin{itemize}
+    \item $TLAUNCH(1)\%nyear  =  2023$
+    \item $TLAUNCH(1)\%nmonth =     1$
+    \item $TLAUNCH(1)\%nday   =    16$
+    \item $TLAUNCH(1)\%xtime  = 21600.$
+  \end{itemize}
+
+\index{XTSTEP!\innam{NAM\_BALLOONS}}
+\item XTSTEP: data storage frequency. If not set, it is forced to 60s. Balloon position are not computed with this timestep but with the model one.
+
+\index{XLATLAUNCH!\innam{NAM\_BALLOONS}}
+\item XLATLAUNCH: latitude of the launching site. Mandatory
+
+\index{XLONLAUNCH!\innam{NAM\_BALLOONS}}
+\item XLONLAUNCH: longitude of the launching site. Mandatory
+
+\index{XALTLAUNCH!\innam{NAM\_BALLOONS}}
+\item XALTLAUNCH: altitude of the launching site (mandatory if CTYPE='RADIOS'; if not set for 'CVBALL' or 'ISODEN', XPRES must be provided)
+
+\index{XPRES!\innam{NAM\_BALLOONS}}
+\item XPRES: pressure at the launching site. Must be provided for 'CVBALL' or 'ISODEN' if XALTLAUNCH is not set. Ignored for 'RADIOS'
+
+\index{XWASCENT!\innam{NAM\_BALLOONS}}
+\item XWASCENT: ascentional vertical speed of the ballon. Speed in calm air for 'RADIOS' (added to air vertical speed, default 5 m/s), initial value for 'CVBALL' (default 0 m/s), not used for 'ISODEN'
+
+\index{XDIAMETER!\innam{NAM\_BALLOONS}}
+\item XDIAMETER: diamater of the balloon (for 'CVBALL'). If not provided, XVOLUME must be set.
+
+\index{XVOLUME!\innam{NAM\_BALLOONS}}
+\item XVOLUME: volume of the balloon (for 'CVBALL'). If not provided, XDIAMETER must be set.
+
+\index{XMASS!\innam{NAM\_BALLOONS}}
+\item XMASS: mass of the balloon (for 'CVBALL'). Mandatory
+
+\index{XAERODRAG!\innam{NAM\_BALLOONS}}
+\item XAERODRAG: aerodynamic drag coefficient of the balloon (for 'CVBALL'). Default: 0.44
+
+\index{XINDDRAG!\innam{NAM\_BALLOONS}}
+\item XINDDRAG: induced drag coefficient (i.e. air shifted by the balloon, only for 'CVBALL'). Default: 0.014
+
+\end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BLANKn (available user variables)}
@@ -3317,6 +3487,32 @@ LOCEAN: flag to activate the Ocean version of Meso-NH. Pronostic variables are: 
 
 
 \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_FLYERS}\label{s:namflyers}
+\index{NAM\_FLYERS!namelist description}
+%
+This namelist is used to set the number of flyers (aircrafts and balloons) that will be simulated in the run. It is a preliminary phase to use the namelists \textbf{NAM\_AIRCRAFTS} (see section \ref{s:namaircrafts} page \pageref{s:namaircrafts}) and \textbf{NAM\_BALLOONS} (see section \ref{s:namballoons} page \pageref{s:namballoons}).
+
+\vspace{0.5cm}
+\begin{longtable} {|p{.25\textwidth}|p{.22\textwidth}|p{.35\textwidth}|}
+\hline
+Fortran name &  Fortran type & default value \\
+\hline
+\endhead
+\hline
+\endfoot
+NAIRCRAFTS & integer & 0 \\
+NBALLOONS  & integer & 0 \\
+\end{longtable}
+\begin{itemize}
+\index{NAIRCRAFTS!\innam{NAIRCRAFTS}}
+\item NAIRCRAFTS: number of aircrafts to declare in \textbf{NAM\_AIRCRAFTS} (see section \ref{s:namaircrafts} page \pageref{s:namaircrafts})
+
+\index{NBALLOONS!\innam{NBALLOONS}}
+\item NBALLOONS: number of balloons to declare in \textbf{NAM\_BALLOONS} (see section \ref{s:namballoons} page \pageref{s:namballoons})
+
+\end{itemize}
+
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_LATZ\_EDFLX}
@@ -6490,13 +6686,13 @@ Here are listed the namelists of SURFEX. See SURFEX documentation for details.
 
 
 %%%%%%%%%%%%%%%%%%%%
-\section{Simulation on the fly of balloons or aircraft in the model fields.}
+\section{Simulation with the flight of balloons or aircrafts in the model}
 \label{ss:balloon}
 
 In order to compare the model outputs to airborne observations
-and measurements, it can be interesting to simulate the deplacment of a
-balloon or an aircraft during the model run (in any model of
-gridnesting runs). A balloon is launch at
+and measurements, it can be interesting to simulate the deplacement of a
+balloon or an aircraft during the model run (in any model for
+gridnesting runs). A balloon is launched at
 a given location, and either for a particular density (iso-density balloon),
 a particular volume (constant volume balloon)
 or ascent speed (radio-sounding). In an ideal case, this suppose to be in conformal projection 
@@ -6504,27 +6700,21 @@ or ascent speed (radio-sounding). In an ideal case, this suppose to be in confor
 For iso-density balloons, initial 
 altitude or pressure is asked. A balloon is advected by the wind of the
 model. It can crash. For an aircraft, the flight
-legs must be given by the user (location and duration). 
+trajectory must be given by the user (time and location).
 
-All the prognostic fields (zonal and meridien wind
+All the prognostic fields (zonal and meridian wind
 (from U and V components), vertical velocity, potential temperature, pression,
 mixing ratios, tke, radiative surface temperature)
 are recorded along the trajectory
 of the balloon or the aircraft, as well as the trajectory itself (position in
 X, Y and Z directions and orography).
-All records are in the diachronic file (.000). Up to 30 balloons and aircraft
-can be used.
+All records are in the diachronic files (.000).
 
-The specification of the flight characteristics  are not given in a namelist,
-but directly in Fortran routines:
-\begin{itemize}
-\item  {\it ini\_balloon.f90} for balloons,
-\item  {\it ini\_aircraft.f90} for aircraft.
-\end{itemize}
+The specification of the flight characteristics are given with the \textbf{NAM\_AIRCRAFTS} (see section \ref{s:namaircrafts} page \pageref{s:namaircrafts}), \textbf{NAM\_BALLOONS} (see section \ref{s:namballoons} page \pageref{s:namballoons}) and \textbf{NAM\_FLYERS} (see section \ref{s:namflyers} page \pageref{s:namflyers}) namelists.
 
 %%%%%%%%%%%%%%%%%%
 \section{Temporal series}
-If you need temporal series over one or different single points, you are going to use stationn.f90/ini\_stationn.f90 or profilern.f90/ini\_profilern.f90 (nothing in namelist). If you need temporal series of fields averaged over a cartesian area, you are going to use seriesn.f90/ini\_seriesn.f90 with LSERIES=T in NAM\_SERIES and the dimensions of the area defined in NAM\_SERIESn.
+If you need temporal series over one or different single points, you are going to use stations or profilers (see section \ref{s:namstationn} page \pageref{s:namstationn}) and section \ref{s:namprofilern} page \pageref{s:namprofilern}). If you need temporal series of fields averaged over a cartesian area, you are going to use seriesn.f90/ini\_seriesn.f90 with LSERIES=T in NAM\_SERIES and the dimensions of the area defined in NAM\_SERIESn.
 
 \subsection{Series}
  
@@ -6638,21 +6828,20 @@ NKCLS, NKCLA: K level in physical domain respectively in the CLS and CLA ((x,t) 
 \label{ss:station}
 To compare the model outputs to observations
 and measurements, it can be interesting to store the simulated data for a given
-profiler or station. Calculations are done for all the nested models and recorded in the corresponding diachronic files.
+profiler or station. Calculations are done for all the selected nested models and recorded in the corresponding diachronic files.
  A profiler is located at a given location defined by its
 latitude and longitude, whereas a station is located with its latitude, 
 longitude and altitude.
-Pronostic fields are recorded at a prescribed time frequency : 
-zonal and meridien wind
+Pronostic fields, recorded at a prescribed time frequency, are
+zonal and meridian wind
 (from U and V components), vertical velocity, potential temperature, pression,
-mixing ratios, tke, radiative surface temperature.
+mixing ratios, tke, radiative surface temperature...
 If surface diagnostics are asked (see surface namelists), surface variables
-(10m-wind, 2m-temperature and humidity, surface fluxes) are also recorded. But if you want to add a new surface field, you have to introduce it in all the following routines : mnhget\_surf\_paramn.f90, ground\_paramn.f90, ini\_diag\_in\_run.f90, modd\_diag\_in\_run.f90, end\_diag\_in\_run.f90, modd\_type\_profiler.f90, ini\_posprofilern.f90, profilern.f90  following the example to HU2M field. 
+(10m-wind, 2m-temperature and humidity, surface fluxes) are also recorded. But if you want to add a new surface field, you have to introduce it in all the following routines : mnhget\_surf\_paramn.f90, ground\_paramn.f90, ini\_diag\_in\_run.f90, modd\_diag\_in\_run.f90, end\_diag\_in\_run.f90, modd\_type\_statprofr.f90, ini\_posprofilern.f90, profilern.f90 following the example of HU2M field.
 
+Since MesoNH version 5.5, the stations are set using a CSV data file or directly in the namelist, see section \ref{s:namstationn} page \pageref{s:namstationn}.
 
-The specification of the characteristics of profilers are not
- given in a namelist, but directly in the ini\_profilern.f90 Fortran routines for profiler.
-Since the version 5.5, the stations are set using a CSV data file or directly in the namelist, see section \ref{s:namstationn} page \pageref{s:namstationn}
+Since MesoNH version 5.6, the profilers are set using a CSV data file or directly in the namelist, see section \ref{s:namprofilern} page \pageref{s:namprofilern}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
