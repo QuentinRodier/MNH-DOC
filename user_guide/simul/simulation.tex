@@ -678,7 +678,7 @@ DRYG   & dry growth of graupel                                    & LPTSPLIT=T o
 IMLT   & melting of ice                                           & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 BERFI  & Bergeron-Findeisen                                       & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 HENU   & CCN activation nucleation                                & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 HINC   & heterogeneous nucleation by contact                      & LCOLD=T and LNUCL=T \\\hline
 HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
 CEDS   & adjustment to saturation                                 & no condition \\\hline
@@ -814,12 +814,13 @@ RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T 
 ACC    & rain accretion on graupel                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
 CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
 HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-COHG   & conversion of hail to graupel                 & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
 NECON  & negativity correction induced by condensation & no condition \\\hline
@@ -893,10 +894,11 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & sedimentation                                 & LCOLD=T and LHAIL=T \\\hline
+DEPH   & deposition on hail                            & LHAIL=T \\\hline
 WETG   & wet growth of graupel                         & LHAIL and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T)) \\\hline
-HMLT   & melting of hail                               & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-COHG   & conversion of hail to graupel                 & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
 NECON  & negativity correction induced by condensation & no condition \\\hline
@@ -966,6 +968,7 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & sedimentation of cloud                         & LCOLD=T and LSEDI=T \\\hline
+HIN    & heterogeneous ice nucleation                   & NMOM\_I=1 \\\hline
 HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
 HINC   & heterogeneous nucleation by contact            & LCOLD=T and LNUCL=T \\\hline
 HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
@@ -977,11 +980,13 @@ IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T
 BERFI  & Bergeron-Findeisen                             & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
 CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
 DEPI   & condensation/deposition on ice                 & LPTSPLIT=T \\\hline
 WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CEDS   & adjustment to saturation                       & no condition \\\hline
 % CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
 NEGA   & negativity correction                          & no condition \\\hline
@@ -999,7 +1004,7 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & sedimentation of cloud                        & no condition \\\hline
-HENU   & heterogeneous nucleation                      & no condition \\\hline
+HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 HON    & homogeneous nucleation                        & no condition \\\hline
 AGGS   & aggregation of snow                           & no condition \\\hline
 AUTS   & autoconversion of ice                         & no condition \\\hline
@@ -1070,8 +1075,8 @@ WETG   & wet growth of graupel                                    & LPTSPLIT=T o
 DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-HMLT   & melting of hail                                          & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
 % CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
 NEGA   & negativity correction                                    & no condition \\\hline
@@ -1188,11 +1193,12 @@ CNVS   & conversion of pristine ice to snow            & LPTSPLIT=T or (LCOLD=T 
 AGGS   & aggregation of snow                           & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
 RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
 ACC    & accretion of rain on snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
 CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 % CORR   & correction                                    & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
@@ -1258,6 +1264,7 @@ NUD    & nudging                        & LNUDGING=T                       \\\hl
 DIF    & numerical diffusion            & LNUMDIFTH=T                      \\\hline
 REL    & relaxation                     & LHORELAX\_RV=T                   \\\hline
 DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+BLAZE  & Blaze fire model               & LBLAZE=T                         \\\hline
 HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
 VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
 MAFL   & mass flux                      & CSCONV='EDKF'                    \\\hline
@@ -1273,11 +1280,13 @@ Name & Description & Condition(s) \\
 \endhead
 HENU   & heterogeneous nucleation                       & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
 REVA   & rain evaporation                               & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HIN    & heterogeneous ice nucleation                   & NMOM\_IMM=1 \\\hline
 HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
 HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
 DEPS   & deposition on snow                             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
 DEPI   & condensation/deposition on ice                 & LPTSPLIT=T \\\hline
 DEPG   & deposition on graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DEPH   & deposition on hail                             & LPTSPLIT=T or LHAIL=T \\\hline
 CEDS   & adjustment to saturation                       & no condition \\\hline
 NEGA   & negativity correction                          & no condition \\\hline
 NETUR  & negativity correction induced by turbulence    & CTURB='TKEL' \\\hline
@@ -1293,10 +1302,11 @@ CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HENU   & heterogeneous nucleation                      & no condition \\\hline
 REVA   & rain evaporation                              & LWARM=T \\\hline
+HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 DEPS   & deposition on snow                            & no condition \\\hline
 DEPG   & deposition on graupel                         & no condition \\\hline
+DEPH   & deposition on hail                            & CCLOUD='ICE4' \\\hline
 ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
 DEPI   & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
 CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
@@ -1498,7 +1508,7 @@ RIM    & riming of cloud water                                    & LPTSPLIT=T o
 WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or LHAIL=T \\\hline
 CEDS   & adjustment to saturation                                 & LWARM=T \\\hline
 % CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
 CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
@@ -1524,8 +1534,8 @@ WETG   & wet growth of graupel                                    & LPTSPLIT=T o
 DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-HMLT   & melting of hail                                          & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or LHAIL=T \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=T or LHAIL=T \\\hline
 % CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
 CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
 \endhead
@@ -1588,14 +1598,72 @@ CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T
 AGGS   & aggregation of snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
 IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
 CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
 WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
 CEDS   & adjustment to saturation                       & LPTSPLIT=F and LSPRO=F \\\hline
 % CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
 CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
+\end{longtable}
+
+\paragraph{Concentration of snow for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+BRKU   & break up of snow                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+ACC    & accretion of rain on snow                      & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CMEL   & conversion melting of snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
+SSC    & snow self collection                           & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T and LSPRO=F \\\hline
+\end{longtable}
+
+\paragraph{Concentration of graupel for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+ACC    & accretion of rain on snow                      & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CMEL   & conversion melting of snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+CFRZ   & conversion freezing of raindrop                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+GMLT   & raupel melting                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
+COHG   & conversion hail graupel                        & LPTSPLIT=T or LHAIL=T \\\hline
+CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T and LSPRO=F \\\hline
+\end{longtable}
+
+\paragraph{Concentration of hail for LIMA}
+\mbox{} %necessary to ensure longtable is after paragraph text
+
+\begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
+\hline
+Name & Description & Condition(s) \\
+\hline \hline
+\endhead
+SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T and LHAIL=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or LHAIL=T \\\hline
+COHG   & conversion hail graupel                        & LPTSPLIT=T or LHAIL=T \\\hline
+HMLT   & hail melting                                   & LPTSPLIT=T or LHAIL=T \\\hline
 \end{longtable}
 
 \paragraph{Concentration of free IFN for LIMA}
@@ -1911,6 +1979,7 @@ DIF    & numerical diffusion            & LNUMDIFTH=T                           
 REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or LVE\_RELAX\_GRD=T \\\hline
 RAD    & radiation                      & CRAD/='NONE'                            \\\hline
 DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'          \\\hline
+BLAZE  & Blaze fire model               & LBLAZE=T                                \\\hline
 HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
 VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
 DISSH  & dissipation                    & CTURB='TKEL'                            \\\hline
@@ -1928,6 +1997,7 @@ Name & Description & Condition(s) \\
 SEDI   & heat transport by hydrometeors sedimentation  & LPTSPLIT=T \\\hline
 HENU   & heterogeneous nucleation                      & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
 REVA   & rain evaporation                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HIN    & heterogeneous ice nucleation                  & NMOM\_I=1 \\\hline
 HIND   & heterogeneous nucleation by deposition        & LCOLD=T and LNUCL=T \\\hline
 HINC   & heterogeneous nucleation by contact           & LCOLD=T and LNUCL=T \\\hline
 HONH   & haze homogeneous nucleation                   & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
@@ -1936,6 +2006,7 @@ HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (LCOLD=T 
 DEPS   & deposition on snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
 DEPI   & condensation/deposition on ice                & LPTSPLIT=T \\\hline
 DEPG   & deposition on graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DEPH   & deposition on hail                            & LPTSPLIT=T or LHAIL=T \\\hline
 IMLT   & melting of ice                                & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 BERFI  & Bergeron-Findeisen                            & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
 RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
@@ -1944,8 +2015,8 @@ CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T 
 WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
-HMLT   & melting of hail                               & LPTSPLIT=F and LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
 CEDS   & adjustment to saturation                      & no condition \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
@@ -1960,12 +2031,13 @@ NECON  & negativity correction induced by condensation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HENU   & heterogeneous nucleation                      & no condition \\\hline
 REVA   & rain evaporation                              & LWARM=T \\\hline
+HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 HON    & homogeneous nucleation                        & no condition \\\hline
 SFR    & spontaneous freezing                          & no condition \\\hline
 DEPS   & deposition on snow                            & no condition \\\hline
 DEPG   & deposition on graupel                         & no condition \\\hline
+DEPH   & deposition on hail                            & CCLOUD='ICE4' \\\hline
 IMLT   & melting of ice                                & no condition \\\hline
 BERFI  & Bergeron-Findeisen                            & no condition \\\hline
 RIM    & riming of cloud water                         & no condition \\\hline
