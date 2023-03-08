@@ -1618,17 +1618,17 @@ CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
-CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
-CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
-BRKU   & break up of snow                               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-ACC    & accretion of rain on snow                      & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-CMEL   & conversion melting of snow                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-DRYG   & dry growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
-SSC    & snow self collection                           & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+SEDI   & sedimentation                                  & NMOM\_S>=2 \\\hline
+CNVI   & conversion of snow to cloud ice                & NMOM\_S>=2 \\\hline
+CNVS   & conversion of pristine ice to snow             & NMOM\_S>=2 \\\hline
+BRKU   & break up of snow                               & NMOM\_S>=2 \\\hline
+RIM    & heavy riming of cloud droplet on snow          & NMOM\_S>=2 \\\hline
+ACC    & accretion of rain on snow                      & NMOM\_S>=2 \\\hline
+CMEL   & conversion melting of snow                     & NMOM\_S>=2 \\\hline
+WETG   & wet growth of graupel                          & NMOM\_S>=2 \\\hline
+DRYG   & dry growth of graupel                          & NMOM\_S>=2 \\\hline
+WETH   & wet growth of hail                             & NMOM\_S>=2 \\\hline
+SSC    & snow self collection                           & NMOM\_S>=2 \\\hline
 CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I>=1 and LSPRO=F \\\hline
 \end{longtable}
 
@@ -1640,15 +1640,15 @@ CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
-RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-ACC    & accretion of rain on snow                      & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-CMEL   & conversion melting of snow                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-CFRZ   & conversion freezing of raindrop                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-GMLT   & raupel melting                                 & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
-COHG   & conversion hail graupel                        & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+SEDI   & sedimentation                                  & NMOM\_G>=2 \\\hline
+RIM    & heavy riming of cloud droplet on snow          & NMOM\_G>=2 \\\hline
+ACC    & accretion of rain on snow                      & NMOM\_G>=2 \\\hline
+CMEL   & conversion melting of snow                     & NMOM\_G>=2 \\\hline
+CFRZ   & conversion freezing of raindrop                & NMOM\_G>=2 \\\hline
+WETG   & wet growth of graupel                          & NMOM\_G>=2 \\\hline
+GMLT   & raupel melting                                 & NMOM\_G>=2 \\\hline
+WETH   & wet growth of hail                             & NMOM\_G>=2 \\\hline
+COHG   & conversion hail graupel                        & NMOM\_G>=2 \\\hline
 CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I>=1 and LSPRO=F \\\hline
 \end{longtable}
 
@@ -1660,10 +1660,10 @@ CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1 and NMOM\_H>=1) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or NMOM\_H>=1 \\\hline
-COHG   & conversion hail graupel                        & LPTSPLIT=T or NMOM\_H>=1 \\\hline
-HMLT   & hail melting                                   & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+SEDI   & sedimentation                                  & NMOM\_H>=2 \\\hline
+WETG   & wet growth of graupel                          & NMOM\_H>=2 \\\hline
+COHG   & conversion hail graupel                        & NMOM\_H>=2 \\\hline
+HMLT   & hail melting                                   & NMOM\_H>=2 \\\hline
 \end{longtable}
 
 \paragraph{Concentration of free IFN for LIMA}
