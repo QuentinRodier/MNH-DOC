@@ -6485,7 +6485,7 @@ CTOM        &  4 characters  & 'NONE'   \\
 XKEMIN      &  real          & 0.01 \\
 XCEDIS      &  real          & 0.84 \\
 VSIGQSAT    & real           & 0.02 \\
-LHGRAD      & logical        & FALSE \\
+LLEONARD      & logical        & FALSE \\
 XCOEFHGRADTHL & real         & 1.0   \\
 XCOEFHGRADRM  & real         & 1.0   \\
 XALTHGRAD     & real         & 2000.0 \\
@@ -6535,13 +6535,13 @@ also by the Deardorff mixing length pertinent in the stable cases.
 CTURBLEN='RM17'
 The mixing length is computed according to Rodier et al. (2017). It is a non-local mixing length combining BL89 with a wind shear term.
 \item
-CTURBLEN='ADAP'
+CTURBLEN='HM21'
 resolution-adaptative mixing length is computed according to Honnert et al. (2021) and given by the minimum between RM17 and the horizontal resolution XCADAP$\sqrt{\Delta x \Delta y}$, where XCADAP is a namelist parameter set to 0.5.
 \end{itemize}
 
 \item
 \index{XCADAP!\innam{NAM\_TURBn}} 
-XCADAP: coefficient applied to the ADAP mixing length
+XCADAP: coefficient applied to the HM21 adaptative mixing length
 
 \item
 \index{LTURB\_FLX!\innam{NAM\_TURBn}}
@@ -6647,8 +6647,8 @@ XCEDIS: Constant for TKE dissipation
 VSIGQSAT: coefficient applied to qsat variance contribution. Only available if LSIGMAS=.TRUE.
 
 \item
-\index{LHGRAD!\innam{NAM\_TURBn}}
-LHGRAD: Flag to compute the Leonard terms (instead of K-gradient terms) applied to the vertical fluxes of $\theta_l$ and $r_{np}$ ($r_c$ + $r_i$ + $r_v$). The main effects are an increase of TKE and a decrease of vertical velocity.
+\index{LLEONARD!\innam{NAM\_TURBn}}
+LLEONARD: Flag to compute the Leonard terms (instead of K-gradient terms) applied to the vertical fluxes of $\theta_l$ and $r_{np}$ ($r_c$ + $r_i$ + $r_v$). The main effects are an increase of TKE and a decrease of vertical velocity.
 
 \item
 \index{XCOEFHGRADTHL!\innam{NAM\_TURBn}}
