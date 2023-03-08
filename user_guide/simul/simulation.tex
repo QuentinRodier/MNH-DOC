@@ -668,28 +668,28 @@ DEPOTR & tree droplet deposition        & LDRAGTREE=T and LDEPOTREE=T      \\\hl
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-SEDI   & sedimentation of cloud                                   & LWARM=T and LSEDC=T \\\hline
-DEPO   & surface droplet deposition                               & LWARM=T and LDEPOC=T \\\hline
-RIM    & riming of cloud water                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-IMLT   & melting of ice                                           & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-BERFI  & Bergeron-Findeisen                                       & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-HENU   & CCN activation nucleation                                & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-HINC   & heterogeneous nucleation by contact                      & LCOLD=T and LNUCL=T \\\hline
-HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+SEDI   & sedimentation of cloud                                   & NMOM\_C>=1 and LSEDC=T \\\hline
+DEPO   & surface droplet deposition                               & NMOM\_C>=1 and LDEPOC=T \\\hline
+RIM    & riming of cloud water                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+IMLT   & melting of ice                                           & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+BERFI  & Bergeron-Findeisen                                       & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+HENU   & CCN activation nucleation                                & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+HINC   & heterogeneous nucleation by contact                      & NMOM\_I>=1 and LNUCL=T \\\hline
+HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T) \\\hline
 CEDS   & adjustment to saturation                                 & no condition \\\hline
-REVA   & evaporation of rain drops                                & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+REVA   & evaporation of rain drops                                & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
 NEGA   & negativity correction                                    & no condition \\\hline
 NETUR  & negativity correction induced by turbulence              & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection               & no condition \\\hline
 NECON  & negativity correction induced by condensation            & no condition \\\hline
-% CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+% CORR   & correction                                               & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
 CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
 \end{longtable}
 
@@ -700,8 +700,8 @@ CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ACCR   & accretion of cloud droplets                   & LWARM=T \\\hline
-AUTO   & autoconversion into rain                      & LWARM=T \\\hline
+ACCR   & accretion of cloud droplets                   & NMOM\_C>=1 \\\hline
+AUTO   & autoconversion into rain                      & NMOM\_C>=1 \\\hline
 SEDI   & sedimentation of cloud                        & LSEDIC=T \\\hline
 DEPO   & surface droplet deposition                    & LDEPOSC=T and CELEC='NONE' \\\hline
 HON    & homogeneous nucleation                        & no condition \\\hline
@@ -729,8 +729,8 @@ NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-ACCR   & accretion of cloud droplets                   & LRAIN=T \\\hline
-AUTO   & autoconversion into rain                      & LRAIN=T \\\hline
+ACCR   & accretion of cloud droplets                   & NMOM\_R>=1 \\\hline
+AUTO   & autoconversion into rain                      & NMOM\_R>=1 \\\hline
 SEDI   & sedimentation of cloud                        & LSEDC=T \\\hline
 DEPO   & surface droplet deposition                    & LDEPOC=T \\\hline
 COND   & vapor condensation or cloud water evaporation & no condition \\\hline
@@ -807,20 +807,20 @@ REL    & relaxation            & LHORELAX\_RG=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                 & LCOLD=T and LSNOW=T \\\hline
-HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
-DEPG   & deposition on graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-ACC    & rain accretion on graupel                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
-CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
-HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_S>=1 \\\hline
+HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T and NMOM\_R>=1) \\\hline
+DEPG   & deposition on graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+ACC    & rain accretion on graupel                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and NMOM\_R>=1) \\\hline
+CMEL   & conversion melting of snow                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LRDSF=T) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+GMLT   & graupel melting                               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
 NECON  & negativity correction induced by condensation & no condition \\\hline
@@ -893,12 +893,12 @@ REL    & relaxation            & LHORELAX\_RG=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                 & LCOLD=T and LHAIL=T \\\hline
-DEPH   & deposition on hail                            & LHAIL=T \\\hline
-WETG   & wet growth of graupel                         & LHAIL and (LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T)) \\\hline
-HMLT   & melting of hail                               & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_H>=1 \\\hline
+DEPH   & deposition on hail                            & NMOM\_H>=1 \\\hline
+WETG   & wet growth of graupel                         & NMOM\_H>=1 and (LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1)) \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+COHG   & conversion of hail to graupel                 & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
 NECON  & negativity correction induced by condensation & no condition \\\hline
@@ -967,28 +967,28 @@ VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hl
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation of cloud                         & LCOLD=T and LSEDI=T \\\hline
+SEDI   & sedimentation of cloud                         & NMOM\_I>=1 and LSEDI=T \\\hline
 HIN    & heterogeneous ice nucleation                   & NMOM\_I=1 \\\hline
-HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
-HINC   & heterogeneous nucleation by contact            & LCOLD=T and LNUCL=T \\\hline
-HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
-HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
-CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-AGGS   & aggregation of snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-BERFI  & Bergeron-Findeisen                             & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
-CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
+HIND   & heterogeneous nucleation by deposition         & NMOM\_I>=1 and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact            & NMOM\_I>=1 and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & NMOM\_I>=1 and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+AGGS   & aggregation of snow                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+IMLT   & melting of ice                                 & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+BERFI  & Bergeron-Findeisen                             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LCIBU=T) \\\hline
+CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LRDSF=T) \\\hline
 DEPI   & condensation/deposition on ice                 & LPTSPLIT=T \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 CEDS   & adjustment to saturation                       & no condition \\\hline
-% CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+% CORR   & correction                                     & LPTSPLIT=T and NMOM\_I>=1 and NMOM\_S>=1 \\\hline
 NEGA   & negativity correction                          & no condition \\\hline
 NETUR  & negativity correction induced by turbulence    & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection     & no condition \\\hline
@@ -1064,21 +1064,21 @@ REL    & relaxation            & LHORELAX\_RR=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation of rain drops                              & LWARM=T and LRAIN=T \\\hline
-AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-REVA   & rain evaporation                                         & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
-ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
-CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+SEDI   & sedimentation of rain drops                              & NMOM\_C>=1 and NMOM\_R>=1 \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+REVA   & rain evaporation                                         & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T and NMOM\_R>=1) \\\hline
+ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and NMOM\_R>=1) \\\hline
+CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+GMLT   & graupel melting                                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-HMLT   & melting of hail                                          & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
-% CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
+% CORR   & correction                                               & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
 NEGA   & negativity correction                                    & no condition \\\hline
 NETUR  & negativity correction induced by turbulence              & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection               & no condition \\\hline
@@ -1094,9 +1094,9 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & sedimentation of rain drops                             & no condition \\\hline
-AUTO   & autoconversion into rain                                & LWARM=T \\\hline
-ACCR   & accretion of cloud droplets                             & LWARM=T \\\hline
-REVA   & rain evaporation                                        & LWARM=T \\\hline
+AUTO   & autoconversion into rain                                & NMOM\_C>=1 \\\hline
+ACCR   & accretion of cloud droplets                             & NMOM\_C>=1 \\\hline
+REVA   & rain evaporation                                        & NMOM\_C>=1 \\\hline
 ACC    & accretion of rain on aggregates                         & no condition \\\hline
 CMEL   & collection of droplets by snow and conversion into rain & LRED=T and CELEC='NONE' \\\hline
 CFRZ   & conversion freezing of rain                             & no condition \\\hline
@@ -1121,9 +1121,9 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & sedimentation of rain drops                   & no condition \\\hline
-AUTO   & autoconversion into rain                      & LRAIN=T \\\hline
-ACCR   & accretion of cloud droplets                   & LRAIN=T \\\hline
-REVA   & rain evaporation                              & LRAIN=T \\\hline
+AUTO   & autoconversion into rain                      & NMOM\_R>=1 \\\hline
+ACCR   & accretion of cloud droplets                   & NMOM\_R>=1 \\\hline
+REVA   & rain evaporation                              & NMOM\_R>=1 \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
@@ -1186,20 +1186,20 @@ REL    & relaxation            & LHORELAX\_RS=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                 & LCOLD=T and LSNOW=T \\\hline
-CNVI   & conversion of snow to cloud ice               & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-DEPS   & deposition on snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CNVS   & conversion of pristine ice to snow            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-AGGS   & aggregation of snow                           & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
-ACC    & accretion of rain on snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
-CMEL   & conversion melting of snow                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-% CORR   & correction                                    & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_S>=1 \\\hline
+CNVI   & conversion of snow to cloud ice               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+DEPS   & deposition on snow                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CNVS   & conversion of pristine ice to snow            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+AGGS   & aggregation of snow                           & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LCIBU=T) \\\hline
+ACC    & accretion of rain on snow                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and NMOM\_R>=1) \\\hline
+CMEL   & conversion melting of snow                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+% CORR   & correction                                    & LPTSPLIT=T and NMOM\_I>=1 and NMOM\_S>=1 \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
 NECON  & negativity correction induced by condensation & no condition \\\hline
@@ -1278,15 +1278,15 @@ SNSUB  & blowing snow sublimation       & LBLOWSNOW=T and LSNOWSUBL=T      \\\hl
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HENU   & heterogeneous nucleation                       & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-REVA   & rain evaporation                               & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HENU   & heterogeneous nucleation                       & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+REVA   & rain evaporation                               & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
 HIN    & heterogeneous ice nucleation                   & NMOM\_IMM=1 \\\hline
-HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
-HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
-DEPS   & deposition on snow                             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+HIND   & heterogeneous nucleation by deposition         & NMOM\_I>=1 and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & NMOM\_I>=1 and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+DEPS   & deposition on snow                             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
 DEPI   & condensation/deposition on ice                 & LPTSPLIT=T \\\hline
-DEPG   & deposition on graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DEPH   & deposition on hail                             & LPTSPLIT=T or LHAIL=T \\\hline
+DEPG   & deposition on graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DEPH   & deposition on hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
 CEDS   & adjustment to saturation                       & no condition \\\hline
 NEGA   & negativity correction                          & no condition \\\hline
 NETUR  & negativity correction induced by turbulence    & CTURB='TKEL' \\\hline
@@ -1302,7 +1302,7 @@ CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-REVA   & rain evaporation                              & LWARM=T \\\hline
+REVA   & rain evaporation                              & NMOM\_C>=1 \\\hline
 HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 DEPS   & deposition on snow                            & no condition \\\hline
 DEPG   & deposition on graupel                         & no condition \\\hline
@@ -1324,7 +1324,7 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 HENU   & heterogeneous nucleation                      & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
-REVA   & rain evaporation                              & LRAIN=T \\\hline
+REVA   & rain evaporation                              & NMOM\_R>=1 \\\hline
 COND   & vapor condensation or cloud water evaporation & no condition \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
@@ -1434,8 +1434,8 @@ Name & Description & Condition(s) \\
 \hline \hline
 DEPOTR & tree droplet deposition           & LDRAGTREE=T and LDEPOTREE=T \\\hline
 HENU   & CCN activation                    & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
-SELF   & self-collection of cloud droplets & LRAIN=T \\\hline
-ACCR   & accretion of cloud droplets       & LRAIN=T \\\hline
+SELF   & self-collection of cloud droplets & NMOM\_R>=1 \\\hline
+ACCR   & accretion of cloud droplets       & NMOM\_R>=1 \\\hline
 SEDI   & sedimentation                     & LSEDC=T \\\hline
 DEPO   & surface droplet deposition        & LDEPOC=T \\\hline
 CEVA   & evaporation                       & no condition \\\hline
@@ -1449,10 +1449,10 @@ CEVA   & evaporation                       & no condition \\\hline
 \hline
 Name & Description & Condition(s) \\
 \hline \hline
-AUTO   & autoconversion into rain               & LRAIN=T        \\\hline
+AUTO   & autoconversion into rain               & NMOM\_R>=1        \\\hline
 SCBU   & self collection - coalescence/break-up & CCLOUD/='KHKO' \\\hline
-REVA   & rain evaporation                       & LRAIN=T        \\\hline
-BRKU   & spontaneous break-up                   & LRAIN=T        \\\hline
+REVA   & rain evaporation                       & NMOM\_R>=1        \\\hline
+BRKU   & spontaneous break-up                   & NMOM\_R>=1        \\\hline
 SEDI   & sedimentation                          & no condition   \\\hline
 \endhead
 \end{longtable}
@@ -1493,24 +1493,24 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 DEPOTR & tree droplet deposition                                  & LDRAGTREE=T and LDEPOTREE=T \\\hline
-SEDI   & sedimentation of cloud                                   & LWARM=T and LSEDC=T \\\hline
-DEPO   & surface droplet deposition                               & LWARM=T and LDEPOC=T \\\hline
-R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
-HENU   & CCN activation                                           & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-HINC   & heterogeneous nucleation by contact                      & LCOLD=T and LNUCL=T \\\hline
-SELF   & self-collection of cloud droplets                        & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-REVA   & evaporation of rain drops                                & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
-IMLT   & melting of ice                                           & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-RIM    & riming of cloud water                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+SEDI   & sedimentation of cloud                                   & NMOM\_C>=1 and LSEDC=T \\\hline
+DEPO   & surface droplet deposition                               & NMOM\_C>=1 and LDEPOC=T \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
+HENU   & CCN activation                                           & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+HINC   & heterogeneous nucleation by contact                      & NMOM\_I>=1 and LNUCL=T \\\hline
+SELF   & self-collection of cloud droplets                        & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+ACCR   & accretion of cloud droplets                              & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+REVA   & evaporation of rain drops                                & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+HONC   & droplet homogeneous freezing                             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T) \\\hline
+IMLT   & melting of ice                                           & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+RIM    & riming of cloud water                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=T or LHAIL=T \\\hline
-CEDS   & adjustment to saturation                                 & LWARM=T \\\hline
-% CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+CEDS   & adjustment to saturation                                 & NMOM\_C>=1 \\\hline
+% CORR   & correction                                               & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
 CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
 \end{longtable}
 
@@ -1521,22 +1521,22 @@ CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \
 \hline
 Name & Description & Condition(s) \\
 \hline \hline
-SEDI   & sedimentation                                            & LWARM=T and LRAIN=T \\\hline
-R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
-AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-SCBU   & self collection - coalescence/break-up                   & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-REVA   & rain evaporation                                         & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
-BRKU   & spontaneous break-up                                     & LPTSPLIT=T or (LWARM=T and LRAIN=T)        \\\hline
-HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LRAIN=T and LNUCL=T) \\\hline
-ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
-CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-GMLT   & graupel melting                                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+SEDI   & sedimentation                                            & NMOM\_C>=1 and NMOM\_R>=1 \\\hline
+R2C1   & rain to cloud change after sedimentation                 & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
+AUTO   & autoconversion into rain                                 & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+SCBU   & self collection - coalescence/break-up                   & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+REVA   & rain evaporation                                         & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
+BRKU   & spontaneous break-up                                     & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1)        \\\hline
+HONR   & rain homogeneous freezing                                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_R>=1 and LNUCL=T) \\\hline
+ACC    & accretion of rain on aggregates                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and NMOM\_R>=1) \\\hline
+CFRZ   & conversion freezing of rain                              & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+GMLT   & graupel melting                                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 CVRC   & rain to cloud change after other microphysical processes & LPTSPLIT=T \\\hline
-WETH   & wet growth of hail                                       & LPTSPLIT=T or LHAIL=T \\\hline
-HMLT   & melting of hail                                          & LPTSPLIT=T or LHAIL=T \\\hline
-% CORR   & correction                                               & LPTSPLIT=T and LWARM=T and LRAIN=T \\\hline
+WETH   & wet growth of hail                                       & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+HMLT   & melting of hail                                          & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+% CORR   & correction                                               & LPTSPLIT=T and NMOM\_C>=1 and NMOM\_R>=1 \\\hline
 CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \\\hline
 \endhead
 \end{longtable}
@@ -1549,9 +1549,9 @@ CORR2  & supplementary correction inside LIMA splitting           & LPTSPLIT=T \
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HENU   & CCN activation              & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-HONH   & haze homogeneous nucleation & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
-CEDS   & adjustment to saturation    & LWARM=T \\\hline
+HENU   & CCN activation              & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+HONH   & haze homogeneous nucleation & NMOM\_I>=1 and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+CEDS   & adjustment to saturation    & NMOM\_C>=1 \\\hline
 SCAV   & scavenging                  & LSCAV=T \\\hline
 \end{longtable}
 
@@ -1563,9 +1563,9 @@ SCAV   & scavenging                  & LSCAV=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HENU   & CCN activation                      & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-HINC   & heterogeneous nucleation by contact & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
-CEDS   & adjustment to saturation            & LWARM=T \\\hline
+HENU   & CCN activation                      & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+HINC   & heterogeneous nucleation by contact & NMOM\_I>=1 and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation            & NMOM\_C>=1 \\\hline
 \end{longtable}
 
 \paragraph{Scavenged mass variable for LIMA}
@@ -1588,25 +1588,25 @@ CEDS   & adjustment to saturation & LSCAV=T and LAERO\_MASS=T and LSPRO=F \\\hli
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LCOLD=T and LSEDI=T \\\hline
-HIND   & heterogeneous nucleation by deposition         & LCOLD=T and LNUCL=T \\\hline
-HINC   & heterogeneous nucleation by contact            & LCOLD=T and LNUCL=T \\\hline
-HONH   & haze homogeneous nucleation                    & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
-HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
-CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-AGGS   & aggregation of snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-IMLT   & melting of ice                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LCIBU=T) \\\hline
-CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRDSF=T) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
+SEDI   & sedimentation                                  & NMOM\_I>=1 and LSEDI=T \\\hline
+HIND   & heterogeneous nucleation by deposition         & NMOM\_I>=1 and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact            & NMOM\_I>=1 and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                    & NMOM\_I>=1 and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                   & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+AGGS   & aggregation of snow                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+IMLT   & melting of ice                                 & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CIBU   & ice multiplication process due to ice collisional breakup & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LCIBU=T) \\\hline
+CFRZ   & conversion freezing of rain                    & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+RDSF   & ice multiplication process following rain contact freezing & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and LRDSF=T) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
 CEDS   & adjustment to saturation                       & LPTSPLIT=F and LSPRO=F \\\hline
-% CORR   & correction                                     & LPTSPLIT=T and LCOLD=T and LSNOW=T \\\hline
+% CORR   & correction                                     & LPTSPLIT=T and NMOM\_I>=1 and NMOM\_S>=1 \\\hline
 CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 \end{longtable}
 
@@ -1618,18 +1618,18 @@ CORR2  & supplementary correction inside LIMA splitting & LPTSPLIT=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-BRKU   & break up of snow                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-ACC    & accretion of rain on snow                      & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CMEL   & conversion melting of snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
-SSC    & snow self collection                           & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T and LSPRO=F \\\hline
+SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CNVI   & conversion of snow to cloud ice                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CNVS   & conversion of pristine ice to snow             & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+BRKU   & break up of snow                               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+ACC    & accretion of rain on snow                      & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CMEL   & conversion melting of snow                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+SSC    & snow self collection                           & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I>=1 and LSPRO=F \\\hline
 \end{longtable}
 
 \paragraph{Concentration of graupel for LIMA}
@@ -1640,16 +1640,16 @@ CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
-RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-ACC    & accretion of rain on snow                      & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CMEL   & conversion melting of snow                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-CFRZ   & conversion freezing of raindrop                & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-GMLT   & raupel melting                                 & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                             & LPTSPLIT=T or LHAIL=T \\\hline
-COHG   & conversion hail graupel                        & LPTSPLIT=T or LHAIL=T \\\hline
-CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T and LSPRO=F \\\hline
+SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
+RIM    & heavy riming of cloud droplet on snow          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+ACC    & accretion of rain on snow                      & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CMEL   & conversion melting of snow                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+CFRZ   & conversion freezing of raindrop                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+GMLT   & raupel melting                                 & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                             & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+COHG   & conversion hail graupel                        & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+CEDS   & adjustment to saturation                       & LPTSPLIT=F and NMOM\_I>=1 and LSPRO=F \\\hline
 \end{longtable}
 
 \paragraph{Concentration of hail for LIMA}
@@ -1660,10 +1660,10 @@ CEDS   & adjustment to saturation                       & LPTSPLIT=F and LCOLD=T
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-SEDI   & sedimentation                                  & LPTSPLIT=T or (LCOLD=T and LSNOW=T and LHAIL=T) \\\hline
-WETG   & wet growth of graupel                          & LPTSPLIT=T or LHAIL=T \\\hline
-COHG   & conversion hail graupel                        & LPTSPLIT=T or LHAIL=T \\\hline
-HMLT   & hail melting                                   & LPTSPLIT=T or LHAIL=T \\\hline
+SEDI   & sedimentation                                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1 and NMOM\_H>=1) \\\hline
+WETG   & wet growth of graupel                          & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+COHG   & conversion hail graupel                        & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+HMLT   & hail melting                                   & LPTSPLIT=T or NMOM\_H>=1 \\\hline
 \end{longtable}
 
 \paragraph{Concentration of free IFN for LIMA}
@@ -1674,8 +1674,8 @@ HMLT   & hail melting                                   & LPTSPLIT=T or LHAIL=T 
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HIND   & heterogeneous nucleation by deposition & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
-CEDS   & adjustment to saturation               & LCOLD=T and LPTSPLIT=F and LSPRO=F \\\hline
+HIND   & heterogeneous nucleation by deposition & NMOM\_I>=1 and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation               & NMOM\_I>=1 and LPTSPLIT=F and LSPRO=F \\\hline
 SCAV   & scavenging                             & LSCAV=T \\\hline
 \end{longtable}
 
@@ -1687,10 +1687,10 @@ SCAV   & scavenging                             & LSCAV=T \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HIND   & heterogeneous nucleation by deposition & LCOLD=T and LNUCL=T and (LMEYERS=F or jsv=NSV\_LIMA\_IFN\_NUCL) \\\hline
-HINC   & heterogeneous nucleation by contact    & LCOLD=T and LNUCL=T and LMEYERS=T and jsv=NSV\_LIMA\_IFN\_NUCL \\\hline
-IMLT   & melting of ice                         & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-CEDS   & adjustment to saturation               & LCOLD=T and LPTSPLIT=F and LSPRO=F \\\hline
+HIND   & heterogeneous nucleation by deposition & NMOM\_I>=1 and LNUCL=T and (LMEYERS=F or jsv=NSV\_LIMA\_IFN\_NUCL) \\\hline
+HINC   & heterogeneous nucleation by contact    & NMOM\_I>=1 and LNUCL=T and LMEYERS=T and jsv=NSV\_LIMA\_IFN\_NUCL \\\hline
+IMLT   & melting of ice                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+CEDS   & adjustment to saturation               & NMOM\_I>=1 and LPTSPLIT=F and LSPRO=F \\\hline
 \end{longtable}
 
 with $jsv$ the scalar variable number.
@@ -1703,8 +1703,8 @@ with $jsv$ the scalar variable number.
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HINC   & heterogeneous nucleation by contact & LCOLD=T and LNUCL=T and LMEYERS=F \\\hline
-CEDS   & adjustment to saturation            & LCOLD=T and LPTSPLIT=F and LSPRO=F \\\hline
+HINC   & heterogeneous nucleation by contact & NMOM\_I>=1 and LNUCL=T and LMEYERS=F \\\hline
+CEDS   & adjustment to saturation            & NMOM\_I>=1 and LPTSPLIT=F and LSPRO=F \\\hline
 \end{longtable}
 
 \paragraph{Homogeneous freezing of CCN for LIMA}
@@ -1715,7 +1715,7 @@ CEDS   & adjustment to saturation            & LCOLD=T and LPTSPLIT=F and LSPRO=
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-HONH   & haze homogeneous nucleation & LCOLD=T and LNUCL=T and ( (LHHONI=T and NMOD\_CCN>0) or (LPTSPLIT=F and LWARM=T) ) \\\hline
+HONH   & haze homogeneous nucleation & NMOM\_I>=1 and LNUCL=T and ( (LHHONI=T and NMOD\_CCN>0) or (LPTSPLIT=F and NMOM\_C>=1) ) \\\hline
 \end{longtable}
 
 \paragraph{Supersaturation for LIMA}
@@ -1755,7 +1755,7 @@ DRIFT  & ion drift motion               & no condition \\\hline
 CORAY  & cosmic ray source              & no condition \\\hline
 DEPS   & deposition on snow             & no condition \\\hline
 DEPG   & deposition on graupel          & no condition \\\hline
-REVA   & rain evaporation               & LWARM=T      \\\hline
+REVA   & rain evaporation               & NMOM\_C>=1      \\\hline
 DEPI   & condensation/deposition on ice & no condition \\\hline
 NEUT   & neutralization                 & no condition \\\hline
 \end{longtable}
@@ -1769,8 +1769,8 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 HON    & homogeneous nucleation         & no condition \\\hline
-AUTO   & autoconversion into rain       & LWARM=T \\\hline
-ACCR   & accretion of cloud droplets    & LWARM=T \\\hline
+AUTO   & autoconversion into rain       & NMOM\_C>=1 \\\hline
+ACCR   & accretion of cloud droplets    & NMOM\_C>=1 \\\hline
 RIM    & riming of cloud water          & no condition \\\hline
 WETG   & wet growth of graupel          & no condition \\\hline
 DRYG   & dry growth of graupel          & no condition \\\hline
@@ -1792,9 +1792,9 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SFR    & spontaneous freezing            & no condition \\\hline
-AUTO   & autoconversion into rain        & LWARM=T \\\hline
-ACCR   & accretion of cloud droplets     & LWARM=T \\\hline
-REVA   & rain evaporation                & LWARM=T \\\hline
+AUTO   & autoconversion into rain        & NMOM\_C>=1 \\\hline
+ACCR   & accretion of cloud droplets     & NMOM\_C>=1 \\\hline
+REVA   & rain evaporation                & NMOM\_C>=1 \\\hline
 ACC    & accretion of rain on aggregates & no condition \\\hline
 CFRZ   & conversion freezing of rain     & no condition \\\hline
 WETG   & wet growth of graupel           & no condition \\\hline
@@ -1901,7 +1901,7 @@ DRIFT  & ion drift motion               & no condition \\\hline
 CORAY  & cosmic ray source              & no condition \\\hline
 DEPS   & deposition on snow             & no condition \\\hline
 DEPG   & deposition on graupel          & no condition \\\hline
-REVA   & rain evaporation               & LWARM=T      \\\hline
+REVA   & rain evaporation               & NMOM\_C>=1      \\\hline
 DEPI   & condensation/deposition on ice & no condition \\\hline
 NEUT   & neutralization                 & no condition \\\hline
 \end{longtable}
@@ -1995,28 +1995,28 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 SEDI   & heat transport by hydrometeors sedimentation  & LPTSPLIT=T \\\hline
-HENU   & heterogeneous nucleation                      & LWARM=T and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
-REVA   & rain evaporation                              & LPTSPLIT=T or (LWARM=T and LRAIN=T) \\\hline
+HENU   & heterogeneous nucleation                      & NMOM\_C>=1 and LACTI=T and NMOD\_CCN>0 and (LPTSPLIT=F or LSUBG\_COND=F) \\\hline
+REVA   & rain evaporation                              & LPTSPLIT=T or (NMOM\_C>=1 and NMOM\_R>=1) \\\hline
 HIN    & heterogeneous ice nucleation                  & NMOM\_I=1 \\\hline
-HIND   & heterogeneous nucleation by deposition        & LCOLD=T and LNUCL=T \\\hline
-HINC   & heterogeneous nucleation by contact           & LCOLD=T and LNUCL=T \\\hline
-HONH   & haze homogeneous nucleation                   & LCOLD=T and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
-HONC   & droplet homogeneous freezing                  & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T) \\\hline
-HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (LCOLD=T and LWARM=T and LNUCL=T and LRAIN=T) \\\hline
-DEPS   & deposition on snow                            & LPTSPLIT=T or (LCOLD=T and LSNOW=T) \\\hline
+HIND   & heterogeneous nucleation by deposition        & NMOM\_I>=1 and LNUCL=T \\\hline
+HINC   & heterogeneous nucleation by contact           & NMOM\_I>=1 and LNUCL=T \\\hline
+HONH   & haze homogeneous nucleation                   & NMOM\_I>=1 and LNUCL=T and LHHONI=T and NMOD\_CCN>0 \\\hline
+HONC   & droplet homogeneous freezing                  & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T) \\\hline
+HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T and NMOM\_R>=1) \\\hline
+DEPS   & deposition on snow                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
 DEPI   & condensation/deposition on ice                & LPTSPLIT=T \\\hline
-DEPG   & deposition on graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DEPH   & deposition on hail                            & LPTSPLIT=T or LHAIL=T \\\hline
-IMLT   & melting of ice                                & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-BERFI  & Bergeron-Findeisen                            & LPTSPLIT=T or (LCOLD=T and LWARM=T) \\\hline
-RIM    & riming of cloud water                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-ACC    & accretion of rain on aggregates               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T and LRAIN=T) \\\hline
-CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETG   & wet growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-DRYG   & dry growth of graupel                         & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-GMLT   & graupel melting                               & LPTSPLIT=T or (LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-WETH   & wet growth of hail                            & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
-HMLT   & melting of hail                               & LPTSPLIT=T or (LHAIL=T and LCOLD=T and LWARM=T and LSNOW=T) \\\hline
+DEPG   & deposition on graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DEPH   & deposition on hail                            & LPTSPLIT=T or NMOM\_H>=1 \\\hline
+IMLT   & melting of ice                                & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+BERFI  & Bergeron-Findeisen                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1) \\\hline
+RIM    & riming of cloud water                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+ACC    & accretion of rain on aggregates               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1 and NMOM\_R>=1) \\\hline
+CFRZ   & conversion freezing of rain                   & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETG   & wet growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+DRYG   & dry growth of graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+GMLT   & graupel melting                               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+WETH   & wet growth of hail                            & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
+HMLT   & melting of hail                               & LPTSPLIT=T or (NMOM\_H>=1 and NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
 CEDS   & adjustment to saturation                      & no condition \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
@@ -2031,7 +2031,7 @@ NECON  & negativity correction induced by condensation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-REVA   & rain evaporation                              & LWARM=T \\\hline
+REVA   & rain evaporation                              & NMOM\_C>=1 \\\hline
 HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 HON    & homogeneous nucleation                        & no condition \\\hline
 SFR    & spontaneous freezing                          & no condition \\\hline
@@ -2066,7 +2066,7 @@ Name & Description & Condition(s) \\
 \hline \hline
 \endhead
 HENU   & heterogeneous nucleation                      & LSUPSAT=F or (CACTCCN='ABRK' and (LORILAM=T or LDUST=T or LSALT=T)) \\\hline
-REVA   & rain evaporation                              & LRAIN=T \\\hline
+REVA   & rain evaporation                              & NMOM\_R>=1 \\\hline
 COND   & vapor condensation or cloud water evaporation & no condition \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
