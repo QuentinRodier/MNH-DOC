@@ -2407,17 +2407,17 @@ This parameterization include coagulation (intra and inter modal), nucleation,  
  This parameterization need to be run together with gas chemical phase (namelist NAM\_CH\_MNHCn). 
 For correct representation, it is recommended to have severals compounds as HNO3 (nitric acid), H2SO4 (or SULF; sulphates), NH3 (ammonium) and CO (carbon monoxyde) in the chemical scheme. 
 
-\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
+\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.17\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
 \hline 
 \endhead
 \hline
 \endfoot
-LORILAM     & logical  & FALSE  \\
-LVARSIGI    & logical  & FALSE  \\
-LVARSIGJ    & logical  & FALSE  \\
-LSEDIMAERO  & logical  & FALSE  \\
+LORILAM     & logical  & .FALSE.  \\
+LVARSIGI    & logical  & .FALSE. \\
+LVARSIGJ    & logical  & .FALSE.  \\
+LSEDIMAERO  & logical  & .FALSE.  \\
 XINIRADIUSI & real     & 0.01  \\
 XINIRADIUSJ & real     & 0.5  \\
 CRGUNIT     & character (len=4)  & 'MASS'   \\
@@ -2431,7 +2431,10 @@ XCOEFRADIMIN& real     &  .1  \\
 XCOEFRADJMIN& real     &  .1  \\
 CMINERAL    & character (len=5)  & 'NONE'   \\
 CORGANIC    & character (len=5)  & 'NONE'   \\
-CNUCLEATION & character (len=80) & 'NONE'   \\
+CNUCLEATION & character (len=80) & 'MAATTANEN'   \\
+LCONDENSATION & logical & .TRUE. \\
+LCOAGULATION & logical & .TRUE. \\
+LMODE\_MERGING & logical & .FALSE. \\
 \end{longtable}
 
 \begin{itemize}
@@ -2481,10 +2484,19 @@ CORGANIC = 'PUN' : PUN parameterization  \\
 CORGANIC = 'MPMPO': MPMPO (non vectorized) 
 
 \index{CNUCLEATION!\innam{NAM\_CH\_ORILAM}}
-\item  CNUCLEATION: type of parameterization for nucleation (formation of new particle from sulphates). Possible values are:\\
-CNUCLEATION = 'KULMALA' : KULMALA parameterization \\  
-CNUCLEATION = 'KERMINEN': KERMINEN parameterization  
-
+\item  CNUCLEATION: type of parameterization for nucleation (formation of new particle from sulphates). 	\item CNUCLEATION: nucleation's parametrization. Four options are available:
+\begin{itemize}
+\item NONE : no nucleation
+\item KULMALA: based on Kulmala et al. 1998
+\item VEHKAMAKI: based on Vehkamäki et al. 2002
+\item MAATTANEN: based on Määttänen et al. 2018
+\end{itemize}
+\index{LCONDENSATION!\innam{NAM\_CH\_ORILAM}}
+\item LCONDENSATION : flag to activate the condensation processes.
+\index{LCOAGULATION!\innam{NAM\_CH\_ORILAM}}
+\item LCOAGULATION : flag to activate the intra and inter coagulation processes.
+\index{LMODE\_MERGING!\innam{NAM\_CH\_ORILAM}}
+\item LMODE\_MERGING : flag to activate the mode merging.
 \item Convective scavenging is activated with LCH\_CONV\_SCAV in NAM\_CH\_MNHCn.
 
 \end{itemize}
