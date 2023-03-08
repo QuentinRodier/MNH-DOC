@@ -77,7 +77,7 @@ the vertical grid.  The file can also contain a free formatted part after the ve
 definition namelist, where  the vertical levels can be prescribed  if this
 option is chosen.
 \subsection{Namelist NAM\_AERO\_CONF (aerosol initialization)}
-\begin{longtable} {|p{.15\textwidth}|p{.15\textwidth}|p{.25\textwidth}|}
+\begin{longtable} {|p{.20\textwidth}|p{.15\textwidth}|p{.25\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
 \hline 
@@ -105,6 +105,11 @@ XN0MIN\_SLT  & real          & 1.e4 , 1.e2 , 1.e-1 \\
 XINIRADIUS\_SLT & real       & 0.14, 1.125,  7.64\\
 XINISIG\_SLT    & real       & 1.9, 2., 2. \\
 CRGUNITS     & character     & "MASS"   \\
+CCLOUD       & character     & "NONE" \\
+NMOD\_CCN    & integer       & 1 \\
+NMOD\_IFN    & integer       & 1 \\
+LDSTCAMS     & logical       & .FALSE. \\
+LSLTCAMS     & logical       & .FALSE. \\
 \end{longtable}
 
 See section \ref{s:namaeropre} page \pageref{s:namaeropre} for details.
@@ -186,7 +191,7 @@ the chemical species if they are not in the HATMFILE or if the ones of the
 HATMFILE are not used (only if HATMFILETYPE is 'GRIBEX'). The grids must
 be the same as the ones of the output file (CINIFILE).
 \index{HCHEMFILE!\innam{NAM\_FILE\_NAMES}}
-\item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH', 'NETCDF')
+\item HCHEMFILETYPE : type of the chemical file ('GRIBEX', 'MESONH', 'MOZART','CAMSEU'). MOZART and CAMSEU must be in netcdf format
 \index{HCHEMFILETYPE!\innam{NAM\_FILE\_NAMES}}
 \item HCAMSFILE : optional name of the CAMS file containing
 the aerosols species. The file must be a NETCDF.

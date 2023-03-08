@@ -95,6 +95,11 @@ XN0MIN\_SLT  & real          & 1.e4 , 1.e2 , 1.e-1 \\
 XINIRADIUS\_SLT & real       & 0.14, 1.125,  7.64\\
 XINISIG\_SLT    & real       & 1.9, 2., 2. \\
 CRGUNITS     & character     & "MASS"   \\
+CCLOUD       & character     & "NONE" \\
+NMOD\_CCN    & integer       & 1 \\
+NMOD\_IFN    & integer       & 1 \\
+LDSTCAMS     & logical       & .FALSE. \\
+LSLTCAMS     & logical       & .FALSE. \\
 \hline
 \end{tabular}
 \end{center}
@@ -143,6 +148,11 @@ Initial mean radius of the NMODE\_SLT modes (only if LSALT=T in NAM\_AERO\_PRE).
 Initial standard deviation of the NMODE\_SLT modes (only if LSALT=T in NAM\_AERO\_PRE).
 \item CRGUNITS\index{CRGUNITS!\innam{NAM\_AERO\_PRE}}:
 Definition of XINIRADIUS\_SLT : mean radius is in mass or in number; possible values are MASS or NUMB (only if LSALT=T in NAM\_AERO\_PRE).
+\item CCLOUD: microphysics scheme (only "LIMA" possible) to use with aerosols coupling
+\item NMOD\_CCN : numer of CCN modes
+\item NMOD\_IFN : numer of IFN modes
+\item LDSTCAMS \index{LDSTCAMS!\innam{NAM\_AERO\_PRE}} : flat to activate initialization of dust aerosols from CAMS file.
+\item LSLTCAMS \index{LSLTCAMS!\innam{NAM\_AERO\_PRE}} : flat to activate initialization of sea-salt aerosols from CAMS file.
 \end{itemize}
 
 
