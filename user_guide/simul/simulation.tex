@@ -3253,6 +3253,7 @@ LHORELAX\_SVCHEM &   logical & FALSE  \\
 LHORELAX\_SVDST  &   logical & FALSE  \\
 LHORELAX\_SVPP   &   logical & FALSE  \\
 LHORELAX\_SVAER  &   logical & FALSE  \\
+LHORELAX\_SVFIRE  &   logical & FALSE  \\
 LVE\_RELAX&  logical  & FALSE  \\
 LVE\_RELAX\_GRD&  logical  & FALSE  \\
 NRIMX     & integer   & 1   \\
@@ -3339,6 +3340,7 @@ outermost verticals of the model for U,V,W TH variables.
 \index{LHORELAX\_SVPP!\innam{NAM\_DYNn}}
 \index{LHORELAX\_SVAER!\innam{NAM\_DYNn}}
 \index{LHORELAX\_SVELEC!\innam{NAM\_DYNn}}
+\index{LHORELAX\_SVFIRE!\innam{NAM\_DYNn}}
 LHORELAX\_RV, LHORELAX\_RC, LHORELAX\_RR, LHORELAX\_RI,
 
 
@@ -3351,7 +3353,7 @@ LHORELAX\_SV, LHORELAX\_SVCHEM, LHORELAX\_SVC2R2,
 LHORELAX\_SVC1R3, LHOREAX\_SVLG, LHORELAX\_SVDST,
 
 
-LHORELAX\_SVPP, LHORELAX\_SVAER, LHORELAX\_SVELEC, LHORELAX\_SVSNW  : same as for other variables
+LHORELAX\_SVPP, LHORELAX\_SVAER, LHORELAX\_SVELEC, LHORELAX\_SVSNW, LHORELAX\_SVFIRE  : same as for other variables
 
 It is safer to set all the LHORELAX\_ values rather than
 use their default values which can be modified by the desfm file.
@@ -4693,11 +4695,15 @@ the scientific documentation of the model.
 Fortran name & Fortran type & default value \\
 \hline
 LMEAN\_FIELD  &  logical &  .FALSE. \\
+LCOV\_FIELD  &  logical &  .FALSE. \\
 \hline
 \end{tabular}
 \end{center}
 \begin{itemize}
  \item LMEAN\_FIELD : flag for computation of the mean and maximum values of variables between two backup outputs. The list of variables available can be modified in mean\_field.f90.
+ \item LCOV\_FIELD : flag for computation of covariances values of variables between two backup outputs. The list of variables available can be modified in mean\_field.f90.
+
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5213,6 +5219,9 @@ LSEDIM\_AFTER & logical & FALSE \\
 CSUBG\_RC\_RR\_ACCR & 80 characters & 'NONE' \\
 CSUBG\_RR\_EVAP & 80 characters & 'NONE' \\
 CSUBG\_PR\_PDF & 80 characters & 'SIGM' \\
+LSNOW\_T & logical & .FALSE. \\
+LPACK\_INTERP & logical & .TRUE. \\
+LPACK\_MICRO & logical & .TRUE. \\
 \end{longtable}
 
 It contains the options for the mixed phase cloud parameterizations
@@ -5299,6 +5308,15 @@ LADJ\_BEFORE  \index{LADJ\_BEFORE!\innam{NAM\_PARAM\_ICE}}: .TRUE. when an adjus
 
 \item 
 LADJ\_AFTER  \index{LADJ\_AFTER!\innam{NAM\_PARAM\_ICE}}: .TRUE. when an adjustment after rain\_ice call is performed (equal to T when LRED=F)
+
+\item \index{LSNOW\_T!\innam{NAM\_PARAM\_ICE}}
+LSNOW\_T : Switch to activate the representation of snow proposed by Wurtz et al. 2023 which improves the extension and cloud composition of anvils in convective systems.
+
+\item
+LPACK\_INTERP  \index{LPACK\_INTERP!\innam{NAM\_PARAM\_ICE}}: to save computation time, some mycrophysical processes (especially collections) are tabulated. If this key is .TRUE., the input variables for the interpolations are packed to limit the computation to the necessary points; otherwise, the interpolations are performed everywhere.
+
+\item
+LPACK\_MICRO  \index{LPACK\_MICRO!\innam{NAM\_PARAM\_ICE}}: the microphysics input variables are packed to perform the computation only on points with hydrometeors; otherwise, computations are performed everywhere. Do not change this option with Méso-NH : .FALSE. works only for AROME).
 
 \item 
 CFRAC\_ICE\_ADJUST   \index{CFRAC\_ICE\_ADJUST!\innam{NAM\_PARAM\_ICE}}: Way to compute ice fraction 
@@ -5434,11 +5452,14 @@ Fortran name &  Fortran type & default value \\
 \endhead
 \hline
 \endfoot
-LCOLD         &  logical     & .TRUE. \\
+NMOM\_C & integer & 2 \\
+NMOM\_R & integer & 2 \\
+NMOM\_I & integer & 2 \\
+NMOM\_S & integer & 1 \\
+NMOM\_G & integer & 1 \\
+NMOM\_H & integer & 0 \\
 LNUCL & logical	  &  .TRUE. \\
 LSEDI &  logical&  .TRUE. \\
-LSNOW & logical  &  .TRUE.\\
-LHAIL &  logical& .FALSE. \\
 LHHONI & logical &  .FALSE.\\
 LMEYERS & logical   & .FALSE. \\
 NMOD\_IFN & integer   & 1  \\
@@ -5452,9 +5473,7 @@ CPRISTINE\_ICE\_LIMA & 4 characters &  'PLAT' \\
 XFACTNUC\_DEP & real  & 1. \\
 XFACTNUC\_CON & real & 1. \\
 NPHILLIPS & integer  & 8 \\
-LWARM & logical  & .TRUE. \\
 LACTI& logical  & .TRUE. \\
-LRAIN& logical  & .TRUE. \\
 LSEDC& logical  & .TRUE. \\
 LACTIT& logical  & .FALSE. \\
 NMOD\_CCN & integer   & 1  \\
@@ -5472,15 +5491,21 @@ XACTEMP\_CCN & real  & 280. \\
 LSCAV & logical  & .FALSE.  \\
 LAERO\_MASS & logical  & .FALSE.  \\
 LACTTKE & logical  & .TRUE.  \\
-LDEPOC & logical  & .FALSE.  \\
+LDEPOC & logical  & .TRUE.  \\
 XVDEPOC &real& 0.02 \\
-LPTSPLIT & logical  & .FALSE.  \\
+LPTSPLIT & logical  & .TRUE.  \\
 LFEEDBACKT & logical  & .TRUE.  \\
-NMAXITER & integer & 1 \\
-XMRSTEP&real& 0. \\
-XTSTEP\_TS& real&0.\\
+NMAXITER & integer & 5 \\
+XMRSTEP&real& 0.005 \\
+XTSTEP\_TS& real&20.\\
 LADJ & logical &  .TRUE. \\
 LSPRO & logical & .FALSE. \\
+LKHKO & logical & .FALSE. \\
+LCIBU & logical & .FALSE. \\
+LRDSF & logical & .FALSE. \\
+XNDEBRIS\_CIBU & real & 50.0 \\
+LMURAKAMI & logical & .TRUE. \\
+LSNOW\_T & logical & .FALSE. \\
 \end{longtable}
 
 It contains the options for the 2 moment mixed phase cloud parameterizations
@@ -5488,8 +5513,24 @@ used  by the model (LIMA). They are included in the declarative module
 MODD\_PARAM\_LIMA
 \begin{itemize}
 \item
-\index{LCOLD!\innam{NAM\_PARAM\_LIMA}}
-LCOLD : Switch to activate the cold phase representation
+\index{NMOM\_C!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_C : number of prognostic moments for cloud droplets.
+\item
+\index{NMOM\_R!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_R : number of prognostic moments for rain drops.
+\item
+\index{NMOM\_I!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_I : number of prognostic moments for ice crystals.
+\item
+\index{NMOM\_S!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_S : number of prognostic moments for snow/aggregates.
+\item
+\index{NMOM\_G!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_G : number of prognostic moments for graupel.
+\item
+\index{NMOM\_H!\innam{NAM\_PARAM\_LIMA}}
+NMOM\_H : number of prognostic moments for hail. \\
+Note that the full flexibility is only available with the time-splitted version of LIMA (with LPTSPLIT=T). With the original version, two configurations only are available : the original parameterization with NMOM\_C=NMOM\_R=NMOM\_I=2 and NMOM\_S=NMOM\_G=1; and 2 moments for all species with NMOM\_x=2.
 \item
 \index{LNUCL!\innam{NAM\_PARAM\_LIMA}}
 LNUCL : Switch to activate pristine ice crystals nucleation (both from IFN and homogeneous freezing)
@@ -5497,11 +5538,23 @@ LNUCL : Switch to activate pristine ice crystals nucleation (both from IFN and h
 \index{LSEDI!\innam{NAM\_PARAM\_LIMA}}
 LSEDI : Switch to activate the sedimentation of pristine ice crystals
 \item
-\index{LSNOW!\innam{NAM\_PARAM\_LIMA}}
-LSNOW : Switch to activate the representation of rimed and aggregated ice particles
+\index{LSNOW\_T!\innam{NAM\_PARAM\_LIMA}}
+LSNOW\_T : Switch to activate the representation of snow proposed by Wurtz et al. 2023 which improves the extension and cloud composition of anvils in convective systems.
 \item
-\index{LHAIL!\innam{NAM\_PARAM\_LIMA}}
-LHAIL : Switch to activate the representation of hail
+\index{LMURAKAMI!\innam{NAM\_PARAM\_LIMA}}
+LMURAKAMI: Switch to activate the snow riming and conversion to graupel process can be computed following Murakami (1990). Only avaiable with LPTSPLIT=T.
+\item
+\index{LCIBU!\innam{NAM\_PARAM\_LIMA}}
+LCIBU : swith to activate the representation of collisional ice break-up (CIBU, Hoarau et al., 2018), a secondary ice production mechanism (ice is produced by the fragmentation of snow upon impact with graupel). The number of fragments formed per collision can be fixed by XNDEBRIS\_CIBU.
+\item
+\index{XNDEBRIS\_CIBU!\innam{NAM\_PARAM\_LIMA}}
+XNDEBRIS\_CIBU : number of fragments formed per collision in the ice collisional break-up mechanism. Negative values result in a random number of fragments formed for each collision.
+\item
+\index{LRDSF!\innam{NAM\_PARAM\_LIMA}}
+LRDSF : switch to activate raindrop shattering freezing, a secondary ice production mechanism.
+\item
+\index{LKHKO!\innam{NAM\_PARAM\_LIMA}}
+LKHKO : switch to activate a replicate behaviour of the KHKO scheme (useful for stratocumulus clouds and drizzle formation) with LIMA code.
 \item
 \index{LHHONI!\innam{NAM\_PARAM\_LIMA}}
 LHHONI : Switch to activate CCN homogeneous freezing
@@ -5546,14 +5599,8 @@ XFACTNUC\_CON : Amplification factor for IN  nucleation by contact (only used if
 \index{NPHILLIPS!\innam{NAM\_PARAM\_LIMA}}
 NPHILLIPS : Version of the Phillips parameterization : 8 for the 2008 paper ; 13 for the 2013 paper
 \item
-\index{LWARM!\innam{NAM\_PARAM\_LIMA}}
-LWARM : Switch to activate the representation of warm phase
-\item
 \index{LACTI!\innam{NAM\_PARAM\_LIMA}}
 LACTI : Switch to activate the CCN activation 
-\item
-\index{LRAIN!\innam{NAM\_PARAM\_LIMA}}
-LRAIN : Switch to activate the rain formation
 
 \item
 \index{LSEDC!\innam{NAM\_PARAM\_LIMA}}
