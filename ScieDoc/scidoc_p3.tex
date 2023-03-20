@@ -1,7 +1,13 @@
 \documentclass[12pt]{book}
 \usepackage{mnh_package}
 \usepackage{subfigure}
+\usepackage[cdot,squaren]{SIunits}
+\usepackage{vector}
 
+\newcommand{\MNH}{\textsc{MésoNH}}
+\newcommand{\Blaze}{\textsc{Blaze}}
+\newcommand{\dpar}[3]{\frac{\partial^{#3} #1}{\partial #2}}
+\DeclareMathOperator{\sgn}{sgn}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \bibliographystyle{mnh_package}
@@ -19,4 +25,5 @@
 \include{3-8-SubgridCondScheme}
 \include{3-9-ElectricalScheme}
 \include{3-10-WindTurbine}
+\include{3-11-BlazeFireModel}
 \end{document}
