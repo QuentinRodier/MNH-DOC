@@ -5136,7 +5136,7 @@ LSPEC\_ALB & logical & .FALSE. \\
 SURF\_TYPE & characters(len=4) & 'SNOW' \\
 \end{longtable}
 
-It contains the options for the ECRAD radiative scheme. ECRAD version is defined in the compilation procedure by setting VER\_ECRAD\footnote{Since the version 1.4.0, ECRAD is open-source}.
+It contains the options for the ECRAD radiative scheme. ECRAD version is defined in the compilation procedure by setting VER\_ECRAD\footnote{Since the version 1.4.0, ECRAD is open-source}. To use ECRAD, you must link specific files found at \$\{SRC\_MESONH\}/src/LIB/RAD/ecrad-\$\{VERSION\_ECRAD\}/data/\{RAD*,*.nc\} in the folder of the simulation.
 \begin{itemize}
 \item NSWSOLVER : SW solver. The possible values are 0 for 'McICA' , 1 for 'SPARTACUS' and 2 for 'SPARTACUS' with 3D effects
  \index{NSWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
@@ -5185,7 +5185,7 @@ It contains the options for the ECRAD radiative scheme. ECRAD version is defined
   \item LSPEC\_ALB : flag to use an idealized (horizontally homogeneous) spectral albedo defined by SURF\_TYPE
  \index{LSPEC\_ALB!\innam{NAM\_PARAM\_ECRADn}}
  
-   \item SURF\_TYPE : type of surface for idealized spectral emissivity and albedo among  "VEGE", "SNOW", "OCEA", "DESE", "ZERO", "UNIT". Values are read in ECRAD data files (spectral\_albedo.nc spectral\_emissivity.nc) 
+   \item SURF\_TYPE : type of surface for idealized spectral emissivity and albedo among  "VEGE", "SNOW", "OCEA", "DESE", "ZERO", "UNIT". Values are read in ECRAD data files (spectral\_albedo.nc spectral\_emissivity.nc (these files are in src/LIB/RAD/data\_mnh). 
  \index{SURF\_TYPE!\innam{NAM\_PARAM\_ECRADn}}
 \end{itemize}
 \newpage
@@ -5868,7 +5868,6 @@ NRAD\_DIAG     & integer        & 0  \\
 XFUDG          & real           &   1.   \\
 LAERO\_FT      & logical        & FALSE  \\
 LFIX\_DAT      & logical        & FALSE  \\
-LRAD\_DUST     & logical        & FALSE  \\
 \end{longtable}
 
 It contains the options retained for the radiations scheme, used by the 
@@ -6029,10 +6028,6 @@ LAERO\_FT : for a temporal interpolation of aerosol and ozone distribution.
 \index{LFIX\_DAT!\innam{NAM\_PARAM\_RADn}}
 LFIX\_DAT : flag to fix the date to a constant perpetual day. It is set by the initial SOUNDING date (RSOU) 
             Note that the diurnal cycle is still considered.
-\item
-\index{LRAD\_DUST!\innam{NAM\_PARAM\_RADn}}
-LRAD\_DUST : if true, the radiativ effect of dusts is take into account
-\end{itemize}
 
 The cloud overlap assumption is defined in the routine ini\_radconf.f90.
 The different assumptions are :
@@ -6265,7 +6260,7 @@ CFILE\_PROF    & 32 characters  &  'NO\_INPUT\_CSV' \\
 \item XLON\_PROF: longitude (in degrees) of the profiler (with LCARTESIAN=F only)
 
 \index{XZ\_PROF!\innam{NAM\_PROFILERn}}
-\item XZ\_PROF: altitude (in meters) of the profiler
+\item XZ\_PROF: height above the model orography (in meters) of the profiler
 
 \index{CNAME\_PROF!\innam{NAM\_PROFILERn}}
 \item CNAME\_PROF: name of the profiler
@@ -6436,7 +6431,7 @@ LDIAG\_SURFRAD & logical & TRUE \\
 \item XLON\_STAT: longitude (in degrees) of the station (with LCARTESIAN=F only)
 
 \index{XZ\_STAT!\innam{NAM\_STATIONn}}
-\item XZ\_STAT: altitude (in meters) of the station
+\item XZ\_STAT: height above the model orography (in meters) of the station
 
 \index{CNAME\_STAT!\innam{NAM\_STATIONn}}
 \item CNAME\_STAT: name of the station
@@ -6616,7 +6611,7 @@ number, Schmidt number, sources of TKE\ldots)
 \item
 \index{LSUBG\_COND!\innam{NAM\_TURBn}}
 LSUBG\_COND: flag to activate the subgrid condensation scheme (refer to the scientific 
-documentation for more details).  With the microphysics scheme LIMA (CCLOUD='LIMA' in NAM\_PARAMn), it must be used with time-splitting LPTSPLIT=T in NAM\_PARAM\_LIMA.
+documentation for more details). It is strongly recommended to activate it at kilometric horizontal resolution (such as in AROME).  With the microphysics scheme LIMA (CCLOUD='LIMA' in NAM\_PARAMn), it must be used with time-splitting LPTSPLIT=T in NAM\_PARAM\_LIMA.
 
 \item
 \index{CCONDENS!\innam{NAM\_TURBn}}
@@ -6967,7 +6962,7 @@ and measurements, it can be interesting to store the simulated data for a given
 profiler or station. Calculations are done for all the selected nested models and recorded in the corresponding diachronic files.
  A profiler is located at a given location defined by its
 latitude and longitude, whereas a station is located with its latitude, 
-longitude and altitude.
+longitude and height above the model orography.
 Pronostic fields, recorded at a prescribed time frequency, are
 zonal and meridian wind
 (from U and V components), vertical velocity, potential temperature, pression,
