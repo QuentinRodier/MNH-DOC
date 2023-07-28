@@ -24,7 +24,7 @@ The role of the \Blaze{} model can be summarized as follows~:
 	\item operate in a massively parallel environment by using the parallelization tools of \MNH.
 \end{itemize}
 
-The Blaze fire model features the following components: \textit{i)} an Eulerian two-dimensional front-tracking model that relies on a level-set (LS) method and uses a description of the local rate of spread based on Balbi’s formulation \citep{Balbi2009}; and \textit{ii)} a flux parametrisation that estimates the spatial distribution and intensity of the surface latent and sensible heat fluxes. If Blaze is embedded in an atmospheric model, these heat fluxes act as surface boundary conditions to solve the atmospheric flow perturbed by the fire.
+The Blaze fire model features the following components: \textit{i)} an Eulerian two-dimensional front-tracking model that relies on a level-set (LS) method and uses a description of the local rate of spread based on Balbi’s formulation \citep{Balbi2009}; and \textit{ii)} a flux parametrization that estimates the spatial distribution and intensity of the surface latent and sensible heat fluxes. If Blaze is embedded in an atmospheric model, these heat fluxes act as surface boundary conditions to solve the atmospheric flow perturbed by the fire.
 
 The interested reader is strongly advised to read the thesis of Aurélien COSTES and the original paper of Blaze in addition to this technical note \citep{costes2021subgrid}.
 
@@ -43,15 +43,15 @@ A distinction is therefore made between the atmospheric surface mesh, referred t
 \bigskip
 
 From a technical point of view, it means that the fire mesh is a 2D array of size $(\Gamma_x N_x, \Gamma_y N_y)$ where $N_x$ and $N_y$ represent the size of the atmospheric mesh in $x$ and $y$ directions respectively.
-However, this 2D grid size is not supported by the parallelization paradigm of \MNH{} which needs a 2D array of size $(N_x, N_y)$.
-Therefore, every fire related array which is normally of size $(\Gamma_x N_x, \Gamma_y N_y)$ shall be stored as a 3D array of size $(N_x, N_y, \Gamma_x \Gamma_y)$.
+However, this 2D grid size is not supported by the parallelization paradigm of \MNH, which needs a 2D array of size $(N_x, N_y)$.
+Therefore, every fire-related array which is generally of size $(\Gamma_x N_x, \Gamma_y N_y)$ shall be stored as a 3D array of size $(N_x, N_y, \Gamma_x \Gamma_y)$.
 The 3D format arrays are not very convenient for gradient operators.
-Fire related fields are stored in this 3D format in output files which is not very convenient either for post processing. 
+Fire-related fields are stored in this 3D format in output files which is not very convenient for post-processing. 
 Two functions are then defined to switch from one representation to another.
 
 \medskip
 
-The first one uses 3D representation indexes $(i,j,k)$ to compute 2D representation indexes $(l, m)$. It defines temporary variables $a$ and $b$.
+The first uses 3D representation indexes $(i,j,k)$ to compute 2D representation indexes $(l, m)$. It defines temporary variables $a$ and $b$.
 
 \begin{align}
   b &= (k-1) \div \Gamma_x + 1 \nonumber \\
@@ -73,16 +73,16 @@ The second one uses 2D representation indexes $(l, m)$ to compute 3D representat
 	k &= (b-1)\Gamma_x + a
 \end{align}
 
-These functions are commonly used in the code in three steps: \textit{i)} switch an fire related array from 3D to 2D representation, \textit{ii)} use an operator (gradient for example) on the 2D array, \textit{iii)} switch the result of the operator from 2D to 3D representation.
+These functions are commonly used in the code in three steps: \textit{i)} switch a fire-related array from 3D to 2D representation, \textit{ii)} use an operator (gradient, for example) on the 2D array, \textit{iii)} switch the result of the operator from 2D to 3D representation.
 
-For post processing purposes, the two functions are available in the Pyrolib package.
+For post-processing purposes, the two functions are available in the Pyrolib package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Governing equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:governingeq}
 
-In Blaze, the LS function $\phi \equiv \phi(x,y,t)$ is not a signed distance but rather a bounded function $0 \leqslant \phi \leqslant 1$, where the contour line $\phi = 0.5$ is identified as the fire front; $\phi > 0.5$ represents burnt vegetation; and $\phi < 0.5$ represents unburnt vegetation at a given time $t$. The LS field is transported at the rate of spread $\mathcal R$ and satisfies the following Hamilton-Jacobi equation:
+In Blaze, the LS function $\phi \equiv \phi(x,y,t)$ is not a signed distance but rather a bounded function $0 \leqslant \phi \leqslant 1$, where the contour line $\phi = 0.5$ is identified as the fire front; $\phi > 0.5$ represents burnt vegetation, and $\phi < 0.5$ represents unburnt vegetation at a given time $t$. The LS field is transported at the rate of spread $\mathcal R$ and satisfies the following Hamilton-Jacobi equation:
 \begin{equation}
 \dpar{\phi}{t}{} = \mathcal R \left (|\nabla \phi | + \epsilon_\phi \widetilde \Delta \phi \right )
 \label{eq:lveq}
@@ -93,7 +93,7 @@ Numerical tests have shown that $\epsilon_\phi = 0.1$ gives satisfactory results
 
 \medskip
 
-In \Blaze, the Hamilton-Jacobi equation (Equation~\ref{eq:lveq}) is solved numerically using a third-order Runge-Kutta scheme in time and a third-order WENO (\emph{Weighted Essentially Non-Oscillatory}) scheme in space (RK3-WENO3). A first order WENO method and the same RK schemes as for MesoNH are also available.
+In \Blaze, the Hamilton-Jacobi equation (Equation~\ref{eq:lveq}) is solved numerically using a third-order Runge-Kutta scheme in time and a third-order WENO (\emph{Weighted Essentially Non-Oscillatory}) scheme in space (RK3-WENO3). A first-order WENO method and the same RK schemes available in \MNH{} can also be used.
 
 \medskip
 
@@ -119,15 +119,15 @@ In order to compute the rate of spread on the fire mesh, we need to interpolate 
 \begin{equation}
   U_0 = \uvec U \cdot \uvec n,
 \end{equation}
-where $\uvec U$ is the wind vector at the fire front and $\uvec n$ the fire front normal vector. As $\uvec n$ is a 3D vector, every component of the wind needs to be interpolated.
+where $\uvec U$ is the wind vector at the fire front, and $\uvec n$ is the fire front normal vector. As $\uvec n$ is a 3D vector, every wind component needs to be interpolated.
 
 \subsubsection{Vertical interpolation}
 
-For now, there is no vertical interpolation of the wind in \Blaze.
+For now, there is no vertical wind interpolation in \Blaze.
 The horizontal wind $(u, v)$ is taken at the first vertical level (excluding the halo).
-The vertical wind is linearly interpolate at the same level between the ground and the first vertical level (excluding the halo).
+The vertical wind is linearly interpolated at the same level between the ground and the first vertical level (excluding the halo).
 The lack of independence between the mesh and the interpolation method is a real problem for the model.
-This development should be a one of the priorities of the community. 
+This development should be one of the priorities of the community. 
 
 \subsubsection{Horizontal interpolation}
 
@@ -153,6 +153,13 @@ with
 \end{align}
 where $\div$ is the Euclidean division.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=10cm]{EPS/Blaze_wind_interp}
+	\caption{Horizontal interpolation of wind from the atmospheric grid to the fire grid.}
+  	\label{fig:windinterpH}
+\end{figure}
+
 \subsubsection{Time-based smoothing}
 
 For very rapidly varying wind intensity, the temporal signal given to the rate-of-spread parameterization can be smoothed by using a moving average method. The recursive Exponential Weighted Averaging Method is used in \Blaze. The interest quantity $s_n$ given to \Blaze{} is computed from the previous time step $s_{n-1}$ and the interpolated wind computed by \MNH{} $u_n$ as:
@@ -166,18 +173,18 @@ The value of $\beta$ is computed by:
 \end{equation}
 where $\tau$ [\second] is the averaging time (the same time constant one would find in a simple averaging method), and $\Delta t$ is the \MNH{} time step.
 
-The time-based smoothing can be activated by LWINDFILTER=.TRUE.. The time constant $\tau$ of the filter is set by XEWAMTAU (default valut: 20\second).
+The time-based smoothing can be activated by LWINDFILTER=.TRUE.. The filter's time constant $\tau$ is set by XEWAMTAU (default value: 20\second).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Slope impact on rate of spread}
+\subsection{Slope impact on the rate of spread}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The Section~\ref{sec:governingeq} described the governing equation for the level-set method on a flat and uniform cartesian grid.
+Section~\ref{sec:governingeq} described the governing equation for the level-set method on a flat and uniform cartesian grid.
 However, the terrain is not always flat and the rate of spread parameterization needs to take into account the slope.
 
 \subsubsection{vector space definition}
 
-Let's consider here four vector bases. The orthonormal reference base of the atmospheric model $(\uvec e_x, \uvec e_y, \uvec e_z)$. It contains for example the wind $\uvec U$. There is also the contravariant basis $(\uvec{\hat e}_x, \uvec{\hat e}_y , \uvec{\hat e}_z)$ which corresponds to the deformed basis of the atmospheric mesh. 
+Let's consider here four vector bases. The orthonormal reference base of the atmospheric model $(\uvec e_x, \uvec e_y, \uvec e_z)$. It contains, for example, the wind $\uvec U$. There is also the contravariant basis $(\uvec{\hat e}_x, \uvec{\hat e}_y , \uvec{\hat e}_z)$ which corresponds to the deformed basis of the atmospheric mesh. 
 
 \smallskip
 
@@ -185,7 +192,7 @@ Then, we find the basis of the flame plane $(\uvec n, \uvec p, \uvec q$) with $\
 
 \smallskip
 
-Let us project this basis on the horizontal surface which constitutes the basis for the level set $(\uvec{\tilde n}, \uvec{\tilde p}, \uvec{\tilde q})$. These vectors are determined by $\uvec{\tilde n} \cdot \uvec n = \cos \alpha$, where $\alpha$ is the slope in the propagation direction. In this case, $\uvec{\tilde p} = \uvec e_z$ and $\uvec{\tilde q} = \uvec q$. This basis corresponds to the rotation of angle $- \alpha$ according to the vector $\uvec q$ of the basis $(\uvec n, \uvec p, \uvec q)$.
+Let us project this basis on the horizontal surface, which constitutes the basis for the level set $(\uvec{\tilde n}, \uvec{\tilde p}, \uvec{\tilde q})$. These vectors are determined by $\uvec{\tilde n} \cdot \uvec n = \cos \alpha$, where $\alpha$ is the slope in the propagation direction. In this case, $\uvec{\tilde p} = \uvec e_z$ and $\uvec{\tilde q} = \uvec q$. This basis corresponds to the rotation of angle $- \alpha$ according to the vector $\uvec q$ of the basis $(\uvec n, \uvec p, \uvec q)$.
 
 \subsubsection{Vector composition}
 
@@ -199,11 +206,11 @@ The $\gamma$ angle is then defined as
 \begin{equation}
   \tan \gamma = \frac{\uvec V \cdot \uvec n}{\uvec V \cdot \uvec p}.
 \end{equation}
-The wind vector is by definition collinear to the front normal
+The wind vector is, by definition, collinear to the front normal
 \begin{equation}
   \uvec U_0 = U_0 \uvec n.
 \end{equation}
-The vertical velocity in the flame is by definition collinear with the vertical direction
+The vertical velocity in the flame is, by definition, collinear with the vertical direction
 \begin{equation}
   \uvec v_f = v_f \uvec e_z.
 \end{equation}
@@ -227,11 +234,11 @@ Therefore, it is possible to write
 
 It is necessary to compute a few basis vectors to determine $\gamma$. In particular, the level set propagation is done on an imaginary horizontal plane of basis $(\uvec e_x, \uvec e_y)$.
 From $\uvec \nabla \phi$, we can determine $\uvec{\tilde n}$.
-It is then necessary to calculate $\alpha$, $\uvec n$ and $U_0$.
+It is then necessary to calculate $\alpha$, $\uvec n$, and $U_0$.
 
 \medskip
 
-The slope is a two-dimensional vector that can be expressed in several bases. A natural basis, already used in many models, consists of two angles $\alpha_s$ and $\alpha_a$, representing the angle of steepest slope and the direction of the face with respect to North, respectively.
+The slope is a two-dimensional vector that can be expressed in several bases. A natural basis, already used in many models, consists of two angles $\alpha_s$ and $\alpha_a$, representing the angle of the steepest slope and the direction of the face with respect to the North, respectively.
 The second option is to use a projection of the slope vector on an orthonormal basis, typically $(\uvec e_x, \uvec e_y)$.
 
 \medskip
@@ -241,10 +248,10 @@ For \MNH-\Blaze, the slope can be determined by two methods:
   \item through a height map on the atmospheric grid, $z(x,y)$, or the fire grid, $z(x_f,y_f)$,
   \item or a map of angles $\alpha_s$ and $\alpha_a$ on the fire grid.
 \end{itemize}
-The two representations are strictly equivalent but the numerical use of angles requires the use of many trigonometric and non-linear functions which has a very important numerical cost.
+The two representations are strictly equivalent, but the numerical use of angles requires the use of many trigonometric and non-linear functions which has a significant numerical cost.
 Whenever possible, it is better to work with vector projection, which only requires scalar products (\textit{i.e.} a product of vectors component by component, which is easily vectorized by the machine).
 
-We therefore set up a calculation strategy based on the height map and the components of the orographic gradient. 
+We, therefore, set up a calculation strategy based on the height map and the components of the orographic gradient. 
 
 \paragraph{Computation of the orographic gradient}
 The expression of the components of the orographic gradient $\uvec \nabla z$, noted $\uvec h$ at the center of the atmospheric cell $(i,j)$ is given by:
@@ -264,7 +271,7 @@ Same on the $y$ component.
 Finally, we interpolate the orographic gradient components on the fire grid with the same approach as for the wind components. 
 
 \paragraph{Computation of the front normal on the surface plane}
-For a particular fire cell, the components of the orographic gradient allow to determine two director vectors of the plane forming the mean surface of fire cell.
+For a particular fire cell, the components of the orographic gradient allow determining two director vectors of the plane forming the mean surface of the fire cell.
 \begin{align}
 	\uvec s_1 &= ( 1, 0, h_x ), \\
 	\uvec s_2 &= (0,1,h_y).
@@ -273,7 +280,7 @@ The normal vector $\uvec n$ lies in this plane and has for projection on the hor
 \begin{equation}
   \uvec{\tilde n} = \frac{1}{\| \uvec \nabla \phi \|} (\uvec \nabla_x \phi, \uvec \nabla_y \phi, 0 ).
 \end{equation}
-$\uvec n$ is therefore a linear combination of the two director vectors
+$\uvec n$ is, therefore, a linear combination of the two director vectors
 \begin{equation}
   \uvec n = a \uvec s_1 + b \uvec s_2.
 \end{equation}
@@ -294,8 +301,8 @@ However, $\uvec{\tilde n}$ is a unit vector which implies that its norm is 1. Th
   \tan \alpha = \tilde n_x h_x + \tilde n_y h_y.
   \label{eq:alphadef}
 \end{equation}
-This is equivalent to calculating $\uvec{\tilde n} \cdot \uvec h $ in the horizontal plane. . This scalar produc can be used to directly calculate the slope term in the equation~\eqref{eq:tangamma}. 
-With this definition, $\uvec n$ is not a unit vector. This property will be very useful when projecting the wind. We then normalize the vector $\uvec n$. The norm is denoted by $\mathcal N$.
+This is equivalent to calculating $\uvec{\tilde n} \cdot \uvec h $ in the horizontal plane. . This scalar product can be used to directly calculate the slope term in the equation~\eqref{eq:tangamma}. 
+With this definition, $\uvec n$ is not a unit vector. This property will be advantageous when projecting the wind. We then normalize the vector $\uvec n$. The norm is denoted by $\mathcal N$.
 \begin{equation}
   \mathcal N^2 = 1 + \tilde n_x^2 h_x^2 + \tilde n_y^2 h_y^2.
 \end{equation}
@@ -319,8 +326,8 @@ We want to compute the projection of $\uvec{\mathcal R}$ on $\uvec{\tilde n}$.
 \begin{equation}
   \widetilde{\mathcal R} = \mathcal R \uvec n \cdot \uvec{\tilde n} = \mathcal R \cos \alpha
 \end{equation}
-Numerically, we already know the value of $\tan \alpha$ but not the value of the angle. To compute this projection it is necessary to compute $\cos (\arctan (\tan \alpha))$ which costs on average 3 times more than using the expression $\cos \alpha = 1 /\sqrt{1 + \tan^2 \alpha}$.
-To optimize this calculation we have
+Numerically, we already know the value of $\tan \alpha$ but not the value of the angle. To compute this projection, it is necessary to compute $\cos (\arctan (\tan \alpha))$ which costs on average 3 times more than using the expression $\cos \alpha = 1 /\sqrt{1 + \tan^2 \alpha}$.
+To optimize this calculation, we have
 \begin{equation}
   \widetilde{\mathcal R} = \mathcal R \frac{1}{\sqrt{1 + \tan^2 \alpha}}.
 \end{equation}
@@ -330,7 +337,7 @@ To optimize this calculation we have
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In \Blaze, sensible and latent heat fluxes computation is based on energy reservoir. Each fire cell constitutes a sensible and latent energy reservoir called Available Sensible Energy (ASE) and Available Water Content (AWC), respectively, based on fuel properties. Then, the heat flux parameterization is the temporal description of how fast this reservoir is emptying. These parameterizations for sensible and latent heat fluxes are noted $\psi_h(t, t^a(\uvec x))$ and $\psi_w(t, t^a(\uvec x))$, respectively. They are functions of time and arrival time $t^a$ at the position $\uvec x$.
-In order to improve the spatial description of heat flux, these functions are moderated by the subgrid surface that is currently burning in the fire cell $\mathcal S (\uvec x, t)$. 
+To improve the spatial description of heat flux, these functions are moderated by the subgrid surface that is currently burning in the fire cell $\mathcal S (\uvec x, t)$. 
 Then, the surface fluxes are given by:
 \begin{align}
 	\Psi_h (\uvec x, t) &= \psi_h(t, t^a(\uvec x)) \mathcal S (\uvec x, t), \\
@@ -352,11 +359,11 @@ The surface terms computed by \Blaze{} are distributed by an exponential law. Fo
 \begin{equation}
   \mathcal F_h (z) = \mathcal F_h^0 \exp \left ( - \frac{z}{z_f} \right ),
 \end{equation}
-where $\mathcal F_h (z)$ is the volume source term, $\mathcal F_h^0$ is the value at the surface, and $z_f$ a characteristic height used a parameter (XFLUXZEXT in the namelist). To determine $\mathcal F_h^0$, we add a contraint on the integral of the volume source term:
+where $\mathcal F_h (z)$ is the volume source term, $\mathcal F_h^0$ is the value at the surface, and $z_f$ is a characteristic height used as a parameter (XFLUXZEXT in the namelist). To determine $\mathcal F_h^0$, we add a constraint on the integral of the volume source term:
 \begin{equation}
   \int_0^{z_{\mathrm{max}}} \mathcal F_h (z) \, \mathrm d z = \Psi_h.
 \end{equation}
-The parameter $z_{\mathrm{max}}$ is the maximum injection height (XFLUXZMAX in the namelist). Numerically, the discretised volume source term $\mathcal F_k$ is the mean value of $\mathcal F_h (z)$ in the considered cell, noted $k$. It is computed as:
+The parameter $z_{\mathrm{max}}$ is the maximum injection height (XFLUXZMAX in the namelist). Numerically, the discretized volume source term $\mathcal F_k$ is the mean value of $\mathcal F_h (z)$ in the considered cell, noted $k$. It is computed as:
 \begin{equation}
 \mathcal F_k =
 \begin{cases}
@@ -364,7 +371,7 @@ The parameter $z_{\mathrm{max}}$ is the maximum injection height (XFLUXZMAX in t
 0 & \text{else}. \\
 \end{cases}
 \end{equation}
-Flux vertical levels are noted with semi-integer indexes and mass vertical levels are noted with integer indices $z_k = \frac{z_{z - 1/2} + z_{k+1/2}}{2}$. Then the vertical cell size is $\Delta z = z_{z + 1/2} - z_{z - 1/2}$.
+Flux vertical levels are noted with semi-integer indexes, and mass vertical levels are noted with integer indices $z_k = \frac{z_{z - 1/2} + z_{k+1/2}}{2}$. Then the vertical cell size is $\Delta z = z_{z + 1/2} - z_{z - 1/2}$.
 
 
 
@@ -387,14 +394,14 @@ For each mode, the coupling variables are exchanged at each atmospheric time ste
 \label{ssec:cpl1A2F}
 %%++++++++++++++++++++++++++++++++
 
-In the forced (A2F) mode (Fig.~\ref{fig:2WCMode}a), the fire spread is affected by the atmospheric flow but the wind conditions are not disturbed by the fire. Blaze requires the wind conditions near the surface from an atmospheric model to compute the Balbi's rate of fire spread but no heat flux computation is needed. As output, Blaze provides the burning map and the fire related fields (LS function $\phi$, rate of spread $\mathcal R$, wind contribution to the rate of spread $(\mathcal R - \mathcal R_0)$, ASE and AWC).
+In the forced (A2F) mode (Fig.~\ref{fig:2WCMode}a), the fire spread is affected by the atmospheric flow, but the wind conditions are not disturbed by the fire. Blaze requires the wind conditions near the surface from an atmospheric model to compute Balbi's rate of fire spread, but no heat flux computation is needed. As output, Blaze provides the burning map and the fire-related fields (LS function $\phi$, rate of spread $\mathcal R$, wind contribution to the rate of spread $(\mathcal R - \mathcal R_0)$, ASE and AWC).
 
 %%++++++++++++++++++++++++++++++++
 \subsection{Forced fire-to-atmosphere mode (fire replay mode)}
 \label{ssec:cpl1F2A}
 %%++++++++++++++++++++++++++++++++
 
-To perform numerical convergence tests or investigate the atmospheric response to fire energy release, it is of primary interest to run simulations from a predetermined fire. This fire replay (F2A) mode (Fig.~\ref{fig:2WCMode}b) takes as input an existing burning map (obtained from simulation or observation), and computes latent and sensible heat fluxes to be injected into the atmospheric model. The fire spread model component is not used. Instead, a temporal reconstruction of the LS function $\phi$ is performed from information contained in the burning map. This is done through a sigmoid function of parameter $\lambda$:
+To perform numerical convergence tests or investigate the atmospheric response to fire energy release, running simulations from a predetermined fire is of primary interest. This fire replay (F2A) mode (Fig.~\ref{fig:2WCMode}b) takes as input an existing burning map (obtained from simulation or observation) and computes latent and sensible heat fluxes to be injected into the atmospheric model. The fire spread model component is not used. Instead, a temporal reconstruction of the LS function $\phi$ is performed from information contained in the burning map. This is done through a sigmoid function of parameter $\lambda$:
 \begin{equation}
   \phi (x,y,t) = \frac{1}{1+ e^{-\lambda (t - t^a (x,y)) }}
   \label{eq:sigmoid}
@@ -404,7 +411,7 @@ Several Blaze simulations run on a simplified test case have shown that $\lambda
 \begin{equation}
  \lambda (\Delta x_f ) = 2.136 \; e^{-0.211 (\Delta x_f + 8.613)} + 0.064
 \end{equation}
-for $1 \leqslant \Delta x_f \leqslant 25 $ [m]. This reconstruction leads to maximum error between reconstructed LS and original LS lower than 9\% for the coarsest mesh and lower than 0.5\% for the most refined mesh. Most importantly, the sigmoid formulation (Eq.~\ref{eq:sigmoid}) guarantees by definition the exact same fire front position represented by the contour line $\phi=0.5$. The injected heat fluxes are thereby well reproduced in the F2A simulations compared to the original simulations carried out in two-way coupled mode for varying fire mesh resolution $\Delta x_f$.
+for $1 \leqslant \Delta x_f \leqslant 25 $ [m]. This reconstruction leads to the maximum error between reconstructed LS and original LS lower than 9\% for the coarsest mesh and lower than 0.5\% for the most refined mesh. Most importantly, the sigmoid formulation (Eq.~\ref{eq:sigmoid}) guarantees by definition the exact same fire front position represented by the contour line $\phi=0.5$. The injected heat fluxes are thereby well reproduced in the F2A simulations compared to the original simulations carried out in two-way coupled mode for varying fire mesh resolution $\Delta x_f$.
 
 %%++++++++++++++++++++++++++++++++
 \subsection{Two-way coupled mode}
@@ -414,15 +421,15 @@ for $1 \leqslant \Delta x_f \leqslant 25 $ [m]. This reconstruction leads to max
 The 2WC (Fig.~\ref{fig:2WCMode}c) accounts for the two-way interactions between the fire model and the atmospheric model, meaning that surface winds simulated by the atmosphere model are used as input to the fire spread model component and that the fire feedback onto the atmosphere is imposed through the surface latent and sensible heat flux model component in Blaze.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Pyrolib: pre/post processing python package for Blaze}
+\section{Pyrolib: pre/post-processing python package for Blaze}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Pyrolib is an open source python package build for Meso-NH/Blaze.
+Pyrolib is an open-source python package built for \MNH/\Blaze.
 It is freely available on \href{https://github.com/Aurel31/pyrolib}{Github} and can be installed via \href{https://pypi.org/project/pyrolib}{Pypi}. 
 
-The use of pyrolib is particularly recommended for the preparation of FuelMap and the post processing of the netcdf output files.
+The use of Pyrolib is particularly recommended for the preparation of FuelMap and the post-processing of the netcdf output files.
 An example of a script to generate a FuelMap.nc file is given in the package examples (simplecase.py).
-The CLI \textit{pyrolib-post} is particularly recommended for post processing tasks. See pyrolib documentation for more information.  
+The CLI \textit{pyrolib-post} is particularly recommended for post-processing tasks. See Pyrolib documentation for more information.  
 
 
 
