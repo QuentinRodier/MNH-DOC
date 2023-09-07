@@ -6028,6 +6028,7 @@ LAERO\_FT : for a temporal interpolation of aerosol and ozone distribution.
 \index{LFIX\_DAT!\innam{NAM\_PARAM\_RADn}}
 LFIX\_DAT : flag to fix the date to a constant perpetual day. It is set by the initial SOUNDING date (RSOU) 
             Note that the diurnal cycle is still considered.
+\end{itemize}
 
 The cloud overlap assumption is defined in the routine ini\_radconf.f90.
 The different assumptions are :
@@ -6237,7 +6238,7 @@ XY\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF  \\
 XLAT\_PROF     & real(:)  &  NNUMB\_PROF * XUNDEF \\
 XLON\_PROF     & real(:)  &  NNUMB\_PROF * XUNDEF \\
 XZ\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF \\
-CNAME\_PROF    & array(8*characters)  &  NNUMB\_PROF * ' ' \\
+CNAME\_PROF    & array(10*characters)  &  NNUMB\_PROF * ' ' \\
 CFILE\_PROF    & 32 characters  &  'NO\_INPUT\_CSV' \\
 LDIAG\_SURFRAD & logical & TRUE \\
 \end{longtable}
@@ -6411,7 +6412,7 @@ XY\_STAT       & real(:)  &  NNUMB\_STAT * XUNDEF  \\
 XLAT\_STAT     & real(:)  &  NNUMB\_STAT * XUNDEF \\
 XLON\_STAT     & real(:)  &  NNUMB\_STAT * XUNDEF \\
 XZ\_STAT       & real(:)  &  NNUMB\_STAT * XUNDEF \\
-CNAME\_STAT    & array(8*characters)  &  NNUMB\_STAT * ' ' \\
+CNAME\_STAT    & array(10*characters)  &  NNUMB\_STAT * ' ' \\
 CFILE\_STAT    & 32 characters  &  'NO\_INPUT\_CSV' \\
 LDIAG\_SURFRAD & logical & TRUE \\
 \end{longtable}
