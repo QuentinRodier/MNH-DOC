@@ -6239,6 +6239,7 @@ XLON\_PROF     & real(:)  &  NNUMB\_PROF * XUNDEF \\
 XZ\_PROF       & real(:)  &  NNUMB\_PROF * XUNDEF \\
 CNAME\_PROF    & array(8*characters)  &  NNUMB\_PROF * ' ' \\
 CFILE\_PROF    & 32 characters  &  'NO\_INPUT\_CSV' \\
+LDIAG\_SURFRAD & logical & TRUE \\
 \end{longtable}
 \begin{itemize}
 \index{NNUMB\_PROF!\innam{NAM\_PROFILERn}}
@@ -6267,6 +6268,9 @@ CFILE\_PROF    & 32 characters  &  'NO\_INPUT\_CSV' \\
 
 \index{CFILE\_PROF!\innam{NAM\_PROFILERn}}
 \item CFILE\_PROF: name of the .csv file containing the definition of the profilers (see below). If CFILE\_PROF='NO\_INPUT\_CSV', the .csv file is not read.
+
+\index{LDIAG\_SURFRAD!\innam{NAM\_PROFILERn}}
+\item LDIAG\_SURFRAD: if True, the surface and radiation variables are written
 
 \end{itemize}
 
