@@ -253,6 +253,8 @@ Time Lat Lon Alt(p)
 300. 50.  2.  988.1
 \end{verbatim}
 
+\textbf{Warning:} if the altitude is given in pressure, the units are hPa and not Pa.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_BACKUP (backup instants)}\label{s:nambackup}
 \index{NAM\_BACKUP!namelist description}
@@ -396,7 +398,7 @@ XINDDRAG    & real(:)              & XNEGUNDEF \\
 \item XALTLAUNCH: altitude of the launching site (mandatory if CTYPE='RADIOS'; if not set for 'CVBALL' or 'ISODEN', XPRES must be provided)
 
 \index{XPRES!\innam{NAM\_BALLOONS}}
-\item XPRES: pressure at the launching site. Must be provided for 'CVBALL' or 'ISODEN' if XALTLAUNCH is not set. Ignored for 'RADIOS'
+\item XPRES: pressure at the launching site (in Pascal). Must be provided for 'CVBALL' or 'ISODEN' if XALTLAUNCH is not set. Ignored for 'RADIOS'
 
 \index{XWASCENT!\innam{NAM\_BALLOONS}}
 \item XWASCENT: ascentional vertical speed of the ballon. Speed in calm air for 'RADIOS' (added to air vertical speed, default 5 m/s), initial value for 'CVBALL' (default 0 m/s), not used for 'ISODEN'
@@ -6965,8 +6967,7 @@ NKCLS, NKCLA: K level in physical domain respectively in the CLS and CLA ((x,t) 
 To compare the model outputs to observations
 and measurements, it can be interesting to store the simulated data for a given
 profiler or station. Calculations are done for all the selected nested models and recorded in the corresponding diachronic files.
- A profiler is located at a given location defined by its
-latitude and longitude, whereas a station is located with its latitude, 
+A profiler or a station is located with its latitude,
 longitude and height above the model orography.
 Pronostic fields, recorded at a prescribed time frequency, are
 zonal and meridian wind
