@@ -1144,33 +1144,6 @@ will be used for zenithal view, and the altitude of the model top will be used f
 \item XWVL\_LIDAR : gives the wavelength of the lidar source (in meters)
 \end{itemize}
 
-\subsection{Aircraft and balloon}
-\begin{center}
-\begin{tabular} {|l|l|l|}
-\hline
-Fortran name  & Fortran type & default value \\
-\hline
-LAIRCRAFT\_BALLOON       & logical     & .FALSE.   \\
-NTIME\_AIRCRAFT\_BALLOON & integer     & NUNDEF    \\
-XSTEP\_AIRCRAFT\_BALLOON & real        & XUNDEF    \\
-XLAT\_BALLOON            & array(real) & 9*XUNDEF  \\
-XLON\_BALLOON            & array(real) & 9*XUNDEF  \\
-XALT\_BALLOON            & array(real) & 9*XUNDEF  \\
-\hline
-\end{tabular}
-\end{center}
-\begin{itemize}
-\item LAIRCRAFT\_BALLOON \index{!\innam{NAM\_DIAG}}:  flag to compute aircraft and balloon trajectories
-with stationnary fields.
-Trajectories will be written in diachronic file {\it YINIFILE}BAL
-\item NTIME\_AIRCRAFT\_BALLOON\index{NTIME\_AIRCRAFT\_BALLOON!\innam{NAM\_DIAG}}: time length of trajectories computation 
-centered on CURrent time (s)
-\item XSTEP\_AIRCRAFT\_BALLOON\index{XSTEP\_AIRCRAFT\_BALLOON!\innam{NAM\_DIAG}}: minimum time step for trajectories computation (s)
-\item XLAT\_BALLOON\index{XLAT\_BALLOON!\innam{NAM\_DIAG}}: initial latitudes of the balloons
-\item XLON\_BALLOON\index{XLON\_BALLOON!\innam{NAM\_DIAG}}: initial longitudes of the balloons
-\item XALT\_BALLOON\index{XALT\_BALLOON!\innam{NAM\_DIAG}}: initial altitudes of the balloons (m)
-\end{itemize}
-
 \subsection{Interpolation on altitude, isobaric and isentropic levels}
 \begin{center}
 \begin{tabular} {|l|l|l|}
