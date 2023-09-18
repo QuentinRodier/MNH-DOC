@@ -293,6 +293,278 @@ $LE_{town}$ & town averaged turbulent latent heat flux & W m$^{-2}$ \\
 \caption{Energy fluxes and variables in the TEB scheme}
 \label{TEB1}
 \end{table}
+%
+The original TEB introduced by Masson (2000) is coupled to Meso-NH at the surface only (single-layer coupling;
+left panel of Fig. \ref{fig:coupling_methods}). This means that the mean building height is at the ground
+level of Meso-NH and the street level in the urban area is below the Meso-NH surface level. This modelling approach is
+suited for homogeneous low- and mid-rise cities, but becomes more problematic for heterogenous
+and high-rise cities. Therefore, a multi-layer coupling (right panel of Fig. \ref{fig:coupling_methods})
+has been introduced by Schoetter et al. (2020). With the multi-layer coupling, the city ground level is
+the same as the ground level in Meso-NH, and the buildings are immersed in the atmospheric model.
+The prognostic variables of horizontal wind, subgrid turbulence kinetic energy, potential temperature,
+and water vapour mixing ratio are impacted by the buildings at all model levels which intersect the buildings. \\
+%
+\begin{figure}[t]
+\hspace*{0.cm}
+\psfig{figure=\EPSDIR/Figure_Coupling.eps,width=17cm}
+\caption{The single-layer and multi-layer approach for the coupling between Meso-NH and SURFEX-TEB.
+For the single-layer coupling, the urban canopy layer is located below the surface of the atmospheric model
+and the Surface Boundary Layer (SBL) scheme is used to calculate the profiles of the meteorological variables
+there. For the multi-layer coupling, the buildings are immersed in and interact directly with the atmosphere.}
+\label{fig:coupling_methods}
+\end{figure}
+%
+The prognostic Meso-NH equations need to be modified for the multi-layer coupling.
+The friction exerted by the buildings on the horizontal wind components is taken into account using a drag force approach.
+The theoretical basis for this approach is explained in Raupach 1992. For highly three-dimensional flow over sparse
+roughness elements (e.g. the buildings in the urban roughness sublayer), the total turbulent stress can be written as
+the sum of the stress on the roughness elements and the stress on the underlying surface. This approach assumes that
+the wake and drag properties of an isolated roughness element can be characterised by an effective shelter area and volume.
+This hypothesis is valid at low roughness density, but is unlikely to hold at high roughness density due to sheltering effects.
+For this reason, the drag force approach might yield uncertainties for high-density cities. The drag force approach
+translates into Equation \ref{eq:drag_u} for the $u$ component (similar for the $v$ component).
+%
+\begin{equation}
+\label{eq:drag_u}
+{\frac{\partial (\rho_{deff} \ u)}{\partial t}} \bigg\vert_{build} = - \rho_{deff} \ \left(c_{d}^{wall}d_{wall} + c_{d}^{roof}d_{roof} 
+\right) u \mid \vec{u_{hor}} \mid
+\end{equation}
+%
+The horizontal wind speed ($\mid \vec{u_{hor}} \mid$) is calculated based on the prognostic 
+$u$ and $v$ wind components (Equation \ref{eq:uhor}).
+%
+\begin{equation}
+\label{eq:uhor}
+\mid \vec{u_{hor}} \mid = \sqrt{u^2+v^2}
+\end{equation}
+%
+The vertical frontal wall area density ($d_{wall}$) is calculated under the assumption
+that all buildings at grid point scale have the same height (Equation \ref{eq:wall_dens})
+to maintain coherence with the geometric assumption in TEB. A cylindrical building shape
+is assumed to calculate the frontal wall area density based on the wall to plan area ratio
+($\lambda_{w}$). The real shape of the buildings is not taken into account, since this would
+require the definition of a large number of additional model input maps describing the
+frontal area density as a function of height and wind direction.
+%
+\begin{equation}
+\label{eq:wall_dens}
+d_{wall}(z^{m}_{k})= 
+\begin{cases}
+\frac{\lambda_{w}}{\pi H_{bld}} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for \ \ \ z^{w}_{k+1} \ < \ H_{bld} \\
+\left( \frac{H_{bld} - z^{w}_{k}}{z^{w}_{k+1}-z^{w}_{k}} \right) \frac{\lambda_{w}}{\pi H_{bld}} \ \ \ \ for \ \ \ z^{w}_{k} \ < \ H_{bld} \ 
+\leq \ z^{w}_{k+1} \\
+0 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else
+\end{cases}
+\end{equation}
+%
+The grid point average building height is denoted with $H_{bld}$. The height above ground of
+the $k$\textsuperscript{th} model level is $z^{m}_{k}$, the height above ground of the interfaces
+between the model levels is $z^{w}_{k}$. \\
+%
+The roofs are assumed to be horizontal. The vertical density of horizontal roofs ($d_{roof}$)
+is calculated following Equation \ref{eq:roof_dens}.
+%
+\begin{equation}
+\label{eq:roof_dens}
+d_{roof}(z^{m}_{k})= 
+\begin{cases}
+\frac{\lambda_{p}} {z^{w}_{k+1}-z^{w}_{k}} \ \ \ for \ \ z^{w}_{k} \ < \ H_{bld} \ \leq \ z^{w}_{k+1} \\
+0 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else
+\end{cases}
+\end{equation}
+%
+The drag coefficient for the vertical walls ($c_{d}^{wall}$) is set to 0.4 since this corresponds
+to the value from wind tunnel studies reported by Raupach (1992) for cubes - a type of
+obstacles similar to actual buildings. The drag coefficient due to the roofs is calculated
+similar to Hamdi and Masson (2008) following Equations \ref{eq:drag_roof} and \ref{eq:ustar_roof}.
+%
+\begin{equation}
+\label{eq:drag_roof}
+c_{d}^{roof}=\left( \frac{u^{roof}_{*}}{\mid \vec{u_{hor}(z^{m}_{k,roof})} \mid} \right)^{2}
+\end{equation}
+%
+\begin{equation}
+\label{eq:ustar_roof}
+u^{roof}_{*}= \frac{\kappa \ \mid \vec{u_{hor}(z^{m}_{k,roof})} \mid}{ln \left( \frac{(z^{m}_{k,roof}-H_{bld})}{z^{roof}_{0,m}} \right)}
+\end{equation}
+%
+$z^{m}_{k,roof}$ is the height above ground of the level, at least 0.5~m above the roof.
+The von K\'arm\'an constant ($\kappa$) is 0.4, the momentum roughness length of the
+roof ($z^{roof}_{0,m}$) is assumed to be 0.15~m to represent chimneys, air conditioning systems,
+or other small constructions that are usually present on the roofs. Atmospheric stability
+is not taken into account in the calculation of the friction due to the roofs;
+it is assumed that the strong wind shear close to the roofs dominates the effects due to buoyancy. \\
+%
+The production of subgrid turbulent kinetic energy ($e$) due to the wind shear close to
+the buildings walls and roofs is considered in a similar manner as in Martilli et al. (2002),
+Chin et al. (2005), and Hamdi and Masson (2008), following Equation \ref{eq:tke}.
+%
+\begin{equation}
+\label{eq:tke}
+\frac{\partial (\rho_{deff} \ e)}{\partial t} \bigg\vert_{build} = \rho_{deff} \ \left(c_{d}^{wall}d_{wall} + c_{d}^{roof}d_{roof} \right) 
+{\mid \vec{u_{hor}} \mid}^{3}
+\end{equation}
+%  
+The tendencies of potential temperature and water vapour mixing ratio due to the sensible
+($Q^{wall}_{h}$, $Q^{roof}_{h}$) and latent ($Q^{wall}_{e}$, $Q^{roof}_{e}$) heat fluxes from the
+walls and the roofs towards the atmosphere are calculated following
+Equations \ref{eq:delta_T} and \ref{eq:delta_R}.
+%
+\begin{equation}
+\label{eq:delta_T}
+\frac{\partial (\rho_{deff}(z^{m}_{k}) \ \theta(z^{m}_{k}))}{\partial t} \bigg\vert_{build} = 
+\begin{cases}
+\frac{Q^{wall}_{h}}{C_{p} H_{bld}} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for \ \ \ z^{w}_{k+1} \ < \ H_{bld} \\
+\left( \frac{H_{bld} - z^{w}_{k}}{z^{w}_{k+1}-z^{w}_{k}} \right) \frac{Q^{wall}_{h}}{C_{p} H_{bld}} + \frac{Q^{roof}_{h}}{C_{pd} (z^{w}_{k+1}-z^{w}_{k})} \ \ \ \ for \ \ \ z^{w}_{k} \ < \ H_{bld} \ \leq \ z^{w}_{k+1} \\
+0 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else
+\end{cases}
+\end{equation}
+%
+\begin{equation}
+\label{eq:delta_R}
+\frac{\partial (\rho_{deff}(z^{m}_{k}) \ r_v(z^{m}_{k}))}{\partial t} \bigg\vert_{build} =  
+\begin{cases}
+\frac{Q^{wall}_{e}}{L_{i} H_{bld}} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for \ \ \ z^{w}_{k+1} \ < \ H_{bld} \\
+\left( \frac{H_{bld} - z^{w}_{k}}{z^{w}_{k+1}-z^{w}_{k}} \right) \frac{Q^{wall}_{e}}{L_{i} H_{bld}} + \frac{Q^{roof}_{e}}{L_i (z^{w}_{k+1}-z^{w}_{k})} \ \ \ \ \ for \ \ \ z^{w}_{k} \ < \ H_{bld} \ \leq \ z^{w}_{k+1} \\
+0 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else
+\end{cases}
+\end{equation}
+%
+Turbulent fluxes are in Wm$^{-2}$ of total horizontal plan area of the grid point.
+They are calculated in the physical routines of TEB with respect to the potential temperature.
+The specific heat $L_{i}$ is 2.5008e+6 Jkg$^{-1}$ for evaporation and 2.8345e+6 Jkg$^{-1}$ for sublimation. \\
+%
+The coupling between Meso-NH and SURFEX-TEB is technically modified such that SURFEX-TEB
+can receive the forcing from the first to the $NC$\textsuperscript{th} ($1:NC$) Meso-NH level.
+For the sake of simplicity, the horizontal dimensions of the Meso-NH variables are not
+explicitly given in the equations. The horizontal wind speed ($\mid \vec{u_{hor}} \mid$)
+is calculated based on the prognostic $u$ and $v$ wind components (Equation \ref{eq:uhor_lvl}).
+%
+\begin{equation}
+\label{eq:uhor_lvl}
+\mid \vec{u_{hor}(z^{m}_{1:NC})} \mid = \sqrt{{u(z^{m}_{1:NC})}^2+{v(z^{m}_{1:NC})}^2}
+\end{equation}
+%
+The air temperature ($T$) is calculated based on the prognostic potential temperature
+($\theta$) and the Exner function ($\Phi$) following
+%
+\begin{equation}
+\label{eq:Tair}
+T(z^{m}_{1:NC}) = \theta(z^{m}_{1:NC}) \Pi(z^{m}_{1:NC})
+\end{equation}
+%
+\begin{equation}
+\label{eq:Exner}
+\Pi(z^{m}_{1:NC}) = {\left( \frac{p(z^{m}_{1:NC})}{p_{00}} \right)}^{\frac{R_{d}}{C_{p}}}
+\end{equation}
+%
+where $p$ is the diagnostic absolute pressure. 
+The absolute humidity ($q$) is calculated based on the prognostic mixing ratio of water vapour ($r_v$) following
+%
+\begin{equation}
+\label{eq:qabs}
+q(z^{m}_{1:NC}) = r_v(z^{m}_{1:NC}) \ \rho_{deff}(z^{m}_{1:NC})
+\end{equation}
+%
+and the density of the moist air ($\rho$) is given by
+%
+\begin{equation}
+\label{eq:dens_moist}
+\rho(z^{m}_{1:NC}) = \frac{p(z^{m}_{1:NC})}{R_{d} T(z^{m}_{1:NC})} \frac{1+(R_{d}/R_{v})r_v(z^{m}_{1:NC})}{1+r_v(z^{m}_{1:NC})}
+\end{equation}
+%
+The height of the atmospheric forcing level used by SURFEX-TEB ($z_{k,forc.}$) needs to be
+calculated based on the height of the Meso-NH levels ($z^{m}_{k}$). It is ambiguous whether
+this forcing height should be the distance of the atmospheric level to the potentially
+inclined surface (inclination angle $\alpha$) or the vertical height above the surface.
+It is assumed that for katabatic winds located in the first few meters above ground level (a.g.l.),
+the distance to the surface is the most relevant, whereas for the other processes it will be
+the vertical height above the surface. Therefore, the forcing height is defined as the shortest
+distance between the model level and the surface in the lowest 5~m vertical distance to the surface,
+and as the vertical distance at or above 20~m vertical distance to the surface (Equation \ref{eq:zfor}).
+A linear transition is applied in between (Equations \ref{eq:zfor} and \ref{eq:fk}).
+%
+\begin{equation}
+\label{eq:zfor}
+z_{k,forc.} = f_{k} z^{m}_{k} + (1 - f_{k}) z^{m}_{k} cos(\alpha)
+\end{equation}
+%
+\begin{equation}
+\label{eq:fk}
+f_{k} = min \left(1.0,\frac{max(z^{m}_{k}-5.0,0.0)}{15.0}\right)
+\end{equation}
+%
+The multi-layer coupling of TEB is technically enabled by a logical switch which deactivates
+the prognostic equations of the SBL scheme of Hamdi and Masson (2008) and instead at each time step
+fills the SBL scheme's prognostic variables with the corresponding Meso-NH variables.
+With this implementation it is easy to switch between the single-layer and the multi-layer coupling.
+The meteorological forcing for the impervious surfaces such as roads ($imp.$), which have an
+aerodynamic roughness length of 0.05 m, and the low urban vegetation ($lveg.$) is taken from
+the first Meso-NH level following
+%
+\begin{equation}
+\label{eq:forc_can}
+U^{imp./lveg.}_{forc.} = \mid \vec{u_{hor}}(1) \mid \ ; \ \ T^{imp./lveg.}_{forc.} = T(1) \ ; \ \ Q^{imp./lveg.}_{forc.} = \frac{q(1)}{\rho(1)}
+\end{equation}
+%
+where $Q$ denotes the specific humidity, $U$ the wind speed, and the height of the forcing is given by
+%
+\begin{equation}
+\label{eq:zforc_can}
+z^{imp./lveg.}_{forc.} = z_{1,forc.} 
+\end{equation}
+%
+The meteorological forcing for the roof (Equation~\ref{eq:forc_roof}) is taken
+from the closest Meso-NH level, but at least 0.5~m above the roof ($k_{roof}$).
+%
+\begin{equation}
+\label{eq:forc_roof}
+U^{roof}_{forc.} = \mid \vec{u_{hor}}(k_{roof}) \mid \ ; \ \ T^{roof}_{forc.} = T(k_{roof}) \ ; \ \ Q^{roof}_{forc.} = \frac{q(k_{roof})}{\rho(k_{roof})} 
+\end{equation}
+%
+The height of the forcing above the roof is
+%
+\begin{equation}
+\label{eq:zforc_roof}
+z^{roof}_{forc.} = z_{k_{roof},forc.} - H_{bld}
+\end{equation}
+%
+Since in TEB the walls are not vertically discretised, there is only one value for the
+prognostic wall temperature at grid point scale, hence the average value of the
+meteorological forcing variables is calculated for all Meso-NH levels intersecting
+the walls (Equations \ref{eq:windforc_canyon} to \ref{eq:qspecforc_canyon}).
+%
+\begin{equation}
+\label{eq:windforc_canyon}
+U^{wall}_{for} = \frac{1}{H_{bld}} \sum_{k=1}^{k_{roof}} 
+\begin{cases}
+\mid \vec{u_{hor}}(k) \mid (z^{w}_{k+1}-z^{w}_{k}) \ \ \ for \ \ \  z^{w}_{k+1} \leq H_{bld} \\
+\mid \vec{u_{hor}}(k) \mid (H_{bld}-z^{w}_{k}) \ \ \  for \ \ \  z^{w}_{k} < H_{bld} < z^{w}_{k+1} \\
+\end{cases}
+\end{equation}
+%
+\begin{equation}
+\label{eq:tempforc_canyon}
+T^{wall}_{for} = \frac{1}{H_{bld}} \sum_{k=1}^{k_{roof}} 
+\begin{cases}
+T(k) (z^{w}_{k+1}-z^{w}_{k}) \ \ \ for \ \ \ z^{w}_{k+1} \leq H_{bld} \\
+T(k) (H_{bld}-z^{w}_{k}) \ \ \ for \ \ \ z^{w}_{k} < H_{bld} < z^{w}_{k+1} \\
+\end{cases}
+\end{equation}
+%
+\begin{equation}
+\label{eq:qspecforc_canyon}
+Q^{wall}_{for} = \frac{1}{H_{bld}} \sum_{k=1}^{k_{roof}}
+\begin{cases}
+\frac{q(k)}{\rho(k)} (z^{w}_{k+1}-z^{w}_{k}) \ \ \ for \ \ \  z^{w}_{k+1} \leq H_{bld} \\
+\frac{q(k)}{\rho(k)} (H_{bld}-z^{w}_{k}) \ \ \  for \ \ \  z^{w}_{k} < H_{bld} < z^{w}_{k+1} \\
+\end{cases}
+\end{equation}
+%
+The sensible and latent heat fluxes from the roof, walls, impervious and pervious surfaces
+to the air in the street canyon are then calculated with the same formulas that are
+detailed in Hamdi and Masson (2008) and Lemonsu et al. (2012).
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 \section{Soil and Vegetation}
@@ -1400,12 +1672,15 @@ Observations and parameterization.
 173-200.
 
 \item
+Chin, H.-N. S., M.J. Leach, G.A. Sugiyama, J.M. Leone, H. Walker, J.S. Nasstrom, and M.J. Brown, 2005:
+Evaluation of an Urban Canopy Parameterization in a Mesoscale Model Using VTMX and URBAN 2000 Data.
+{\em Mon. Weather Rev.}, {\bf 133}, 2043–2068.
+
+\item
 Deardorff, J.W., 1978:
 Efficient prediction of ground surface temperature and moisture
 with inclusion of a layer of vegetation.
-{\em J. Geophys. Res.},
-{\bf 20},
-1889-1903.
+{\em J. Geophys. Res.}, {\bf 20}, 1889-1903.
 
 \item
 Deardorff, J.W., 1977:
@@ -1450,6 +1725,11 @@ campagne EFEDA 91.
 Note de travail 24 GMME/M\'et\'eo-France.
 
 \item
+Hamdi, R., and V. Masson, 2008:
+Inclusion of a Drag Approach in the Town Energy Balance (TEB) Scheme: Offline 1D Evaluation in a Street Canyon.
+{\em J. Appl. Meteorol. Clim.}, {\bf 47}, 2627–2644.
+
+\item
 Jacquemin, B., and J. Noilhan, 1990:
 Validation of a land surface parameterization using the
 HAPEX-MOBILHY data set.
@@ -1464,6 +1744,11 @@ and soil frost.
 {\em J. Hydro.},
 {\bf 122},
 141-158.
+
+\item
+Lemonsu, A., V. Masson, L. Shashua-Bar, E. Erell, and D. Pearlmutter, 2012:
+Inclusion of vegetation in the Town Energy Balance model for modelling urban green areas.
+{\em Geosci. Model Dev.}, {\bf 5}, 1377–1393.
 
 \item
 Loth, B.,
@@ -1501,6 +1786,10 @@ Comparative study of various formulations of evaporation
 from bare soil using in situ data.
 {\em J. Appl. Meteor.}, {\bf 9}, 1354-1365.
 
+\item
+Martilli, A., A. Clappier, and M.W. Rotach, 2002:
+An Urban Surface Exchange Parameterisation for Mesoscale Models.
+{\em Bound.-Lay. Meteorol.}, {\bf 104}, 261–304.
 
 \item
 Mascart, P., J. Noilhan, and H. Giordani, 1995:
@@ -1521,9 +1810,18 @@ GCM grid-scale evaporation from mesoscale modeling.
 
 \item
 Noilhan, J., and S. Planton, 1989:
-A simple parameterization of land surface processes for
-meteorological models.
+A simple parameterization of land surface processes for meteorological models.
 {\em Mon. Wea. Rev.}, {\bf 117}, 536-549.
+
+\item
+Raupach, R.:
+Drag and drag partition on rough surfaces. 
+{\em Bound.-Lay. Meteorol.}, {\bf 60}, 375–395.
+
+\item
+Schoetter, R., Y.T. Kwok, C. de Munck, K.K.L. Lau, W.K. Wong, and V. Masson, 2020:
+Multi-layer coupling between SURFEX-TEB-v9.0 and Meso-NH-v5.3 for modelling the urban climate of high-rise cities. 
+{\em Geosci. Model Dev.}, {\bf 13}, 5609–5643.
 
 \item
 Sun, S.,
