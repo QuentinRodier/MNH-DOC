@@ -3098,6 +3098,86 @@ XVDEPOTREE   & real  & 0.02  \\
 \item LDEPOTREE: flag for droplet deposition on trees
 \item XVDEPOTREE: Droplet deposition velocity on trees
 \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_DRAGBLDGn}
+\label{s:namdragbldg}
+\index{NAM\_DRAGBLDGn!namelist description}
+%
+This namelist allows to couple the Town Energy Balance (SURFEX-TEB) at multiple levels
+with Meso-NH (Schoetter et al. 2020, GMD). LDRAGBLDG activates the drag
+force due to buildings at grid points and model levels intersecting the buildings.
+The prognostic (U,V) wind componentes are reduced, the prognostic subgrid TKE is increased
+due to the turbulence produced by the wind shear close to the buildings.
+LFLUXBLDG additionally activates the release of heat and moisture fluxes from buildings
+at grid points and model levels intersecting the buildings. Otherwise, these fluxes
+are released at the surface. LDRAGURBVEG activates the drag force due to urban trees at grid points
+and model levels intersecting the trees. The prognostic (U,V) wind components are reduced,
+for the prognostic subgrid TKE there is a production term due to the wind shear close
+to the trees, and a dissipation term representing turbulence destruction by leaves. \\
+%
+When building drag is activated, the roughness length of the urban areas should be
+reduced to avoid a double counting of building drag via the drag force and the
+high surface roughness. \\
+%
+Furthermore, for multi-layer coupling, the number of atmospheric model levels
+sent to SURFEX (NLEV\_COUPLE) needs to be specified in NAM\_COUPLING\_LEVELSn
+(see \ref{s:namcouplinglevels}) such that all model levels intersecting the buildings
+are coupled with SURFEX.
+%
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LDRAGBLDG   & logical  & FALSE  \\
+LFLUXBLDG   & logical  & FALSE  \\
+LDRAGURBVEG & logical  & FALSE  \\
+\hline
+\end{tabular}
+\end{center}
+%
+\begin{itemize}
+\index{LDRAGBLDG!\innam{NAM\_DRAGBLDGn}}
+\item LDRAGBLDG: flag to activate drag of buildings
+\item LFLUXBLDG: flag to activate release of heat and moisture from buildings at model levels instead of the surface
+\item LDRAGURBVEG: flag to activate drag of urban vegetation
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_COUPLING\_LEVELSn}
+\label{s:namcouplinglevels}
+\index{NAM\_COUPLING\_LEVELSn!namelist description}
+%
+This namelist allows to specify the number of atmospheric levels
+(NLEV\_COUPLE) for which the meteorological forcing data is sent to SURFEX.
+A value of 1 for NLEV\_COUPLE corresponds to the standard use of SURFEX;
+only the lowest atmospheric level is coupled. A value higher than 1 implies
+multi-layer coupling and is currently only used by the Town Energy Balance TEB,
+as described in Schoetter et al. (2020, GMD). \\
+%
+In the case a value of NLEV\_COUPLE greater than 1 is used, the model
+user must ensure that the height above ground level of the highest model
+level is larger than the height of the highest building in the domain.
+Furthermore, the drag force, heat, and moisture fluxes from buildings
+should be activated in NAM\_DRAGBLDGn (see \ref{s:namdragbldg}).
+%
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+NLEV\_COUPLE & integer & 1  \\
+\hline
+\end{tabular}
+\end{center}
+%
+\begin{itemize}
+\index{NLEV\_COUPLE!\innam{NAM\_COUPLING\_LEVELSn}}
+\item NLEV\_COUPLE: The number of atmospheric levels sent to SURFEX.
+\end{itemize}
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_DUST }
 \index{NAM\_DUST!namelist description}
