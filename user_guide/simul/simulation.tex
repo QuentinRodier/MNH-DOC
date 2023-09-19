@@ -5585,21 +5585,30 @@ XIFN\_CONC : Initial reference number concentration for each IFN mode (\verb?#/L
 \index{LIFN\_HOM!\innam{NAM\_PARAM\_LIMA}}
 LIFN\_HOM : If set to true, the initial concentration of IFN is homogeneous on the vertical. If set to false, the IFN concentration is equal to the reference value XIFN\_CONC below 1000m and exponentially decreasing above.
 \item
-\index{CIFN\_SPECIES!\innam{NAM\_PARAM\_LIMA}}
-CIFN\_SPECIES : String to select the proportion of each IFN type in each IFN mode.Possible values :
+\index{CINT\_MIXING!\innam{NAM\_PARAM\_LIMA}}
+CIFN\_SPECIES : String to select the proportion of each IFN type in each IFN mode. Possible values :
 \begin{itemize}
 \item 'DM1' pure small dust particles
 \item 'DM2' pure large dust particles
 \item 'BC'  pure black carbon
 \item 'O'   pure organics
+\item 'CAMS', 'CAMS\_JPP', 'CAMS\_AIT', 'CAMS\_ACC', 'MOCAGE',  mix for use of CAMS or MOCAGE aerosols
 \item 'DEFAULT' mix as in Phillips et al 2008 or 2013
+\end{itemize}
+
+\item
+\index{CIFN\_SPECIES!\innam{NAM\_PARAM\_LIMA}}
+CIFN\_SPECIES : String to select the IFN modes size distribution parameters. Available options are :
+\begin{itemize}
+\item 'MOCAGE', 'CAMS\_JPP', 'CAMS\_AIT', 'CAMS\_ACC' for use with MOCAGE/CAMS aerosols
+\item 'DEFAULT' for use the same parameters as in Phillips et al. 2008 or 2023
 \end{itemize}
 \item
 \index{NMOD\_IMM!\innam{NAM\_PARAM\_LIMA}}
 NMOD\_IMM :Number of “coated IFN” modes
 \item
 \index{NIND\_SPECIE!\innam{NAM\_PARAM\_LIMA}}
-NIND\_SPECIE : Type of the “coated IFN” mode
+NIND\_SPECIE : Type of the “coated IFN” mode. 1 for dust, 2 for black carbon or 3 for organics
 \item
 \index{CPRISTINE\_ICE\_LIMA!\innam{NAM\_PARAM\_LIMA}}
 CPRISTINE\_ICE\_LIMA : Select the shape of pristine ice ('PLAT', 'COLU' or 'BURO' )
@@ -5618,8 +5627,7 @@ LACTI : Switch to activate the CCN activation
 
 \item
 \index{LSEDC!\innam{NAM\_PARAM\_LIMA}}
-Switch to activate the cloud droplets sedimentation
-LSEDC : 
+LSEDC: Switch to activate the cloud droplets sedimentation
 \item
 \index{LACTIT!\innam{NAM\_PARAM\_LIMA}}
 LACTIT : Switch to activate the representation of radiative cooling in the diagnostic maximum supersaturation computation
@@ -5681,7 +5689,7 @@ LAERO\_MASS : Switch to track the mass of scavenged aerosols
 LADJ : flag to activate the saturation adjustement from Thouron et al. 2012 (diagnostic supersaturation)
 \item
 \index{LSPRO\_MF!\innam{NAM\_PARAM\_LIMA}}
-LSPRO : flag to activate the prognostic supersaturation (to use with LADJ=F)
+LSPRO : flag to use a saturation adjustment for cloud droplets (if set to T) or the "diagnostic supersaturation" from Thouron et al. 2012 (if set to F and LSPRO=F).
 \end{itemize}
 
 Use of CAMS with LIMA. You must have set HCAMSFILE and HCAMSFILETYPE at the PREP\_REAL\_CASE step (see section \ref{s:namfilenames} page \pageref{s:namfilenames}).
