@@ -241,7 +241,7 @@ XTSTEP  & real(:)              & 60. \\
   \end{itemize}
 
 \index{XTSTEP!\innam{NAM\_AIRCRAFTS}}
-\item XTSTEP: data storage frequency. If not set, it is forced to 60s
+\item XTSTEP: data storage frequency. If not set, it is forced to 60s. The frequency must be a multiple of the timestep of the chosen model NMODEL if CMODEL='FIX' or of the main model 1 if CMODEL='MOB'. It will be enforced at run.
 
 \end{itemize}
 
@@ -386,7 +386,7 @@ XINDDRAG    & real(:)              & XNEGUNDEF \\
   \end{itemize}
 
 \index{XTSTEP!\innam{NAM\_BALLOONS}}
-\item XTSTEP: data storage frequency. If not set, it is forced to 60s. Balloon positions are not computed with this timestep but with the model one.
+\item XTSTEP: data storage frequency. If not set, it is forced to 60s. The frequency must be a multiple of the timestep of the chosen model NMODEL if CMODEL='FIX' or of the main model 1 if CMODEL='MOB'. It will be enforced at run. Balloon positions are not computed with this timestep but with the model one.
 
 \index{XLATLAUNCH!\innam{NAM\_BALLOONS}}
 \item XLATLAUNCH: latitude of the launching site. Mandatory
