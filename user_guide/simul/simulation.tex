@@ -5520,6 +5520,7 @@ LRDSF & logical & .FALSE. \\
 XNDEBRIS\_CIBU & real & 50.0 \\
 LMURAKAMI & logical & .TRUE. \\
 LSNOW\_T & logical & .FALSE. \\
+LKESSLERAC & logical & .FALSE. \\
 \end{longtable}
 
 It contains the options for the 2 moment mixed phase cloud parameterizations
@@ -5586,7 +5587,7 @@ XIFN\_CONC : Initial reference number concentration for each IFN mode (\verb?#/L
 LIFN\_HOM : If set to true, the initial concentration of IFN is homogeneous on the vertical. If set to false, the IFN concentration is equal to the reference value XIFN\_CONC below 1000m and exponentially decreasing above.
 \item
 \index{CINT\_MIXING!\innam{NAM\_PARAM\_LIMA}}
-CIFN\_SPECIES : String to select the proportion of each IFN type in each IFN mode. Possible values :
+CINT\_MIXING : String to select the proportion of each IFN type in each IFN mode. Possible values :
 \begin{itemize}
 \item 'DM1' pure small dust particles
 \item 'DM2' pure large dust particles
@@ -5601,7 +5602,7 @@ CIFN\_SPECIES : String to select the proportion of each IFN type in each IFN mod
 CIFN\_SPECIES : String to select the IFN modes size distribution parameters. Available options are :
 \begin{itemize}
 \item 'MOCAGE', 'CAMS\_JPP', 'CAMS\_AIT', 'CAMS\_ACC' for use with MOCAGE/CAMS aerosols
-\item 'DEFAULT' for use the same parameters as in Phillips et al. 2008 or 2023
+\item 'DEFAULT' to use the same parameters as in Phillips et al. 2008 or 2023
 \end{itemize}
 \item
 \index{NMOD\_IMM!\innam{NAM\_PARAM\_LIMA}}
@@ -5685,11 +5686,15 @@ LAERO\_MASS : Switch to track the mass of scavenged aerosols
 \item XTSTEP\_TS : Maximum length of sub-time-steps (for the time-splitting scheme)
 \index{XTSTEP\_TS!\innam{NAM\_PARAM\_LIMA}}
 \item 
-\index{LADJ\_MF!\innam{NAM\_PARAM\_LIMA}}
-LADJ : flag to activate the saturation adjustement from Thouron et al. 2012 (diagnostic supersaturation)
-\item
 \index{LSPRO\_MF!\innam{NAM\_PARAM\_LIMA}}
-LSPRO : flag to use a saturation adjustment for cloud droplets (if set to T) or the "diagnostic supersaturation" from Thouron et al. 2012 (if set to F and LSPRO=F).
+LSPRO : flag to activate the saturation adjustement from Thouron et al. 2012 (diagnostic supersaturation)
+\item
+\index{LADJ\_MF!\innam{NAM\_PARAM\_LIMA}}
+LADJ : flag to use a saturation adjustment for cloud droplets (if set to T) or the "diagnostic supersaturation" from Thouron et al. 2012 (if set to F and LSPRO=F).
+\item
+\index{LKESSLERAC!\innam{NAM\_PARAM\_LIMA}}
+LKESSLERAC : Set to T to use the Kessler autoconversion of cloud droplets into rain drops, based on the droplets mixing ratio. Useful if NMOM\_C=1 to have results closer to ICE3 simulations.
+
 \end{itemize}
 
 Use of CAMS with LIMA. You must have set HCAMSFILE and HCAMSFILETYPE at the PREP\_REAL\_CASE step (see section \ref{s:namfilenames} page \pageref{s:namfilenames}).
