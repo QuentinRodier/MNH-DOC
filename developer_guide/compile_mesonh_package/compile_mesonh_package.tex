@@ -1,0 +1,385 @@
+% =============================================================
+\section{Compile Meso-NH's package}
+\label{sec:compile_mesonh_package}
+% =============================================================
+
+During the first Meso-NH's compilation, almost all the numerical schemes and all the physical parameterizations are compiled and it is then in namelist (during simulations) that we choose the type of numerical scheme and physical parameterization. In the Meso-NH language, we say that we compile the \textbf{MASTER}. This compilation is quite long, more than 20 minutes in 1 core in O2. \\
+
+When you want to modify the code contained in the Meso-NH's package, you create a folder containing the modified code and you compile only the modified code: in the Meso-NH language we say that we compile the \textbf{VER\_USER}. This compilation is shorter than the MASTER one, it depends on how many sources are modified.
+
+% -------------------------------------------------------------
+\subsection{On Linux computer}
+% -------------------------------------------------------------
+
+Go to the directory ``src'' :
+\begin{bashcode}
+cd  MNH-V5-6-0/src
+\end{bashcode}
+
+if you have not already configured your Meso-NH environment either manually in your interactive session or automatically through your .profile (or .bashrc), do:
+\begin{bashcode}
+. ../conf/profile_mesonh-your_configuration
+\end{bashcode}
+
+run the compilation by
+\begin{bashcode}
+make
+\end{bashcode}
+
+The compilation will take about 20 minutes on modern PC-Linux ... If you have a multi-processor machine you can speedup the compilation, for example on four cores, with:
+\begin{bashcode}
+make -j 4
+\end{bashcode}
+
+The  object files "*.o"  and  main executables of the Meso-NH's package : MESONH , PREP\_IDEAL\_CASE , PREP\_REAL\_CASE , etc ... are compiled in one step and created in the directory :
+\begin{bashcode}
+src/dir_obj-your_configuration/MASTER 
+\end{bashcode}
+
+\textbf{Remark :} the lib...a is only created and removed at the link phase this allows a parallel compilation of the sources ... \\
+
+The name ``dir\_obj...'' depends on the different environment variables set by the ``profile\_mesonh ...'' which you have loaded before the compilation. This allows by loading different ``profile\_mesonh ...'' files to compile in the same source/installation directory different versions of Meso-NH, with different compilers, different versions of MPI, different USER sources ... \\
+
+To install the new compiled program in the ``\$SRC\_MESONH/exe'' directory, after compilation, just run
+\begin{bashcode}
+make installmaster
+\end{bashcode}
+
+The executables with their full name, including \$ARCH, compiler, MPI and level of optimization, will be linked in the ``../exe'' directory. \\
+
+\textbf{Remark :} The ``make installmaster'' need to be done only one time by ``version''.  If you only change/add source, you have to do ``make'' 
+\begin{bashcode}
+make
+\end{bashcode}
+
+% -------------------------------------------------------------
+\subsection{On supercomputer (IDRIS, CINES, ECMWF, METEO-FRANCE, CALMIP, NUWA, ...)}
+% -------------------------------------------------------------
+
+If you do not have sufficient space in your \$HOME directory, install the whole package directly on the \$WORKDIR. The name of the \$WORKDIR differs in the differents computer center, most of them manage disk space throw 'multi-projet' with only one unique login. \\
+
+\begin{warningblock}
+Think to do a backup of your installation. \$WORKDIR space is not everytime purged but a crash disk could/will probably occur !!!
+\end{warningblock}
+
+Due to limitation in time and memory on interactive connection, in some computer you have to compile the Meso-NH's package in batch mode with the different ``src/job\_make\_mesonh*'' files.
+
+% ~~~~~~~~~~~~
+\subsubsection{at IDRIS (JEAN-ZAY)}
+\label{subsec:idris_compilation}
+% ~~~~~~~~~~~~
+
+The compilation can be do in interactive :
+\begin{bashcode}
+cd MNH-V5-6-0/src
+. ../conf/profile_mesonh-LXifort-R8I4-MNH-V5-6-0-MPIINTEL-O2
+make -j16 |& tee error$XYZ
+make installmaster
+\end{bashcode}
+ 
+You can also use the ``compil'' partition
+\begin{bashcode} 
+sbatch job_make_mesonh_HPE_jeanzay
+\end{bashcode}
+ 
+ To run the test case examples  run
+\begin{bashcode} 
+ sbatch -A {your_projet}@cpu job_make_examples_BullX_jeanzay
+\end{bashcode}
+
+% ~~~~~~~~~~~~
+\subsubsection{at CINES on ADASTRA (BULLX)}
+% ~~~~~~~~~~~~
+
+Install the PACKAGE in your \$HOME (default 50Go of quota) and compile in interactive mode :
+\begin{bashcode}
+cd MNH-V5-6-0/src
+. ../conf/profile_mesonh-LXifort-R8I4-MNH-V5-6-0-MPIINTEL-O2
+make -j16 |& tee error$XYZ
+make installmaster
+\end{bashcode}
+
+To run the test case examples  run :
+\begin{bashcode}
+sbatch job_make_examples_BullX_occigen
+\end{bashcode}
+
+% ~~~~~~~~~~~~
+\subsubsection{at TGCC on IRENE (BULLX)}
+% ~~~~~~~~~~~~
+
+At TGCC , you have two architectures accessible throw 2 differents frontals but with a commun disk space , connect to : 
+\begin{itemize}
+\item \textbf{ssh irene-fr} : for Intel SkyLake/KNL processors. On Intel processors the MPI use is OPENMPI/2.0.4, the configure will generate a profile\_mesonh-LXifort-R8I4-MNH-V5-6-0-MPIAUTO-O2
+\item \textbf{ssh irene-amd} : for AMD, processors. On AMD processors the MPI use is OPENMPI/4.02, the configure  will generate a profile\_mesonh-LXifort-R8I4-MNH-V5-6-0-AMD-MPIAUTO-O2
+\end{itemize}
+
+Install the PACKAGE in your \$CCCHOME (default 20Go of quota) and compile in interactive mode (see \ref{subsec:idris_compilation}). \\
+
+To run the test case examples  run :
+\begin{itemize}
+\item On intel Skylake : ccc\_msub job\_make\_examples\_BullX\_irene
+\item On intel Knl : ccc\_msub -q knl job\_make\_examples\_BullX\_irene
+\item On intel AMD : ccc\_msub job\_make\_examples\_BullX\_irene\_AMD
+\end{itemize}
+
+% ~~~~~~~~~~~~
+\subsubsection{at ECMWF on hpc-login ( ATos/HPCF ) :}
+% ~~~~~~~~~~~~
+
+To install Meso-NH's package go to your \$HPCPERM directory and do
+\begin{bashcode}
+./configure
+\end{bashcode}
+
+Then connect to an "interactive compute node"  and compile the code ( 16 core & 16GO of memory)
+\begin{bashcode}
+ecinteractive -c16 -m 16G -t 12:00:00
+. ../profile_mesonh-your_configuration
+make
+make installmaster
+\end{bashcode}
+
+etc ... \\
+
+To run the test case examples  run
+\begin{bashcode}
+sbatch  job_make_examples_Atos_HPCF
+\end{bashcode}
+
+% ~~~~~~~~~~~~
+\subsubsection{At Meteo-France DSI on belenos}
+% ~~~~~~~~~~~~
+
+To install the whole package on your \$HOME directory, untar the file "MNH-V5-6-0.tar.gz" from its location and run the "./configure" command:
+\begin{bashcode}
+cd ~
+tar xvf $MESONH/MNH-V5-6-0.tar.gz
+cd MNH-V5-6-0/src
+./configure
+\end{bashcode}
+
+Due to limitation in time & memory on interactive connection then compile the MESONH PACKAGE in batch mode with the job\_make\_mesonh\_BullX\_belenos file :
+\begin{bashcode}
+sbatch job_make_mesonh_BullX_belenos
+\end{bashcode}
+
+This job does ``gmake -j 4'', then ``make installmaster''
+
+To run basic KTEST examples :
+\begin{bashcode}
+sbatch job_make_examples_BullX_belenos
+\end{bashcode}
+ 
+% ~~~~~~~~~~~~
+\subsubsection{at CALMIP on OLYMPE (BULLX)  :}
+% ~~~~~~~~~~~~
+
+Install the PACKAGE in your /tmpdir/\$USER and compile in interactive mode. \\
+
+To run the test case examples  run :
+\begin{bashcode}
+sbatch job_make_examples_BullX_olympe
+\end{bashcode}
+
+% -------------------------------------------------------------------
+\subsection{Cleaning previous compiled version}
+% -------------------------------------------------------------------
+
+If you have already compiled exactly the same version of Meso-NH on this computer (same \$XYZ value) you have first to clean this version with
+\begin{bashcode}
+make cleanmaster
+\end{bashcode}
+
+This will delete the dir-obj\_\${XYZ} directory and all the preprocessed sources contained on it .. I you have also a VER\_USER version do
+\begin{bashcode}
+make cleanuser
+\end{bashcode}
+
+% -------------------------------------------------------------------
+\subsection{Use additional libraries (FOREFIRE, RTTOV, ECRAD, MEGAN, OASIS, ...)}
+% -------------------------------------------------------------------
+
+% ~~~~~~~~~~~~~
+\subsubsection{MNH\_FOREFIRE for forefire runs ( external package needed)}
+% ~~~~~~~~~~~~~
+
+If you want to use coupled(inline) run with FOREFIRE and MESONH you could compile the interfaced/coupling routine by activating this variable before any compilation
+\begin{bashcode}
+export MNH_FOREFIRE=1.0
+\end{bashcode}
+and then the configure and compile the code :
+\begin{bashcode}
+./configure
+make
+make installmaster
+\end{bashcode}
+
+The FOREFIRE API package himself must be compiled independently from MesoNH.
+
+The git repository is here https://github.com/forefireAPI/firefront/tree/2014.01 it could be cloned by
+\begin{bashcode}
+git clone -b 2014.01 https://github.com/forefireAPI/firefront.git
+\end{bashcode}
+
+It depend on netcdf and scons for is compilation the ``libForeFIre.so'' generate must by referenced in the LD\_LIBRARY\_PATH or move/linked to the exe directory of MesoNH.
+
+% ~~~~~~~~~~~~~
+\subsubsection{MNH\_RTTOV for optional radiative computation}
+% ~~~~~~~~~~~~~
+
+The RTTOV package was not included into the open source version of Meso-NH because it needs a licence agrement.
+
+% ++++++++
+\paragraph{OPTION 1: Use version 13.2 of RTTOV}
+% ++++++++
+
+Run the ``configure'' script preceded with the setting of the MNH\_RTTOV variable:
+\begin{bashcode}
+cd MNH.../src/
+export MNH_RTTOV=1
+export VER_RTTOV=13.2
+\end{bashcode}
+
+Download the RTTOV package rttov132.tar.xz by following the instructions given on \href{https://nwpsaf.eu/site/software/rttov/}{RTTOW website}. \\
+
+Install the RTTOV package rttov132.tar.xz :
+\begin{bashcode}
+cd MNH.../src/LIB
+mkdir RTTOV-13.2
+cd RTTOV-13.2
+tar xJf rttov132.tar.xz
+cd build
+\end{bashcode}
+
+edit Makefile.local and set HDF5\_PREFIX, FFLAGS\_HDF5 and LDFLAGS\_HDF5 as shown below
+\begin{fortrancode}
+"
+HDF5_PREFIX  = $(SRC_MESONH)/src/dir_obj${XYZ}/MASTER/NETCDF-${VERSION_CDFF}
+FFLAGS_HDF5  = -D_RTTOV_HDF $(FFLAG_MOD)$(HDF5_PREFIX)/include
+LDFLAGS_HDF5 = -L$(HDF5_PREFIX)/lib64 -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -lsz -laec -lz -ldl
+"
+\end{fortrancode}
+
+\begin{bashcode}
+cd src
+../build/Makefile.PL RTTOV_HDF=1
+make ARCH=ifort        # Use Intel "ifort" compiler; other options: gfortran, NAG, pgf90, IBM
+\end{bashcode}
+
+Then, you can follow the steps described in the section dedicated to your computer (interactive or batch mode).
+
+% ++++++++
+\paragraph{OPTION 2: Use version 11.3 of RTTOV}
+% ++++++++
+
+Download the RTTOV package rttov113.tar.gz by following the instructions given on \href{https://nwpsaf.eu/site/software/rttov/}{RTTOW website}
+
+
+Install the RTTOV package rttov113.tar.gz
+\begin{bashcode}
+cd MNH.../src/LIB
+mkdir RTTOV-11.3
+cd RTTOV-11.3
+tar xvfz rttov113.tar.gz
+cd src
+make ARCH=ifort        # Use Intel "ifort" compiler; other options: gfortran, NAG, pgf90, IBM
+\end{bashcode}
+
+And then for the compilation, run the 'configure' script preceded with the setting of the MNH\_RTTOV variable:
+\begin{bashcode}
+cd MNH.../src/
+export MNH_RTTOV=1
+export VER_RTTOV=11.3
+./configure
+\end{bashcode}
+
+Then, you can follow the steps described in the section dedicated to your computer (interactive or batch mode).
+
+% ++++++++
+\paragraph{OPTION 3: Use version 8.7 of RTTOV}
+% ++++++++
+
+For already(old) licencied MesoNH users (MNH-4-X version with research licence see here: http://mesonh.aero.obs-mip.fr/mesonh410/UserInformation) the package could be reloaded in this way :
+\begin{itemize}
+\item With cvs access :
+\end{itemize}
+\begin{bashcode}
+cd MNH.../src/LIB
+cvs up -rPACK-MNH-V4-10-3 -d -P RTTOV
+\end{bashcode}
+\begin{itemize}
+With WEB access (with WEB login/pass as usually) the RTTOV package could also be retrieve in tarball with wget like this:
+\end{itemize}
+\begin{bashcode}
+cd MNH.../src/LIB
+wget --http-user=USER  --http-password=PASS 'http://mesonh.aero.obs-mip.fr/cgi-bin/mesonh_interne/viewcvs.cgi/MNH-VX-Y-Z/src/LIB/RTTOV/?view=tar&pathrev=PACK-MNH-V4-10-3' -O RTTOV.tar.gz
+tar xvfz RTTOV.tar.gz
+\end{bashcode}
+
+\begin{warningblock}
+don't forget the '.  Otherwise, this will not work!
+\end{warningblock}
+
+And then for the compilation, run the 'configure' script preceded with the setting of the MNH\_RTTOV variable:
+\begin{bashcode}
+cd MNH.../src/
+export MNH_RTTOV=1
+export VER_RTTOV=8.7
+./configure
+\end{bashcode}
+
+% ~~~~~~~~~~~~~
+\subsubsection{MNH\_ECRAD for optional compilation of new ECRAD radiative library from ECMWF}
+% ~~~~~~~~~~~~~
+
+The default version of ECRAD is 1.4.0 (open-source). To use ECRAD, do : 
+\begin{bashcode}
+export MNH_ECRAD=1
+./configure
+\end{bashcode}
+
+The version of ECRAD is set by (by default):
+\begin{bashcode}
+export VER_ECRAD=140
+\end{bashcode}
+
+\begin{noteblock}
+The full ECRAD package 1.0.1  was not included into the open source version of Meso-NH because it needs a licence agrement.  See here to get the licence and full sources \href{https://software.ecmwf.int/wiki/display/ECRAD/ECMWF+Radiation+Scheme+Home}{https://software.ecmwf.int/wiki/display/ECRAD/ECMWF+Radiation+Scheme+Home}
+\end{noteblock}
+
+\textbf{Remark:} Some of the files modified for MNH are included in the directory \${SRC\_MESONH}/src/LIB/RAD/ecrad-1.0.1\_mnh. \\
+
+Install the ECRAD package ecrad-1.0.1.tar.gz in the MNH tree directory
+\begin{bashcode}
+cd ${SRC_MESONH}/src/LIB/RAD
+tar xvfz ecrad-1.0.1.tar.gz
+\end{bashcode}
+
+To use this version of ECRAD, do :
+\begin{bashcode}
+export MNH_ECRAD=1
+export VER_ECRAD=101
+./configure
+\end{bashcode}
+
+To compile Meso-NH with MEGAN, you can follow the steps described in the section dedicated to your computer (interactive or batch mode). \\
+
+To use ECRAD during a simulation, replace RAD='ECMW' by RAD='ECRA' in EXSEG1.nam and add link to all ``ecrad-1.X.X/data'' files in your Meso-NH run directory :
+\begin{bashcode}
+ln -sf ${SRC_MESONH}/src/LIB/RAD/ecrad-1.X.X/data/* .
+\end{bashcode}
+
+\textbf{Remark:} you can replace CDATADIR = ``.'' by CDATADIR = ``data'' of ini\_radiations\_ecrad.f90 to link only the data folder instead of all the files one by one. See MY\_RUN/KTEST/007\_16janvier/008\_run2 test case for example.
+
+% ~~~~~~~~~~~~~
+\subsubsection{MNH\_MEGAN for optional compilation of MEGAN code}
+% ~~~~~~~~~~~~~
+
+To use MEGAN, do :
+\begin{bashcode}
+export MNH_MEGAN=1
+./configure
+\end{bashcode}
+
+To compile Meso-NH with MEGAN, you can follow the steps described in the section dedicated to your computer (interactive or batch mode).

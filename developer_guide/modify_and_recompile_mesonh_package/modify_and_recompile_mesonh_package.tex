@@ -1,0 +1,72 @@
+% ~-----------------------------------------------------------------
+\section{Modify and recompile Meso-NH's package}
+% ~-----------------------------------------------------------------
+
+Now you can generate and recompile your own sources. 
+
+
+% ~~~~~~~~~~~~
+\subsection{Prepare your source directory}
+% ~~~~~~~~~~~~
+
+Suppose you want to create a ``MY\_MODIF'' version. Put your own sources in a subdirectory of ``\${SRC\_MESONH}/src'' named  \${SRC\_MESONH}/src/MY\_MODIF. All subdirectories in ``MY\_MODIF'' will be scanned. So if you want, you could make a subdirectory for each component of the MESONH Package :
+\begin{bashcode}
+cd MY_MODIF
+mkdir MNH
+mkdir SURFEX
+cp ../MNH/mesonh.f90 MNH/
+cp ../SURFEX/isba.f90 SURFEX/
+\end{bashcode}
+
+\textbf{Remark :} In this subdirectory, put only fortran source you want to compile !!! Don't use it as a trash with old sources file like ``my\_source.f90.old'' or ``tar'' files ``mysource.tar''. All ``spirituous'' file will confuse the ``make'' command.
+ 
+% ~~~~~~~~~~~~
+\subsection{Configure Meso-NH with modified sources}
+% ~~~~~~~~~~~~
+ 
+Logout of the current session to be sure to unset all the environment variables loaded with the your MASTER ``profile\_mesonh''. \\
+
+Login again and:
+\begin{itemize}
+\item set the environment variable VER\_USER to the name of your user directory (MY\_MODIF, by example), 
+\item set also the optional environment variable ARCH, VER\_MPI... you want to use.
+\end{itemize}
+
+and run again the ``./configure'' command
+
+\begin{bashcode}
+ export VER_USER=MY_MODIF
+ ./configure
+\end{bashcode}
+
+This will regenerate the ``profile-mesonh'' file and a copy of this with the extent ``profile\_mesonh ...\$VER\_USER...''.
+
+% ~~~~~~~~~~~~
+\subsection{Compile Meso-NH with modified sources}
+% ~~~~~~~~~~~~
+
+Compile with the ``make user'' command :
+\begin{bashcode}
+ . ../conf/profile_mesonh...${VER_USER}...
+make user
+make installuser
+\end{bashcode}
+
+This will compile only your sources and the files depending on your sources and generate the new executables in your own directory
+\begin{bashcode}
+dir_obj-your_configuration/${VER_USER}
+\end{bashcode}
+
+The ``make installuser'' needs to be done only one time by version. And run the examples. Your version should appear in the name of the used executables. 
+
+\begin{warningblock}
+Before compiling your own sources be sure that these ones are younger than the "*.o" files of the MASTER directory. If any doubt, at any time use the command :
+\end{warningblock} 
+\begin{bashcode}
+touch *.f*
+\end{bashcode}
+on your sources, and only on yours do that!!!
+
+\begin{noteblock}
+Where you compile the MASTER of Meso-NH in batch mode, you can also compile VER\_USER in batch mode. For belenos, by example, use the script  job\_make\_mesonh\_user\_BullX\_belenos to compile your own sources.
+\end{noteblock}

@@ -1,0 +1,65 @@
+% =============================================================
+\section{Run KTEST examples}
+\label{sec:run_ktest_examples}
+% =============================================================
+
+After installation and compilation of Meso-NH, you can run some basic ``KTEST'' examples from the ``src'' directory by running:
+\begin{bashcode}
+make examples 
+\end{bashcode}
+
+or by giving one of the ``KTEST'' names like :
+\begin{bashcode}
+make 004_Reunion
+\end{bashcode}
+
+To run these KTESTS you can also go to MY\_RUN/KTEST directory, choose your ktest and run it by yourself. \\
+
+A more complete list of KTESTS is available on the mesonh website at \href{http://mesonh.aero.obs-mip.fr/mesonh/dir_doc/dir_namelist_examples/K560/}{http://mesonh.aero.obs-mip.fr/mesonh/dir\_doc/dir\_namelist\_examples/K560}.
+On each folder you will find the namelists, scripts to execute the programs (some on supercomputer) and plots (mostly in python).
+
+The list of the KTESTS are :
+\begin{itemize}
+    \item 2Drelief : idealized
+   \item3Drelief : idealized
+   \item ARM\_COND\_SAMP : cumulus case with conditional sampling 1D
+   \item BLOWSNOW\_c1b1D : Blowing snow in 1D
+   \item BOMEX : shallow cumulus convection (idealized)
+   \item COLD\_BUBBLE : idealized cold bubble falling 
+   \item COPT81 : idealized squall line
+   \item FIRE\_1D : idealized stratocumulus 1D
+   \item FOG\_1D : idealized fog 1D
+   \item GABLS1\_1D : idealized stable boundary layer 1D
+   \item HYDRO : idealized mountain wave
+   \item IHOP\_1D : idealized growing moist convective boundary layer 1D
+   \item KW78 : idealized deep convection
+   \item MEGAN : biogenic surface emission (real case)
+   \item SALT : sea salt emission (real case)
+  \item  16JAN : advection scheme tests with grid-nesting
+\item  ARM\_LES : 3D idealized cumulus case
+\item AZF\_2M : AZF explosion (scalar transport, station and aircraft diagnostic) with grid-nesting
+\item EOLIENNE : 6 idealized cases for ALM and ADNR wind rotors models
+\item BLAZE : 3 idealized fire propagation simulations (coupled or not with the atmosphere)
+\item BLAZE-orog : 1 fire propagation case with orography
+\item IBM : 3 idealized cases with Immersed Boundary Methods (one sphere, one idealized city blocks, real-case MUST)
+\item RECYCLING : idealized case to test the turbulence recycling at the domain's border 2nd domain
+\item CHARMEX : chemistry case 
+\item CYCLONE : idealized cyclone over sea
+\item DUST : dust transport over Sahara
+\item FANNY : Mediterranean deep convection (high precipitation) with options for ICE3, LIMA, LIMA with CAMS, LIMA in full 2-moment option
+\item FIRE : stratocumulus LES 3D 
+\item HAIC : HAIC microphysics with a real-case culumonimbus (LIMA tests and ICE3)
+\item SUPERCELL : idealized split of a supercell (ICE3, LIMA)
+\item FOG\_3D : fog LES 3D (real case over Paris)
+\item GABLS1 : 3D LES stable boundary layer (idealized)
+\item KMAP : grid-nesting with 3 subdomains
+\item PARIS\_GARDEN : 2003 heatwave over Paris (SURFEX options)
+\item SNOW\_BLOW : 3D case of blowing snow
+\item STERAO : idealized case with electricity scheme
+\item XYNTHIA\_2.5km : storm (very high wind gust)
+\item FARCE : 3D real case biogenic emission over La Reunion
+\item ICART2M : chemistry case
+\item OCEAN\_LES : LES within the OCEAN
+\item DOUBLE\_GRIDNESTING : technical 2-nested domains x2
+\item STATIONS\_PROF\_BALLON\_AIRCR\_4doms : technical 4-nested domains with restart and activation of stations, profilers, ballons and aircraft online diagnostics
+\end{itemize}

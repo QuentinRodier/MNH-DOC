@@ -1,0 +1,42 @@
+% =============================================================
+\section{Description of Meso-NH's package}
+\label{sec:description_mesonh_package}
+% =============================================================
+
+\begin{warningblock}
+\textcolor{red}{Section à améliorer, mon idée était de décrire en quelques mots la structure du package de Meso-NH : ce qu'il y a dedans, etc... Je n'aime pas trop les listes à puces mais je n'ai pas de meilleures idées pour le moment.}
+\end{warningblock}
+
+Meso-NH's package (\href{http://mesonh.aero.obs-mip.fr}{http://mesonh.aero.obs-mip.fr}) contains sources, makefiles, pre-compiled executables, graphic tools and basic examples. \\
+
+Hereafter is a very quick description of Meso-NH's tree :
+\begin{itemize}
+\item A-INSTALL : instructions to install Meso-NH,  all informations are available in this document.
+\item bin/ : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item bin\_tools/ : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item conf/ : location of profile\_mesonh files (See Section \ref{sec:configure_mesonh_package})
+\item exe/ : links to binary compiled programs (See Section \ref{sec:compile_mesonh_package})
+\item LIBTOOLS/ : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item Licence\_CeCILL-C\_V1-en.txt : licence in French
+\item Licence\_CeCILL-C\_V1-fr.txt : licence in English
+\item LICENSE : license ? \textcolor{red}{(pourquoi 3 fichiers de licence ??)}
+\item MY\_RUN/ : ktests and benchs  (See Section \ref{sec:run_ktest_examples})
+\item pub/ : public tools
+\item README\_MNH\_CONDA : instructions to install \href{https://github.com/QuentinRodier/MNHPy}{MNHPy} via conda, a python library to plot Meso-NH outputs
+\item src/
+\begin{itemize}
+\item ARCH\_SRC/ 
+\item configure : script to configure Meso-NH (See Section \ref{sec:configure_mesonh_package})
+\item include/ : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item job\_make\_examples\_* : script to launch examples on different computers
+\item job\_make\_mesonh\_* : script to launch examples on different computers
+\item LIB/ : location of external libraries (ECCODES, ECRAD, NETCDF, OASIS, ...)
+\item Makefile : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item Makefile.MESONH.mk : \textcolor{red}{(décrire ce qu'il y a dedans)}
+\item MNH/ : Meso-NH source code
+\item PHYEX/ : PHYEX source code, externalized atmospheric physics common to AROME and HARMONIE-AROME
+\item Rules.* : compiled options for different compilers
+\item SURFEX/ : SURFEX source code
+\end{itemize}
+\end{itemize}
+

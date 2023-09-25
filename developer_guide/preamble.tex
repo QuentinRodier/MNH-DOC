@@ -1,0 +1,113 @@
+%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+%$$$$$$       START OF PREAMBLE
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%=========================================
+%    Titlepage
+%=========================================
+\title{Meso-NH 56 developer's guide}
+\author{mesonhsupport .at. obs-mip.fr}
+\date{Last updated : 25 September 2023}
+
+%=========================================
+%    Use colors
+%=========================================
+\usepackage{xcolor, colortbl}
+\definecolor{lightgray}{gray}{0.95}
+
+%=========================================
+%    Bibliography
+%=========================================
+\usepackage{natbib}          
+\bibliographystyle{plainnat}
+
+%=========================================
+%    Fancy boxes : https://ctan.org/pkg/awesomebox
+%=========================================
+\usepackage{awesomebox}
+
+%==================================
+%    Pdf metadata
+%==================================
+\usepackage[pdftex]{hyperref}                  % Link inside PDF
+\usepackage[figure]{hypcap}[2008/09/08]        % Link to the figure and not the caption (hyperref correction)
+\hypersetup{
+    bookmarksnumbered = true,
+    pdftitle          = {Meso-NH developer's guide},
+    pdfauthor         = {Support Meso-NH},
+    pdfsubject        = {Meso-NH developer's guide},
+    colorlinks        = true,
+    linkcolor         = blue,
+    citecolor         = green,
+    filecolor         = magenta, 
+    urlcolor          = cyan,
+    pageanchor        = true}
+
+%==================================
+%    Include codes
+%==================================
+\usepackage{fancyvrb}
+\fvset{frame=single,fontsize=\small,numbers=left,framerule=0.2mm}%,commandchars=\\\{\}}
+%
+\usepackage{minted}
+
+\newminted{python3}{linenos=true,
+                    bgcolor=lightgray,
+                    fontsize=\footnotesize}
+                    
+\newminted{fortran}{linenos=true,
+%                    bgcolor=lightgray,
+                    fontsize=\footnotesize}
+
+\newminted{bash}{linenos=true,breaklines,
+                 fontsize=\footnotesize}
+
+\newminted{matlab}{linenos=true,
+                 fontsize=\footnotesize}
+
+\renewcommand{\listingscaption}{Program code}
+\renewcommand{\listoflistingscaption}{List of Program Code}
+
+%==================================
+%    List modifications
+%==================================
+\renewcommand{\labelitemi}{$\bullet$}
+
+\newenvironment{itemize*}{\begin{itemize}
+  \setlength{\itemsep}{0.2pt}
+  \setlength{\parskip}{0.2pt}}
+{\end{itemize}}
+
+\newenvironment{enumerate*}{\begin{enumerate}
+  \setlength{\itemsep}{0.2pt}
+  \setlength{\parskip}{0.2pt}}
+{\end{enumerate}}
+
+%=========================================
+%    Figure and table modifications
+%=========================================
+\usepackage[pdftex, final]{graphicx,pdfpages}                   
+\usepackage{longtable}                                 
+\usepackage{booktabs}
+\usepackage{float} 
+
+%=========================================
+%    Margins modifications
+%=========================================
+\usepackage{geometry}
+\geometry{hmargin=2.5cm,vmargin=1.5cm}
+
+%=========================================
+%    Table Of Contents depth      
+%=========================================
+\setcounter{tocdepth}{2}
+
+%=========================================
+%    Appendices    
+%=========================================
+\usepackage{appendix}
+
+%$$$$$$       END OF PREAMBLE
+%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
