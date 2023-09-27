@@ -1,0 +1,50 @@
+%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+%$$$$$$       START OF PREAMBLE
+
+\input{preamble}
+
+%$$$$$$       END OF PREAMBLE
+%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+%$$$$$$       START OF DOCUMENT
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This guide provides to the users and developers of Meso-NH \citep{lac_overview_2018} the necessary information to get the code, to compile and modify it. The aim is to facilitate the integration of new developments into the official version. This document gathers different information present in the A-INSTALL file and in different places of the Meso-NH website. 
+\end{abstract}
+
+\tableofcontents
+
+%---------
+\include{description_mesonh_package/description_mesonh_package}
+\include{get_mesonh_package/get_mesonh_package}
+\include{configure_mesonh_package/configure_mesonh_package}
+\include{compile_mesonh_package/compile_mesonh_package}
+\include{modify_and_recompile_mesonh_package/modify_and_recompile_mesonh_package}
+\include{how_to_contribute/contribute}
+\include{run_ktests/run_ktests}
+\include{known_issues/known_issues}
+%\include{scandollar/scandollar}
+
+%\include{compilation/compilation}
+%\include{develop_inside_mesonh/develop_inside_mesonh}
+%\include{validation_of_your_development}
+%\include{ask_for_merging_in_the_master}
+%---------
+
+%---------
+\appendix
+\include{appendices/basic_git_commands}
+%---------
+
+%---------
+\newpage
+\addcontentsline{toc}{section}{References}
+\bibliography{references}
+
+\end{document}
+
+%$$$$$$       END OF DOCUMENT
+%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

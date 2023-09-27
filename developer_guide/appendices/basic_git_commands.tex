@@ -1,0 +1,69 @@
+% =============================================================
+\section{Basic git commands}
+\label{app:basic_git_commands}
+% =============================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|p{7cm}}
+\hline
+\textbf{Command} & \textbf{Function} \\
+\hline
+git clone https://depot.git & get git repository \\
+\hline
+git status & display the status of the local repository in relation to the status of the repository after the last git fetch \\
+\hline
+git add file & index file to git, git will follows modifications of this file \\
+\hline
+git add * & index every files in the directory \\
+\hline
+git commit -m 'comment' & comment related to the modifications \\
+\hline
+git push & push the modifications on the server. Modifications can be used by other collaborators. \\
+\hline
+git log & display commit's history \\
+\hline
+git checkout id\_commit & return to the commit with the id visible via the ``git log'' command \\
+\hline
+git checkout master & return to the master's commit \\
+\hline
+git pull & = git fetch + git merge \\
+\hline
+git fetch & retrieve the history of what has been modified on the repository without modifying the source code in your working directory. \\
+\hline
+git diff origin master & display what will be merged (with git merge). Possibility to see the differences between 2 branches before merging \\
+\hline
+git merge & retrieve modified files (whose history has been fetched by git fetch) in the current folder \\
+\hline
+git mergetool meld & use meld to merge conflicts \\
+\hline
+git remote & display the name of the ``remote'' distant server \\
+\hline
+git remote -v & display the list of servers on which the git fetch and git push commands will work \\
+\hline
+git rm --cached file & remove an index file \\
+\hline
+git config & configure git (user name, ...) \\
+\hline
+git branch branch\_name & create a branch \\
+\hline
+git branch & display the created branches and the one being worked on (local branches) \\
+\hline
+git branch -a & display all the branches in the repository \\
+\hline
+git branch -v & display all the branches in the repository and the last associated commit \\
+\hline
+git checkout branch\_name or master & change branch \\
+\hline
+git checkout -b MYB-MNH-V5-5-0 PACK-MNH-V5-5-0 & create a branch called MYB-MNH-V5-5-0 from the tag PACK-MNH-V5-5-0 \\
+\hline
+git merge branchA &  merge branchA into the current branch given by git branch \\
+\hline
+git tag & list created tags. A tag points to a specific commit. You can put several tags per commit \\
+\hline
+git tag -a v1.4 -m "my version 1.4" & create a tag called v1.4 with a comment \\
+\hline
+\end{tabular}
+\caption{Some basic Git commands}
+\label{tab:git_commands}
+\end{table}

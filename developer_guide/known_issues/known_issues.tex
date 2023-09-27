@@ -1,0 +1,26 @@
+% =============================================================
+\section{Known issues}
+\label{sec:known_issues}
+% =============================================================
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\subsection{Segmentation violation : problem of stack size limit}
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When running the examples coming with the Meso-NH package, if you obtain a ``segmentation violation'' error it is probably a problem with the stack size limit on your computer ... Check this limit with the command :
+\begin{bashcode}
+ ulimit -s
+\end{bashcode}
+
+The limit is given in Kbytes (KB) and is often 8192 KB, this mean only 8 MB for array in stack memory. It's a very low value. We recommend you to defined it to ``unlimited'' in your environment (``.bashrc'' or ``.profile'') or in your script used to launch your executables like this :
+\begin{bashcode}
+ulimit -s unlimited
+\end{bashcode}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\subsection{Bug with ``ifort 10.0.xxx'' compilers}
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some routines do not compile with the version ``10.0.XXX'' of ``ifort'' (at least until 10.0.023), solution is to upgrade to ifort ``10.1.015''. \\
+
+The ifort ``10.1.008'' has also some bug in the generation of optimized vectorized code resulting in unpredictable flaoting point error. Solution is to compile the routine with problem with ``-O1'' option or upgrade to at least ``10.1.015'' version.

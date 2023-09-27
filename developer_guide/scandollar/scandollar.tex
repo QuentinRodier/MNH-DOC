@@ -1,0 +1,193 @@
+ 711  
+ 715 
+ 716 #
+ 717 #  VII) "SCANDOLLAR" = SCRIPTING YOUR OWN PROCEDURES 
+ 718 #  ====================================================
+ 719 
+ 720 REM : not tested on 5-5-X version ...
+ 721 
+ 722 # A small script 'scandollar' is in test in this version of MESONH.
+ 723 # It will help you to build a complete chaining of an experiment. 
+ 724 # The idea is to write some "template" scripts with '$VARIABLE' in the 
+ 725 # Key point. Then 'scandollar' will parse this template files
+ 726 # and generate the file with the variables evaluated ...
+ 727 #
+ 728 # First don't forget to load your "profile_mesonh..."
+ 729 #
+ 730 # So how it work  ...
+ 731 #
+ 732 #  Syntaxe 
+ 733 
+ 734 export CONFEXP="YOUR_EXPERIMENT"
+ 735 scandollar [list_directory]
+ 736 
+ 737 # What is done :
+ 738 #
+ 739 #   for all (directory) in [liste directory]
+ 740 #   go to this (directory)
+ 741 #    - read the environnement variable in the user 'confdollar' file 
+ 742 #    - read the default environnement variable for this 'machine' in ${CONF_DOLLAR}
+ 743 #    - parse all the '*.ihm' file and put the transformed file 
+ 744 #         (without extension in) in a new sub-directory '${CONFEXP}'
+ 745 #
+ 746 #  Without [list_directory] the current directory '.' is parsed . 
+ 747 #
+ 748 # As a demonstration the '16janvier Study Case' is build with this
+ 749 # template script here :
+ 750 
+ 751 $SRC_MESONH/MY_RUN/KTEST/007_16janvier_scandollar
+ 752 
+ 753 #
+ 754 # EXAMPLE :
+ 755 # -------
+ 756 #
+ 757 # To parse only the first pgd step = directory '001_pgd1'
+ 758 
+ 759 cd $SRC_MESONH/MY_RUN/KTEST/007_16janvier_scandollar/001_pgd1
+ 760 
+ 761 export CONFEXP=512
+ 762 scandollar
+ 763 
+ 764 ## OUTPUT ::
+ 765 
+ 766 >#  read default config file :: --->  CONF_DOLLAR=/home/escj/DEV64/PACK-MNH-V5-6-0/conf/post/confdollar_aeropc_default
+ 767 >#
+ 768 >#  read    user config file :: --->  CONFIG=confdollar
+ 769 >#
+ 770 >#  processes file *.ihm and put them in ./512/ ::
+ 771 >#          ---> run_prep_pgd_xyz.ihm =>  ./512/run_prep_pgd_xyz
+ 772 
+ 773 
+ 774 #
+ 775 # And to run this step 
+ 776 #
+ 777 
+ 778 cd $SRC_MESONH/MY_RUN/KTEST/007_16janvier_scandollar/001_pgd1/512
+ 779 (qsub) run_prep_pgd_xyz # qsub on brodie 
+ 780 
+ 781 # To parse all these steps 
+ 782 
+ 783 cd $SRC_MESONH/MY_RUN/KTEST/007_16janvier_scandollar/
+ 784 scandollar 0*
+ 785 
+ 786 ## OUTPUT ::
+ 787 >#
+ 788 >#  read default config file :: --->  CONF_DOLLAR=/home/escj/DEV64/PACK-MNH-V5-6-0/conf/post/confdollar_aeropc_default
+ 789 >#
+ 790 >#  read    user config file :: --->  CONFIG=confdollar
+ 791 >#
+ 792 >#  processes file *.ihm and put them in 001_pgd1/512/ ::
+ 793 >#          ---> run_prep_pgd_xyz.ihm =>  001_pgd1/512/run_prep_pgd_xyz
+ 794 ...
+ 795 >#  read    user config file :: --->  CONFIG=confdollar
+ 796 >#
+ 797 >#  processes file *.ihm and put them in 008_run2/512/ ::
+ 798 >#          ---> run_mesonh_xyz.ihm =>  008_run2/512/run_mesonh_xyz
+ 799 >#
+ 800 ...
+ 801 >#  read    user config file :: --->  CONFIG=confdollar
+ 802 >#
+ 803 >#  processes file *.ihm and put them in 011_diaprog/512/ ::
+ 804 >#          ---> run_diaprog.ihm =>  011_diaprog/512/run_diaprog
+ 805 
+ 806 
+ 807 #
+ 808 # The chaining of the differents steps is control by the "RMSHELL" variable .
+ 809 # To inhibit put a "#" in it , eather in your current shell
+ 810 # or in the 'confdollar' file .
+ 811 
+ 812 export RMSHELL="#"
+ 813 
+ 814 #
+ 815 # Some 'predefine' variables are set in the '${CONF_DOLLAR}' default files
+ 816 #   --> One file is defined by know-computer . 
+ 817 #
+ 818 #   Are included files for 'brodie' , 'vargas' , ( babel beta-test ) , 'c1a' , 'jade' & 'aeropc*' ( = default for unknown host )
+ 819 
+ 820 export  CONF_DOLLAR=${SRC_MESONH}/conf/post/confdollar_aeropc_default
+ 821 
+ 822 #
+ 823 #   You could define your own default file and use it by setting
+ 824 #   in your shell the  'CONF_DOLLAR' variable 
+ 825 #   ( By default './configure' will set it for you in the profile_mesonh file ) 
+ 826 
+ 827 
+ 828 #
+ 829 #  ON GENCI PLATEFORM 
+ 830 #  ------------------
+ 831 # 
+ 832 #  You will find my "own" personal installation of MESONH 
+ 833 #  in the next directory . If you need only to run MESONH
+ 834 #  without recompiliong new sources for MESONH, you could :
+ 835 #
+ 836 #  - source/load my own "profile_mesonh" without modification
+ 837 # 
+ 838 #  - and copy the scripts examples  with 
+ 839 
+ 840 cp -R  007_16janvier_scandollar /.../your_directory
+ 841   
+ 842 #
+ 843 
+ 844 # 
+ 845 # You could also copy only the differents "*/512"  sub-directory
+ 846 # if you don't when ti use the "scandollar" script  .
+ 847 #
+ 848 # 
+ 849 #   You will the need to change only information corresponding 
+ 850 #   the location to your own path directory for the input/ouput data .
+ 851 #  
+ 852 #   So
+ 853 #
+ 854 #  - At IDRIS :
+ 855 #    ==========
+ 856 #
+ 857 #  On Brodie
+ 858 #  ---------
+ 859 #
+ 860 # use this "profile_mesonh" :
+ 861 
+ 862 .  /home/rech/mnh/rmnh007/DEV/MNH-V5-6-0/conf/profile_mesonh-SX8-MNH-V5-6-0-MPIAUTO-O4
+ 863 
+ 864 # And the examples are here ( link to my $WORKDIR in actually )  
+ 865 
+ 866 /home/rech/mnh/rmnh007/DEV/MNH-V5-6-0/MY_RUN/KTEST/007_16janvier_scandollar
+ 867 
+ 868 #
+ 869 #  On vargas
+ 870 #  ---------
+ 871 #  use this "profile_mesonh" :
+ 872 
+ 873 . /workgpfs/rech/mnh/rmnh007/DEV/MNH-V5-6-0/conf/profile_mesonh-AIX64-MNH-V5-6-0-MPIAUTO-O2
+ 874 
+ 875 # and examples here :
+ 876 
+ 877 /workgpfs/rech/mnh/rmnh007/DEV/MNH-V5-6-0/MY_RUN/KTEST/007_16janvier_scandollar
+ 878 
+ 879 # 
+ 880 #  - At CINES on JADE :
+ 881 #    =================
+ 882 #
+ 883 # use 
+ 884 
+ 885 . /work/escobar/DEV/MNH-V5-6-0/conf/profile_mesonh-LXifort-MNH-V5-6-0-MPIICE-O2
+ 886 
+ 887 # and the exemples
+ 888 
+ 889 /work/escobar/DEV/MNH-V5-6-0/MY_RUN/KTEST/007_16janvier_scandollar
+ 890 
+ 891 #
+ 892 #  - At ECMWF on cxa :
+ 893 #    ===============
+ 894 #
+ 895 # use
+ 896 
+ 897 . /c1a/ms_perm/au5/MNH-V5-6-0/conf/profile_mesonh-AIX64-MNH-V5-6-0-MPIAUTO-O2
+ 898 
+ 899 # and the examples
+ 900 
+ 901 /c1a/ms_perm/au5/MNH-V5-6-0/MY_RUN/KTEST/007_16janvier_scandollar
+ 902 
+ 903 
+ 904 #
+ 905 #  Good luck!!!
+ 906 #

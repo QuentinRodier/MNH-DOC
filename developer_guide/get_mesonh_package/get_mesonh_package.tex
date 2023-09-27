@@ -1,0 +1,187 @@
+% =============================================================
+\section{Get Meso-NH's package}
+\label{sec:get_mesonh_package}
+% =============================================================
+
+Meso-NH package is developed and maintained using Git\footnote{\href{https://git-scm.com/}{https://git-scm.com/}}. \\
+
+It is now strongly recommended, but not mandatory, for all users to download Meso-NH package using Git (Section \ref{subsec:mesonh_git}), because:
+\begin{itemize}
+\item It's more easy for us (Meso-NH support's team) to give you some assistance in case of trouble... as Git permits us to know exactly what you have changed in the original package ;
+\item It's much more easy for you to update to the last version...  or at least see the change made for bug fix directly on our installation.
+\end{itemize}
+
+However, if you are allergic to Git, you can still download a tarball of Meso-NH package (Section \ref{subsec:mesonh_tar}).
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\subsection{Download a tarball of Meso-NH (for basic users ; not recommended)}
+\label{subsec:mesonh_tar}
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are a basic user of Meso-NH, you can download a ``tarball'' containing Meso-NH package. With your preferred web browser go to the Meso-NH website (\href{http://mesonh.aero.obs-mip.fr/mesonh}{http://mesonh.aero.obs-mip.fr}) and click on \textbf{Download} link on the left part or you can directly download the last validated version of Meso-NH via \href{http://mesonh.aero.obs-mip.fr/mesonh/dir_open/dir_MESONH/MNH-V5-6-0.tar.gz}{http://mesonh.aero.obs-mip.fr/mesonh/dir\_open/dir\_MESONH/MNH-V5-6-0.tar.gz}. \\
+
+Then untar the file ``MNH-V5-6-0.tar.gz'' where you want to.
+For example, in your home directory:
+\begin{bashcode}
+cd
+tar xvfz MNH-V5-6-0.tar.gz
+\end{bashcode}
+
+Next step is to configure Meso-NH package, for that go to Section \ref{sec:configure_mesonh_package}.
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\subsection{Download via git (for users only ; highly recommended)}
+\label{subsec:mesonh_git}
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\notebox{If you will modify the code, go to section \ref{sec:dev_sec}.}
+
+
+\notebox{Some basic Git commands are presented in Appendice \ref{app:basic_git_commands}.}
+
+% ----------------------------
+\subsubsection{Prerequisites}
+% ----------------------------
+
+ In order to clone the Meso-NH git repository the git LFS extension is required to handle binary (or large) files (LFS meaning Large File Storage). So before starting, be sure:
+\begin{itemize}
+    \item to have git v1.8.2 or higher installed on your workstation. You can run and check with:
+\end{itemize}
+\begin{bashcode}
+ git --version
+\end{bashcode}
+\begin{itemize}
+\item to install the git LFS extension (not included by default in the Git package :
+\begin{itemize}
+\item get the linux git-lfs archive from the ``Download v1.X.Y (Linux)'' link on the web page https://git-lfs.github.com/
+\item extract the archive and copy the git-lfs binary in your \$HOME/bin (the provided install.sh script doesn't need to be executed)
+\item from any directory, you can now execute:
+\end{itemize}
+\end{itemize}
+\begin{bashcode}
+git lfs install
+\end{bashcode}
+that will set up some filters under the name ``lfs'' in the global Git config file (\$HOME/.gitconfig)
+ 
+% ----------------------------
+\subsubsection{Before cloning}
+% ----------------------------
+
+\begin{itemize}
+\item Download the private key to access the anonymous Meso-NH Git server (read-only access) by following the next link \href{http://mesonh.aero.obs-mip.fr/mesonh56/GitSources?action=AttachFile&do=get&target=anongitmesonh.key}{anongitmesonh.key} and save the file in your \$HOME/.ssh/ directory
+\item Change the access permissions of the key with:
+\end{itemize}
+\begin{bashcode}
+chmod 600 $HOME/.ssh/anongitmesonh.key
+\end{bashcode}
+\begin{itemize}
+\item Copy/paste the following lines and add them in your \$HOME/.ssh/config file (create the file if it is missing):
+\end{itemize}
+\begin{bashcode}
+Host anongit_mesonh
+  User anongit
+  IdentityFile ~/.ssh/anongitmesonh.key
+  Hostname 195.83.22.22
+  Port 22222
+\end{bashcode}
+
+To finish, it's necessary to disable the certificate checks because a self-signed certificate was used for the LFS server, for that execute :
+\begin{bashcode}
+git config --global http.sslverify false
+\end{bashcode}
+
+% ----------------------------
+\subsubsection{Cloning Meso-NH on the read-only repository MNH-git\_open\_source-lfs}
+% ----------------------------
+
+Finally you can clone the \textbf{read-only} Meso-NH Git repository with the following command:
+\begin{bashcode}
+git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MNH-56-branch MNH-V5-6-0
+\end{bashcode}
+
+that will create the MNH-V5-6-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+
+\subsection{Download via git (for developpers; mandatory)}
+\label{sec:dev_sec}
+If you wish to contribute to the public Meso-NH code, the support team needs to have access to your branches. For that purpose, a second repository with read-write permissions MNH-ladev is available for any contributors. This repo contains :
+\begin{itemize}
+    \item strictly duplicated branches from the read-only MNH-git\_open\_source-lfs.git repository. These branches are synchronized every 24 hours. DO NOT WRITE ON THESE BRANCHES OR YOU MAY LOOSE YOUR WORK.
+    \item public user's developping branches
+\end{itemize}
+
+Once your developpement is ready, contact the support team in charge of the merging process to the master branch.
+% ----------------------------
+\subsubsection{Before cloning}
+% ----------------------------
+The MNH-ladev repository is available to anyone who requests the access by sending its public ssh key, usually found in 
+\begin{bashcode}
+    ~/.ssh/id_rsa.pub
+\end{bashcode}
+to the support team by email. You may send multiple keys if you need to acess MNH-ladev through multiple devices.
+Once you have received confirmations by the team, you can continue to next step.
+
+% ----------------------------
+\subsubsection{Cloning Meso-NH on the developpers read-write repository MNH-ladev}
+% ----------------------------
+Finally you can clone the \textbf{read-write} Meso-NH Git repository with the following command:
+\begin{bashcode}
+git lfs clone gitladev@mesonh2.aero.obs-mip.fr:/gitladevrepos/MNH-ladev.git -b MNH-56-branch MNH-V5-6-0
+\end{bashcode}
+
+that will create the MNH-V5-6-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+
+% ----------------------------
+\subsection{Checking out a given version of Meso-NH}
+% ----------------------------
+
+Once the repository is cloned, it's better for you to checkout your own branch (by default, you are on HEAD of the MNH-56-branch development branch). \\
+
+To create your local branch corresponding to the V5-6-0 version, type:
+\begin{bashcode}
+cd MNH-V5-6-0
+git checkout -b MYB-MNH-V5-6-0 PACK-MNH-V5-6-0
+\end{bashcode}
+
+MYB-MNH-V5-6-0 is the name of the local branch you created and PACK-MNH-V5-6-0 is the remote/origin tag on which it is based.
+
+\begin{importantblock}
+\textcolor{red}{Est-ce que cette branche peut remonter sur le serveur git de Meso-NH ? j'ai un doute ! Si ce n'est pas possible, comment est-ce qu'on récupère les modifications qui sont faites par les développeurs ?}
+\end{importantblock}
+
+The advantage of this way of downloading the package is that in the future you could check and update quickly differences with the new version of the package without having to download entirely the full package. \\
+
+Suppose that a new version, for example ``PACK-MNH-V5-6-1'', is announced. To see the differences with your working copy, do:
+\begin{bashcode}
+git fetch
+git diff HEAD PACK-MNH-V5-6-1
+\end{bashcode}
+
+To go to the new version, you can, for example, create a new local branch:
+\begin{bashcode}
+git checkout -b MYB-MNH-V5-6-1 PACK-MNH-V5-6-1
+\end{bashcode}
+
+At any time, you can also check for ``uptodate'' changes in the Git branch dedicated to the MNH56 version before the official release of the ``bugN+1'' bugfix version.
+\begin{bashcode}
+git fetch
+git diff HEAD MNH-56-branch
+\end{bashcode}
+
+And, test this development (not yet official) version by going to this branch:
+\begin{bashcode}
+git checkout --track origin/MNH-56-branch
+\end{bashcode}
+
+% ----------------------------
+\subsection{Get the Meso-NH documentation repository}
+% ----------------------------
+
+In a similar way, you can get the Meso-NH documentation with the following command:
+\begin{bashcode}
+git clone anongit@anongit_mesonh:/gitrepos/MNH-DOC.git
+\end{bashcode}
+
+This command will create the MNH-DOC directory containing the latest \LaTeX version of the Meso-NH documentation. \\
+
+Next step is to configure Meso-NH package, for that go to Section \ref{sec:configure_mesonh_package}.
+
+ 

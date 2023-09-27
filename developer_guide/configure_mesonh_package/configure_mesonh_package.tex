@@ -1,0 +1,69 @@
+% =============================================================
+\section{Configure Meso-NH's package}
+\label{sec:configure_mesonh_package}
+% =============================================================
+  
+To configure Meso-NH's package you have to use the ``./configure'' script located in src/ directory. This command will create a file called ``profile\_mesonh'' and an other one with an extension reflecting the different choices made. This file includes all the environments variables and library required to compile and run Meso-NH's package. \\
+
+\begin{noteblock}
+\textcolor{red}{Préciser les variables d'environnement définies dans le profile\_mesonh, XYZ, SRC\_MESONH, MAJ du path (exe), ...}
+\end{noteblock}
+
+Some computer are automatically detected by the configure script, we recommend you to verify the presence of your computer in the configure script before running it.
+
+% --------------------------------------------------------------
+\subsection{On Linux computer}
+% --------------------------------------------------------------
+
+For your Linux computer which is not referenced in the configure file, it's up to you to set the environment variables ARCH, VER\_MPI, OPTLEVEL, ... correctly. \\
+
+By default, for an unknown computer, you will have:
+\begin{itemize}
+\item export ARCH=LXgfortran : compiler is ``gfortran''
+\item export VER\_MPI=MPIVIDE : MPI library to set to MPIVIDE (empty MPI library coming with Meso-NH's package, no parallel run possible)
+\item export OPTLEVEL=DEBUG : level of optimization is DEBUG (for development purpose, fast compilation but slow simulation) \\
+\end{itemize} 
+
+If needed, you can change the different options by changing the environment variable before running the configure script, for example :
+\begin{bashcode}
+export ARCH=LXifort        # Use ifort compiler on LX=linux Plateform 
+export VER_MPI=MPIAUTO     # Use MPI with compiler wrapper mpif90
+export OPTLEVEL=O2         # Compile in O2, slow compilation but simulation 4 times faster than DEBUG, but less error checks
+ ./configure 
+\end{bashcode}
+
+Then you can load the new generate profile\_mesonh file :
+\begin{bashcode}
+. ../conf/profile_mesonh-your_configuration
+\end{bashcode}
+
+Next step is to compile Meso-NH package, for that go to Section \ref{sec:compile_mesonh_package}.
+
+% --------------------------------------------------------------
+\subsection{On supercomputer (IDRIS, CINES, ECMWF, METEO-FRANCE, CALMIP, NUWA, ...)}
+% --------------------------------------------------------------
+
+For IDRIS (JEAN-ZAY), ECMWF , METEO-FRANCE (belenos/taranis), CALMIP (Olympe), NUWA computers and some other one, the ``configure'' script detected automatically the compiler and libraries already tested. \\
+
+On these computers, you just have to to do :
+\begin{bashcode}
+ cd MNH-V5-6-0/src
+ ./configure
+ . ../conf/profile_mesonh-your_configuration
+ \end{bashcode}
+
+Next step is to compile Meso-NH package, for that go to Section \ref{sec:compile_mesonh_package}.
+ 
+% --------------------------------------------------------------
+\subsection{Some tips}
+% --------------------------------------------------------------
+
+\begin{itemize}
+\item Options specific to compiling/architecture, like ``OPTLEVEL`` are defined inside the ``Rules.\${ARCH}.mk``.
+\item Options specific to library like ``mpi''=``VER\_MPI'' or ``cdf''=``VER\_CDF'' are defined inside ``Makefile.MESONH.mk''
+\item By default, ECCODES and NETCDF libraries are automatically installed and compiled by Meso-NH (src/LIB/)
+\item If needed, for adaptation to your requirements, look inside the files and changes options for your needs.
+\item On PC-Linux, if needed, look at the ``MesonhTEAM wiki'' to know how to compile the Open-MPI library with Meso-NH (\href{http://mesonh.aero.obs-mip.fr/mesonh56/MesonhTEAMFAQ/PC_Linux}{http://mesonh.aero.obs-mip.fr/mesonh56/MesonhTEAMFAQ/PC\_Linux})
+ \end{itemize}
+
+ 
