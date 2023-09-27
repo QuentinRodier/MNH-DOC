@@ -18,13 +18,13 @@ However, if you are allergic to Git, you can still download a tarball of Meso-NH
 \label{subsec:mesonh_tar}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are a basic user of Meso-NH, you can download a ``tarball'' containing Meso-NH package. With your preferred web browser go to the Meso-NH website (\href{http://mesonh.aero.obs-mip.fr/mesonh}{http://mesonh.aero.obs-mip.fr}) and click on \textbf{Download} link on the left part or you can directly download the last validated version of Meso-NH via \href{http://mesonh.aero.obs-mip.fr/mesonh/dir_open/dir_MESONH/MNH-V5-6-0.tar.gz}{http://mesonh.aero.obs-mip.fr/mesonh/dir\_open/dir\_MESONH/MNH-V5-6-0.tar.gz}. \\
+If you are a basic user of Meso-NH, you can download a ``tarball'' containing Meso-NH package. With your preferred web browser go to the Meso-NH website (\href{http://mesonh.aero.obs-mip.fr/mesonh}{http://mesonh.aero.obs-mip.fr}) and click on \textbf{Download} link on the left part or you can directly download the last validated version of Meso-NH via \href{http://mesonh.aero.obs-mip.fr/mesonh/dir_open/dir_MESONH/MNH-V5-6-1.tar.gz}{http://mesonh.aero.obs-mip.fr/mesonh/dir\_open/dir\_MESONH/MNH-V5-6-1.tar.gz}. \\
 
-Then untar the file ``MNH-V5-6-0.tar.gz'' where you want to.
+Then untar the file ``MNH-V5-6-1.tar.gz'' where you want to.
 For example, in your home directory:
 \begin{bashcode}
 cd
-tar xvfz MNH-V5-6-0.tar.gz
+tar xvfz MNH-V5-6-1.tar.gz
 \end{bashcode}
 
 Next step is to configure Meso-NH package, for that go to Section \ref{sec:configure_mesonh_package}.
@@ -95,10 +95,10 @@ git config --global http.sslverify false
 
 Finally you can clone the \textbf{read-only} Meso-NH Git repository with the following command:
 \begin{bashcode}
-git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MNH-56-branch MNH-V5-6-0
+git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MNH-56-branch MNH-V5-6-1
 \end{bashcode}
 
-that will create the MNH-V5-6-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+that will create the MNH-V5-6-1 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
 
 \subsection{Download via git (for developpers; mandatory)}
 \label{sec:dev_sec}
@@ -124,10 +124,10 @@ Once you have received confirmations by the team, you can continue to next step.
 % ----------------------------
 Finally you can clone the \textbf{read-write} Meso-NH Git repository with the following command:
 \begin{bashcode}
-git lfs clone gitladev@mesonh2.aero.obs-mip.fr:/gitladevrepos/MNH-ladev.git -b MNH-56-branch MNH-V5-6-0
+git lfs clone gitladev@mesonh2.aero.obs-mip.fr:/gitladevrepos/MNH-ladev.git -b MNH-56-branch MNH-V5-6-1
 \end{bashcode}
 
-that will create the MNH-V5-6-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+that will create the MNH-V5-6-1 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
 
 % ----------------------------
 \subsection{Checking out a given version of Meso-NH}
@@ -135,17 +135,13 @@ that will create the MNH-V5-6-0 directory containing a clone (copy) of the Meso-
 
 Once the repository is cloned, it's better for you to checkout your own branch (by default, you are on HEAD of the MNH-56-branch development branch). \\
 
-To create your local branch corresponding to the V5-6-0 version, type:
+To create your local branch corresponding to the V5-6-1 version, type:
 \begin{bashcode}
-cd MNH-V5-6-0
-git checkout -b MYB-MNH-V5-6-0 PACK-MNH-V5-6-0
+cd MNH-V5-6-1
+git checkout -b MYB-MNH-V5-6-1 PACK-MNH-V5-6-1
 \end{bashcode}
 
-MYB-MNH-V5-6-0 is the name of the local branch you created and PACK-MNH-V5-6-0 is the remote/origin tag on which it is based.
-
-\begin{importantblock}
-\textcolor{red}{Est-ce que cette branche peut remonter sur le serveur git de Meso-NH ? j'ai un doute ! Si ce n'est pas possible, comment est-ce qu'on récupère les modifications qui sont faites par les développeurs ?}
-\end{importantblock}
+MYB-MNH-V5-6-1 is the name of the local branch you created and PACK-MNH-V5-6-1 is the remote/origin tag on which it is based.
 
 The advantage of this way of downloading the package is that in the future you could check and update quickly differences with the new version of the package without having to download entirely the full package. \\
 
