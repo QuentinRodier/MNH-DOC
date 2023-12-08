@@ -713,15 +713,15 @@ DRYG   & dry growth of graupel                         & no condition \\\hline
 IMLT   & melting of ice                                & no condition \\\hline
 BERFI  & Bergeron-Findeisen                            & no condition \\\hline
 DEPI   & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
-CMEL   & collection by snow and conversion into rain with $T>XTT$ on ice & LRED=T and CELEC='NONE' \\\hline
+CMEL   & collection by snow and conversion into rain with $T>XTT$ on ice & LRED=T and CELEC/='ELE3' \\\hline
 DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
-ADJU   & adjustement to saturation                     & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+ADJU   & adjustement to saturation                     & LRED=T and LADJ\_BEFORE=T and CELEC/='ELE3' \\\hline
 WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 \subsubsection{C2R2 / KHKO source terms}
@@ -849,10 +849,10 @@ GMLT   & graupel melting                               & no condition \\\hline
 WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
 HGCV   & hail to graupel conversion                    & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
 DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 
@@ -923,7 +923,7 @@ HMLT   & melting of hail                               & no condition \\\hline
 CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 
@@ -1018,12 +1018,12 @@ DRYG   & dry growth of graupel                         & no condition \\\hline
 WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
 DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
 DEPI   & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
-ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 
@@ -1100,7 +1100,7 @@ AUTO   & autoconversion into rain                                & NMOM\_C>=1 \\
 ACCR   & accretion of cloud droplets                             & NMOM\_C>=1 \\\hline
 REVA   & rain evaporation                                        & NMOM\_C>=1 \\\hline
 ACC    & accretion of rain on aggregates                         & no condition \\\hline
-CMEL   & collection of droplets by snow and conversion into rain & LRED=T and CELEC='NONE' \\\hline
+CMEL   & collection of droplets by snow and conversion into rain & LRED=T and CELEC/='ELE3' \\\hline
 CFRZ   & conversion freezing of rain                             & no condition \\\hline
 WETG   & wet growth of graupel                                   & no condition \\\hline
 DRYG   & dry growth of graupel                                   & no condition \\\hline
@@ -1109,10 +1109,10 @@ WETH   & wet growth of hail                                      & CCLOUD='ICE4'
 DRYH   & dry growth of hail                                      & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
 HMLT   & melting of hail                                         & CCLOUD='ICE4' \\\hline
 SFR    & spontaneous freezing                                    & no condition \\\hline
-CORR   & correction                                              & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                              & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                                   & no condition \\\hline
 NEADV  & negativity correction induced by advection              & no condition \\\hline
-NECON  & negativity correction induced by condensation           & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation           & no condition \\\hline
 \end{longtable}
 
 \subsubsection{C2R2 / KHKO source terms}
@@ -1225,10 +1225,10 @@ WETG   & wet growth of graupel                         & no condition \\\hline
 DRYG   & dry growth of graupel                         & no condition \\\hline
 WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
 DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 
@@ -1266,6 +1266,7 @@ NUD    & nudging                        & LNUDGING=T                       \\\hl
 DIF    & numerical diffusion            & LNUMDIFTH=T                      \\\hline
 REL    & relaxation                     & LHORELAX\_RV=T                   \\\hline
 DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'   \\\hline
+DRAGB  & vapor released by buildings    & LDRAGBLDG=T                      \\\hline
 BLAZE  & Blaze fire model               & LBLAZE=T                         \\\hline
 HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
 VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
@@ -1309,13 +1310,13 @@ HIN    & heterogeneous ice nucleation                  & no condition \\\hline
 DEPS   & deposition on snow                            & no condition \\\hline
 DEPG   & deposition on graupel                         & no condition \\\hline
 DEPH   & deposition on hail                            & CCLOUD='ICE4' \\\hline
-ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC/='ELE3' \\\hline
 DEPI   & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 \subsubsection{C2R2 / KHKO source terms}
@@ -1732,7 +1733,7 @@ CEDS   & adjustment to saturation & no condition \\\hline
 \end{longtable}
 
 
-\subsubsection{Electricity source terms (ICE3 / ICE4 only)}
+\subsubsection{Electricity source terms}
 
 \paragraph{Common source terms for electricity}
 \mbox{} %necessary to ensure longtable is after paragraph text
@@ -1742,10 +1743,13 @@ CEDS   & adjustment to saturation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
-NEGA   & negativity correction & no condition \\\hline
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
+NEADV  & negativity correction induced by advection    & no condition \\\hline
+NEGA   & negativity correction                         & no condition \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
-\paragraph{Volumetric charge of water vapor}
+\paragraph{Positive ions}
 \mbox{} %necessary to ensure longtable is after paragraph text
 
 \begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
@@ -1755,11 +1759,15 @@ Name & Description & Condition(s) \\
 \endhead
 DRIFT  & ion drift motion               & no condition \\\hline
 CORAY  & cosmic ray source              & no condition \\\hline
+ADJU   & adjustement to saturation      & CCLOUD(1:3)='ICE' and LRED=T and LADJ\_BEFORE \\\hline
 DEPS   & deposition on snow             & no condition \\\hline
 DEPG   & deposition on graupel          & no condition \\\hline
-REVA   & rain evaporation               & NMOM\_C>=1      \\\hline
-DEPI   & condensation/deposition on ice & no condition \\\hline
+REVA   & rain evaporation               & NMOM\_C>=1   \\\hline
+DEPI   & condensation/deposition on ice & CCLOUD(1:3)='ICE' and (LRED=F or LADJ\_AFTER) \\\hline
+CEDS   & adjustement to saturation      & CCLOUD='LIMA' \\\hline
 NEUT   & neutralization                 & no condition \\\hline
+SUBI   & sublimation of ice crystals    & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting & CCLOUD='LIMA' and LPTSPLIT=T  \\\hline
 \end{longtable}
 
 \paragraph{Volumetric charge of cloud droplets}
@@ -1770,6 +1778,7 @@ NEUT   & neutralization                 & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+ADJU   & adjustement to saturation      & CCLOUD(1:3)='ICE' and LRED=T and LADJ\_BEFORE \\\hline
 HON    & homogeneous nucleation         & no condition \\\hline
 AUTO   & autoconversion into rain       & NMOM\_C>=1 \\\hline
 ACCR   & accretion of cloud droplets    & NMOM\_C>=1 \\\hline
@@ -1781,8 +1790,12 @@ WETH   & wet growth of hail             & CCLOUD='ICE4' \\\hline
 IMLT   & melting of ice                 & no condition \\\hline
 BERFI  & Bergeron-Findeisen             & no condition \\\hline
 SEDI   & sedimentation                  & LSEDIC=T \\\hline
-DEPI   & condensation/deposition on ice & no condition \\\hline
+DEPI   & condensation/deposition on ice & CCLOUD(1:3)='ICE' and (LRED=F or LADJ\_AFTER) \\\hline
+CEDS   & adjustement to saturation      & CCLOUD='LIMA' \\\hline
 NEUT   & neutralization                 & no condition \\\hline
+R2C1   & rain to cloud change after sedimentation & CCLOUD='LIMA' and LPTSPLIT=T and NMOM\_C>=1 NMOM\_R>=1 \\\hline
+CORR2  & supplementary correction inside LIMA splitting & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CMEL   & collection by snow and conversion into rain with T>XTT on ice & CCLOUD(1:3)='ICE' and LRED=T \\\hline
 \end{longtable}
 
 \paragraph{Volumetric charge of rain drops}
@@ -1806,6 +1819,10 @@ WETH   & wet growth of hail              & CCLOUD='ICE4' \\\hline
 HMLT   & melting of hail                 & CCLOUD='ICE4' \\\hline
 SEDI   & sedimentation                   & no condition \\\hline
 NEUT   & neutralization                  & no condition \\\hline
+R2C1   & rain to cloud change after sedimentation & CCLOUD='LIMA' and LPTSPLIT=T and NMOM\_C>=1 NMOM\_R>=1 \\\hline
+CORR2  & supplementary correction inside LIMA splitting & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CMEL   & collection by snow and conversion into rain with T>XTT on ice & CCLOUD(1:3)='ICE' and LRED=T \\\hline
+RDSF   & raindrop shattering by freezing & CCLOUD='LIMA' and LPTSPLIT=T and LRDSF=T \\\hline
 \end{longtable}
 
 \paragraph{Volumetric charge of ice crystals}
@@ -1816,6 +1833,7 @@ NEUT   & neutralization                  & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+ADJU   & adjustement to saturation      & CCLOUD(1:3)='ICE' and LRED=T and LADJ\_BEFORE \\\hline
 HON    & homogeneous nucleation         & no condition \\\hline
 AGGS   & aggregation of snow            & no condition \\\hline
 AUTS   & autoconversion of ice          & no condition \\\hline
@@ -1826,9 +1844,18 @@ WETH   & wet growth of hail             & CCLOUD='ICE4' \\\hline
 IMLT   & melting of ice                 & no condition \\\hline
 BERFI  & Bergeron-Findeisen             & no condition \\\hline
 NIIS   & non-inductive charge separation due to ice-snow collisions & no condition \\\hline
+NIIG   & non-inductive charge separation due to ice-graupel collisions & no condition \\\hline
 SEDI   & sedimentation                  & no condition \\\hline
-DEPI   & condensation/deposition on ice & no condition \\\hline
+DEPI   & condensation/deposition on ice & CCLOUD(1:3)='ICE' and (LRED=F or LADJ\_AFTER) \\\hline
+CEDS   & adjustement to saturation      & CCLOUD='LIMA' \\\hline
 NEUT   & neutralization                 & no condition \\\hline
+CNVI   & conversion of snow to cloud ice & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+SUBI   & sublimation of ice crystals    & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CIBU   & collisional ice breakup         & CCLOUD='LIMA' and LPTSPLIT=T and LCIBU=T \\\hline
+RDSF   & raindrop shattering by freezing & CCLOUD='LIMA' and LPTSPLIT=T and LRDSF=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
 \end{longtable}
 
 \paragraph{Volumetric charge of snow}
@@ -1848,8 +1875,12 @@ CMEL   & conversion melting        & no condition \\\hline
 WETG   & wet growth of graupel     & no condition \\\hline
 DRYG   & dry growth of graupel     & no condition \\\hline
 NIIS   & non-inductive charge separation due to ice-snow collisions & no condition \\\hline
+NISG   & non-inductive charge separation due to snow-graupel collisions & no condition \\\hline
 WETH   & wet growth of hail        & CCLOUD='ICE4' \\\hline
 SEDI   & sedimentation             & no condition \\\hline
+CNVI   & conversion of snow to cloud ice & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+HMS    & Hallett-Mossop ice multiplication process due to snow riming & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CIBU   & collisional ice breakup   & CCLOUD='LIMA' and LPTSPLIT=T and LCIBU=T \\\hline
 NEUT   & neutralization            & no condition \\\hline
 \end{longtable}
 
@@ -1870,13 +1901,16 @@ CFRZ   & conversion freezing of rain  & no condition \\\hline
 WETG   & wet growth of graupel        & no condition \\\hline
 DRYG   & dry growth of graupel        & no condition \\\hline
 INCG   & inductive charge transfer between cloud droplets and graupel & LINDUCTIVE=T \\\hline
+NIIG   & non-inductive charge separation due to ice-graupel collisions & no condition \\\hline
+NISG   & non-inductive charge separation due to snow-graupel collisions & no condition \\\hline
 GMLT   & graupel melting              & no condition \\\hline
 WETH   & wet growth of hail           & CCLOUD='ICE4' \\\hline
 SEDI   & sedimentation                & no condition \\\hline
+HMG    & Hallett-Mossop ice multiplication process due to graupel riming & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
 NEUT   & neutralization               & no condition \\\hline
 \end{longtable}
 
-\paragraph{Volumetric charge of hail (ICE4 only)}
+\paragraph{Volumetric charge of hail (ICE4 or LIMA with NMOM\_H>=1 only)}
 \mbox{} %necessary to ensure longtable is after paragraph text
 
 \begin{longtable} {|p{.1\textwidth}|p{.3\textwidth}|p{.51\textwidth}|}
@@ -1901,11 +1935,15 @@ Name & Description & Condition(s) \\
 \endhead
 DRIFT  & ion drift motion               & no condition \\\hline
 CORAY  & cosmic ray source              & no condition \\\hline
+ADJU   & adjustement to saturation      & CCLOUD(1:3)='ICE' and LRED=T and LADJ\_BEFORE \\\hline
 DEPS   & deposition on snow             & no condition \\\hline
 DEPG   & deposition on graupel          & no condition \\\hline
-REVA   & rain evaporation               & NMOM\_C>=1      \\\hline
-DEPI   & condensation/deposition on ice & no condition \\\hline
+REVA   & rain evaporation               & NMOM\_C>=1   \\\hline
+DEPI   & condensation/deposition on ice & CCLOUD(1:3)='ICE' and (LRED=F or LADJ\_AFTER) \\\hline
+CEDS   & adjustement to saturation      & CCLOUD='LIMA' \\\hline
 NEUT   & neutralization                 & no condition \\\hline
+SUBI   & sublimation of ice crystals    & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
+CORR2  & supplementary correction inside LIMA splitting & CCLOUD='LIMA' and LPTSPLIT=T \\\hline
 \end{longtable}
 
 
@@ -1982,6 +2020,7 @@ REL    & relaxation                     & LHORELAX\_UVWTH=T or LVE\_RELAX=T or L
 RAD    & radiation                      & CRAD/='NONE'                            \\\hline
 DCONV  & KAFR convection                & CDCONV='KAFR' or CSCONV='KAFR'          \\\hline
 BLAZE  & Blaze fire model               & LBLAZE=T                                \\\hline
+DRAGB  & heat released by buildings     & LDRAGBLDG=T                             \\\hline
 HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM'        \\\hline
 VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                            \\\hline
 DISSH  & dissipation                    & CTURB='TKEL'                            \\\hline
@@ -2051,13 +2090,13 @@ GMLT   & graupel melting                               & no condition \\\hline
 WETH   & wet growth of hail                            & CCLOUD='ICE4' \\\hline
 DRYH   & dry growth of hail                            & CCLOUD='ICE4' and LRED=T and CELEC='NONE' \\\hline
 HMLT   & melting of hail                               & CCLOUD='ICE4' \\\hline
-ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC='NONE' \\\hline
+ADJU   & adjustment to saturation                      & LRED=T and LADJ\_BEFORE=T and CELEC/='ELE3' \\\hline
 DEPI   & condensation/deposition on ice                & LRED=F or ( LRED=T and LADJ\_AFTER=T) or CELEC/='NONE' \\\hline
-CORR   & correction                                    & LRED=T and CELEC='NONE' \\\hline
+CORR   & correction                                    & LRED=T and CELEC/='ELE3' \\\hline
 NEGA   & negativity correction                         & no condition \\\hline
 NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 NEADV  & negativity correction induced by advection    & no condition \\\hline
-NECON  & negativity correction induced by condensation & CELEC='NONE' \\\hline
+NECON  & negativity correction induced by condensation & no condition \\\hline
 \end{longtable}
 
 \subsubsection{C2R2 / KHKO source terms}
@@ -2128,8 +2167,8 @@ ADV    & total advection              & no condition    \\\hline
 FRC    & forcing                      & LFORCING=T      \\\hline
 DIF    & numerical diffusion          & LNUMDIFTH=T     \\\hline
 REL    & relaxation                   & LHORELAX\_TKE=T \\\hline
-DRAG   & drag force                   & LDRAGTREE       \\\hline
-DRAGB  & drag force due to buildings  & LDRAGBLDG       \\\hline
+DRAG   & drag force                   & LDRAGTREE=T     \\\hline
+DRAGB  & drag force due to buildings  & LDRAGBLDG=T     \\\hline
 DP     & dynamic production           & no condition    \\\hline
 TP     & thermal production           & no condition    \\\hline
 DISS   & dissipation of TKE           & no condition    \\\hline
