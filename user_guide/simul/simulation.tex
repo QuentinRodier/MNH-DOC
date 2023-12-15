@@ -2917,13 +2917,15 @@ NIO\_ABORT\_LEVEL  & integer & 2 \\
 LIO\_ALLOW\_NO\_BACKUP & logical & FALSE \\
 LIO\_NO\_WRITE         & logical & FALSE \\
 \hline
+NFILE\_NUM\_MAX & integer & 999 \\
+\hline
 \end{tabular}
 \end{center}
 
 \begin{itemize}
 
 \item
-LCDF4 : read and write files in netCDF-4 file format
+LCDF4: read and write files in netCDF-4 file format
 \index{LCDF4!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
@@ -2932,7 +2934,7 @@ LCDF4 : read and write files in netCDF-4 file format
 \end{itemize}
 
 \item
-LLFIOUT : write files in LFI file format
+LLFIOUT: write files in LFI file format
 \index{LLFIOUT!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
@@ -2941,7 +2943,7 @@ LLFIOUT : write files in LFI file format
 \end{itemize}
 
 \item
-LLFIREAD : read files in LFI file format (even if $LCDF4=.TRUE.$)
+LLFIREAD: read files in LFI file format (even if $LCDF4=.TRUE.$)
 \index{LLFIREAD!\innam{NAM\_CONFIO}}
 
 \begin{itemize}
@@ -3013,10 +3015,15 @@ Remark: not all messages use this infrastructure. Therefore, some of them are no
 
 \item
 LIO\_ALLOW\_NO\_BACKUP : allow to have no valid backup time (useful for some tests)
+\index{LIO\_ALLOW\_NO\_BACKUP!\innam{NAM\_CONFIO}}
 
 \item
 LIO\_NO\_WRITE : disable file writes (useful for benchs)
+\index{LIO\_NO\_WRITE!\innam{NAM\_CONFIO}}
 
+\item
+NFILE\_NUM\_MAX: maximum number for numbered files (mainly backup and output files). If less than 1000, the numbers will be on 3 digits. From 1000, they will be on the number of digits of NFILE\_NUM\_MAX (5 if NFILE\_NUM\_MAX=12345).
+\index{NFILE\_NUM\_MAX!\innam{NAM\_CONFIO}}
 \end{itemize}
 
 
