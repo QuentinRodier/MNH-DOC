@@ -4923,9 +4923,12 @@ NOUT\_STEP\_FREQ\_FIRST & integer(:)         & 1            \\
 LOUT\_BEG               & logical            & .FALSE.      \\
 LOUT\_END               & logical            & .FALSE.      \\
 \hline
-LOUT\_REDUCE\_FLOAT\_PRECISION  & logical(:) & .FALSE.      \\
-LOUT\_COMPRESS                  & logical(:) & .FALSE.      \\
-NOUT\_COMPRESS\_LEVEL           & integer(:) & 4            \\
+LOUT\_REDUCE\_FLOAT\_PRECISION  & logical(:)           & .FALSE.      \\
+LOUT\_COMPRESS                  & logical(:)           & .FALSE.      \\
+NOUT\_COMPRESS\_LEVEL           & integer(:)           & 4            \\
+LOUT\_COMPRESS\_LOSSY           & logical(:)           & FALSE        \\
+COUT\_COMPRESS\_LOSSY\_ALGO     & character(len=10)(:) & 'GRANULARBR' \\
+NOUT\_COMPRESS\_LOSSY\_NSD      & integer(:)           & 3            \\
 \hline
 COUT\_DIR               & character(len=512) & ''           \\
 \hline
@@ -4984,6 +4987,18 @@ LOUT\_COMPRESS(m): enable lossless compression of data for each model $m$ (only 
 LOUT\_COMPRESS\_LEVEL(m): set the compression level for each model $m$ (only for files in netCDF format, not for LFI format). The value must be in the 0 to 9 interval (0 for no compression, 9 for maximum compression).
 
 \item
+\index{LOUT\_COMPRESS\_LOSSY!\innam{NAM\_OUTPUT}}
+LOUT\_COMPRESS\_LOSSY(m): enable lossy compression of data for each model $m$ (only for files in netCDF format, not for LFI format and only for float numbers)
+
+\item
+\index{LOUT\_COMPRESS\_LOSSY\_ALGOL!\innam{NAM\_OUTPUT}}
+COUT\_COMPRESS\_LOSSY\_ALGO(m): algorithm used to reduce the number of significants digits or bits. Available algorithms: 'BitGroom', 'GranularBR' and 'BitRound' (case insensitive). Default: 'GranularBR'
+
+\item
+\index{LOUT\_COMPRESS\_LOSSY\_NSD!\innam{NAM\_OUTPUT}}
+NOUT\_COMPRESS\_LOSSY\_NSD(m): number of significants digits (for 'BitGroom', 'GranularBR') or bits (for 'BitRound') to keep. Allowed values for 'BitGroom', 'GranularBR': 1 to 15 for floats stored with 64 bits and 1 to 7 on 32 bits. And for 'BitRound', 1 to 23 for 32-bit floats and 1 to 52 for 64-bit floats. Default value: 3
+
+\item
 \index{COUT\_DIR!\innam{NAM\_OUTPUT}} 
 COUT\_DIR: directory used to write outputs and diachronic files (current directory by default).
 It overrides CIO\_DIR (see section \ref{s:namconfio} page \pageref{s:namconfio}).
@@ -4995,6 +5010,7 @@ Remarks:
 \item Not all fieldnames are possible. If a field is not (yet) knwon, it is possible to add a personalized one by modifying the $IO\_WRITE\_FIELD\_USER$ subroutine.
 \item If a choosen time is not a multiple of the timestep, it will be rounded to the nearest one.
 \item The different ways to choose the output time can be combined. Duplicate times will be automatically removed.
+\item Lossy compression is possible for output files. This kind of compression leads to a loss of data but allows high reduction in the size of the output files. The procedure to reduce filespace is a two-phase process. Firstly, the last bits of each array elements are all set to 0 or 1 (alternatively to try to keep the average value). And secondly, standard compression is applied. Three algorithms are available. They are provided by the netCDF library. For each of them, it is possible to choose the number of significants digits or bits to keep.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
