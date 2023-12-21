@@ -853,33 +853,8 @@ values, the interpolated values of GPS delays are written in ASCII files
 \end{center}
 \subsection{Simulating satellite images from a MESO-NH run}
 
-A comparison between model outputs and satellite observations provides an assessment on how well the model can reproduce the meteorological situation.
- The model-to-satellite approach compares directly the satellite brightness temperatures (BTs) to the BTs computed from the predicted model fields 
-(Morcrette, 1991). It has been first applied to Meso-NH outputs for comparison
- with Meteosat observations in the infrared using a narrow-band code 
-(Chaboureau et al., 2000).
-\begin{center}
-\begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
-\hline
-\multirow{7}{*}{CRAD\_SAT}\index{CRAD\_SAT!\innam{NAM\_DIAG}}&\textbf{' '} & by default : no computation is made\\\cline{2-3}
-&\multirow{2}{*}{'METEOSAT'} & {\tt METEOSAT\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
-& &{\tt METEOSAT\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
-&\multirow{2}{*}{'GMS'} & {\tt GMS\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
-& &{\tt GMS\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
-&\multirow{2}{*}{'GOES-E'} &{\tt GOES-E\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
-& &{\tt GOES-E'\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
-&\multirow{2}{*}{'GOES-W'} &{\tt GOES-W\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
-& &{\tt GOES-W\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\cline{2-3}
-&\multirow{2}{*}{'INDSAT'} &{\tt INDSAT\_IRBT }: [2D] Brightness temperature in IR channel (K)\\\cline{3-3}
-& &{\tt INDSAT\_WVBT }: [2D] Brightness temperature in WV channel (K)\\\hline
-\multirow{2}{*}{\small LRAD\_SUBG\_COND}&{\bf .TRUE.} & WITH subgrid condensation scheme taken into account \\\cline{2-3}
-&{.FALSE.} & WITHOUT subgrid condensation scheme \\\hline
-\end{tabular} 
-\end{center}
-\vspace{0.5cm}
- {\bf The use of RTTOV is highly recommended to compute satellite BTs.} Since the Masdev4\_7 version, the Radiative Transfer for Tiros Operational Vertical Sounder (RTTOV) code version 8.7 (Saunders et al., 2005) is also available allowing the calculation of BT for a large number of satellites, but only for registered users.
  
-Since RTTOV requires a license agreement, no RTTOV package is included in the open source version of Meso-NH. However, a subroutine calling RTTOV 11.3 is included in Meso-NH version Masdev5\_3 and another one calling RTTOV 13.0 is included in Meso-NH Masdev5\_5. {\bf To use RTTOV, you must follow the instructions in the A-INSTALL file to compile MESO-NH with RTTOV.}   
+Since RTTOV requires a license agreement, no RTTOV package is included in the open source version of Meso-NH. However, a subroutine calling RTTOV 13 is included in Meso-NH version Masdev5\_7. {\bf To use RTTOV, you must follow the instructions in the A-INSTALL file to compile MESO-NH with RTTOV.}   
 
 \begin{center}
 \begin{tabular}{|>{\centering}p{3.1cm}|>{\centering}p{2.4cm}|p{11cm}|}
@@ -912,13 +887,7 @@ For example, to simulate both all the SEVIRI channels of MSG-2 and all the AMSU-
 \begin{verbatim}
 &NAM_DIAG NRTTOVinfo(:,1)= 12 2 21 0, NRTTOVinfo(:,2)= 1 16 4 0 /
 \end{verbatim}
-For this specific choice, you need to have:
-\begin{itemize}
-\item{three files (RTTOV version 8.7)}:
-{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat};
-\item{four files (RTTOV version 11.3)}:
-{\tt rtcoef\_msg\_2\_seviri.dat}, {\tt sccldcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt mietable\_noaa\_amsub.dat}. These files can be found in directories {\tt rttov7pred54L}, {\tt cldaer} and {\tt mietable} (or to be downloaded from the RTTOV web site);
-\item{four files (RTTOV version 13.0)}:
+For this specific choice, you need to have four files:
 {\tt rtcoef\_msg\_2\_seviri.dat}, {\tt sccldcoef\_msg\_2\_seviri.dat}, {\tt rtcoef\_noaa\_16\_amsub.dat} and {\tt hydrotable\_noaa\_amsub.dat}. The AMSU-B coefficient files can be found in directories {\tt rttov13pred54L} and {\tt hydrotable} (or to be downloaded from the RTTOV web site). The MSG-2 coefficient files are aliased following:\\
 ~\\
 \underline{for IR only calculation}, do:\\
@@ -929,7 +898,6 @@ For this specific choice, you need to have:
 {\tt ln -sf []/rttov13pred54L/rtcoef\_msg\_2\_seviri\_o3co2.dat rtcoef\_msg\_2\_seviri.dat}\\
 {\tt ln -sf []/cldaer\_visir/sccldcoef\_msg\_2\_seviri.dat .}\\
 In addition, download the {\tt brdf\_data} file and set NRTTOVinfo(4,1) to 1.
-\end{itemize}
 
 \begin{center}\begin{tabular}{|c|c|c|}
 \hline
