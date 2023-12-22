@@ -228,11 +228,7 @@ It depend on netcdf and scons for is compilation the ``libForeFIre.so'' generate
 \subsubsection{MNH\_RTTOV for optional radiative computation}
 % ~~~~~~~~~~~~~
 
-The RTTOV package was not included into the open source version of Meso-NH because it needs a licence agrement.
-
-% ++++++++
-\paragraph{OPTION 1: Use version 13.2 of RTTOV}
-% ++++++++
+The RTTOV 13.2 package was not included into the open source version of Meso-NH because it needs a licence agrement.
 
 Run the ``configure'' script preceded with the setting of the MNH\_RTTOV variable:
 \begin{bashcode}
@@ -268,66 +264,6 @@ make ARCH=ifort        # Use Intel "ifort" compiler; other options: gfortran, NA
 \end{bashcode}
 
 Then, you can follow the steps described in the section dedicated to your computer (interactive or batch mode).
-
-% ++++++++
-\paragraph{OPTION 2: Use version 11.3 of RTTOV}
-% ++++++++
-
-Download the RTTOV package rttov113.tar.gz by following the instructions given on \href{https://nwpsaf.eu/site/software/rttov/}{RTTOW website}
-
-
-Install the RTTOV package rttov113.tar.gz
-\begin{bashcode}
-cd MNH.../src/LIB
-mkdir RTTOV-11.3
-cd RTTOV-11.3
-tar xvfz rttov113.tar.gz
-cd src
-make ARCH=ifort        # Use Intel "ifort" compiler; other options: gfortran, NAG, pgf90, IBM
-\end{bashcode}
-
-And then for the compilation, run the 'configure' script preceded with the setting of the MNH\_RTTOV variable:
-\begin{bashcode}
-cd MNH.../src/
-export MNH_RTTOV=1
-export VER_RTTOV=11.3
-./configure
-\end{bashcode}
-
-Then, you can follow the steps described in the section dedicated to your computer (interactive or batch mode).
-
-% ++++++++
-\paragraph{OPTION 3: Use version 8.7 of RTTOV}
-% ++++++++
-
-For already(old) licencied MesoNH users (MNH-4-X version with research licence see here: http://mesonh.aero.obs-mip.fr/mesonh410/UserInformation) the package could be reloaded in this way :
-\begin{itemize}
-\item With cvs access :
-\end{itemize}
-\begin{bashcode}
-cd MNH.../src/LIB
-cvs up -rPACK-MNH-V4-10-3 -d -P RTTOV
-\end{bashcode}
-\begin{itemize}
-With WEB access (with WEB login/pass as usually) the RTTOV package could also be retrieve in tarball with wget like this:
-\end{itemize}
-\begin{bashcode}
-cd MNH.../src/LIB
-wget --http-user=USER  --http-password=PASS 'http://mesonh.aero.obs-mip.fr/cgi-bin/mesonh_interne/viewcvs.cgi/MNH-VX-Y-Z/src/LIB/RTTOV/?view=tar&pathrev=PACK-MNH-V4-10-3' -O RTTOV.tar.gz
-tar xvfz RTTOV.tar.gz
-\end{bashcode}
-
-\begin{warningblock}
-don't forget the '.  Otherwise, this will not work!
-\end{warningblock}
-
-And then for the compilation, run the 'configure' script preceded with the setting of the MNH\_RTTOV variable:
-\begin{bashcode}
-cd MNH.../src/
-export MNH_RTTOV=1
-export VER_RTTOV=8.7
-./configure
-\end{bashcode}
 
 % ~~~~~~~~~~~~~
 \subsubsection{MNH\_ECRAD for optional compilation of new ECRAD radiative library from ECMWF}
