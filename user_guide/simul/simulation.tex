@@ -5046,6 +5046,7 @@ CRAD    &  4 characters  & 'NONE'   \\
 CCLOUD  &  4 characters  & 'NONE'   \\
 CDCONV  &  4 characters  & 'NONE'   \\
 CSCONV  &  4 characters  & 'NONE'   \\
+CELEC   &  4 characters  & 'NONE'   \\
 CACTCCN &  4 characters  & 'NONE'   \\
 \hline
 \end{tabular}
@@ -5139,6 +5140,24 @@ CSCONV = 'KAFR'  : Kain-Fritsch-Bechtold scheme.
 \item
 CSCONV = 'EDKF'  : Eddy-Diffusivity-Kain-Fritsch scheme (according to Pergaud et al., 2008).
 Can only be used with $CTURB='TKEL'$.
+\end{itemize}
+
+\item
+\index{CELEC!\innam{NAM\_PARAMn}}
+CELEC: type of electricity-lightning scheme used to parameterize electrification of hydrometeors
+\begin{itemize}
+\item
+CELEC = 'NONE'  : no electricity-lightning scheme.
+\item
+CELEC = 'ELE3'  : original scheme CELLS\footnote{see Barthe and Pinty, 2007; Barthe et al. 2007, 2012, 2016)} based on duplication of microphysics ICE3 code. Works only with NAM\_PARAM\_ICEn LRED=F, LSNOW\_T=F.
+\item
+CELEC = 'ELE4'  : externalization and modernization of ELE3 with possibility to use with LIMA and ICE3 with time-splitting.
+ 
+With LIMA, two configurations are possible in NAM\_PARAM\_LIMA:\\
+- LPTSPLIT=T, NMOM\_C=NMOM\_R=NMOM\_I=2, NMOM\_S=NMOM\_G=1, NMOM\_H=0, and LSNOW\_T=F \\
+- LPTSPLIT=T, NMOM\_C=NMOM\_R=NMOM\_I=NMOM\_S=NMOM\_G=2,\\ 
+NMOM\_H=0, and LSNOW\_T=F. \\
+With ICE3, set LRED=T and LSNOW\_T=F in NAM\_PARAM\_ICEn.
 \end{itemize}
 
 \item
