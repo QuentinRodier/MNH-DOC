@@ -795,6 +795,8 @@ Name & Description & Condition(s) \\
 ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
 ASSE   & time filter (Asselin) & no condition           \\\hline
 NEST   & nesting               & NMODEL$>1$             \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
 VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
 ADV    & total advection       & no condition           \\\hline
 FRC    & forcing               & LFORCING=T             \\\hline
@@ -809,6 +811,7 @@ REL    & relaxation            & LHORELAX\_RG=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_S>=1 \\\hline
 HONR   & rain homogeneous freezing                     & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and LNUCL=T and NMOM\_R>=1) \\\hline
 DEPG   & deposition on graupel                         & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1) \\\hline
@@ -835,6 +838,7 @@ NECON  & negativity correction induced by condensation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & no condition \\\hline
 SFR    & spontaneous freezing                          & no condition \\\hline
 DEPG   & deposition on graupel                         & no condition \\\hline
@@ -881,6 +885,8 @@ Name & Description & Condition(s) \\
 ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
 ASSE   & time filter (Asselin) & no condition           \\\hline
 NEST   & nesting               & NMODEL$>1$             \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
 VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
 ADV    & total advection       & no condition           \\\hline
 FRC    & forcing               & LFORCING=T             \\\hline
@@ -895,6 +901,7 @@ REL    & relaxation            & LHORELAX\_RG=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_H>=1 \\\hline
 DEPH   & deposition on hail                            & NMOM\_H>=1 \\\hline
 WETG   & wet growth of graupel                         & NMOM\_H>=1 and (LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_C>=1 and NMOM\_S>=1)) \\\hline
@@ -913,6 +920,7 @@ NECON  & negativity correction induced by condensation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & no condition \\\hline
 GHCV   & graupel to hail conversion                    & LRED=T and CELEC='NONE' \\\hline
 WETG   & wet growth of graupel                         & LRED=F or CELEC/='NONE' \\\hline
@@ -1174,6 +1182,8 @@ Name & Description & Condition(s) \\
 ALL    & all available source terms (separated,  water microphysics included) & no condition \\\hline \hline
 ASSE   & time filter (Asselin) & no condition           \\\hline
 NEST   & nesting               & NMODEL$>1$             \\\hline
+VTURB  & vertical turbulent diffusion   & CTURB='TKEL'                     \\\hline
+HTURB  & horizontal turbulent diffusion & CTURB='TKEL' and CTURBDIM='3DIM' \\\hline
 VISC   & viscosity             & LVISC=T and LVISC\_R=T \\\hline
 ADV    & total advection       & no condition           \\\hline
 FRC    & forcing               & LFORCING=T             \\\hline
@@ -1188,6 +1198,7 @@ REL    & relaxation            & LHORELAX\_RS=T         \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & NMOM\_I>=1 and NMOM\_S>=1 \\\hline
 CNVI   & conversion of snow to cloud ice               & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
 DEPS   & deposition on snow                            & LPTSPLIT=T or (NMOM\_I>=1 and NMOM\_S>=1) \\\hline
@@ -1214,6 +1225,7 @@ NECON  & negativity correction induced by condensation & no condition \\\hline
 Name & Description & Condition(s) \\
 \hline \hline
 \endhead
+NETUR  & negativity correction induced by turbulence   & CTURB='TKEL' \\\hline
 SEDI   & sedimentation                                 & no condition \\\hline
 DEPS   & deposition on snow                            & no condition \\\hline
 AGGS   & aggregation of snow                           & no condition \\\hline
