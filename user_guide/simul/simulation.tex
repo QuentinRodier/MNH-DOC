@@ -5016,9 +5016,84 @@ LCOV\_FIELD  &  logical &  .FALSE. \\
 \begin{itemize}
  \item LMEAN\_FIELD : flag for computation of the mean and maximum values of variables between two backup outputs. The list of variables available can be modified in mean\_field.f90.
  \item LCOV\_FIELD : flag for computation of covariances values of variables between two backup outputs. The list of variables available can be modified in mean\_field.f90.
+\end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Namelist NAM\_NEBn}
+
+This namelist is new and regroup options related to internal clouds life cycle.
+\begin{center}
+\begin{tabular} {|l|l|l|}
+\hline
+Fortran name & Fortran type & default value \\
+\hline
+LHGT\_QS  & logical & FALSE    \\
+LSTATNW  & logical & FALSE    \\
+XTMINMIX  & real & 253.16    \\
+XTMAXMIX  & real & 273.16    \\
+LSUBG\_COND &  logical       & FALSE  \\
+CCONDENS    &  80 characters  & 'CB02' \\
+CLAMBDA3    &  4 characters  & 'CB' \\
+LSIGMAS     &  logical       & TRUE   \\
+VSIGQSAT    & real           & 0.02 \\
+CFRAC\_ICE\_ADJUST  & 1 character & 'S' \\
+CFRAC\_ICE\_SHALLOW\_MF& 1 character & 'S' \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+    \item LHGT\_QS: flag to activate height dependence of qsat variance (VSIGQSAT)\index{LHGT\_QS!\innam{NAM\_NEBn}}
+    \item LSTATNW: flag to switch on the full updated statistical cloud scheme\index{LSTATNW!\innam{NAM\_NEBn}}
+    \item XTMINMIX: minimum temperature of mixed phase (K)\index{XTMINMIX!\innam{NAM\_NEBn}}
+    \item XTMAXMIX: maximum temperature of mixed phase (K)\index{XTMAXMIX!\innam{NAM\_NEBn}}
+\item
+\index{LSUBG\_COND!\innam{NAM\_NEBn}}
+LSUBG\_COND: flag to activate the subgrid condensation scheme (refer to the scientific 
+documentation for more details). It is strongly recommended to activate it at kilometric horizontal resolution (such as in AROME).  With the microphysics scheme LIMA (CCLOUD='LIMA' in NAM\_PARAMn), it must be used with time-splitting LPTSPLIT=T in NAM\_PARAM\_LIMA.
+
+\item
+\index{CCONDENS!\innam{NAM\_NEBn}}
+CCONDENS: subgrid distribution used in the saturation adjustment
+\begin{itemize}
+\item  'CB02' to use the Chaboureau and Bechtold (2002) formulations
+\item 'GAUS' to use a gaussian PDF
+\end{itemize}
+
+\item
+\index{CLAMBDA3!\innam{NAM\_NEBn}}
+CLAMBDA3: modulation of s'r' computation in the saturation adjustment
+\begin{itemize}
+\item 'CB' to use the formulation originally associated to the use of CCONDENS='CB02'
+\item 'NONE' to use a value of 1 (no modulation)
+\end{itemize}
+
+\item
+\index{VSIGQSAT!\innam{NAM\_NEBn}}
+VSIGQSAT: coefficient applied to qsat variance contribution. Only available if LSIGMAS=.TRUE.
+\item
+\index{LSIGMAS!\innam{NAM\_NEBn}}
+LSIGMAS: Flag for using Sigma\_s from turbulence scheme instead parameterized values
+in ice subgrid condensation scheme
+\item 
+CFRAC\_ICE\_ADJUST   \index{CFRAC\_ICE\_ADJUST!\innam{NAM\_NEBn}}: Way to compute ice fraction 
+\begin{itemize}
+\item{'T'} : linear formulation according to temperature
+\item{'O'} : Tao et al. (1989) formulation
+\item{'N'} : No ice
+\item{'S'} : Ice fraction given by the slow microphysics
+\end{itemize}
+
+\item 
+CFRAC\_ICE\_SHALLOW\_MF \index{CFRAC\_ICE\_SHALLOW\_MF!\innam{NAM\_NEBn}}: Way to compute ice fraction for MF contribution
+\begin{itemize}
+\item{'T'} : linear formulation according to temperature
+\item{'O'} : Tao et al. (1989) formulation
+\item{'N'} : No ice
+\item{'S'} : Ice fraction given by the slow microphysics
+\end{itemize}
 
 \end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_NESTING (grid nesting configuration)}
@@ -5311,7 +5386,7 @@ CELEC: type of electricity-lightning scheme used to parameterize electrification
 \item
 CELEC = 'NONE'  : no electricity-lightning scheme.
 \item
-CELEC = 'ELE3'  : original scheme CELLS\footnote{see Barthe and Pinty, 2007; Barthe et al. 2007, 2012, 2016)} based on duplication of microphysics ICE3 code. Works only with NAM\_PARAM\_ICEnn LRED=F, LSNOW\_T=F.
+CELEC = 'ELE3'  : original scheme CELLS\footnote{see Barthe and Pinty, 2007; Barthe et al. 2007, 2012, 2016)} based on duplication of microphysics ICE3 code. Works only with NAM\_PARAM\_ICEn LRED=F, LSNOW\_T=F.
 \item
 CELEC = 'ELE4'  : externalization and modernization of ELE3 with possibility to use with LIMA and ICE3 with time-splitting.
  
@@ -5319,7 +5394,7 @@ With LIMA, two configurations are possible in NAM\_PARAM\_LIMA:\\
 - LPTSPLIT=T, NMOM\_C=NMOM\_R=NMOM\_I=2, NMOM\_S=NMOM\_G=1, NMOM\_H=0, and LSNOW\_T=F \\
 - LPTSPLIT=T, NMOM\_C=NMOM\_R=NMOM\_I=NMOM\_S=NMOM\_G=2,\\ 
 NMOM\_H=0, and LSNOW\_T=F. \\
-With ICE3, set LRED=T and LSNOW\_T=F in NAM\_PARAM\_ICEnn.
+With ICE3, set LRED=T and LSNOW\_T=F in NAM\_PARAM\_ICEn.
 \end{itemize}
 
 \item
@@ -5532,7 +5607,7 @@ It contains the options for the ECRAD radiative scheme. ECRAD version is defined
 parameterization ICE3 and ICE4)}
 \index{NAM\_PARAM\_ICEn!namelist description}
 %
-\begin{longtable} {|p{.35\textwidth}|p{.21\textwidth}|p{.15\textwidth}|}
+\begin{longtable} {|p{.35\textwidth}|p{.17\textwidth}|p{.32\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
 \hline 
@@ -5555,22 +5630,35 @@ LWETGPOST & logical & TRUE \\
 LWETHPOST & logical & TRUE \\
 CSNOWRIMING & 4 characters & 'M90 ' \\
 XFRACM90 & real & 0.1 \\
-NMAXITER & integer & 5 \\
+NMAXITER\_MICRO & integer & 5 \\
 XMRSTEP & real & 0.00005 \\
 XTSTEP\_TS & real & 0. \\
 LADJ\_BEFORE & logical & TRUE \\
 LADJ\_AFTER & logical & TRUE \\
-CFRAC\_ICE\_ADJUST  & 1 character & 'S' \\
-CFRAC\_ICE\_SHALLOW\_MF& 1 character & 'S' \\
 LCRFLIMIT &  logical     & .TRUE. \\
 XSPLIT\_MAXCFL& real & 0.8 \\
 LSEDIM\_AFTER & logical & FALSE \\
 CSUBG\_RC\_RR\_ACCR & 80 characters & 'NONE' \\
 CSUBG\_RR\_EVAP & 80 characters & 'NONE' \\
 CSUBG\_PR\_PDF & 80 characters & 'SIGM' \\
+CSUBG\_AUCV\_RC &  4 characters  & 'NONE' \\
+CSUBG\_AUCV\_RI &  80 characters  & 'NONE' \\
+CSUBG\_MF\_PDF  &  80 characters  & 'TRIANGLE' \\
 LSNOW\_T & logical & .FALSE. \\
 LPACK\_INTERP & logical & .TRUE. \\
 LPACK\_MICRO & logical & .TRUE. \\
+NPROMICRO  & integer & 0   \\
+LCRIAUTI  & logical & FALSE    \\
+LOCND2  & logical & FALSE    \\
+XCRIAUTI\_NAM  & real &  0.2E-4  \\
+XT0CRIAUTI\_NAM  & real & (LOG10(XCRIAUTI\_NAM)\\
+& & -XBCRIAUTI\_NAM)/0.06   \\
+XBCRIAUTI\_NAM  & real & -3.5    \\
+XACRIAUTI\_NAM  & real & 0.06    \\
+XCRIAUTC\_NAM  & real & 0.5E-3    \\
+XRDEPSRED\_NAM  & real & 1.0    \\
+XRDEPGRED\_NAM  & real & 1.0    \\
+XFRMIN\_NAM  & real(40) &    see \href{https://hirlam.github.io/HarmonieSystemDocumentation/dev/ForecastModel/OCDN2/#Full-list-of-RFRMIN-variables-(included-here-for-completeness,-not-all-OCDN2-related}{the doc} \\
 \end{longtable}
 
 It contains the options for the mixed phase cloud parameterizations
@@ -5644,7 +5732,7 @@ CSNOWRIMING  \index{CSNOWRIMING!\innam{NAM\_PARAM\_ICEn}}:  Parametrization for 
 XFRACM90 \index{XFRACM90!\innam{NAM\_PARAM\_ICEn}}: Fraction used for the Murakami 1990 formulation (active when LRED=T)
 
 \item 
-NMAXITER  \index{NMAXITER!\innam{NAM\_PARAM\_ICEn}}: Maximum number of iterations for mixing ratio or time splitting (active when LRED=T)
+NMAXITER\_MICRO  \index{NMAXITER\_MICRO!\innam{NAM\_PARAM\_ICEn}}: Maximum number of iterations for mixing ratio or time splitting (active when LRED=T)
 
 \item 
 XMRSTEP  \index{XMRSTEP!\innam{NAM\_PARAM\_ICEn}}: Maximum mixing ratio step for mixing ratio splitting (active when LRED=T)
@@ -5665,25 +5753,7 @@ LSNOW\_T : Switch to activate the representation of snow proposed by Wurtz et al
 LPACK\_INTERP  \index{LPACK\_INTERP!\innam{NAM\_PARAM\_ICEn}}: to save computation time, some mycrophysical processes (especially collections) are tabulated. If this key is .TRUE., the input variables for the interpolations are packed to limit the computation to the necessary points; otherwise, the interpolations are performed everywhere.
 
 \item
-LPACK\_MICRO  \index{LPACK\_MICRO!\innam{NAM\_PARAM\_ICEn}}: the microphysics input variables are packed to perform the computation only on points with hydrometeors; otherwise, computations are performed everywhere. Do not change this option with Méso-NH : .FALSE. works only for AROME).
-
-\item 
-CFRAC\_ICE\_ADJUST   \index{CFRAC\_ICE\_ADJUST!\innam{NAM\_PARAM\_ICEn}}: Way to compute ice fraction 
-\begin{itemize}
-\item{'T'} : linear formulation according to temperature
-\item{'O'} : Tao et al. (1989) formulation
-\item{'N'} : No ice
-\item{'S'} : Ice fraction given by the slow microphysics
-\end{itemize}
-
-\item 
-CFRAC\_ICE\_SHALLOW\_MF \index{CFRAC\_ICE\_SHALLOW\_MF!\innam{NAM\_PARAM\_ICEn}}: Way to compute ice fraction for MF contribution
-\begin{itemize}
-\item{'T'} : linear formulation according to temperature
-\item{'O'} : Tao et al. (1989) formulation
-\item{'N'} : No ice
-\item{'S'} : Ice fraction given by the slow microphysics
-\end{itemize}
+LPACK\_MICRO  \index{LPACK\_MICRO!\innam{NAM\_PARAM\_ICEn}}: the microphysics input variables are packed to perform the computation only on points with hydrometeors; otherwise, computations are performed everywhere..
 
 \item 
 LCRFLIMIT  \index{LCRFLIMIT!\innam{NAM\_PARAM\_ICEn}}: .TRUE. to limit rain contact freezing to possible heat exchange (active when LRED=T)
@@ -5693,6 +5763,37 @@ XSPLIT\_MAXCFL \index{XSPLIT\_MAXCFL!\innam{NAM\_PARAM\_ICEn}}: Maximum CFL numb
 
 \item 
 LSEDIM\_AFTER  \index{LSEDIM\_AFTER!\innam{NAM\_PARAM\_ICEn}}: sedimentation done before (.FALSE.) or after (.TRUE.) microphysics (active when LRED=T)
+
+\item
+\index{CSUBG\_AUCV\_RC!\innam{NAM\_PARAM\_ICEn}}
+CSUBG\_AUCV\_RC : Type of subgrid $r_c$ - $r_r$ autoconversion scheme.
+\begin{itemize}
+\item  'NONE'
+\item 'SIGM' for Redelsperger and Sommeria (1982) scheme using $\overline{s'r'_{c}}$ 
+(if LSUBG\_COND
+is set to TRUE and only with the mixed phase for the moment)
+\item 'CLFR' from the convective cloud fraction given by EDKF 
+(if CSCONV='EDKF' only)
+\item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012). Only if LRED=TRUE.
+\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
+\end{itemize}
+
+\item
+\index{CSUBG\_AUCV\_RI!\innam{NAM\_PARAM\_ICEn}}
+CSUBG\_AUCV\_RI: Type of subgrid $r_i$ - $r_s$ autoconversion scheme.
+\begin{itemize}
+\item  'NONE' for considering a homogeneous cloud over the entire grid-cell
+\item 'CLFR' for considering a homogeneous cloud over its cloud fraction
+\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
+\end{itemize}
+
+\item
+\index{CSUBG\_MF\_PDF!\innam{NAM\_PARAM\_ICEn}}
+CSUBG\_MF\_PDF: PDF used to diagnose autoconversion from the shallow convection cloud.
+\begin{itemize}
+\item  'NONE' for considering a homogeneous cloud over its fraction.
+\item 'TRIANGLE' to use a triangular PDF.
+\end{itemize}
 
 \item
 CSUBG\_RC\_RR\_ACCR \index{CSUBG\_RC\_RR\_ACCR!\innam{NAM\_PARAM\_ICEn}}:
@@ -5721,7 +5822,17 @@ PDF for subgrid precipitation
 \item{'HLCQUADRAPDF'} : second order quadratic PDF
 \item{'HLCISOTRIPDF'} : isocele triangular PDF
 \end{itemize}
-
+    \item NPROMICRO\index{NPROMICRO!\innam{NAM\_PARAM\_ICEn}}: size of cache-blocking bloc (0 to deactivate)
+    \item LCRIAUTI\index{LCRIAUTI!\innam{NAM\_PARAM\_ICEn}}: True to compute XACRIAUTI and XBCRIAUTI (from XCRIAUTI and XT0CRIAUTI); False to compute XT0CRIAUTI (from XCRIAUTI and XBCRIAUTI)
+    \item LOCND2\index{LOCND2!\innam{NAM\_PARAM\_ICEn}}:  flag to switch on the OCND2 scheme that separates liquid and ice (full documentation here\footnote{https://hirlam.github.io/HarmonieSystemDocumentation/dev/ForecastModel/OCDN2/})
+    \item XCRIAUTI\_NAM\index{XCRIAUTI\_NAM!\innam{NAM\_PARAM\_ICEn}}: minimum value for the ice$\rightarrow$snow autoconversion threshold
+    \item XT0CRIAUTI\_NAM\index{XT0CRIAUTI\_NAM!\innam{NAM\_PARAM\_ICEn}}:  threshold temperature for the ice$\rightarrow$snow autoconversion threshold
+    \item XBCRIAUTI\_NAM\index{XBCRIAUTI\_NAM!\innam{NAM\_PARAM\_ICEn}}: B parameter for the ice$\rightarrow$snow autoconversion 10**(aT+b) law
+    \item XACRIAUTI\_NAM\index{XACRIAUTI\_NAM!\innam{NAM\_PARAM\_ICEn}}: A parameter for the ice$\rightarrow$snow autoconversion 10**(aT+b) law
+    \item XCRIAUTC\_NAM\index{XCRIAUTC\_NAM!\innam{NAM\_PARAM\_ICEn}}: threshold for liquid cloud $\rightarrow$ rain autoconversion (kg/m**3)
+    \item XRDEPSRED\_NAM\index{XRDEPSRED\_NAM!\innam{NAM\_PARAM\_ICEn}}: tuning factor of sublimation of snow
+    \item XRDEPGRED\_NAM\index{XRDEPGRED\_NAM!\innam{NAM\_PARAM\_ICEn}}: tuning factor of sublimation of graupel
+    \item XFRMIN\_NAM\index{XFRMIN\_NAM!\innam{NAM\_PARAM\_ICEn}}: parameters to modify melt and growth of graupels 
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAM\_KAFRn (options for the Kain-Fritsch-Bechtold convective
@@ -6095,9 +6206,10 @@ XB             &  real         &    0.002   \\
 XC             &  real         &    0.012   \\
 XBETA1         &  real         &    0.9     \\
 XR             &  real         &    2.      \\
-XLAMBDA\_MF    &  real         &    0.      \\
+LTHETAS\_MF    &  Logical      &    FALSE   \\
 LGZ            &  Logical      &    FALSE   \\
 XGZ            &  real         &    1.83    \\
+LVERLIMUP      & logical       &    TRUE    \\
 \end{longtable}
 
 It contains the options retained for the EDKF shallow convection scheme, used
@@ -6192,14 +6304,17 @@ XBETA1 : Tuning variable for RHCJ10 updraft
 \index{XR!\innam{NAM\_PARAM\_MFSHALLn}}
 XR : Aspect ratio of updraft
 \item
-\index{XLAMBDA\_MF!\innam{NAM\_PARAM\_MFSHALLn}}
-XLAMBDA\_MF : Lambda to compute ThetaS from ThetaL
+\index{LTHETAS\_MF!\innam{NAM\_PARAM\_MFSHALLn}}
+LTHETAS\_MF : True to compute ThetaS from ThetaL
 \item
 \index{LGZ!\innam{NAM\_PARAM\_MFSHALLn}}
 LGZ : flag to turn on the reduction of the mass-flux surface closure with the resolution. Must be used in the turbulence grey-zone (~500 meters horizontal resolution)
 \item
 \index{XGZ!\innam{NAM\_PARAM\_MFSHALLn}}
 XGZ : parameter for the reduction the surface closure of the Mass-Flux thermal plume if LGZ = TRUE.
+    \item 
+    LVERLIMUP: flag to allow a smooth vertical decrease of the mass-flux as soon as the updraft reaches a specific altitude, instead of a sharp limit of 0.\index{LVERLIMUP!\innam{NAM\_PARAM\_MFSHALLn}}
+
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_PARAM\_RADn (options for the radiations of model n)}
@@ -6825,67 +6940,11 @@ probe3, 350.0, 50.0, 10.0
 \end{verbatim}
 The values of X,Y or Lat/Lon are read depending on LCARTESIAN.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_TURB}
-\index{NAM\_TURB!namelist description}
-It contains the characteristics of the turbulence scheme used by all models.
-\begin{longtable} {|p{.25\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
-\hline
-Fortran name &  Fortran type & default value \\
-\hline 
-\endhead
-\hline
-\endfoot
- XPHI\_LIM        & real        & 3.     \\
- XSBL\_O\_BL      & real        & 0.05   \\
- XFTOP\_O\_FSURF  & real        & 0.05   \\
-\end{longtable}
-
-\begin{itemize}
-\item 'XPHI\_LIM'\index{XPHI\_LIM!\innam{NAM\_TURB}} is the threshold value for $\phi _{3}$ and $\psi _{3}$
-\item 'XSBL\_O\_BL'\index{XSBL\_O\_BL!\innam{NAM\_TURB}} is SBL height / BL height ratio
-\item 'XFTOP\_O\_FSURF'\index{XFTOP\_O\_FSURF!\innam{NAM\_TURB}} is the fraction of surface (heat or momentum) flux used to define top of BL
-\end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Namelist NAM\_TURB\_CLOUD (mixing length for clouds)}
-\index{NAM\_TURB\_CLOUD!namelist description}
-\begin{longtable} {|p{.30\textwidth}|p{.15\textwidth}|p{.15\textwidth}|}
-\hline
-Fortran name &  Fortran type & default value \\
-\hline 
-\endhead
-\hline
-\endfoot
- NMODEL\_CLOUD & integer       & 999           \\
- CTURBLEN\_CLOUD & 4 characters       & 'DELT'   \\
- XCOEF\_AMPL\_SAT& real        & 5.   \\
- XCEI\_MIN       & real        & 0.001E-6   \\
- XCEI\_MAX       & real        & 0.01E-6    \\
-\end{longtable}
-
-\begin{itemize}
-\item NMODEL\_CLOUD \index{NMODEL\_CLOUD!\innam{NAM\_TURB\_CLOUD}}:
-model number where the modification of the mixing length in the clouds is
-computed,
-\item CTURBLEN\_CLOUD \index{CTURBLEN\_CLOUD!\innam{NAM\_TURB\_CLOUD}}:
-type of turbulent mixing length in the clouds
- ('BL89','DELT','DEAR': see CTURBLEN for meanings),
-\item XCOEF\_AMPL\_SAT \index{XCOEF\_AMPL\_SAT!\innam{NAM\_TURB\_CLOUD}}:
-saturation of the amplification coefficient,
-\item XCEI\_MIN \index{XCEI\_MIN!\innam{NAM\_TURB\_CLOUD}}:
-minimum threshold for the instability index (in kg/kg/m/s,
- beginning of the amplication),
-\item XCEI\_MAX \index{XCEI\_MAX!\innam{NAM\_TURB\_CLOUD}}:
-maximum threshold for the instability index (in kg/kg/m/s,
- beginning of the saturation of the amplification).
-\end{itemize}
-Diagnostic quantities are written on every synchronuous files 
-(mixing length in clear sky, mixing length modified, amplification coefficient\ldots) if LTURB\_DIAG=.TRUE. in NAM\_TURBn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Namelist NAM\_TURBn (turbulence parameters for model n)}
 \index{NAM\_TURBn!namelist description}
 
-\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.15\textwidth}|}
+\begin{longtable} {|p{.25\textwidth}|p{.20\textwidth}|p{.25\textwidth}|}
 \hline
 Fortran name &  Fortran type & default value \\
 \hline 
@@ -6898,25 +6957,35 @@ CTURBDIM    &  4 characters  & '1DIM'   \\
 XCADAP      & real           & 0.5 \\
 LTURB\_FLX  &  logical       & FALSE  \\
 LTURB\_DIAG &  logical       & FALSE  \\
-LSUBG\_COND &  logical       & FALSE  \\
-CCONDENS    &  80 characters  & 'CB02' \\
-CLAMBDA3    &  4 characters  & 'CB' \\
-CSUBG\_AUCV &  4 characters  & 'NONE' \\
-CSUBG\_AUCV\_RI &  80 characters  & 'NONE' \\
-CSUBG\_MF\_PDF  &  80 characters  & 'TRIANGLE' \\
-LSIGMAS     &  logical       & TRUE   \\
 LSIG\_CONV  &  logical       & FALSE   \\
 LRMC01      &  logical       & FALSE  \\
 CTOM        &  4 characters  & 'NONE'   \\
-XKEMIN      &  real          & 0.01 \\
-XCEDIS      &  real          & 0.84 \\
-VSIGQSAT    & real           & 0.02 \\
+XTKEMIN      &  real          & 0.01 \\
+XCED      &  real          & 0.84 \\
 LLEONARD      & logical        & FALSE \\
 XCOEFHGRADTHL & real         & 1.0   \\
 XCOEFHGRADRM  & real         & 1.0   \\
 XALTHGRAD     & real         & 2000.0 \\
 XCLDTHOLD     & real         & -1.0   \\
+LCLOUDMODIFLM & logical       & FALSE           \\
+CTURBLEN\_CLOUD & 4 characters       & 'DELT'   \\
+XCOEF\_AMPL\_SAT& real        & 5.   \\
+XCEI\_MIN       & real        & 0.001E-6   \\
+XCEI\_MAX       & real        & 0.01E-6    \\
+XPHI\_LIM        & real        & 3.     \\
+XSBL\_O\_BL      & real        & 0.05   \\
+XFTOP\_O\_FSURF  & real        & 0.05   \\
+XLINI        & real &   0.1  \\
+XCTP & real & 4.0 if LSTATNW, \\
+ & & else 4.65 \\
+XMINSIGS        & real &   1.E-12  \\
+LHARAT        & logical &  FALSE   \\
+LPROJQITURB        & logical &  TRUE   \\
+LSMOOTH\_PRANDTL        & logical &  TRUE   \\
+NTURBSPLIT        & integer &  1   \\
+LTURB\_PRECIP        & logical          & FALSE        \\
 \end{longtable}
+
 
 It contains the characteristics of the turbulence scheme used by the model n. They are
 included in the declarative module MODD\_TURBn
@@ -6980,62 +7049,8 @@ LTURB\_DIAG: flag to  store diagnostic quantities related to the
 turbulent scheme  on every output synchronous file. (mesh length, Prandtl
 number, Schmidt number, sources of TKE\ldots)
 
-\item
-\index{LSUBG\_COND!\innam{NAM\_TURBn}}
-LSUBG\_COND: flag to activate the subgrid condensation scheme (refer to the scientific 
-documentation for more details). It is strongly recommended to activate it at kilometric horizontal resolution (such as in AROME).  With the microphysics scheme LIMA (CCLOUD='LIMA' in NAM\_PARAMn), it must be used with time-splitting LPTSPLIT=T in NAM\_PARAM\_LIMA.
 
-\item
-\index{CCONDENS!\innam{NAM\_TURBn}}
-CCONDENS: subgrid distribution used in the saturation adjustment
-\begin{itemize}
-\item  'CB02' to use the Chaboureau and Bechtold (2002) formulations
-\item 'GAUS' to use a gaussian PDF
-\end{itemize}
 
-\item
-\index{CLAMBDA3!\innam{NAM\_TURBn}}
-CLAMBDA3: modulation of s'r' computation in the saturation adjustment
-\begin{itemize}
-\item 'CB' to use the formulation originally associated to the use of CCONDENS='CB02'
-\item 'NONE' to use a value of 1 (no modulation)
-\end{itemize}
-
-\item
-\index{CSUBG\_AUCV!\innam{NAM\_TURBn}}
-CSUBG\_AUCV (formerly LSUBG\_AUCV in masdev47) : Type of subgrid $r_c$ - $r_r$ autoconversion scheme.
-\begin{itemize}
-\item  'NONE'
-\item 'SIGM' for Redelsperger and Sommeria (1982) scheme using $\overline{s'r'_{c}}$ 
-(if LSUBG\_COND
-is set to TRUE and only with the mixed phase for the moment)
-\item 'CLFR' from the convective cloud fraction given by EDKF 
-(if CSCONV='EDKF' only)
-\item 'PDF' for subgrid warm precipitation (not only autoconversion) according to Turner et al. (2012). Only if LRED=TRUE.
-\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
-\end{itemize}
-
-\item
-\index{CSUBG\_AUCV\_RI!\innam{NAM\_TURBn}}
-CSUBG\_AUCV\_RI: Type of subgrid $r_i$ - $r_s$ autoconversion scheme.
-\begin{itemize}
-\item  'NONE' for considering a homogeneous cloud over the entire grid-cell
-\item 'CLFR' for considering a homogeneous cloud over its cloud fraction
-\item 'ADJU' to use a diagnostic computed in the saturation adjustment when CCONDENS is set to GAUS.
-\end{itemize}
-
-\item
-\index{CSUBG\_MF\_PDF!\innam{NAM\_TURBn}}
-CSUBG\_MF\_PDF: PDF used to diagnose autoconversion from the shallow convection cloud.
-\begin{itemize}
-\item  'NONE' for considering a homogeneous cloud over its fraction.
-\item 'TRIANGLE' to use a triangular PDF.
-\end{itemize}
-
-\item
-\index{LSIGMAS!\innam{NAM\_TURBn}}
-LSIGMAS: Flag for using Sigma\_s from turbulence scheme instead parameterized values
-in ice subgrid condensation scheme
 
 \item
 \index{LSIG\_CONV!\innam{NAM\_TURBn}}
@@ -7060,17 +7075,14 @@ according to Tomas and Masson (2006).
 \end{itemize}
 
 \item
-\index{XKEMIN!\innam{NAM\_TURBn}}
-XKEMIN: minimum value for the TKE ($m^{2}.s^{-2}$).
+\index{XTKEMIN!\innam{NAM\_TURBn}}
+XTKEMIN: minimum value for the TKE ($m^{2}.s^{-2}$).
 
 \item
-\index{XCEDIS!\innam{NAM\_TURBn}}
-XCEDIS: Constant for TKE dissipation
-(with CTURBLEN='RM17' it is better to use XCEDIS=0.34 according to Rodier et al., 2017).
+\index{XCED!\innam{NAM\_TURBn}}
+XCED: Constant for TKE dissipation
+(with CTURBLEN='RM17' it is better to use XCED=0.34 according to Rodier et al., 2017).
 
-\item
-\index{VSIGQSAT!\innam{NAM\_TURBn}}
-VSIGQSAT: coefficient applied to qsat variance contribution. Only available if LSIGMAS=.TRUE.
 
 \item
 \index{LLEONARD!\innam{NAM\_TURBn}}
@@ -7092,8 +7104,31 @@ XALTHGRAD: height above ground from which the Leonard terms are applied.
 \index{XCLDTHOLD!\innam{NAM\_TURBn}}
 XCLDTHOLD: mixing ratios threshold ($r_c + r_i$) from which the Leonard terms are applied. For instance, XCLDTHOLD=$10^{-6}$ kg/kg to apply only on clouds. XCLDTHOLD=-1 to apply everywhere.
 
+\item LCLOUDMODIFLM \index{LCLOUDMODIFLM!\innam{NAM\_TURBn}}:
+model number where the modification of the mixing length in the clouds is
+computed.
+\item CTURBLEN\_CLOUD \index{CTURBLEN\_CLOUD!\innam{NAM\_TURBn}}:
+type of turbulent mixing length in the clouds
+ ('BL89','DELT','DEAR': see CTURBLEN for meanings),
+\item XCOEF\_AMPL\_SAT \index{XCOEF\_AMPL\_SAT!\innam{NAM\_TURBn}}:
+saturation of the amplification coefficient,
+\item XCEI\_MIN \index{XCEI\_MIN!\innam{NAM\_TURBn}}:
+minimum threshold for the instability index (in kg/kg/m/s,
+ beginning of the amplication),
+\item XCEI\_MAX \index{XCEI\_MAX!\innam{NAM\_TURBn}}:
+maximum threshold for the instability index (in kg/kg/m/s,
+ beginning of the saturation of the amplification).
+\item XPHI\_LIM\index{XPHI\_LIM!\innam{NAM\_TURBn}} is the threshold value for $\phi _{3}$ and $\psi _{3}$
+\item XSBL\_O\_BL\index{XSBL\_O\_BL!\innam{NAM\_TURBn}} is SBL height / BL height ratio
+\item XFTOP\_O\_FSURF\index{XFTOP\_O\_FSURF!\innam{NAM\_TURBn}} is the fraction of surface (heat or momentum) flux used to define top of BL
+   \item XCTP: Constant for temperature and vapor pressure-correlations (if not defined, the value depends on LSTATNW)\index{XCTP!\innam{NAM\_TURBn}}
+    \item XMINSIGS: minimum value of the variance of the deficit to the saturation out of the turbulence scheme $kg^2.kg^{-2}$)\index{XMINSIGS!\innam{NAM\_TURBn}}
+    \item LHARAT: flag to activate the RACMO turbulence scheme\index{LHARAT!\innam{NAM\_TURBn}}
+    \item LPROJQITURB: flag to project the $r_t$ tendency on $r_c$ and $r_i$\index{LPROJQITURB!\innam{NAM\_TURBn}}
+    \item LSMOOTH\_PRANDTL: flag to smooth the Prandtl functions\index{LSMOOTH\_PRANDTL!\innam{NAM\_TURBn}}
+    \item NTURBSPLIT: number of time-splitting for the computation of horizontal turbulent fluxes\index{NTURBSPLIT!\innam{NAM\_TURBn}}
+    \item LTURB\_PRECIP: flag to activate the turbulent mixing of mixing ratios of snow, graupel, hail and liquid droplets $r_s$, $r_g$, $r_h$, and $r_r$\index{LTURB\_PRECIP!\innam{NAM\_TURBn}}
 \end{itemize}
-
 Diagnostic quantities are written on every synchronuous files 
 (mixing length in clear sky, mixing length modified, amplification coefficient\ldots) if LTURB\_DIAG=.TRUE. in NAM\_TURBn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
