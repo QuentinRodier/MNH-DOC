@@ -5300,7 +5300,7 @@ It contains the options for the ECRAD radiative scheme. ECRAD version is defined
  \index{NLWSOLVER!\innam{NAM\_PARAM\_ECRADn}}
 \item NLIQOPT: optical properties of liquid particles ; 2 = Slingo ; 3 = SOCRATES
  \index{NLIQOPT!\innam{NAM\_PARAM\_ECRADn}}
-\item NICEOPT: optical properties of liquid particles ; 3 = Fu ; 4 = Baran
+\item NICEOPT: optical properties of ice particles ; 3 = Fu ; 4 = Baran ; 7 = coherent with LIMA with CPRISTINE\_ICE\_LIMA = {YPLA, YCOL, YBUR, YHCO, YHBU}
  \index{NICEOPT!\innam{NAM\_PARAM\_ECRADn}}
 \item NOVLP :  overlap assumption ; 0= 'Max-Ran' ; 1= 'Exp-Ran'; 2 = 'Exp-Exp'
  \index{NOVLP!\innam{NAM\_PARAM\_ECRADn}}
@@ -5766,7 +5766,18 @@ NMOD\_IMM :Number of “coated IFN” modes
 NIND\_SPECIE : Type of the “coated IFN” mode. 1 for dust, 2 for black carbon or 3 for organics
 \item
 \index{CPRISTINE\_ICE\_LIMA!\innam{NAM\_PARAM\_LIMA}}
-CPRISTINE\_ICE\_LIMA : Select the shape of pristine ice ('PLAT', 'COLU' or 'BURO' )
+CPRISTINE\_ICE\_LIMA : Select the shape of pristine ice among:
+\begin{itemize}
+\item{'PLAT'} : plates 
+\item{'COLU'} : columns
+\item{'BURO'} : bullet rosettes
+\item{'YPLA'} : plates from Yang et al. 2013
+\item{'YCOL'} : column from Yang et al. 2013
+\item{'YBUR'} : solid bullet rosette from Yang et al. 2013
+\item{'YDRO'} : droxtal from Yang et al. 2013
+\item{'YHCO'} : hollow column from Yang et al. 2013
+\item{'YHBU'} : hollow bullet rosette from Yang et al. 2013
+\end{itemize}
 \item
 \index{XFACTNUC\_DEP!\innam{NAM\_PARAM\_LIMA}}
 XFACTNUC\_DEP : Amplification factor for IN nucleation by deposition (only used if LMEYERS=T)
@@ -6037,6 +6048,7 @@ NRAD\_DIAG     & integer        & 0  \\
 XFUDG          & real           &   1.   \\
 LAERO\_FT      & logical        & FALSE  \\
 LFIX\_DAT      & logical        & FALSE  \\
+NRAD\_AGG      & integer        & 1      \\
 \end{longtable}
 
 It contains the options retained for the radiations scheme, used by the 
@@ -6218,6 +6230,11 @@ for Effective Zenithal Angle. This option is well adapted in the absence of mult
 \item
 $NOVLP=8 $ : Maximum Random overlap for Clear Sky fraction and 
 Effective Zenithal Angle. It corresponds to the previous configurations before  masdev4\_7.
+
+\item
+\index{NRAD\_AGG!\innam{NAM\_PARAM\_RADn}}
+NRAD\_AGG : side of a square of aggregated columns on which the radiation code will be called. This allows cheaper numerical cost of the radiation code and reduce its cost by NRAD AGG2. If NRAD AGG = 1, the radiation code is called on every columns (historical version). May be useful for very high resolution LES on which calling radiation on every columns is not necessary
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ù
