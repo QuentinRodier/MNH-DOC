@@ -67,7 +67,7 @@ that will set up some filters under the name ``lfs'' in the global Git config fi
 % ----------------------------
 
 \begin{itemize}
-\item Download the private key to access the anonymous Meso-NH Git server (read-only access) by following the next link \href{http://mesonh.aero.obs-mip.fr/mesonh56/GitSources?action=AttachFile&do=get&target=anongitmesonh.key}{anongitmesonh.key} and save the file in your \$HOME/.ssh/ directory
+\item Download the private key to access the anonymous Meso-NH Git server (read-only access) by following the next link \href{http://mesonh.aero.obs-mip.fr/mesonh57/GitSources?action=AttachFile&do=get&target=anongitmesonh.key}{anongitmesonh.key} and save the file in your \$HOME/.ssh/ directory
 \item Change the access permissions of the key with:
 \end{itemize}
 \begin{bashcode}
@@ -95,10 +95,10 @@ git config --global http.sslverify false
 
 Finally you can clone the \textbf{read-only} Meso-NH Git repository with the following command:
 \begin{bashcode}
-git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MNH-56-branch MNH-V5-7-0
+git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MNH-57-branch MNH-V5-7-0
 \end{bashcode}
 
-that will create the MNH-V5-7-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+that will create the MNH-V5-7-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-57-branch.
 
 \subsection{Download via git (for developpers; mandatory)}
 \label{sec:dev_sec}
@@ -124,18 +124,18 @@ Once you have received confirmations by the team, you can continue to next step.
 % ----------------------------
 Finally you can clone the \textbf{read-write} Meso-NH Git repository with the following command:
 \begin{bashcode}
-git lfs clone gitladev@mesonh2.aero.obs-mip.fr:/gitladevrepos/MNH-ladev.git -b MNH-56-branch MNH-V5-7-0
+git lfs clone gitladev@mesonh2.aero.obs-mip.fr:/gitladevrepos/MNH-ladev.git -b MNH-57-branch MNH-V5-7-0
 \end{bashcode}
 
-that will create the MNH-V5-7-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-56-branch.
+that will create the MNH-V5-7-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-57-branch.
 
 % ----------------------------
 \subsection{Checking out a given version of Meso-NH}
 % ----------------------------
 
-Once the repository is cloned, it's better for you to checkout your own branch (by default, you are on HEAD of the MNH-56-branch development branch). \\
+Once the repository is cloned, it's better for you to checkout your own branch (by default, you are on HEAD of the MNH-57-branch development branch). \\
 
-To create your local branch corresponding to the V5-6-1 version, type:
+To create your local branch corresponding to the V5-7-0 version, type:
 \begin{bashcode}
 cd MNH-V5-7-0
 git checkout -b MYB-MNH-V5-7-0 PACK-MNH-V5-7-0
@@ -156,15 +156,15 @@ To go to the new version, you can, for example, create a new local branch:
 git checkout -b MYB-MNH-V5-7-0 PACK-MNH-V5-7-0
 \end{bashcode}
 
-At any time, you can also check for ``uptodate'' changes in the Git branch dedicated to the MNH56 version before the official release of the ``bugN+1'' bugfix version.
+At any time, you can also check for ``uptodate'' changes in the Git branch dedicated to the MNH57 version before the official release of the ``bugN+1'' bugfix version.
 \begin{bashcode}
 git fetch
-git diff HEAD MNH-56-branch
+git diff HEAD MNH-57-branch
 \end{bashcode}
 
 And, test this development (not yet official) version by going to this branch:
 \begin{bashcode}
-git checkout --track origin/MNH-56-branch
+git checkout --track origin/MNH-57-branch
 \end{bashcode}
 
 % ----------------------------
