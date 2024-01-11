@@ -5614,11 +5614,11 @@ Fortran name &  Fortran type & default value \\
 \endhead
 \hline
 \endfoot
-LWARM         &  logical     & .TRUE. \\
+LWARM         &  logical     & TRUE \\
 CPRISTINE\_ICE & 4 characters & 'PLAT' \\
 LSEDIC & logical & TRUE \\
 CSEDIM & 4 characters & 'SPLI' \\
-LCONVHG       &  logical     & .FALSE. \\
+LCONVHG       &  logical     & FALSE \\
 LDEPOSC& logical & FALSE \\
 XVDEPOSC& real & 0.02 \\
 LRED & logical & TRUE \\
@@ -5635,7 +5635,7 @@ XMRSTEP & real & 0.00005 \\
 XTSTEP\_TS & real & 0. \\
 LADJ\_BEFORE & logical & TRUE \\
 LADJ\_AFTER & logical & TRUE \\
-LCRFLIMIT &  logical     & .TRUE. \\
+LCRFLIMIT &  logical     & TRUE \\
 XSPLIT\_MAXCFL& real & 0.8 \\
 LSEDIM\_AFTER & logical & FALSE \\
 CSUBG\_RC\_RR\_ACCR & 80 characters & 'NONE' \\
@@ -5645,8 +5645,8 @@ CSUBG\_AUCV\_RC &  4 characters  & 'NONE' \\
 CSUBG\_AUCV\_RI &  80 characters  & 'NONE' \\
 CSUBG\_MF\_PDF  &  80 characters  & 'TRIANGLE' \\
 LSNOW\_T & logical & .FALSE. \\
-LPACK\_INTERP & logical & .TRUE. \\
-LPACK\_MICRO & logical & .TRUE. \\
+LPACK\_INTERP & logical & TRUE \\
+LPACK\_MICRO & logical & TRUE \\
 NPROMICRO  & integer & 0   \\
 LCRIAUTI  & logical & FALSE    \\
 LOCND2  & logical & FALSE    \\
@@ -6972,9 +6972,6 @@ CTURBLEN\_CLOUD & 4 characters       & 'DELT'   \\
 XCOEF\_AMPL\_SAT& real        & 5.   \\
 XCEI\_MIN       & real        & 0.001E-6   \\
 XCEI\_MAX       & real        & 0.01E-6    \\
-XPHI\_LIM        & real        & 3.     \\
-XSBL\_O\_BL      & real        & 0.05   \\
-XFTOP\_O\_FSURF  & real        & 0.05   \\
 XLINI        & real &   0.1  \\
 XCTP & real & 4.0 if LSTATNW, \\
  & & else 4.65 \\
@@ -7118,9 +7115,6 @@ minimum threshold for the instability index (in kg/kg/m/s,
 \item XCEI\_MAX \index{XCEI\_MAX!\innam{NAM\_TURBn}}:
 maximum threshold for the instability index (in kg/kg/m/s,
  beginning of the saturation of the amplification).
-\item XPHI\_LIM\index{XPHI\_LIM!\innam{NAM\_TURBn}} is the threshold value for $\phi _{3}$ and $\psi _{3}$
-\item XSBL\_O\_BL\index{XSBL\_O\_BL!\innam{NAM\_TURBn}} is SBL height / BL height ratio
-\item XFTOP\_O\_FSURF\index{XFTOP\_O\_FSURF!\innam{NAM\_TURBn}} is the fraction of surface (heat or momentum) flux used to define top of BL
    \item XCTP: Constant for temperature and vapor pressure-correlations (if not defined, the value depends on LSTATNW)\index{XCTP!\innam{NAM\_TURBn}}
     \item XMINSIGS: minimum value of the variance of the deficit to the saturation out of the turbulence scheme $kg^2.kg^{-2}$)\index{XMINSIGS!\innam{NAM\_TURBn}}
     \item LHARAT: flag to activate the RACMO turbulence scheme\index{LHARAT!\innam{NAM\_TURBn}}
