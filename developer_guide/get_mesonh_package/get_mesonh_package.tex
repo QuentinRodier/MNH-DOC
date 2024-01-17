@@ -54,6 +54,7 @@ Next step is to configure Meso-NH package, for that go to Section \ref{sec:confi
 \begin{itemize}
 \item get the linux git-lfs archive from the ``Download v1.X.Y (Linux)'' link on the web page https://git-lfs.github.com/
 \item extract the archive and copy the git-lfs binary in your \$HOME/bin (the provided install.sh script doesn't need to be executed)
+\item execute the following command if it's not already in your \$HOME/.bash\_profile: export PATH=\$PATH:\$HOME/bin
 \item from any directory, you can now execute:
 \end{itemize}
 \end{itemize}
@@ -89,6 +90,9 @@ To finish, it's necessary to disable the certificate checks because a self-signe
 git config --global http.sslverify false
 \end{bashcode}
 
+\textbf{For users at Météo-France}, you must accept a certicate before cloning by going to the following address : \href{https://195.83.22.118/objects/batch}{https://195.83.22.118/objects/batch}.
+This certificate acceptance must be done each time you may change a branch with changes in large files with git lfs. To make this process automatically, please contact Q.Rodier.
+
 % ----------------------------
 \subsubsection{Cloning Meso-NH on the read-only repository MNH-git\_open\_source-lfs}
 % ----------------------------
@@ -100,15 +104,15 @@ git lfs clone anongit@anongit_mesonh:/gitrepos/MNH-git_open_source-lfs.git -b MN
 
 that will create the MNH-V5-7-0 directory containing a clone (copy) of the Meso-NH package on the remote branch MNH-57-branch.
 
-\subsection{Download via git (for developpers; mandatory)}
+\subsection{Download via git (for developers; mandatory)}
 \label{sec:dev_sec}
 If you wish to contribute to the public Meso-NH code, the support team needs to have access to your branches. For that purpose, a second repository with read-write permissions MNH-ladev is available for any contributors. This repo contains :
 \begin{itemize}
     \item strictly duplicated branches from the read-only MNH-git\_open\_source-lfs.git repository. These branches are synchronized every 24 hours. DO NOT WRITE ON THESE BRANCHES OR YOU MAY LOOSE YOUR WORK.
-    \item public user's developping branches
+    \item public user's developing branches
 \end{itemize}
 
-Once your developpement is ready, contact the support team in charge of the merging process to the master branch.
+Once your developement is ready, contact the support team in charge of the merging process to the master branch.
 % ----------------------------
 \subsubsection{Before cloning}
 % ----------------------------
@@ -120,7 +124,7 @@ to the support team by email. You may send multiple keys if you need to acess MN
 Once you have received confirmations by the team, you can continue to next step.
 
 % ----------------------------
-\subsubsection{Cloning Meso-NH on the developpers read-write repository MNH-ladev}
+\subsubsection{Cloning Meso-NH on the developers read-write repository MNH-ladev}
 % ----------------------------
 Finally you can clone the \textbf{read-write} Meso-NH Git repository with the following command:
 \begin{bashcode}
