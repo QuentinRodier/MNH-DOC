@@ -396,6 +396,7 @@ LSHIFT        & logical            & if HATMFILETYPE = 'GRIBEX':  \\
 LDUMMY\_REAL  & logical            & .FALSE.                     \\
 LRES          & logical            & .FALSE.                     \\
 XRES          & real               & 1.E-07                      \\
+NITR          & integer            & 4                           \\
 LCOUPLING     & logical            & .FALSE.                     \\
 NHALO      & integer        & 1      \\
 JPHEXT     & integer        & 1      \\
@@ -432,6 +433,9 @@ asking for additional fields by modifying FULLPOS namelist or {\bf extractecmwf}
 
 \item XRES : Value of the residual divergence limit
 \index{XRES\innam{NAM\_REAL\_CONF}}
+
+\item
+NITR  \index{NITR!\innam{NAM\_REAL\_CONF}}: number of  iterations used for the resolution of the elliptic equation (solver = "CPRESOPT").
 
 \item \textbf{LCOUPLING : Flag to handle the output file as coupling file instead of initial file : no surface field will be computed. (time saving and smaller file) }
 \index{LCOUPLING\innam{NAM\_REAL\_CONF}}
