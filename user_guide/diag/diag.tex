@@ -154,8 +154,10 @@ Only available if CSURF='EXTE' in YINIFILE.des
 \begin{center}
 \begin{tabular}{>{\centering}p{3cm}>{\centering}p{2.5cm}|p{11cm}|}
 \cline{3-3}
-&&{\tt UM10 VM10} : [2D] components of wind at 10m (m/s)\\\cline{3-3}
-&&{\tt FF10MAX} : [2D] Wind gusts at 10 m (only if CTURB='TKEL')\\ \cline{3-3}
+&&{\tt UM10, VM10}    : [2D] zonal and meridional wind at 10\,m height AGL (m/s)\\\cline{3-3}
+&&{\tt FF10MAX}       : [2D] wind gusts at 10\,m height AGL, with TKE component equals to $4\sqrt{\mathrm{TKE}_\mathrm{IKB}}$ (m/s, only if CTURB='TKEL')\\ \cline{3-3}
+&&{\tt FF10MAX2}      : [2D] wind gusts at 10\,m height AGL, with TKE component equals to $4\sqrt{\mathrm{TKE}_\mathrm{10m}}$ (m/s, only if CTURB='TKEL')\\ \cline{3-3}
+&&{\tt FF10MAX\_AROME} : [2D] wind gusts at 10\,m height AGL, with TKE component equals to $3.8\sqrt{\mathrm{TKE}_\mathrm{20m}}$ as in AROME-France (m/s, only if CTURB='TKEL')\\ \cline{3-3}
 &&{\tt SFCO2} : [2D] CO2 flux (mg/m2/s) (if present in YINIFILE)\\ \cline{3-3}
 \end{tabular} 
 \end{center}
