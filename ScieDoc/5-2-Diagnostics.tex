@@ -132,14 +132,7 @@ u_{ag} = u - u_g &;& v_{ag} = v - v_g \nonumber
 %
 Zonal and meridional wind at 10\,m height above ground level (AGL), $u_\mathrm{10m}, v_\mathrm{10m}$ are stored in variables {\tt UM10}, {\tt VM10} and computed as:
 \begin{itemize}
-\item If {\tt IKB} = 1 + {\tt JPVEXT} (first physical vertical level) is above 10\,m height AGL: XCURRENT\_ZON10M and XCURRENT\_MER10M are initialized by
-SURFEX model diagnostic variables {\tt ZON10M}, {\tt MER10M} and not equal to XUNDEF if {\tt N2M} > 0 in NAM\_DIAG\_SURFn.
-%SURFEX routine "get\_fluxn.F90" computes PZON10M and PMER10M if N2M>0 in \&NAM\_DIAG\_SURFn and Meso-NH routines "mnhget\_surf\_paramn.f90" and "ground\_paramn.f90".
-\begin{align}
-u_\mathrm{10m} &= {\tt ZON10M}\\
-v_\mathrm{10m} &= {\tt MER10M}
-\end{align}
-\item If {\tt IKB} is below 10\,m height AGL, then at the mass level $z_i = {\tt XZHATM}(i)$ at which ${\tt XZHATM}(i) \leq 10\,\mathrm{m} < {\tt XZHATM}(i+1)$, a linear interpolation of $u_i$ and $u_{i+1}$ is performed:
+\item If first physical vertical mass level {\tt XZHATM(IKB)} is below 10\,m height AGL (i.e. the level 10\,m is between two physical vertical levels of the grid), with {\tt IKB}= 1 + {\tt JPVEXT}, the index of this level, then at mass level $z_i =$ {\tt XZHATM($i$)} at which {\tt XZHATM($i$)}$\,\leq 10\,\mathrm{m}\,<\,${\tt XZHATM($i+1$)}, a linear interpolation of $u_i$ and $u_{i+1}$ is performed:
 \begin{eqnarray}
 &\dfrac{u_\mathrm{10m}-u_i}{u_{i+1}-u_i} = \dfrac{10-z_i}{z_{i+1}-z_i}\\
 \Rightarrow &u_\mathrm{10m} =u_i + (u_{i+1}-u_i) \dfrac{10-z_i}{z_{i+1}-z_i}
@@ -148,21 +141,45 @@ v_\mathrm{10m} &= {\tt MER10M}
 \begin{eqnarray}
 v_\mathrm{10m}=v_i + (v_{i+1}-v_i) \dfrac{10-z_i}{z_{i+1}-z_i}
 \end{eqnarray}
-\end{itemize} 
 
-Three formulae are available for wind gusts at 10\,m height AGL. As a reminder, the World Meteorological Organization (WMO) defines wind gusts as the maximum value, over the observing cycle, of the 3-second running average wind speed (gust duration of 3\,s, \citet{WMO2021}). 
+\item If {\tt XZHATM(IKB)} is above 10\,m height AGL: 
+\begin{itemize}
+\item if ${\tt N2M} = 0$ in {\tt NAM\_DIAG\_SURFn}, {\tt UM10} and {\tt VM10} are not computed (equal to  {\tt ZUNDEF})
+\item if ${\tt N2M} > 0$ in {\tt NAM\_DIAG\_SURFn}, {\tt UM10} and {\tt VM10} are initialized by SURFEX model diagnostic variables {\tt ZON10M}, {\tt MER10M}:
+\begin{align}
+u_\mathrm{10m} &= {\tt ZON10M} \label{U10SURF}\\
+v_\mathrm{10m} &= {\tt MER10M} \label{V10SURF}
+\end{align}
+\end{itemize}
+\end{itemize}
 
-Currently, in France, this variable called "FXI3S" is only provided in a limited number of observation reports (e.g. METAR) and for a limited number of Météo-France weather stations (e.g. stations located on airports). In most reports (SYNOP, RADOMEH, RADOME1M, etc.), the variable provided is the maximum instantaneous wind speed ("FXI") which is the maximum value, over the observing cycle, of all the observations, which are made at periods varying between 0.25\,s and 0.5\,s depending on the anemometer technology and model (cup, ultrasonic or propeller). Coefficients (3.8 or 4, see below) may have been set to model FXI (gust duration of 0.25 or 0.5\,s) and they may need to be adapted to model FXI3S (gust duration of 3\,s).
+Three formulae are available for wind gusts at 10\,m height AGL. As a reminder, the \citet[WMO,][]{WMO2021} defines wind gusts as the maximum value, over the observing cycle, of the 3-second running average wind speed (gust duration of 3\,s,). Currently, in France, this variable, called "FXI3S" is only provided in a limited number of observation reports (e.g., METAR) and for a limited number of Météo-France weather stations (e.g. stations located on airports). In most reports (SYNOP, RADOMEH, RADOME1M, etc.), the variable provided is the maximum instantaneous wind speed ("FXI") which is the maximum value, over the observing cycle, of all the observations, which are made at periods varying between 0.25\,s and 0.5\,s depending on the anemometer technology and model (cup, ultrasonic or propeller). Coefficients (3.8 or 4, see below) may have been set to model FXI and they may need to be adapted to model FXI3S.
 
 \begin{eqnarray}
-{\tt FF10MAX} &= \sqrt{u_\mathrm{10m}^2+v_\mathrm{10m}^2} + 4 \sqrt{\mathrm{TKE_{IKB}}}\\
+{\tt FF10MAX} &= \sqrt{u_\mathrm{10m}^2+v_\mathrm{10m}^2} + 4 \sqrt{\mathrm{TKE_{IKB}}} \label{FF10MAX}\\
 {\tt FF10MAX2} &= \sqrt{u_\mathrm{10m}^2+v_\mathrm{10m}^2} + 4 \sqrt{\mathrm{TKE_{10m}}}\\
-{\tt FF10MAX\_AROME} &= \sqrt{u_\mathrm{10m}^2+v_\mathrm{10m}^2} + 3.8 \sqrt{\mathrm{TKE_{20m}}}\
+{\tt FF10MAX\_AROME} &= \sqrt{u_\mathrm{10m}^2+v_\mathrm{10m}^2} + 3.8 \sqrt{\mathrm{TKE_{20m}}} \label{FF10MAXAROME}
 \end{eqnarray}
 
-These formulations are inspired by \citet{Brasseur2001}. {\tt FF10MAX2} formula was added to reduce the sensitivity to {\tt IKB} and therefore the first vertical level of the grid. {\tt FF10MAX\_AROME} corresponds to the formulation in AROME-France cy46t1 (operational in 2024) which is controlled by the namelist "NAMPHY2" and the parameters "FACRAF" and "HTKERAF". Computation is done in "accldia.f90".
+\begin{itemize}
+\item If {\tt XZHATM(IKB)} is below 10\,m height AGL: {\tt FF10MAX}, {\tt FF10MAX2} and {\tt FF10MAX\_AROME} are computed according to Eqs.~\ref{FF10MAX}--\ref{FF10MAXAROME}.
 
-In addition to these variables providing the wind gust at the exact time of the output diachronic file: the maximum between two diachronic files is provided by {\tt FF10MAX\_MA}, {\tt FF10MAX2\_MA} and {\tt FF10MAX\_AROME\_MA} when NAM\_MEAN LMEAN\_FIELD=T in EXSEG\$n.nam file.
+\item If {\tt XZHATM(IKB)} is above 10\,m height AGL: 
+
+\begin{itemize}
+\item if ${\tt N2M} = 0$ in {\tt NAM\_DIAG\_SURFn}:
+{\tt FF10MAX}, {\tt FF10MAX2} and {\tt FF10MAX\_AROME} are not computed.
+\item if ${\tt N2M} > 0$ in {\tt NAM\_DIAG\_SURFn}:
+{\tt FF10MAX} is computed with $u_\mathrm{10m}$ and $v_\mathrm{10m}$ given by SURFEX as in Eqs~\ref{U10SURF}--\ref{V10SURF}. {\tt FF10MAX\_AROME} is computed only if {\tt XZHATM(IKB)} is below 20\,m height AGL. {\tt FF10MAX2} is not computed.
+\end{itemize}
+\end{itemize}
+
+
+
+
+These formulations are inspired by \citet{Brasseur2001}. {\tt FF10MAX2} formula was added to reduce the sensitivity to {\tt IKB} and therefore the first vertical level of the grid. {\tt FF10MAX\_AROME} corresponds to the formulation in AROME-France cy46t1 (operational in 2024) which is controlled by the namelist "NAMPHY2" and the parameters "FACRAF" and "HTKERAF" in AROME code. Computation is done in "accldia.f90".
+
+In addition to these variables providing the wind gust at the exact time of the output diachronic file: the maximum between two diachronic files is provided by {\tt FF10MAX\_MA}, {\tt FF10MAX2\_MA} and {\tt FF10MAX\_AROME\_MA} when {\tt NAM\_MEAN LMEAN\_FIELD=T} in {\tt  EXSEG\$n.nam} file. These maxima are provided only if {\tt XZHATM(IKB)} is below 10\,m height AGL (no call to SURFEX).
 %
 \subsubsection{Mean sea level pressure}
 The surface pressure ({\tt MSLP}) is first computed as the mean between 
